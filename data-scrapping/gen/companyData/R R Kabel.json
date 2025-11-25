@@ -1,0 +1,5035 @@
+{
+  "refId": "1284488",
+  "name": "R R Kabel Ltd",
+  "url": "http://www.rrkabel.com",
+  "about": "Incorporated in 1995, RR Kabel provides consumer electrical products used for residential, commercial, industrial, and infrastructure purposes in two major segments, namely wires and cables including house wires, industrial wires, power cables, and special cables; and FMEG including fans, lighting, switches, and appliances.",
+  "keyPoints": "Product segments[1]\nA)Wires and cables - including house wires, industrial wires, power cables, control cables, solar cables & special cables. 40% market share in the Indian electrical industry as of FY24.\nB)FMEG - includes room heater, water heater, cooler, and irons; its switches & switchgear portfolio comprises modular switches, MCBs, and Distribution Box. In fan, its product basket comprises ceiling fans, table/pedestal fans, and exhaust fans. In lighting ,its product basket comprises bulbs, panels, streetlights, and downlights",
+  "summary": {
+    "marketCap": {
+      "amount": 15291,
+      "baseValue": "crore"
+    },
+    "currentPrice": {
+      "amount": 1351,
+      "baseValue": "one"
+    },
+    "high": {
+      "amount": 1524,
+      "baseValue": "one"
+    },
+    "low": {
+      "amount": 750,
+      "baseValue": "one"
+    },
+    "stockPE": {
+      "amount": 37.9,
+      "baseValue": "ratio"
+    },
+    "bookValue": {
+      "amount": 207,
+      "baseValue": "one"
+    },
+    "dividendYield": {
+      "amount": 0.44,
+      "baseValue": "percent"
+    },
+    "roce": {
+      "amount": 19.8,
+      "baseValue": "percent"
+    },
+    "roe": {
+      "amount": 15.2,
+      "baseValue": "percent"
+    },
+    "faceValue": {
+      "amount": 5,
+      "baseValue": "one"
+    },
+    "pros": [
+      "Company has been maintaining a healthy dividend payout of 22.4%"
+    ],
+    "cons": []
+  },
+  "peerCompanies": [
+    {
+      "sector": "Industrials Capital Goods Industrial Products Cables - Electricals",
+      "name": "Polycab India",
+      "currentPrice": {
+        "amount": 7403.9,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 45.29,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 111486.34,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 0.47,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 692.96,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": 55.85,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 6477.21,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": 17.8,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 29.72,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Industrials Capital Goods Industrial Products Cables - Electricals",
+      "name": "KEI Industries",
+      "currentPrice": {
+        "amount": 4062.85,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 49.16,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 38862.85,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 0.1,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 203.51,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": 31.46,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 2726.35,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": 19.38,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 21.29,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Industrials Capital Goods Industrial Products Cables - Electricals",
+      "name": "R R Kabel",
+      "currentPrice": {
+        "amount": 1351.1,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 37.88,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 15291.39,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 0.44,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 116.26,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": 134.73,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 2163.77,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": 19.54,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 19.77,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Industrials Capital Goods Industrial Products Cables - Electricals",
+      "name": "Finolex Cables",
+      "currentPrice": {
+        "amount": 750.8,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 19.11,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 11497.3,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 1.06,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 186.89,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": 27.93,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 1375.79,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": 4.88,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 16.21,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Industrials Capital Goods Industrial Products Cables - Electricals",
+      "name": "Universal Cables",
+      "currentPrice": {
+        "amount": 903.15,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 21.45,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 3134.52,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 0.44,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 47.68,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": 160.83,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 814.29,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": 27.61,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 8.58,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Industrials Capital Goods Industrial Products Cables - Electricals",
+      "name": "V-Marc India",
+      "currentPrice": {
+        "amount": 723.4,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 28.88,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 1766.6,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 36.44,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": 220.49,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 691.54,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": 100.32,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 26.43,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Industrials Capital Goods Industrial Products Cables - Electricals",
+      "name": "Advait Energy",
+      "currentPrice": {
+        "amount": 1581.5,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 43.18,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 1729.43,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 0.11,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 11.11,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": 142.86,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 156.87,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": 239.33,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 26.87,
+        "baseValue": "percent"
+      }
+    }
+  ],
+  "quarterlyResultStatements": [
+    {
+      "timePeriod": "Sep 2022",
+      "sales": {
+        "value": {
+          "amount": 1367,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 1304,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 83,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 63,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 5,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 9,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 9.48,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 10,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 15,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 48,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 27,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 35,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 35,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 35,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 35,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 14.63,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/9/2022/"
+    },
+    {
+      "timePeriod": "Dec 2022",
+      "sales": {
+        "value": {
+          "amount": 1480,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 1362,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 80,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 4,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 118,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 8,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 6,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 5.74,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 11,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 17,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 95,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 25,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 71,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 71,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 71,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 71,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 29.86,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/12/2022/"
+    },
+    {
+      "timePeriod": "Mar 2023",
+      "sales": {
+        "value": {
+          "amount": 1517,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 1416,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 81,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 100,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 7,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 15,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 14.51,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 13,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 14,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 88,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 26,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 65,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 65,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 65,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 65,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 6.82,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/3/2023/"
+    },
+    {
+      "timePeriod": "Jun 2023",
+      "sales": {
+        "value": {
+          "amount": 1597,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 29.24,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 1484,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 82,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 113,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 7,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 17,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 16.95,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 14,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 16,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 99,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 25,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 74,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 74,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 74,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 74,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": 310,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 7.77,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/6/2023/"
+    },
+    {
+      "timePeriod": "Sep 2023",
+      "sales": {
+        "value": {
+          "amount": 1610,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 17.73,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 1489,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 80,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 121,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 8,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 15,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 14.93,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 14,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 17,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 105,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 29,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 74,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 74,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 74,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 74,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": 112,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 6.57,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/9/2023/"
+    },
+    {
+      "timePeriod": "Dec 2023",
+      "sales": {
+        "value": {
+          "amount": 1634,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 10.41,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 1521,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 81,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 113,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 7,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 12,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 12.28,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 12,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 16,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 96,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 26,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 71,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 71,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 71,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 71,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": -1,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 6.29,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/12/2023/"
+    },
+    {
+      "timePeriod": "Mar 2024",
+      "sales": {
+        "value": {
+          "amount": 1754,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 15.66,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 1639,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 82,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 4,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 115,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 7,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 20,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 19.57,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 13,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 16,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 106,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 26,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 79,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 79,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 79,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 79,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": 21,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 6.98,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/3/2024/"
+    },
+    {
+      "timePeriod": "Jun 2024",
+      "sales": {
+        "value": {
+          "amount": 1808,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 13.2,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 1713,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 83,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 95,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 5,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 19,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 19.01,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 12,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 16,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 86,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 25,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 64,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 64,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 64,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 64,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": -13,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 5.71,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/6/2024/"
+    },
+    {
+      "timePeriod": "Sep 2024",
+      "sales": {
+        "value": {
+          "amount": 1810,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 12.45,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 1725,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 84,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 86,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 5,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 7,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 7.22,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 16,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 17,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 60,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 17,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 50,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 50,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 50,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 50,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": -33,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 4.38,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/9/2024/"
+    },
+    {
+      "timePeriod": "Dec 2024",
+      "sales": {
+        "value": {
+          "amount": 1782,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 9.1,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 1672,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 82,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 111,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 6,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 14,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 13.88,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 16,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 18,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 90,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 24,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 69,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 69,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 69,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 69,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": -3,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 6.06,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/12/2024/"
+    },
+    {
+      "timePeriod": "Mar 2025",
+      "sales": {
+        "value": {
+          "amount": 2218,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 26.44,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 2023,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 80,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 4,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 194,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 9,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 13,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 13.32,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 15,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 19,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 173,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 25,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 129,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 129,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 129,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 129,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": 64,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 11.42,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/3/2025/"
+    },
+    {
+      "timePeriod": "Jun 2025",
+      "sales": {
+        "value": {
+          "amount": 2059,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 13.85,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 1917,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 82,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 142,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 7,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 13,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 13.41,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 15,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 20,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 120,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 25,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 90,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 90,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 90,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 90,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": 39,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 7.94,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/6/2025/"
+    },
+    {
+      "timePeriod": "Sep 2025",
+      "sales": {
+        "value": {
+          "amount": 2164,
+          "baseValue": "crore"
+        },
+        "other": {
+          "YOY Sales Growth %": {
+            "amount": 19.54,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 1988,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 81,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 176,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 8,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 17,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Other income normal": {
+            "amount": 17.17,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 16,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 22,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 155,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 25,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 116,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit excl Excep": {
+            "amount": 116,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 116,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 116,
+            "baseValue": "crore"
+          },
+          "YOY Profit Growth %": {
+            "amount": 135,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 10.28,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/1284488/9/2025/"
+    }
+  ],
+  "profitAndLossStatements": [
+    {
+      "timePeriod": "Mar 2020",
+      "sales": {
+        "value": {
+          "amount": 2479,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Sales Growth %": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 2272,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 78,
+            "baseValue": "percent"
+          },
+          "Manufacturing Cost %": {
+            "amount": 2,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          },
+          "Other Cost %": {
+            "amount": 7,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 207,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 8,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 27,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items": {
+            "amount": 1.18,
+            "baseValue": "crore"
+          },
+          "Other income normal": {
+            "amount": 25.84,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 37,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 39,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 158,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 22,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 122,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items AT": {
+            "amount": 1,
+            "baseValue": "crore"
+          },
+          "Profit excl Excep": {
+            "amount": 121,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 121,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 122,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 52.32,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2021",
+      "sales": {
+        "value": {
+          "amount": 2724,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Sales Growth %": {
+            "amount": 9.9,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 2492,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 79,
+            "baseValue": "percent"
+          },
+          "Manufacturing Cost %": {
+            "amount": 2,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          },
+          "Other Cost %": {
+            "amount": 6,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 232,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 9,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 23,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items": {
+            "amount": 3.3,
+            "baseValue": "crore"
+          },
+          "Other income normal": {
+            "amount": 19.79,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 29,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 45,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 181,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 25,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 135,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items AT": {
+            "amount": 2,
+            "baseValue": "crore"
+          },
+          "Profit excl Excep": {
+            "amount": 133,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 133,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 135,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 56.6,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2022",
+      "sales": {
+        "value": {
+          "amount": 4386,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Sales Growth %": {
+            "amount": 61.01,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 4082,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 82,
+            "baseValue": "percent"
+          },
+          "Manufacturing Cost %": {
+            "amount": 1,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 4,
+            "baseValue": "percent"
+          },
+          "Other Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 304,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 7,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 50,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items": {
+            "amount": 5.72,
+            "baseValue": "crore"
+          },
+          "Other income normal": {
+            "amount": 44.76,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 24,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 46,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 284,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 25,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 214,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items AT": {
+            "amount": 4,
+            "baseValue": "crore"
+          },
+          "Profit excl Excep": {
+            "amount": 210,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 210,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 214,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 89.42,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2023",
+      "sales": {
+        "value": {
+          "amount": 5599,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Sales Growth %": {
+            "amount": 27.66,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 5276,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 82,
+            "baseValue": "percent"
+          },
+          "Manufacturing Cost %": {
+            "amount": 1,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          },
+          "Other Cost %": {
+            "amount": 6,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 323,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 6,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 35,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items": {
+            "amount": 3.64,
+            "baseValue": "crore"
+          },
+          "Other income normal": {
+            "amount": 31.74,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 43,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 60,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 256,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 26,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 190,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items AT": {
+            "amount": 3,
+            "baseValue": "crore"
+          },
+          "Profit excl Excep": {
+            "amount": 187,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 187,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 190,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 19.84,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2024",
+      "sales": {
+        "value": {
+          "amount": 6595,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Sales Growth %": {
+            "amount": 17.78,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 6133,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 81,
+            "baseValue": "percent"
+          },
+          "Manufacturing Cost %": {
+            "amount": 1,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          },
+          "Other Cost %": {
+            "amount": 6,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 462,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 7,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 64,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items": {
+            "amount": 5.25,
+            "baseValue": "crore"
+          },
+          "Other income normal": {
+            "amount": 58.42,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 54,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 65,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 406,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 27,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 298,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items AT": {
+            "amount": 4,
+            "baseValue": "crore"
+          },
+          "Profit excl Excep": {
+            "amount": 294,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 294,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 298,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 26.43,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2025",
+      "sales": {
+        "value": {
+          "amount": 7618,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Sales Growth %": {
+            "amount": 15.52,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 7131,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 82,
+            "baseValue": "percent"
+          },
+          "Manufacturing Cost %": {
+            "amount": 1,
+            "baseValue": "percent"
+          },
+          "Employee Cost %": {
+            "amount": 5,
+            "baseValue": "percent"
+          },
+          "Other Cost %": {
+            "amount": 6,
+            "baseValue": "percent"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 487,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 6,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 53,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items": {
+            "amount": 11.56,
+            "baseValue": "crore"
+          },
+          "Other income normal": {
+            "amount": 41.65,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 60,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 70,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 409,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 24,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 312,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items AT": {
+            "amount": 9,
+            "baseValue": "crore"
+          },
+          "Profit excl Excep": {
+            "amount": 303,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 303,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 312,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 27.56,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "TTM",
+      "sales": {
+        "value": {
+          "amount": 8222,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Sales Growth %": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "expenses": {
+        "value": {
+          "amount": 7600,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Material Cost %": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Manufacturing Cost %": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Employee Cost %": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Other Cost %": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "operatingProfit": {
+        "amount": 623,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 8,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 58,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Other income normal": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "interest": {
+        "amount": 63,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 79,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 539,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 404,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Exceptional items AT": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Profit excl Excep": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Profit for PE": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Profit for EPS": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "EPS": {
+        "amount": 35.7,
+        "baseValue": "one"
+      }
+    }
+  ],
+  "balanceSheetStatements": [
+    {
+      "timePeriod": "Mar 2020",
+      "equityCapital": {
+        "amount": 23,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": 881,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 400,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Long term Borrowings": {
+            "amount": 68,
+            "baseValue": "crore"
+          },
+          "Short term Borrowings": {
+            "amount": 327,
+            "baseValue": "crore"
+          },
+          "Lease Liabilities": {
+            "amount": 4,
+            "baseValue": "crore"
+          },
+          "Other Borrowings": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 242,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Trade Payables": {
+            "amount": 181,
+            "baseValue": "crore"
+          },
+          "Advance from Customers": {
+            "amount": 10,
+            "baseValue": "crore"
+          },
+          "Other liability items": {
+            "amount": 51,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalLiabilities": {
+        "amount": 1545,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 391,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Land": {
+            "amount": 38.89,
+            "baseValue": "crore"
+          },
+          "Building": {
+            "amount": 126.36,
+            "baseValue": "crore"
+          },
+          "Plant Machinery": {
+            "amount": 268.9,
+            "baseValue": "crore"
+          },
+          "Equipments": {
+            "amount": 7.94,
+            "baseValue": "crore"
+          },
+          "Furniture n fittings": {
+            "amount": 27.01,
+            "baseValue": "crore"
+          },
+          "Vehicles": {
+            "amount": 15.38,
+            "baseValue": "crore"
+          },
+          "Intangible Assets": {
+            "amount": 5.3,
+            "baseValue": "crore"
+          },
+          "Other fixed assets": {
+            "amount": 15.12,
+            "baseValue": "crore"
+          },
+          "Gross Block": {
+            "amount": 504.9,
+            "baseValue": "crore"
+          },
+          "Accumulated Depreciation": {
+            "amount": 114.37,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "CWIP": {
+        "amount": 15,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 221,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 919,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Inventories": {
+            "amount": 375,
+            "baseValue": "crore"
+          },
+          "Trade receivables": {
+            "amount": 419,
+            "baseValue": "crore"
+          },
+          "Cash Equivalents": {
+            "amount": 11,
+            "baseValue": "crore"
+          },
+          "Loans n Advances": {
+            "amount": 30,
+            "baseValue": "crore"
+          },
+          "Other asset items": {
+            "amount": 83,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalAssets": {
+        "amount": 1545,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2021",
+      "equityCapital": {
+        "amount": 24,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": 1023,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 507,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Long term Borrowings": {
+            "amount": 71,
+            "baseValue": "crore"
+          },
+          "Short term Borrowings": {
+            "amount": 427,
+            "baseValue": "crore"
+          },
+          "Lease Liabilities": {
+            "amount": 8,
+            "baseValue": "crore"
+          },
+          "Other Borrowings": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 161,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Trade Payables": {
+            "amount": 114,
+            "baseValue": "crore"
+          },
+          "Advance from Customers": {
+            "amount": 4,
+            "baseValue": "crore"
+          },
+          "Other liability items": {
+            "amount": 44,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalLiabilities": {
+        "amount": 1715,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 399,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Land": {
+            "amount": 38.89,
+            "baseValue": "crore"
+          },
+          "Building": {
+            "amount": 137.99,
+            "baseValue": "crore"
+          },
+          "Plant Machinery": {
+            "amount": 298.42,
+            "baseValue": "crore"
+          },
+          "Equipments": {
+            "amount": 8.97,
+            "baseValue": "crore"
+          },
+          "Furniture n fittings": {
+            "amount": 27.92,
+            "baseValue": "crore"
+          },
+          "Vehicles": {
+            "amount": 17.34,
+            "baseValue": "crore"
+          },
+          "Intangible Assets": {
+            "amount": 5.3,
+            "baseValue": "crore"
+          },
+          "Other fixed assets": {
+            "amount": 22.14,
+            "baseValue": "crore"
+          },
+          "Gross Block": {
+            "amount": 556.97,
+            "baseValue": "crore"
+          },
+          "Accumulated Depreciation": {
+            "amount": 157.55,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "CWIP": {
+        "amount": 7,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 237,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 1072,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Inventories": {
+            "amount": 534,
+            "baseValue": "crore"
+          },
+          "Trade receivables": {
+            "amount": 420,
+            "baseValue": "crore"
+          },
+          "Cash Equivalents": {
+            "amount": 8,
+            "baseValue": "crore"
+          },
+          "Loans n Advances": {
+            "amount": 48,
+            "baseValue": "crore"
+          },
+          "Other asset items": {
+            "amount": 61,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalAssets": {
+        "amount": 1715,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2022",
+      "equityCapital": {
+        "amount": 24,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": 1226,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 533,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Long term Borrowings": {
+            "amount": 59,
+            "baseValue": "crore"
+          },
+          "Short term Borrowings": {
+            "amount": 462,
+            "baseValue": "crore"
+          },
+          "Lease Liabilities": {
+            "amount": 11,
+            "baseValue": "crore"
+          },
+          "Other Borrowings": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 268,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Trade Payables": {
+            "amount": 168,
+            "baseValue": "crore"
+          },
+          "Advance from Customers": {
+            "amount": 26,
+            "baseValue": "crore"
+          },
+          "Other liability items": {
+            "amount": 74,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalLiabilities": {
+        "amount": 2051,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 398,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Land": {
+            "amount": 40.12,
+            "baseValue": "crore"
+          },
+          "Building": {
+            "amount": 141.92,
+            "baseValue": "crore"
+          },
+          "Plant Machinery": {
+            "amount": 322.3,
+            "baseValue": "crore"
+          },
+          "Equipments": {
+            "amount": 11.54,
+            "baseValue": "crore"
+          },
+          "Furniture n fittings": {
+            "amount": 32.21,
+            "baseValue": "crore"
+          },
+          "Vehicles": {
+            "amount": 16.92,
+            "baseValue": "crore"
+          },
+          "Intangible Assets": {
+            "amount": 5.3,
+            "baseValue": "crore"
+          },
+          "Other fixed assets": {
+            "amount": 29,
+            "baseValue": "crore"
+          },
+          "Gross Block": {
+            "amount": 599.31,
+            "baseValue": "crore"
+          },
+          "Accumulated Depreciation": {
+            "amount": 200.82,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "CWIP": {
+        "amount": 43,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 268,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 1342,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Inventories": {
+            "amount": 710,
+            "baseValue": "crore"
+          },
+          "Trade receivables": {
+            "amount": 517,
+            "baseValue": "crore"
+          },
+          "Cash Equivalents": {
+            "amount": 12,
+            "baseValue": "crore"
+          },
+          "Loans n Advances": {
+            "amount": 43,
+            "baseValue": "crore"
+          },
+          "Other asset items": {
+            "amount": 59,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalAssets": {
+        "amount": 2051,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2023",
+      "equityCapital": {
+        "amount": 48,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": 1372,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 580,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Long term Borrowings": {
+            "amount": 27,
+            "baseValue": "crore"
+          },
+          "Short term Borrowings": {
+            "amount": 489,
+            "baseValue": "crore"
+          },
+          "Lease Liabilities": {
+            "amount": 65,
+            "baseValue": "crore"
+          },
+          "Other Borrowings": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 633,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Trade Payables": {
+            "amount": 440,
+            "baseValue": "crore"
+          },
+          "Advance from Customers": {
+            "amount": 70,
+            "baseValue": "crore"
+          },
+          "Other liability items": {
+            "amount": 123,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalLiabilities": {
+        "amount": 2634,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 517,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Land": {
+            "amount": 40.86,
+            "baseValue": "crore"
+          },
+          "Building": {
+            "amount": 168.11,
+            "baseValue": "crore"
+          },
+          "Plant Machinery": {
+            "amount": 385.87,
+            "baseValue": "crore"
+          },
+          "Equipments": {
+            "amount": 18.34,
+            "baseValue": "crore"
+          },
+          "Furniture n fittings": {
+            "amount": 40.09,
+            "baseValue": "crore"
+          },
+          "Vehicles": {
+            "amount": 20.68,
+            "baseValue": "crore"
+          },
+          "Intangible Assets": {
+            "amount": 5.3,
+            "baseValue": "crore"
+          },
+          "Other fixed assets": {
+            "amount": 96.04,
+            "baseValue": "crore"
+          },
+          "Gross Block": {
+            "amount": 775.29,
+            "baseValue": "crore"
+          },
+          "Accumulated Depreciation": {
+            "amount": 258.13,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "CWIP": {
+        "amount": 44,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 363,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 1710,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Inventories": {
+            "amount": 860,
+            "baseValue": "crore"
+          },
+          "Trade receivables": {
+            "amount": 592,
+            "baseValue": "crore"
+          },
+          "Cash Equivalents": {
+            "amount": 81,
+            "baseValue": "crore"
+          },
+          "Loans n Advances": {
+            "amount": 56,
+            "baseValue": "crore"
+          },
+          "Other asset items": {
+            "amount": 121,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalAssets": {
+        "amount": 2634,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2024",
+      "equityCapital": {
+        "amount": 56,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": 1772,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 360,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Long term Borrowings": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Short term Borrowings": {
+            "amount": 289,
+            "baseValue": "crore"
+          },
+          "Lease Liabilities": {
+            "amount": 71,
+            "baseValue": "crore"
+          },
+          "Other Borrowings": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 681,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Trade Payables": {
+            "amount": 429,
+            "baseValue": "crore"
+          },
+          "Advance from Customers": {
+            "amount": 52,
+            "baseValue": "crore"
+          },
+          "Other liability items": {
+            "amount": 199,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalLiabilities": {
+        "amount": 2869,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 535,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Land": {
+            "amount": 58.58,
+            "baseValue": "crore"
+          },
+          "Building": {
+            "amount": 174.91,
+            "baseValue": "crore"
+          },
+          "Plant Machinery": {
+            "amount": 418.56,
+            "baseValue": "crore"
+          },
+          "Equipments": {
+            "amount": 18.83,
+            "baseValue": "crore"
+          },
+          "Furniture n fittings": {
+            "amount": 42.12,
+            "baseValue": "crore"
+          },
+          "Vehicles": {
+            "amount": 21.53,
+            "baseValue": "crore"
+          },
+          "Intangible Assets": {
+            "amount": 5.3,
+            "baseValue": "crore"
+          },
+          "Other fixed assets": {
+            "amount": 112.02,
+            "baseValue": "crore"
+          },
+          "Gross Block": {
+            "amount": 851.85,
+            "baseValue": "crore"
+          },
+          "Accumulated Depreciation": {
+            "amount": 317.23,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "CWIP": {
+        "amount": 164,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 342,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 1830,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Inventories": {
+            "amount": 898,
+            "baseValue": "crore"
+          },
+          "Trade receivables": {
+            "amount": 641,
+            "baseValue": "crore"
+          },
+          "Cash Equivalents": {
+            "amount": 99,
+            "baseValue": "crore"
+          },
+          "Loans n Advances": {
+            "amount": 43,
+            "baseValue": "crore"
+          },
+          "Other asset items": {
+            "amount": 149,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalAssets": {
+        "amount": 2869,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2025",
+      "equityCapital": {
+        "amount": 57,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": 2096,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 290,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Long term Borrowings": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Short term Borrowings": {
+            "amount": 222,
+            "baseValue": "crore"
+          },
+          "Lease Liabilities": {
+            "amount": 68,
+            "baseValue": "crore"
+          },
+          "Other Borrowings": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 1074,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Trade Payables": {
+            "amount": 762,
+            "baseValue": "crore"
+          },
+          "Advance from Customers": {
+            "amount": 89,
+            "baseValue": "crore"
+          },
+          "Other liability items": {
+            "amount": 223,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalLiabilities": {
+        "amount": 3517,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 769,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Land": {
+            "amount": 81.17,
+            "baseValue": "crore"
+          },
+          "Building": {
+            "amount": 271.4,
+            "baseValue": "crore"
+          },
+          "Plant Machinery": {
+            "amount": 556.85,
+            "baseValue": "crore"
+          },
+          "Equipments": {
+            "amount": 20.59,
+            "baseValue": "crore"
+          },
+          "Furniture n fittings": {
+            "amount": 53.12,
+            "baseValue": "crore"
+          },
+          "Vehicles": {
+            "amount": 21.47,
+            "baseValue": "crore"
+          },
+          "Intangible Assets": {
+            "amount": 5.3,
+            "baseValue": "crore"
+          },
+          "Other fixed assets": {
+            "amount": 142.9,
+            "baseValue": "crore"
+          },
+          "Gross Block": {
+            "amount": 1152.8,
+            "baseValue": "crore"
+          },
+          "Accumulated Depreciation": {
+            "amount": 383.82,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "CWIP": {
+        "amount": 235,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 239,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 2274,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Inventories": {
+            "amount": 1011,
+            "baseValue": "crore"
+          },
+          "Trade receivables": {
+            "amount": 823,
+            "baseValue": "crore"
+          },
+          "Cash Equivalents": {
+            "amount": 227,
+            "baseValue": "crore"
+          },
+          "Loans n Advances": {
+            "amount": 46,
+            "baseValue": "crore"
+          },
+          "Other asset items": {
+            "amount": 167,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalAssets": {
+        "amount": 3517,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Sep 2025",
+      "equityCapital": {
+        "amount": 57,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": 2283,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 393,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Long term Borrowings": {
+            "amount": 1,
+            "baseValue": "crore"
+          },
+          "Short term Borrowings": {
+            "amount": 326,
+            "baseValue": "crore"
+          },
+          "Lease Liabilities": {
+            "amount": 65,
+            "baseValue": "crore"
+          },
+          "Other Borrowings": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 945,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Trade Payables": {
+            "amount": 685,
+            "baseValue": "crore"
+          },
+          "Advance from Customers": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Other liability items": {
+            "amount": 260,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalLiabilities": {
+        "amount": 3678,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 952,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Land": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Building": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Plant Machinery": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Equipments": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Furniture n fittings": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Vehicles": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Intangible Assets": {
+            "amount": 0.28,
+            "baseValue": "crore"
+          },
+          "Other fixed assets": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Gross Block": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Accumulated Depreciation": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "CWIP": {
+        "amount": 204,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 224,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 2297,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Inventories": {
+            "amount": 1262,
+            "baseValue": "crore"
+          },
+          "Trade receivables": {
+            "amount": 856,
+            "baseValue": "crore"
+          },
+          "Cash Equivalents": {
+            "amount": 17,
+            "baseValue": "crore"
+          },
+          "Loans n Advances": {
+            "amount": 5,
+            "baseValue": "crore"
+          },
+          "Other asset items": {
+            "amount": 158,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "totalAssets": {
+        "amount": 3678,
+        "baseValue": "crore"
+      }
+    }
+  ],
+  "cashFlowStatements": [
+    {
+      "timePeriod": "Mar 2020",
+      "operatingActivities": {
+        "value": {
+          "amount": 216,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit from operations": {
+            "amount": 236,
+            "baseValue": "crore"
+          },
+          "Receivables": {
+            "amount": 20,
+            "baseValue": "crore"
+          },
+          "Inventory": {
+            "amount": -22,
+            "baseValue": "crore"
+          },
+          "Payables": {
+            "amount": -13,
+            "baseValue": "crore"
+          },
+          "Other WC items": {
+            "amount": 29,
+            "baseValue": "crore"
+          },
+          "Working capital changes": {
+            "amount": 14,
+            "baseValue": "crore"
+          },
+          "Direct taxes": {
+            "amount": -33,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "investingActivities": {
+        "value": {
+          "amount": -128,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Fixed assets purchased": {
+            "amount": -93,
+            "baseValue": "crore"
+          },
+          "Fixed assets sold": {
+            "amount": 1,
+            "baseValue": "crore"
+          },
+          "Investments purchased": {
+            "amount": -29,
+            "baseValue": "crore"
+          },
+          "Investments sold": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Interest received": {
+            "amount": 3,
+            "baseValue": "crore"
+          },
+          "Dividends received": {
+            "amount": 4,
+            "baseValue": "crore"
+          },
+          "Redemp n Canc of Shares": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Other investing items": {
+            "amount": -14,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "financingActivities": {
+        "value": {
+          "amount": -82,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Proceeds from shares": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Proceeds from borrowings": {
+            "amount": 60,
+            "baseValue": "crore"
+          },
+          "Repayment of borrowings": {
+            "amount": -66,
+            "baseValue": "crore"
+          },
+          "Interest paid fin": {
+            "amount": -34,
+            "baseValue": "crore"
+          },
+          "Dividends paid": {
+            "amount": -35,
+            "baseValue": "crore"
+          },
+          "Financial liabilities": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Other financing items": {
+            "amount": -7,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "netCashFlow": {
+        "amount": 5,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2021",
+      "operatingActivities": {
+        "value": {
+          "amount": -71,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit from operations": {
+            "amount": 254,
+            "baseValue": "crore"
+          },
+          "Receivables": {
+            "amount": -11,
+            "baseValue": "crore"
+          },
+          "Inventory": {
+            "amount": -159,
+            "baseValue": "crore"
+          },
+          "Payables": {
+            "amount": -67,
+            "baseValue": "crore"
+          },
+          "Other WC items": {
+            "amount": -47,
+            "baseValue": "crore"
+          },
+          "Working capital changes": {
+            "amount": -284,
+            "baseValue": "crore"
+          },
+          "Direct taxes": {
+            "amount": -42,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "investingActivities": {
+        "value": {
+          "amount": -6,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Fixed assets purchased": {
+            "amount": -47,
+            "baseValue": "crore"
+          },
+          "Fixed assets sold": {
+            "amount": 1,
+            "baseValue": "crore"
+          },
+          "Investments purchased": {
+            "amount": -3,
+            "baseValue": "crore"
+          },
+          "Investments sold": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Interest received": {
+            "amount": 4,
+            "baseValue": "crore"
+          },
+          "Dividends received": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Redemp n Canc of Shares": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Other investing items": {
+            "amount": 40,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "financingActivities": {
+        "value": {
+          "amount": 74,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Proceeds from shares": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Proceeds from borrowings": {
+            "amount": 121,
+            "baseValue": "crore"
+          },
+          "Repayment of borrowings": {
+            "amount": -15,
+            "baseValue": "crore"
+          },
+          "Interest paid fin": {
+            "amount": -29,
+            "baseValue": "crore"
+          },
+          "Dividends paid": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Financial liabilities": {
+            "amount": -3,
+            "baseValue": "crore"
+          },
+          "Other financing items": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "netCashFlow": {
+        "amount": -3,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2022",
+      "operatingActivities": {
+        "value": {
+          "amount": 98,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit from operations": {
+            "amount": 347,
+            "baseValue": "crore"
+          },
+          "Receivables": {
+            "amount": -96,
+            "baseValue": "crore"
+          },
+          "Inventory": {
+            "amount": -176,
+            "baseValue": "crore"
+          },
+          "Payables": {
+            "amount": 54,
+            "baseValue": "crore"
+          },
+          "Other WC items": {
+            "amount": 42,
+            "baseValue": "crore"
+          },
+          "Working capital changes": {
+            "amount": -175,
+            "baseValue": "crore"
+          },
+          "Direct taxes": {
+            "amount": -73,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "investingActivities": {
+        "value": {
+          "amount": -63,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Fixed assets purchased": {
+            "amount": -68,
+            "baseValue": "crore"
+          },
+          "Fixed assets sold": {
+            "amount": 5,
+            "baseValue": "crore"
+          },
+          "Investments purchased": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Investments sold": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Interest received": {
+            "amount": 1,
+            "baseValue": "crore"
+          },
+          "Dividends received": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Redemp n Canc of Shares": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Other investing items": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "financingActivities": {
+        "value": {
+          "amount": -32,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Proceeds from shares": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Proceeds from borrowings": {
+            "amount": 34,
+            "baseValue": "crore"
+          },
+          "Repayment of borrowings": {
+            "amount": -11,
+            "baseValue": "crore"
+          },
+          "Interest paid fin": {
+            "amount": -22,
+            "baseValue": "crore"
+          },
+          "Dividends paid": {
+            "amount": -28,
+            "baseValue": "crore"
+          },
+          "Financial liabilities": {
+            "amount": -4,
+            "baseValue": "crore"
+          },
+          "Other financing items": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "netCashFlow": {
+        "amount": 4,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2023",
+      "operatingActivities": {
+        "value": {
+          "amount": 454,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit from operations": {
+            "amount": 359,
+            "baseValue": "crore"
+          },
+          "Receivables": {
+            "amount": -18,
+            "baseValue": "crore"
+          },
+          "Inventory": {
+            "amount": -80,
+            "baseValue": "crore"
+          },
+          "Payables": {
+            "amount": 240,
+            "baseValue": "crore"
+          },
+          "Other WC items": {
+            "amount": 11,
+            "baseValue": "crore"
+          },
+          "Working capital changes": {
+            "amount": 153,
+            "baseValue": "crore"
+          },
+          "Direct taxes": {
+            "amount": -58,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "investingActivities": {
+        "value": {
+          "amount": -334,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Fixed assets purchased": {
+            "amount": -108,
+            "baseValue": "crore"
+          },
+          "Fixed assets sold": {
+            "amount": 1,
+            "baseValue": "crore"
+          },
+          "Investments purchased": {
+            "amount": -68,
+            "baseValue": "crore"
+          },
+          "Investments sold": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Interest received": {
+            "amount": 2,
+            "baseValue": "crore"
+          },
+          "Dividends received": {
+            "amount": 1,
+            "baseValue": "crore"
+          },
+          "Redemp n Canc of Shares": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Other investing items": {
+            "amount": -160,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "financingActivities": {
+        "value": {
+          "amount": -102,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Proceeds from shares": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Proceeds from borrowings": {
+            "amount": 32,
+            "baseValue": "crore"
+          },
+          "Repayment of borrowings": {
+            "amount": -38,
+            "baseValue": "crore"
+          },
+          "Interest paid fin": {
+            "amount": -36,
+            "baseValue": "crore"
+          },
+          "Dividends paid": {
+            "amount": -50,
+            "baseValue": "crore"
+          },
+          "Financial liabilities": {
+            "amount": -10,
+            "baseValue": "crore"
+          },
+          "Other financing items": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "netCashFlow": {
+        "amount": 19,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2024",
+      "operatingActivities": {
+        "value": {
+          "amount": 339,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit from operations": {
+            "amount": 500,
+            "baseValue": "crore"
+          },
+          "Receivables": {
+            "amount": -50,
+            "baseValue": "crore"
+          },
+          "Inventory": {
+            "amount": -38,
+            "baseValue": "crore"
+          },
+          "Payables": {
+            "amount": -12,
+            "baseValue": "crore"
+          },
+          "Other WC items": {
+            "amount": 36,
+            "baseValue": "crore"
+          },
+          "Working capital changes": {
+            "amount": -64,
+            "baseValue": "crore"
+          },
+          "Direct taxes": {
+            "amount": -97,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "investingActivities": {
+        "value": {
+          "amount": -84,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Fixed assets purchased": {
+            "amount": -190,
+            "baseValue": "crore"
+          },
+          "Fixed assets sold": {
+            "amount": 2,
+            "baseValue": "crore"
+          },
+          "Investments purchased": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Investments sold": {
+            "amount": 68,
+            "baseValue": "crore"
+          },
+          "Interest received": {
+            "amount": 4,
+            "baseValue": "crore"
+          },
+          "Dividends received": {
+            "amount": 1,
+            "baseValue": "crore"
+          },
+          "Redemp n Canc of Shares": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Other investing items": {
+            "amount": 31,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "financingActivities": {
+        "value": {
+          "amount": -205,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Proceeds from shares": {
+            "amount": 180,
+            "baseValue": "crore"
+          },
+          "Proceeds from borrowings": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Repayment of borrowings": {
+            "amount": -226,
+            "baseValue": "crore"
+          },
+          "Interest paid fin": {
+            "amount": -51,
+            "baseValue": "crore"
+          },
+          "Dividends paid": {
+            "amount": -84,
+            "baseValue": "crore"
+          },
+          "Financial liabilities": {
+            "amount": -15,
+            "baseValue": "crore"
+          },
+          "Other financing items": {
+            "amount": -10,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "netCashFlow": {
+        "amount": 50,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2025",
+      "operatingActivities": {
+        "value": {
+          "amount": 494,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Profit from operations": {
+            "amount": 525,
+            "baseValue": "crore"
+          },
+          "Receivables": {
+            "amount": -187,
+            "baseValue": "crore"
+          },
+          "Inventory": {
+            "amount": -113,
+            "baseValue": "crore"
+          },
+          "Payables": {
+            "amount": 334,
+            "baseValue": "crore"
+          },
+          "Other WC items": {
+            "amount": 32,
+            "baseValue": "crore"
+          },
+          "Working capital changes": {
+            "amount": 66,
+            "baseValue": "crore"
+          },
+          "Direct taxes": {
+            "amount": -96,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "investingActivities": {
+        "value": {
+          "amount": -169,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Fixed assets purchased": {
+            "amount": -367,
+            "baseValue": "crore"
+          },
+          "Fixed assets sold": {
+            "amount": 1,
+            "baseValue": "crore"
+          },
+          "Investments purchased": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Investments sold": {
+            "amount": 195,
+            "baseValue": "crore"
+          },
+          "Interest received": {
+            "amount": 2,
+            "baseValue": "crore"
+          },
+          "Dividends received": {
+            "amount": 1,
+            "baseValue": "crore"
+          },
+          "Redemp n Canc of Shares": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Other investing items": {
+            "amount": -1,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "financingActivities": {
+        "value": {
+          "amount": -191,
+          "baseValue": "crore"
+        },
+        "other": {
+          "Proceeds from shares": {
+            "amount": 8,
+            "baseValue": "crore"
+          },
+          "Proceeds from borrowings": {
+            "amount": 0,
+            "baseValue": "crore"
+          },
+          "Repayment of borrowings": {
+            "amount": -67,
+            "baseValue": "crore"
+          },
+          "Interest paid fin": {
+            "amount": -54,
+            "baseValue": "crore"
+          },
+          "Dividends paid": {
+            "amount": -62,
+            "baseValue": "crore"
+          },
+          "Financial liabilities": {
+            "amount": -17,
+            "baseValue": "crore"
+          },
+          "Other financing items": {
+            "amount": 0,
+            "baseValue": "crore"
+          }
+        }
+      },
+      "netCashFlow": {
+        "amount": 134,
+        "baseValue": "crore"
+      }
+    }
+  ],
+  "ratioStatements": [
+    {
+      "timePeriod": "Mar 2020",
+      "debtorDays": {
+        "amount": 62,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 71,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 34,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": 99,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": 50,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": 0,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2021",
+      "debtorDays": {
+        "amount": 56,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 91,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 19,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": 128,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": 62,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": 15,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2022",
+      "debtorDays": {
+        "amount": 43,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 72,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 17,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": 98,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": 49,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": 18,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2023",
+      "debtorDays": {
+        "amount": 39,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 69,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 35,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": 72,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": 31,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": 16,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2024",
+      "debtorDays": {
+        "amount": 35,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 61,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 29,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": 67,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": 40,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": 22,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2025",
+      "debtorDays": {
+        "amount": 39,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 59,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 44,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": 54,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": 34,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": 20,
+        "baseValue": "percent"
+      }
+    }
+  ],
+  "shareholdingPatternStatements": [
+    {
+      "timePeriod": "Sep 2023",
+      "promoters": {
+        "value": {
+          "amount": 62.76,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "FIIS": {
+        "value": {
+          "amount": 4.99,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 8.66,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 23.58,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 189668,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Dec 2023",
+      "promoters": {
+        "value": {
+          "amount": 62.76,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "FIIS": {
+        "value": {
+          "amount": 4.69,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 8.83,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 23.73,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 156947,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2024",
+      "promoters": {
+        "value": {
+          "amount": 62.76,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "FIIS": {
+        "value": {
+          "amount": 4.16,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 9.37,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 23.7,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 145858,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Jun 2024",
+      "promoters": {
+        "value": {
+          "amount": 61.89,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "FIIS": {
+        "value": {
+          "amount": 6.54,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 13.53,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 18.04,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 134822,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Sep 2024",
+      "promoters": {
+        "value": {
+          "amount": 61.78,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "FIIS": {
+        "value": {
+          "amount": 7.35,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 14.34,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 16.54,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 128740,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Dec 2024",
+      "promoters": {
+        "value": {
+          "amount": 61.8,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "FIIS": {
+        "value": {
+          "amount": 7.83,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 14.33,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 16.03,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 138200,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2025",
+      "promoters": {
+        "value": {
+          "amount": 61.8,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "FIIS": {
+        "value": {
+          "amount": 7.17,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 14.75,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 16.27,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 146892,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Jun 2025",
+      "promoters": {
+        "value": {
+          "amount": 61.76,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "FIIS": {
+        "value": {
+          "amount": 8.57,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 13.62,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 16.05,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 135697,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Sep 2025",
+      "promoters": {
+        "value": {
+          "amount": 61.76,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "FIIS": {
+        "value": {
+          "amount": 8.18,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 13.87,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 16.2,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 135711,
+        "baseValue": "one"
+      }
+    }
+  ],
+  "metrics": [
+    {
+      "metric": "Price",
+      "label": "Price on NSE",
+      "values": {
+        "2023-09-22": {
+          "amount": 1181.3,
+          "baseValue": "one"
+        },
+        "2023-09-29": {
+          "amount": 1399.95,
+          "baseValue": "one"
+        },
+        "2023-10-06": {
+          "amount": 1502.8,
+          "baseValue": "one"
+        },
+        "2023-10-13": {
+          "amount": 1424.5,
+          "baseValue": "one"
+        },
+        "2023-10-20": {
+          "amount": 1367.3,
+          "baseValue": "one"
+        },
+        "2023-10-27": {
+          "amount": 1344.6,
+          "baseValue": "one"
+        },
+        "2023-11-03": {
+          "amount": 1391,
+          "baseValue": "one"
+        },
+        "2023-11-12": {
+          "amount": 1636.25,
+          "baseValue": "one"
+        },
+        "2023-11-17": {
+          "amount": 1633.15,
+          "baseValue": "one"
+        },
+        "2023-11-24": {
+          "amount": 1666.9,
+          "baseValue": "one"
+        },
+        "2023-12-01": {
+          "amount": 1650.05,
+          "baseValue": "one"
+        },
+        "2023-12-08": {
+          "amount": 1709.4,
+          "baseValue": "one"
+        },
+        "2023-12-15": {
+          "amount": 1705.7,
+          "baseValue": "one"
+        },
+        "2023-12-22": {
+          "amount": 1618.85,
+          "baseValue": "one"
+        },
+        "2023-12-29": {
+          "amount": 1571.4,
+          "baseValue": "one"
+        },
+        "2024-01-05": {
+          "amount": 1575.45,
+          "baseValue": "one"
+        },
+        "2024-01-12": {
+          "amount": 1481.5,
+          "baseValue": "one"
+        },
+        "2024-01-20": {
+          "amount": 1454.8,
+          "baseValue": "one"
+        },
+        "2024-01-25": {
+          "amount": 1467.1,
+          "baseValue": "one"
+        },
+        "2024-02-02": {
+          "amount": 1447.55,
+          "baseValue": "one"
+        },
+        "2024-02-09": {
+          "amount": 1460.2,
+          "baseValue": "one"
+        },
+        "2024-02-16": {
+          "amount": 1501.55,
+          "baseValue": "one"
+        },
+        "2024-02-23": {
+          "amount": 1444.2,
+          "baseValue": "one"
+        },
+        "2024-03-02": {
+          "amount": 1462.3,
+          "baseValue": "one"
+        },
+        "2024-03-07": {
+          "amount": 1423.5,
+          "baseValue": "one"
+        },
+        "2024-03-15": {
+          "amount": 1410.1,
+          "baseValue": "one"
+        },
+        "2024-03-22": {
+          "amount": 1423.4,
+          "baseValue": "one"
+        },
+        "2024-03-28": {
+          "amount": 1538.95,
+          "baseValue": "one"
+        },
+        "2024-04-05": {
+          "amount": 1546.15,
+          "baseValue": "one"
+        },
+        "2024-04-12": {
+          "amount": 1598.55,
+          "baseValue": "one"
+        },
+        "2024-04-19": {
+          "amount": 1590.25,
+          "baseValue": "one"
+        },
+        "2024-04-26": {
+          "amount": 1681.7,
+          "baseValue": "one"
+        },
+        "2024-05-03": {
+          "amount": 1689.55,
+          "baseValue": "one"
+        },
+        "2024-05-10": {
+          "amount": 1700.25,
+          "baseValue": "one"
+        },
+        "2024-05-18": {
+          "amount": 1777.45,
+          "baseValue": "one"
+        },
+        "2024-05-24": {
+          "amount": 1754.4,
+          "baseValue": "one"
+        },
+        "2024-05-31": {
+          "amount": 1727.05,
+          "baseValue": "one"
+        },
+        "2024-06-07": {
+          "amount": 1701.1,
+          "baseValue": "one"
+        },
+        "2024-06-14": {
+          "amount": 1757.45,
+          "baseValue": "one"
+        },
+        "2024-06-21": {
+          "amount": 1752.05,
+          "baseValue": "one"
+        },
+        "2024-06-28": {
+          "amount": 1740.4,
+          "baseValue": "one"
+        },
+        "2024-07-05": {
+          "amount": 1807.95,
+          "baseValue": "one"
+        },
+        "2024-07-12": {
+          "amount": 1775.35,
+          "baseValue": "one"
+        },
+        "2024-07-19": {
+          "amount": 1737.35,
+          "baseValue": "one"
+        },
+        "2024-07-26": {
+          "amount": 1756.3,
+          "baseValue": "one"
+        },
+        "2024-08-02": {
+          "amount": 1711.15,
+          "baseValue": "one"
+        },
+        "2024-08-09": {
+          "amount": 1643.95,
+          "baseValue": "one"
+        },
+        "2024-08-16": {
+          "amount": 1634.2,
+          "baseValue": "one"
+        },
+        "2024-08-23": {
+          "amount": 1639.65,
+          "baseValue": "one"
+        },
+        "2024-08-30": {
+          "amount": 1614,
+          "baseValue": "one"
+        },
+        "2024-09-06": {
+          "amount": 1575.05,
+          "baseValue": "one"
+        },
+        "2024-09-13": {
+          "amount": 1654.85,
+          "baseValue": "one"
+        },
+        "2024-09-20": {
+          "amount": 1707.55,
+          "baseValue": "one"
+        },
+        "2024-09-27": {
+          "amount": 1706,
+          "baseValue": "one"
+        },
+        "2024-10-04": {
+          "amount": 1735.75,
+          "baseValue": "one"
+        },
+        "2024-10-11": {
+          "amount": 1718.85,
+          "baseValue": "one"
+        },
+        "2024-10-18": {
+          "amount": 1723.2,
+          "baseValue": "one"
+        },
+        "2024-10-25": {
+          "amount": 1505.25,
+          "baseValue": "one"
+        },
+        "2024-11-01": {
+          "amount": 1529.9,
+          "baseValue": "one"
+        },
+        "2024-11-08": {
+          "amount": 1545.5,
+          "baseValue": "one"
+        },
+        "2024-11-14": {
+          "amount": 1527.1,
+          "baseValue": "one"
+        },
+        "2024-11-22": {
+          "amount": 1494.65,
+          "baseValue": "one"
+        },
+        "2024-11-29": {
+          "amount": 1439.1,
+          "baseValue": "one"
+        },
+        "2024-12-06": {
+          "amount": 1482.7,
+          "baseValue": "one"
+        },
+        "2024-12-13": {
+          "amount": 1444.3,
+          "baseValue": "one"
+        },
+        "2024-12-20": {
+          "amount": 1399.2,
+          "baseValue": "one"
+        },
+        "2024-12-27": {
+          "amount": 1381.4,
+          "baseValue": "one"
+        },
+        "2025-01-03": {
+          "amount": 1423.75,
+          "baseValue": "one"
+        },
+        "2025-01-10": {
+          "amount": 1360.6,
+          "baseValue": "one"
+        },
+        "2025-01-17": {
+          "amount": 1291.95,
+          "baseValue": "one"
+        },
+        "2025-01-24": {
+          "amount": 1248.9,
+          "baseValue": "one"
+        },
+        "2025-02-01": {
+          "amount": 1308.15,
+          "baseValue": "one"
+        },
+        "2025-02-07": {
+          "amount": 1191.85,
+          "baseValue": "one"
+        },
+        "2025-02-14": {
+          "amount": 1129,
+          "baseValue": "one"
+        },
+        "2025-02-21": {
+          "amount": 1156.45,
+          "baseValue": "one"
+        },
+        "2025-02-28": {
+          "amount": 890.25,
+          "baseValue": "one"
+        },
+        "2025-03-07": {
+          "amount": 908.9,
+          "baseValue": "one"
+        },
+        "2025-03-13": {
+          "amount": 874.85,
+          "baseValue": "one"
+        },
+        "2025-03-21": {
+          "amount": 926.95,
+          "baseValue": "one"
+        },
+        "2025-03-28": {
+          "amount": 948,
+          "baseValue": "one"
+        },
+        "2025-04-04": {
+          "amount": 918.1,
+          "baseValue": "one"
+        },
+        "2025-04-11": {
+          "amount": 909,
+          "baseValue": "one"
+        },
+        "2025-04-17": {
+          "amount": 940.9,
+          "baseValue": "one"
+        },
+        "2025-04-25": {
+          "amount": 972.05,
+          "baseValue": "one"
+        },
+        "2025-05-02": {
+          "amount": 1023.8,
+          "baseValue": "one"
+        },
+        "2025-05-09": {
+          "amount": 1234.8,
+          "baseValue": "one"
+        },
+        "2025-05-16": {
+          "amount": 1315.9,
+          "baseValue": "one"
+        },
+        "2025-05-23": {
+          "amount": 1313.1,
+          "baseValue": "one"
+        },
+        "2025-05-30": {
+          "amount": 1425.7,
+          "baseValue": "one"
+        },
+        "2025-06-06": {
+          "amount": 1413.8,
+          "baseValue": "one"
+        },
+        "2025-06-13": {
+          "amount": 1361.7,
+          "baseValue": "one"
+        },
+        "2025-06-20": {
+          "amount": 1317.6,
+          "baseValue": "one"
+        },
+        "2025-06-27": {
+          "amount": 1357.4,
+          "baseValue": "one"
+        },
+        "2025-07-04": {
+          "amount": 1372,
+          "baseValue": "one"
+        },
+        "2025-07-11": {
+          "amount": 1332.1,
+          "baseValue": "one"
+        },
+        "2025-07-18": {
+          "amount": 1471.5,
+          "baseValue": "one"
+        },
+        "2025-07-25": {
+          "amount": 1396.2,
+          "baseValue": "one"
+        },
+        "2025-08-01": {
+          "amount": 1334.3,
+          "baseValue": "one"
+        },
+        "2025-08-08": {
+          "amount": 1241.7,
+          "baseValue": "one"
+        },
+        "2025-08-14": {
+          "amount": 1211.8,
+          "baseValue": "one"
+        },
+        "2025-08-22": {
+          "amount": 1215.8,
+          "baseValue": "one"
+        },
+        "2025-08-29": {
+          "amount": 1167.5,
+          "baseValue": "one"
+        },
+        "2025-09-05": {
+          "amount": 1206.3,
+          "baseValue": "one"
+        },
+        "2025-09-12": {
+          "amount": 1244.2,
+          "baseValue": "one"
+        },
+        "2025-09-19": {
+          "amount": 1255.5,
+          "baseValue": "one"
+        },
+        "2025-09-26": {
+          "amount": 1218.3,
+          "baseValue": "one"
+        },
+        "2025-10-03": {
+          "amount": 1253.1,
+          "baseValue": "one"
+        },
+        "2025-10-10": {
+          "amount": 1272.6,
+          "baseValue": "one"
+        },
+        "2025-10-17": {
+          "amount": 1263.2,
+          "baseValue": "one"
+        },
+        "2025-10-24": {
+          "amount": 1245.5,
+          "baseValue": "one"
+        },
+        "2025-10-31": {
+          "amount": 1412,
+          "baseValue": "one"
+        },
+        "2025-11-07": {
+          "amount": 1376.9,
+          "baseValue": "one"
+        },
+        "2025-11-14": {
+          "amount": 1373.2,
+          "baseValue": "one"
+        },
+        "2025-11-21": {
+          "amount": 1350.6,
+          "baseValue": "one"
+        },
+        "2025-11-25": {
+          "amount": 1362.2,
+          "baseValue": "one"
+        }
+      },
+      "meta": {
+        "is_weekly": true
+      }
+    }
+  ]
+}
