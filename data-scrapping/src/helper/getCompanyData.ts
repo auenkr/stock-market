@@ -1,6 +1,7 @@
 import { BASE_URL, COOKIE, DELAY_BETWEEN_API_REQUEST } from "../utils/constant";
 import * as cheerio from "cheerio";
-import axios, { type AxiosResponse } from "axios";
+import axios from "axios";
+import { getCompanyMetrics, type CompanyMetricDataType } from "./getCompanyMetric";
 
 // ***************************************************************
 //                        ALL DATA TYPES
@@ -36,6 +37,7 @@ export type CompanyDataType = {
   cashFlowStatements: CashFlowStatementType[];
   ratioStatements: RatioStatementType[];
   shareholdingPatternStatements: ShareholdingPatternStatementType[];
+  metrics: CompanyMetricDataType[];
 };
 
 type CompanySummaryDataType = {
@@ -141,7 +143,7 @@ export type ShareholdingPatternStatementType = {
  * e.g., "1,234.5 Cr." => { amount: 1234.5, baseValue: "crore" }
  * e.g., "50 %" => { amount: 50, baseValue: "percent" }
  */
-function parseNumberData(
+export function parseNumberData(
   value: string | undefined | null,
   base: BaseValueEnum = "none"
 ): NumberDataType {
@@ -542,7 +544,13 @@ export async function GetCompanyData(
         shareholdingPatternDetailFields
       );
 
-    // 4. Assemble the final data object
+    // Getting company price history
+    const metricsData = await getCompanyMetrics(refId);
+    await new Promise((resolve) =>
+      setTimeout(resolve, DELAY_BETWEEN_API_REQUEST)
+    );
+
+    // Assemble the final data object
     const companyData: CompanyDataType = {
       refId,
       name,
@@ -557,6 +565,7 @@ export async function GetCompanyData(
       cashFlowStatements,
       ratioStatements,
       shareholdingPatternStatements,
+      metrics: metricsData,
     };
 
     return companyData;

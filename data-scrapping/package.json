@@ -8,7 +8,8 @@
     "start": "bun run build && bun run dist/index.js",
     "dev": "bun run --watch src/index.ts",
     "server": "bun run src/orchestrator/server.ts",
-    "worker": "bun run src/worker/index.ts"
+    "worker": "bun run src/worker/index.ts",
+    "metrics": "bun run src/metrics/index.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",

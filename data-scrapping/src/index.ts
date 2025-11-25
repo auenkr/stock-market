@@ -1,7 +1,5 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { allCompanyDataDir, companyListFile } from "./utils/constant";
-import { GetCompanyData } from "./helper/getCompanyData";
-import { join } from "node:path";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { allCompanyDataDir, companyListFile } from "./utils/constant"; 
 import { getAllCompanyData, getAllCompanyList } from "./utils/helper";
 import type { CompanyDetailList } from "./helper/getCompanyList";
 
@@ -26,4 +24,3 @@ async function main() {
 }
 
 main();
-

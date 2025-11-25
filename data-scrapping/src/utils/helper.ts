@@ -1,6 +1,6 @@
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { GetCompanyData } from "../helper/getCompanyData";
+import { GetCompanyData, type BaseValueEnum } from "../helper/getCompanyData";
 import {
   allCompanyDataDir,
   DELAY_BETWEEN_COMPANY_DATA_REQUEST,
@@ -62,10 +62,35 @@ export async function getAllCompanyData(companyList: CompanyDetailList[]) {
       console.log(`Count: ${count} of ${companyList.length}`);
     }
   } catch (error) {
-    console.error(`Error fetching company data:`);
+    console.error(`Error fetching company data:`, error);
     await new Promise((resolve) =>
       setTimeout(resolve, DELAY_BETWEEN_ERROR_REQUEST)
     );
     await getAllCompanyData(companyList);
+  }
+}
+
+export function GetBaseValue(baseValue: BaseValueEnum): number {
+  switch (baseValue) {
+    case "one":
+      return 1;
+    case "ten":
+      return 10;
+    case "hundred":
+      return 100;
+    case "thousand":
+      return 1000;
+    case "lakh":
+      return 100000;
+    case "crore":
+      return 10000000;
+    case "percent":
+      return 1;
+    case "ratio":
+      return 1;
+    case "none":
+      return 0; // 0 is the default base value
+    default:
+      throw new Error(`Invalid base value: ${baseValue}`);
   }
 }

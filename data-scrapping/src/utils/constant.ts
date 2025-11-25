@@ -19,8 +19,13 @@ export const TotalCompanies = 5176;
 // All Company Data File
 export const allCompanyDataDir = join(outputDir + "/companyData/");
 
+// All EV and EBITA Valuation Result File
+export const allEVAndEBITAValuationResultFile = join(outputDir + "/evAndEBITAValuationResult.csv");
+
+export const allEVAndEBITAValuationResultFailedFile = join(outputDir + "/evAndEBITAValuationResultFailed.json");
+
 // Rate Limit values
 
-export const DELAY_BETWEEN_API_REQUEST = 1100;
+export const DELAY_BETWEEN_API_REQUEST = 1000;
 export const DELAY_BETWEEN_COMPANY_DATA_REQUEST = 2000;
-export const DELAY_BETWEEN_ERROR_REQUEST = 8000;
+export const DELAY_BETWEEN_ERROR_REQUEST = 5000;
