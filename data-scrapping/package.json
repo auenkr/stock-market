@@ -1,0 +1,25 @@
+{
+  "name": "data-scrapping",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "bun build --target=bun --outdir=dist src/index.ts",
+    "start": "bun run build && bun run dist/index.js",
+    "dev": "bun run --watch src/index.ts",
+    "server": "bun run src/orchestrator/server.ts",
+    "worker": "bun run src/worker/index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/cheerio": "^1.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "axios": "^1.13.1",
+    "cheerio": "^1.1.2",
+    "dotenv": "^17.2.3"
+  }
+}
