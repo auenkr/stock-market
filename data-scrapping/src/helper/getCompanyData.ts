@@ -29,6 +29,8 @@ export type CompanyDataType = {
   url: string;
   about: string;
   keyPoints: string;
+  timeStamp: string;
+  skip: boolean;
   summary: CompanySummaryDataType;
   peerCompanies: CompanyPeerCompaniesDataType[];
   quarterlyResultStatements: QuarterlyResultStatementType[];
@@ -557,6 +559,8 @@ export async function GetCompanyData(
       url,
       about,
       keyPoints,
+      timeStamp: new Date().toISOString(),
+      skip: false,
       summary: summary as CompanySummaryDataType,
       peerCompanies: peerCompanies,
       quarterlyResultStatements,

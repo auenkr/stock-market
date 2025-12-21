@@ -1,8 +1,9 @@
-import { existsSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { GetCompanyData, type BaseValueEnum } from "../helper/getCompanyData";
 import {
   allCompanyDataDir,
+  companyListFile,
   DELAY_BETWEEN_COMPANY_DATA_REQUEST,
   DELAY_BETWEEN_ERROR_REQUEST,
   TotalCompanies,
@@ -27,10 +28,29 @@ export async function getAllCompanyList() {
   return companyList;
 }
 
-export async function getAllCompanyData(companyList: CompanyDetailList[]) {
+export async function getAllCompanyData() {
+  // Get All company list
+  let companyList: CompanyDetailList[] = [];
+  if (!existsSync(companyListFile)) {
+    companyList = await getAllCompanyList();
+    console.log(`Successfully fetched ${companyList.length} companies.`);
+    writeFileSync(companyListFile, JSON.stringify(companyList, null, 2));
+    console.log(`Company list file created at ${companyListFile}`);
+  } else {
+    console.log(`Company list file already exists. Skipping...`);
+    companyList = JSON.parse(readFileSync(companyListFile, "utf8"));
+    console.log(`Successfully read ${companyList.length} companies from file.`);
+  }
+  let lastCompanyIndex = 0;
   try {
     let count = 0;
     for (const company of companyList) {
+      if (company.skip) {
+        console.log(
+          `Skipping ${company.name} because it is marked as skipped.`
+        );
+        continue;
+      }
       const fileDir = join(allCompanyDataDir, company.name + ".json");
       if (!existsSync(fileDir)) {
         console.log(
@@ -58,15 +78,26 @@ export async function getAllCompanyData(companyList: CompanyDetailList[]) {
           company.name
         );
       }
+      lastCompanyIndex = count;
       count++;
       console.log(`Count: ${count} of ${companyList.length}`);
     }
   } catch (error) {
+    if (
+      error instanceof Error &&
+      (error.message.includes("Could not fetch or parse company data.") ||
+        error.message.includes("Request failed with status code 404"))
+    ) {
+      console.log(`Error fetching company data:`, error);
+      companyList[lastCompanyIndex]!.skip = true;
+      writeFileSync(companyListFile, JSON.stringify(companyList, null, 2));
+      console.log(`Company list file updated at ${companyListFile}`);
+    }
     console.error(`Error fetching company data:`, error);
     await new Promise((resolve) =>
       setTimeout(resolve, DELAY_BETWEEN_ERROR_REQUEST)
     );
-    await getAllCompanyData(companyList);
+    await getAllCompanyData();
   }
 }
 

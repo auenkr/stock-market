@@ -40,37 +40,64 @@ async function getEVAndEBITAValuation() {
     return;
   }
   results = results.filter((each) => each !== undefined);
-  const csvHeaders = Object.keys(results[0]![0]!);
+  const csvHeaders = [
+    "companyFileName",
+    "timePeriod",
+    "currentPrice",
+    "forecastPrice",
+    "deltaPricePercentage",
+    "expectedSellingPrice",
+    "potentialMaxGain",
+    "marketCap",
+    "enterpriseValue",
+    "annualEbita",
+    "evEbitaRatio",
+    "growthRate",
+    "avgWeightedGrowthRate",
+    "forecastEbita",
+    "forecastEV",
+    "outStandingShares",
+  ];
 
   const csvRows: string[] = [csvHeaders.join(",")];
+
+  results.sort((a, b) => {
+    const aLastGain = a && a.length > 0 ? a[a.length - 1]?.potentialMaxGain ?? 0 : 0;
+    const bLastGain = b && b.length > 0 ? b[b.length - 1]?.potentialMaxGain ?? 0 : 0;
+    return bLastGain - aLastGain;
+  });
 
   results.forEach((companyResults) => {
     companyResults?.forEach((result) => {
       const row = [
         result.companyFileName,
         result.timePeriod,
+        result.currentPrice.toFixed(2),
+        result.forecastPrice.toFixed(2),
+        result.deltaPricePercentage.toFixed(2),
+        result.expectedSellingPrice.toFixed(2),
+        result.potentialMaxGain.toFixed(2),
+        result.marketCap,
         result.enterpriseValue,
         result.annualEbita,
-        result.evEbitaRatio,
-        result.growthRate,
-        result.avgWeightedGrowthRate,
+        result.evEbitaRatio.toFixed(2),
+        result.growthRate.toFixed(2),
+        result.avgWeightedGrowthRate.toFixed(2),
         result.forecastEbita,
         result.forecastEV,
         result.outStandingShares,
-        result.currentPrice,
-        result.forecastPrice,
-        result.deltaPricePercentage,
       ].join(",");
       csvRows.push(row);
     });
     csvRows.push("");
     csvRows.push("");
   });
+  
   console.log(`Failed ${failedResults.length} companies:`);
   writeFileSync(allEVAndEBITAValuationResultFailedFile, JSON.stringify(failedResults, null, 2), "utf8");
 
   writeFileSync(allEVAndEBITAValuationResultFile, csvRows.join("\n"), "utf8");
-  console.log(`Results saved to ${allEVAndEBITAValuationResultFile}`);
+  console.log(`Results saved to ${allEVAndEBITAValuationResultFile}: ${results.length} companies`);
 }
 
 getEVAndEBITAValuation();

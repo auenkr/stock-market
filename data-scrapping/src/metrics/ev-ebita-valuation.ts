@@ -24,15 +24,22 @@ type EVAndEBITAValuationResult = {
   currentPrice: number;
   forecastPrice: number;
   deltaPricePercentage: number;
+  expectedSellingPrice: number; // 10 % less than potentialMaxGain
+  potentialMaxGain: number;
+  marketCap: number;
 };
 
 export function GetEVAndEBITAValuation(companyFileName: string) : EVAndEBITAValuationResult[] {
   const companyData = readCompanyData(companyFileName);
+  if (companyData.skip) {
+    throw new Error(`Skipping ${companyFileName} because it is marked as skipped.`);
+  }
   
   let timePeriods = companyData.profitAndLossStatements.map((each) => each.timePeriod);
   timePeriods = timePeriods.filter((each) => each !== "TTM");
 
   let avgWeightedGrowthRate = 0;
+  let previousYearForecastPrice = 0;
   let result = timePeriods.map((timePeriod, index) => {
     if (index === 0) {
       return;
@@ -57,9 +64,17 @@ export function GetEVAndEBITAValuation(companyFileName: string) : EVAndEBITAValu
     if (!metric) {
       throw new Error("Price metric not found");
     }
-    const currentPrice = getCompanyMonthPrice(metric, timePeriod);
+    let currentPrice = getCompanyMonthPrice(metric, timePeriod);
+    // For latest price
+    if (index === timePeriods.length - 1) {
+      const currentPriceMetric = companyData.metrics.filter((each) => each.metric === "Price")[0]!
+      currentPrice = currentPriceMetric.values[Object.keys(currentPriceMetric.values)[Object.keys(currentPriceMetric.values).length - 1]!]!
+    }
 
-    const deltaPricePercentage = (forecastPrice - currentPrice.amount * GetBaseValue(currentPrice.baseValue)) / (currentPrice.amount * GetBaseValue(currentPrice.baseValue)) * 100;
+    const deltaPricePercentage = (currentPrice.amount * GetBaseValue(currentPrice.baseValue) - previousYearForecastPrice) / previousYearForecastPrice * 100;
+    previousYearForecastPrice = forecastPrice;
+
+    const potentialMaxGain = (forecastPrice - currentPrice.amount * GetBaseValue(currentPrice.baseValue)) / (currentPrice.amount * GetBaseValue(currentPrice.baseValue)) * 100;
 
     const resultData: EVAndEBITAValuationResult = {
       companyFileName: companyFileName,
@@ -75,6 +90,9 @@ export function GetEVAndEBITAValuation(companyFileName: string) : EVAndEBITAValu
       currentPrice: currentPrice.amount * GetBaseValue(currentPrice.baseValue),
       forecastPrice: forecastPrice,
       deltaPricePercentage: deltaPricePercentage,
+      expectedSellingPrice: forecastPrice * 0.9, // 10 % less than forecastPrice
+      potentialMaxGain: potentialMaxGain,
+      marketCap: companyData.summary.marketCap.amount * GetBaseValue(companyData.summary.marketCap.baseValue),
     };
     return resultData;
   });

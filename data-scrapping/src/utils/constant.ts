@@ -26,6 +26,6 @@ export const allEVAndEBITAValuationResultFailedFile = join(outputDir + "/evAndEB
 
 // Rate Limit values
 
-export const DELAY_BETWEEN_API_REQUEST = 1000;
-export const DELAY_BETWEEN_COMPANY_DATA_REQUEST = 2000;
-export const DELAY_BETWEEN_ERROR_REQUEST = 5000;
+export const DELAY_BETWEEN_API_REQUEST = 1200;
+export const DELAY_BETWEEN_COMPANY_DATA_REQUEST = 3000;
+export const DELAY_BETWEEN_ERROR_REQUEST = 6000;

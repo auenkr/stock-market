@@ -1,0 +1,7060 @@
+{
+  "refId": "2833",
+  "name": "Saffron Industries Ltd",
+  "url": "http://www.saffronindustries.in",
+  "about": "Incorporated in 1993, Saffron Industries Limited is in the business of paper manufacturing and real estate development.[1]",
+  "keyPoints": "Business Overview:[1][2]\na) SIL is engaged in manufacturing newsprint and kraft papers.\nb) It has also ventured into real estate development after obtaining approvals to convert factory land from industrial to residential use.\nc) A layout plan has been approved, development charges paid, and RERA registration obtained from Maharashtra RERA.\nd) The factory land has been reclassified as stock-in-trade based on approvals.\ne) The company signed MoUs with a few buyers and allotted plots accordingly; proceeds are treated as sales, though sale deeds are yet to be executed.",
+  "timeStamp": "2025-12-05T07:42:02.576Z",
+  "skip": false,
+  "summary": {
+    "marketCap": {
+      "amount": 29.7,
+      "baseValue": "crore"
+    },
+    "currentPrice": {
+      "amount": 41.3,
+      "baseValue": "one"
+    },
+    "high": {
+      "amount": 104,
+      "baseValue": "one"
+    },
+    "low": {
+      "amount": 5.76,
+      "baseValue": "one"
+    },
+    "stockPE": {
+      "amount": 8.51,
+      "baseValue": "ratio"
+    },
+    "bookValue": {
+      "amount": -13.4,
+      "baseValue": "one"
+    },
+    "dividendYield": {
+      "amount": 0,
+      "baseValue": "percent"
+    },
+    "roce": {
+      "amount": 86.9,
+      "baseValue": "percent"
+    },
+    "roe": {
+      "amount": 0,
+      "baseValue": "percent"
+    },
+    "faceValue": {
+      "amount": 10,
+      "baseValue": "one"
+    },
+    "pros": [
+      "Company has reduced debt."
+    ],
+    "cons": [
+      "The company has delivered a poor sales growth of -6.47% over past five years."
+    ]
+  },
+  "peerCompanies": [
+    {
+      "sector": "Commodities Forest Materials Paper, Forest & Jute Products Paper & Paper Products",
+      "name": "A B Real Estate",
+      "currentPrice": {
+        "amount": 1761.85,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 0,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 19679.04,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 0.11,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": -17.82,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": -5413.58,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 97.84,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": -63.27,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": -0.16,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Commodities Forest Materials Paper, Forest & Jute Products Paper & Paper Products",
+      "name": "JK Paper",
+      "currentPrice": {
+        "amount": 363.75,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 20.72,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 6162.01,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 1.37,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 77.88,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": -41.83,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 1748.53,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": 3.9,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 8.63,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Commodities Forest Materials Paper, Forest & Jute Products Paper & Paper Products",
+      "name": "West Coast Paper",
+      "currentPrice": {
+        "amount": 410.8,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 15.07,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 2713.32,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 1.21,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 11.91,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": -80.37,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 1043.02,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": -0.17,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 11.47,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Commodities Forest Materials Paper, Forest & Jute Products Paper & Paper Products",
+      "name": "Seshasayee Paper",
+      "currentPrice": {
+        "amount": 238.65,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 18.46,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 1505.13,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 1.04,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 22.41,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": -21.29,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 346.32,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": -13.09,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 7.04,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Commodities Forest Materials Paper, Forest & Jute Products Paper & Paper Products",
+      "name": "Andhra Paper",
+      "currentPrice": {
+        "amount": 66.89,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 64.72,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 1330.11,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 1.49,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": -20.26,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": -148.56,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 362.08,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": -16.24,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 4.5,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Commodities Forest Materials Paper, Forest & Jute Products Paper & Paper Products",
+      "name": "T N Newsprint",
+      "currentPrice": {
+        "amount": 140.65,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 0,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 973.42,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 2.13,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 8.1,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": 212.74,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 1110.15,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": 21.5,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 5.54,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Commodities Forest Materials Paper, Forest & Jute Products Paper & Paper Products",
+      "name": "Pudumjee Paper",
+      "currentPrice": {
+        "amount": 97.75,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 10.13,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 928.14,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 0.62,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 16.92,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": -43.15,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 207.13,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": -6.9,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 22.35,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "sector": "Commodities Forest Materials Paper, Forest & Jute Products Paper & Paper Products",
+      "name": "Saffron Industri",
+      "currentPrice": {
+        "amount": 41.31,
+        "baseValue": "one"
+      },
+      "stockPE": {
+        "amount": 8.51,
+        "baseValue": "ratio"
+      },
+      "marketCap": {
+        "amount": 29.68,
+        "baseValue": "crore"
+      },
+      "dividendYield": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfitLatestQuarter": {
+        "amount": 0.24,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlyProfitGrowth": {
+        "amount": 233.33,
+        "baseValue": "percent"
+      },
+      "salesLatestQuarter": {
+        "amount": 0.81,
+        "baseValue": "crore"
+      },
+      "YOYQuarterlySalesGrowth": {
+        "amount": 76.09,
+        "baseValue": "percent"
+      },
+      "ROCE": {
+        "amount": 86.9,
+        "baseValue": "percent"
+      }
+    }
+  ],
+  "quarterlyResultStatements": [
+    {
+      "timePeriod": "Sep 2022",
+      "sales": {
+        "value": {
+          "amount": 4.26,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 4.35,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": -0.09,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": -2.11,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.01,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 0.44,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -0.52,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -0.52,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -0.72,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/9/2022/"
+    },
+    {
+      "timePeriod": "Dec 2022",
+      "sales": {
+        "value": {
+          "amount": 4.69,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 4.13,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 0.56,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 11.94,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.01,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 0.44,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 0.13,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 0.13,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": 0.18,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/12/2022/"
+    },
+    {
+      "timePeriod": "Mar 2023",
+      "sales": {
+        "value": {
+          "amount": 3.7,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 6.43,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": -2.73,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": -73.78,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.01,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 0.61,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -3.33,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -3.33,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -4.63,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/3/2023/"
+    },
+    {
+      "timePeriod": "Jun 2023",
+      "sales": {
+        "value": {
+          "amount": 2.97,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 3.28,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": -0.31,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": -10.44,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 0.49,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -0.8,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -0.81,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -1.13,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/6/2023/"
+    },
+    {
+      "timePeriod": "Sep 2023",
+      "sales": {
+        "value": {
+          "amount": 0,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 0.02,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": -0.02,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.01,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 0.43,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -0.44,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -0.44,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -0.61,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/9/2023/"
+    },
+    {
+      "timePeriod": "Dec 2023",
+      "sales": {
+        "value": {
+          "amount": 3.75,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 3.55,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 0.2,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 5.33,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.02,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 0.54,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -0.32,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -0.31,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -0.43,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/12/2023/"
+    },
+    {
+      "timePeriod": "Mar 2024",
+      "sales": {
+        "value": {
+          "amount": 9.47,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 9.32,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 0.15,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 1.58,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.01,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 0.48,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -0.32,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -0.33,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -0.46,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/3/2024/"
+    },
+    {
+      "timePeriod": "Jun 2024",
+      "sales": {
+        "value": {
+          "amount": 0,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 0.06,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": -0.06,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.01,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 0.31,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -0.36,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -0.36,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -0.5,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/6/2024/"
+    },
+    {
+      "timePeriod": "Sep 2024",
+      "sales": {
+        "value": {
+          "amount": 0.46,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 0.34,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 0.12,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 26.09,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.01,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 0.31,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -0.18,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -0.18,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -0.25,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/9/2024/"
+    },
+    {
+      "timePeriod": "Dec 2024",
+      "sales": {
+        "value": {
+          "amount": 2.48,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 1.76,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 0.72,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 29.03,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.01,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 0.31,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 0.42,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 0.43,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": 0.6,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/12/2024/"
+    },
+    {
+      "timePeriod": "Mar 2025",
+      "sales": {
+        "value": {
+          "amount": 3.38,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": -0.61,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 3.99,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 118.05,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 1.08,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 2.91,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 2.91,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": 4.05,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/3/2025/"
+    },
+    {
+      "timePeriod": "Jun 2025",
+      "sales": {
+        "value": {
+          "amount": 3.1,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 1.25,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 1.85,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 59.68,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.01,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 1.95,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -0.09,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -0.09,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -0.13,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/6/2025/"
+    },
+    {
+      "timePeriod": "Sep 2025",
+      "sales": {
+        "value": {
+          "amount": 0.81,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 0.27,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 0.54,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 66.67,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 0.3,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 0.24,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 0.24,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": 0.33,
+        "baseValue": "one"
+      },
+      "sourceUrl": "/company/source/quarter/2833/9/2025/"
+    }
+  ],
+  "profitAndLossStatements": [
+    {
+      "timePeriod": "Mar 2014",
+      "sales": {
+        "value": {
+          "amount": 60.77,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 64.48,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": -3.71,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": -6.1,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 9.25,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 2.71,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 2.48,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 0.35,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 0.35,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": 0.49,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2015",
+      "sales": {
+        "value": {
+          "amount": 49.62,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 46.39,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 3.23,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 6.51,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0.96,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 1.4,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 0.98,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 0.98,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": 1.36,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2016",
+      "sales": {
+        "value": {
+          "amount": 35.61,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 32.89,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 2.72,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 7.64,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": -0.21,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0.01,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 1.38,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 1.12,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 1.11,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": 1.54,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2017",
+      "sales": {
+        "value": {
+          "amount": 32.3,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 31.09,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 1.21,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 3.75,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.6,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 1.41,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 0.4,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 0.4,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": 0.56,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2018",
+      "sales": {
+        "value": {
+          "amount": 5.63,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 6.1,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": -0.47,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": -8.35,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.12,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0.18,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 1.24,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -1.77,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -1.76,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -2.45,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2019",
+      "sales": {
+        "value": {
+          "amount": 16.47,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 12.98,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 3.49,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 21.19,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": -1.09,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0.04,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 1.21,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 1.15,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 1.15,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": 1.6,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2020",
+      "sales": {
+        "value": {
+          "amount": 8.83,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 8.26,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 0.57,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 6.46,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.27,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0.01,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 1.19,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -0.36,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -0.36,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -0.5,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2021",
+      "sales": {
+        "value": {
+          "amount": 17.24,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 18.03,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": -0.79,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": -4.58,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0.01,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 1.2,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -1.89,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -1.9,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -2.64,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2022",
+      "sales": {
+        "value": {
+          "amount": 17.85,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 18.02,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": -0.17,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": -0.95,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.02,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0.01,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 1.62,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -1.78,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -1.78,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -2.48,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2023",
+      "sales": {
+        "value": {
+          "amount": 17.02,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 16.62,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 0.4,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 2.35,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.02,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 1.93,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -1.51,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -1.5,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -2.09,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2024",
+      "sales": {
+        "value": {
+          "amount": 16.2,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 16.18,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 0.02,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 0.12,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.04,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0.01,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 1.94,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": -1.89,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": -1.89,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": -2.63,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2025",
+      "sales": {
+        "value": {
+          "amount": 6.32,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 1.53,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 4.79,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 75.79,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.03,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0.01,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 2,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 2.81,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 2.81,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": 3.91,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "TTM",
+      "sales": {
+        "value": {
+          "amount": 9.77,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "expenses": {
+        "value": {
+          "amount": 2.67,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "operatingProfit": {
+        "amount": 7.1,
+        "baseValue": "crore"
+      },
+      "OPM": {
+        "amount": 72.67,
+        "baseValue": "percent"
+      },
+      "otherIncome": {
+        "value": {
+          "amount": 0.02,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "interest": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "depreciation": {
+        "amount": 3.64,
+        "baseValue": "crore"
+      },
+      "profitBeforeTax": {
+        "amount": 3.48,
+        "baseValue": "crore"
+      },
+      "tax": {
+        "amount": 0,
+        "baseValue": "percent"
+      },
+      "netProfit": {
+        "value": {
+          "amount": 3.49,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "EPS": {
+        "amount": 4.85,
+        "baseValue": "one"
+      }
+    }
+  ],
+  "balanceSheetStatements": [
+    {
+      "timePeriod": "Mar 2014",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -14.16,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 30.33,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 11.52,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 34.88,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 21.79,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 13.09,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 34.88,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2015",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -13.18,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 21.21,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 15.73,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 30.95,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 21.52,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 9.43,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 30.95,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2016",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -12.06,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 20.58,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 14.03,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 29.74,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 20.1,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 9.64,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 29.74,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2017",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -11.67,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 20.58,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 12.65,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 28.75,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 18.59,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 10.16,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 28.75,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2018",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -13.43,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 20.58,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 7.53,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 21.87,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 14.52,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 7.35,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 21.87,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2019",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -12.28,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 20.58,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 3.15,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 18.64,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 13.04,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 5.6,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 18.64,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2020",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -12.65,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 20.58,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 2.36,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 17.48,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 11.85,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 5.63,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 17.48,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2021",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -14.54,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 17.35,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 2.07,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 12.07,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 10.65,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 1.42,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 12.07,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2022",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -16.32,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 19.14,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 0.91,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 10.92,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 9.43,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 1.49,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 10.92,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2023",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -17.82,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 19.96,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 1.01,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 10.34,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 6.69,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 3.65,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 10.34,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2024",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -19.76,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 16.98,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 6.43,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 10.84,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 4.75,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 6.09,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 10.84,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2025",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -16.95,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 11.84,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 10.45,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 12.53,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 2.76,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 9.77,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 12.53,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Sep 2025",
+      "equityCapital": {
+        "amount": 7.19,
+        "baseValue": "crore"
+      },
+      "reservers": {
+        "amount": -16.81,
+        "baseValue": "crore"
+      },
+      "borrowings": {
+        "value": {
+          "amount": 2.55,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "otherLiabilities": {
+        "value": {
+          "amount": 23.52,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalLiabilities": {
+        "amount": 16.45,
+        "baseValue": "crore"
+      },
+      "fiexedAssets": {
+        "value": {
+          "amount": 0.01,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "CWIP": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "investments": {
+        "amount": 0,
+        "baseValue": "crore"
+      },
+      "otherAssets": {
+        "value": {
+          "amount": 16.44,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "totalAssets": {
+        "amount": 16.45,
+        "baseValue": "crore"
+      }
+    }
+  ],
+  "cashFlowStatements": [
+    {
+      "timePeriod": "Mar 2014",
+      "operatingActivities": {
+        "value": {
+          "amount": 18.71,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "investingActivities": {
+        "value": {
+          "amount": 4.02,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "financingActivities": {
+        "value": {
+          "amount": -22.59,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "netCashFlow": {
+        "amount": 0.14,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2015",
+      "operatingActivities": {
+        "value": {
+          "amount": -4.73,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "investingActivities": {
+        "value": {
+          "amount": -0.87,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "financingActivities": {
+        "value": {
+          "amount": 5.63,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "netCashFlow": {
+        "amount": 0.04,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2016",
+      "operatingActivities": {
+        "value": {
+          "amount": 2.19,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "investingActivities": {
+        "value": {
+          "amount": -1.23,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "financingActivities": {
+        "value": {
+          "amount": -0.97,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "netCashFlow": {
+        "amount": -0.02,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2017",
+      "operatingActivities": {
+        "value": {
+          "amount": 0,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "investingActivities": {
+        "value": {
+          "amount": 0,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "financingActivities": {
+        "value": {
+          "amount": 0,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "netCashFlow": {
+        "amount": 0,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2018",
+      "operatingActivities": {
+        "value": {
+          "amount": -3.32,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "investingActivities": {
+        "value": {
+          "amount": 2.63,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "financingActivities": {
+        "value": {
+          "amount": -0.04,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "netCashFlow": {
+        "amount": -0.73,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2019",
+      "operatingActivities": {
+        "value": {
+          "amount": -0.45,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "investingActivities": {
+        "value": {
+          "amount": -0.12,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "financingActivities": {
+        "value": {
+          "amount": 0.51,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "netCashFlow": {
+        "amount": -0.06,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2020",
+      "operatingActivities": {
+        "value": {
+          "amount": -0.22,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "investingActivities": {
+        "value": {
+          "amount": 0.03,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "financingActivities": {
+        "value": {
+          "amount": 0,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "netCashFlow": {
+        "amount": -0.2,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2021",
+      "operatingActivities": {
+        "value": {
+          "amount": 3.47,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "investingActivities": {
+        "value": {
+          "amount": 0.03,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "financingActivities": {
+        "value": {
+          "amount": -3.23,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "netCashFlow": {
+        "amount": 0.27,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2022",
+      "operatingActivities": {
+        "value": {
+          "amount": -1.22,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "investingActivities": {
+        "value": {
+          "amount": -0.38,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "financingActivities": {
+        "value": {
+          "amount": 1.79,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "netCashFlow": {
+        "amount": 0.19,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2023",
+      "operatingActivities": {
+        "value": {
+          "amount": -2.09,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "investingActivities": {
+        "value": {
+          "amount": 0.83,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "financingActivities": {
+        "value": {
+          "amount": 0.82,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "netCashFlow": {
+        "amount": -0.44,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2024",
+      "operatingActivities": {
+        "value": {
+          "amount": 3.27,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "investingActivities": {
+        "value": {
+          "amount": 0.04,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "financingActivities": {
+        "value": {
+          "amount": -2.98,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "netCashFlow": {
+        "amount": 0.33,
+        "baseValue": "crore"
+      }
+    },
+    {
+      "timePeriod": "Mar 2025",
+      "operatingActivities": {
+        "value": {
+          "amount": 5.1,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "investingActivities": {
+        "value": {
+          "amount": 0.03,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "financingActivities": {
+        "value": {
+          "amount": -5.14,
+          "baseValue": "crore"
+        },
+        "other": {}
+      },
+      "netCashFlow": {
+        "amount": -0.01,
+        "baseValue": "crore"
+      }
+    }
+  ],
+  "ratioStatements": [
+    {
+      "timePeriod": "Mar 2014",
+      "debtorDays": {
+        "amount": 32.31,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 35.22,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 55.81,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": 11.72,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": -90.21,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": -21.7,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2015",
+      "debtorDays": {
+        "amount": 19.49,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 41.8,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 124.69,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": -63.4,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": -53.33,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": 10.06,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2016",
+      "debtorDays": {
+        "amount": 41.31,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 17.05,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 220.19,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": -161.84,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": -58.12,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": 9.25,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2017",
+      "debtorDays": {
+        "amount": 69.16,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 0.84,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 184.76,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": -114.76,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": -46.22,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": 2.7,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2018",
+      "debtorDays": {
+        "amount": 313.13,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 7.41,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 714.13,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": -393.59,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": -71.96,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": -10.38,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2019",
+      "debtorDays": {
+        "amount": 104.6,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 1.4,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 116.39,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": -10.39,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": 39.67,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": 16.36,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2020",
+      "debtorDays": {
+        "amount": 190.56,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 11.53,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 114.66,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": 87.44,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": 116.16,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": -2.29,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2021",
+      "debtorDays": {
+        "amount": 0,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 3.59,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 40.24,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": -36.64,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": -29.01,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": -14.97,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2022",
+      "debtorDays": {
+        "amount": 0,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 0.23,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 15.1,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": -14.87,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": -6.95,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": -17.69,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2023",
+      "debtorDays": {
+        "amount": 0,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 83.08,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 9.77,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": 73.31,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": 46.11,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": -15.62,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2024",
+      "debtorDays": {
+        "amount": 0,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 141.46,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 51.23,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": 90.23,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": -26.14,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": -27.37,
+        "baseValue": "percent"
+      }
+    },
+    {
+      "timePeriod": "Mar 2025",
+      "debtorDays": {
+        "amount": 5.2,
+        "baseValue": "one"
+      },
+      "inventoryDays": {
+        "amount": 0,
+        "baseValue": "one"
+      },
+      "daysPayable": {
+        "amount": 0,
+        "baseValue": "one"
+      },
+      "cashConversionCycle": {
+        "amount": 5.2,
+        "baseValue": "crore"
+      },
+      "workingCapitalTurnover": {
+        "amount": -85.47,
+        "baseValue": "one"
+      },
+      "ROCE": {
+        "amount": 86.9,
+        "baseValue": "percent"
+      }
+    }
+  ],
+  "shareholdingPatternStatements": [
+    {
+      "timePeriod": "Dec 2022",
+      "promoters": {
+        "value": {
+          "amount": 60.49,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 39.4,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 1948,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2023",
+      "promoters": {
+        "value": {
+          "amount": 60.49,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 39.39,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 1956,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Jun 2023",
+      "promoters": {
+        "value": {
+          "amount": 60.49,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 39.39,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 1955,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Sep 2023",
+      "promoters": {
+        "value": {
+          "amount": 60.49,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 39.39,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 1961,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Dec 2023",
+      "promoters": {
+        "value": {
+          "amount": 60.49,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 39.39,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 2066,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2024",
+      "promoters": {
+        "value": {
+          "amount": 60.49,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 39.39,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 2142,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Jun 2024",
+      "promoters": {
+        "value": {
+          "amount": 60.49,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 39.39,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 2318,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Sep 2024",
+      "promoters": {
+        "value": {
+          "amount": 60.49,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 39.39,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 2410,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Dec 2024",
+      "promoters": {
+        "value": {
+          "amount": 60.5,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 39.4,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 2430,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Mar 2025",
+      "promoters": {
+        "value": {
+          "amount": 60.5,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 39.41,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 2535,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Jun 2025",
+      "promoters": {
+        "value": {
+          "amount": 60.5,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 39.41,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 2493,
+        "baseValue": "one"
+      }
+    },
+    {
+      "timePeriod": "Sep 2025",
+      "promoters": {
+        "value": {
+          "amount": 60.5,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "DIIS": {
+        "value": {
+          "amount": 0.11,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "public": {
+        "value": {
+          "amount": 39.4,
+          "baseValue": "percent"
+        },
+        "other": {}
+      },
+      "noOfShareHolders": {
+        "amount": 2685,
+        "baseValue": "one"
+      }
+    }
+  ],
+  "metrics": [
+    {
+      "metric": "Price",
+      "label": "Price on BSE",
+      "values": {
+        "2005-04-01": {
+          "amount": 5.8,
+          "baseValue": "one"
+        },
+        "2005-04-07": {
+          "amount": 5.16,
+          "baseValue": "one"
+        },
+        "2005-04-15": {
+          "amount": 5.2,
+          "baseValue": "one"
+        },
+        "2005-04-22": {
+          "amount": 5.65,
+          "baseValue": "one"
+        },
+        "2005-04-29": {
+          "amount": 5,
+          "baseValue": "one"
+        },
+        "2005-05-06": {
+          "amount": 5.2,
+          "baseValue": "one"
+        },
+        "2005-05-13": {
+          "amount": 4.98,
+          "baseValue": "one"
+        },
+        "2005-05-20": {
+          "amount": 5.35,
+          "baseValue": "one"
+        },
+        "2005-05-27": {
+          "amount": 7.27,
+          "baseValue": "one"
+        },
+        "2005-06-04": {
+          "amount": 12.66,
+          "baseValue": "one"
+        },
+        "2005-06-10": {
+          "amount": 12.67,
+          "baseValue": "one"
+        },
+        "2005-06-17": {
+          "amount": 12.04,
+          "baseValue": "one"
+        },
+        "2005-06-24": {
+          "amount": 10.3,
+          "baseValue": "one"
+        },
+        "2005-07-01": {
+          "amount": 9.62,
+          "baseValue": "one"
+        },
+        "2005-07-08": {
+          "amount": 9.62,
+          "baseValue": "one"
+        },
+        "2005-07-15": {
+          "amount": 9.85,
+          "baseValue": "one"
+        },
+        "2005-07-22": {
+          "amount": 11.15,
+          "baseValue": "one"
+        },
+        "2005-07-29": {
+          "amount": 10.49,
+          "baseValue": "one"
+        },
+        "2005-08-05": {
+          "amount": 10.9,
+          "baseValue": "one"
+        },
+        "2005-08-12": {
+          "amount": 11.4,
+          "baseValue": "one"
+        },
+        "2005-08-19": {
+          "amount": 12.3,
+          "baseValue": "one"
+        },
+        "2005-08-26": {
+          "amount": 12.34,
+          "baseValue": "one"
+        },
+        "2005-09-02": {
+          "amount": 12.89,
+          "baseValue": "one"
+        },
+        "2005-09-09": {
+          "amount": 12.82,
+          "baseValue": "one"
+        },
+        "2005-09-16": {
+          "amount": 13.3,
+          "baseValue": "one"
+        },
+        "2005-09-23": {
+          "amount": 11.07,
+          "baseValue": "one"
+        },
+        "2005-09-30": {
+          "amount": 9.55,
+          "baseValue": "one"
+        },
+        "2005-10-07": {
+          "amount": 9.95,
+          "baseValue": "one"
+        },
+        "2005-10-14": {
+          "amount": 8.76,
+          "baseValue": "one"
+        },
+        "2005-10-21": {
+          "amount": 8,
+          "baseValue": "one"
+        },
+        "2005-10-28": {
+          "amount": 8.1,
+          "baseValue": "one"
+        },
+        "2005-10-31": {
+          "amount": 7.75,
+          "baseValue": "one"
+        },
+        "2005-11-11": {
+          "amount": 9.38,
+          "baseValue": "one"
+        },
+        "2005-11-18": {
+          "amount": 9,
+          "baseValue": "one"
+        },
+        "2005-11-25": {
+          "amount": 8.7,
+          "baseValue": "one"
+        },
+        "2005-12-02": {
+          "amount": 8,
+          "baseValue": "one"
+        },
+        "2005-12-09": {
+          "amount": 9.59,
+          "baseValue": "one"
+        },
+        "2005-12-16": {
+          "amount": 8.33,
+          "baseValue": "one"
+        },
+        "2005-12-22": {
+          "amount": 8.08,
+          "baseValue": "one"
+        },
+        "2005-12-30": {
+          "amount": 7.22,
+          "baseValue": "one"
+        },
+        "2006-01-06": {
+          "amount": 8.58,
+          "baseValue": "one"
+        },
+        "2006-01-13": {
+          "amount": 8.46,
+          "baseValue": "one"
+        },
+        "2006-01-20": {
+          "amount": 8.85,
+          "baseValue": "one"
+        },
+        "2006-01-27": {
+          "amount": 8.6,
+          "baseValue": "one"
+        },
+        "2006-02-03": {
+          "amount": 8.1,
+          "baseValue": "one"
+        },
+        "2006-02-08": {
+          "amount": 7.8,
+          "baseValue": "one"
+        },
+        "2006-02-16": {
+          "amount": 7.89,
+          "baseValue": "one"
+        },
+        "2006-02-24": {
+          "amount": 6.9,
+          "baseValue": "one"
+        },
+        "2006-03-03": {
+          "amount": 6.58,
+          "baseValue": "one"
+        },
+        "2006-03-10": {
+          "amount": 6.01,
+          "baseValue": "one"
+        },
+        "2006-03-17": {
+          "amount": 6.21,
+          "baseValue": "one"
+        },
+        "2006-03-24": {
+          "amount": 6.5,
+          "baseValue": "one"
+        },
+        "2006-03-31": {
+          "amount": 6.47,
+          "baseValue": "one"
+        },
+        "2006-04-07": {
+          "amount": 6.55,
+          "baseValue": "one"
+        },
+        "2006-04-13": {
+          "amount": 7.27,
+          "baseValue": "one"
+        },
+        "2006-04-19": {
+          "amount": 7,
+          "baseValue": "one"
+        },
+        "2006-04-28": {
+          "amount": 6.1,
+          "baseValue": "one"
+        },
+        "2006-05-05": {
+          "amount": 6.51,
+          "baseValue": "one"
+        },
+        "2006-05-12": {
+          "amount": 7.35,
+          "baseValue": "one"
+        },
+        "2006-05-16": {
+          "amount": 7.33,
+          "baseValue": "one"
+        },
+        "2006-05-26": {
+          "amount": 6.81,
+          "baseValue": "one"
+        },
+        "2006-05-30": {
+          "amount": 6.45,
+          "baseValue": "one"
+        },
+        "2006-06-09": {
+          "amount": 5.85,
+          "baseValue": "one"
+        },
+        "2006-06-15": {
+          "amount": 5.39,
+          "baseValue": "one"
+        },
+        "2006-06-25": {
+          "amount": 6.22,
+          "baseValue": "one"
+        },
+        "2006-06-30": {
+          "amount": 5.47,
+          "baseValue": "one"
+        },
+        "2006-07-07": {
+          "amount": 4.81,
+          "baseValue": "one"
+        },
+        "2006-07-14": {
+          "amount": 4.96,
+          "baseValue": "one"
+        },
+        "2006-07-20": {
+          "amount": 3.72,
+          "baseValue": "one"
+        },
+        "2006-07-28": {
+          "amount": 4.5,
+          "baseValue": "one"
+        },
+        "2006-08-04": {
+          "amount": 6.84,
+          "baseValue": "one"
+        },
+        "2006-08-11": {
+          "amount": 7.02,
+          "baseValue": "one"
+        },
+        "2006-08-18": {
+          "amount": 10.26,
+          "baseValue": "one"
+        },
+        "2006-08-25": {
+          "amount": 13.7,
+          "baseValue": "one"
+        },
+        "2006-09-01": {
+          "amount": 14.19,
+          "baseValue": "one"
+        },
+        "2006-09-08": {
+          "amount": 13.8,
+          "baseValue": "one"
+        },
+        "2006-09-15": {
+          "amount": 11.34,
+          "baseValue": "one"
+        },
+        "2006-09-22": {
+          "amount": 9.5,
+          "baseValue": "one"
+        },
+        "2006-09-29": {
+          "amount": 9.42,
+          "baseValue": "one"
+        },
+        "2006-10-04": {
+          "amount": 9.87,
+          "baseValue": "one"
+        },
+        "2006-10-13": {
+          "amount": 10.18,
+          "baseValue": "one"
+        },
+        "2006-10-19": {
+          "amount": 9.3,
+          "baseValue": "one"
+        },
+        "2006-10-26": {
+          "amount": 9.36,
+          "baseValue": "one"
+        },
+        "2006-11-03": {
+          "amount": 8.69,
+          "baseValue": "one"
+        },
+        "2006-11-09": {
+          "amount": 8.71,
+          "baseValue": "one"
+        },
+        "2006-11-16": {
+          "amount": 8.75,
+          "baseValue": "one"
+        },
+        "2006-11-24": {
+          "amount": 9.34,
+          "baseValue": "one"
+        },
+        "2006-12-01": {
+          "amount": 9.3,
+          "baseValue": "one"
+        },
+        "2006-12-08": {
+          "amount": 11.5,
+          "baseValue": "one"
+        },
+        "2006-12-15": {
+          "amount": 10.4,
+          "baseValue": "one"
+        },
+        "2006-12-22": {
+          "amount": 9.97,
+          "baseValue": "one"
+        },
+        "2006-12-29": {
+          "amount": 9.53,
+          "baseValue": "one"
+        },
+        "2007-01-05": {
+          "amount": 10.51,
+          "baseValue": "one"
+        },
+        "2007-01-12": {
+          "amount": 10.51,
+          "baseValue": "one"
+        },
+        "2007-01-19": {
+          "amount": 11.79,
+          "baseValue": "one"
+        },
+        "2007-01-25": {
+          "amount": 13.7,
+          "baseValue": "one"
+        },
+        "2007-02-02": {
+          "amount": 16.25,
+          "baseValue": "one"
+        },
+        "2007-02-09": {
+          "amount": 19.1,
+          "baseValue": "one"
+        },
+        "2007-02-15": {
+          "amount": 18.5,
+          "baseValue": "one"
+        },
+        "2007-02-23": {
+          "amount": 19.25,
+          "baseValue": "one"
+        },
+        "2007-03-02": {
+          "amount": 18.8,
+          "baseValue": "one"
+        },
+        "2007-03-09": {
+          "amount": 19.6,
+          "baseValue": "one"
+        },
+        "2007-03-16": {
+          "amount": 19.1,
+          "baseValue": "one"
+        },
+        "2007-03-23": {
+          "amount": 21.15,
+          "baseValue": "one"
+        },
+        "2007-03-30": {
+          "amount": 19.1,
+          "baseValue": "one"
+        },
+        "2007-04-05": {
+          "amount": 19.1,
+          "baseValue": "one"
+        },
+        "2007-04-13": {
+          "amount": 18.25,
+          "baseValue": "one"
+        },
+        "2007-04-20": {
+          "amount": 17.6,
+          "baseValue": "one"
+        },
+        "2007-04-26": {
+          "amount": 16.55,
+          "baseValue": "one"
+        },
+        "2007-05-04": {
+          "amount": 14.95,
+          "baseValue": "one"
+        },
+        "2007-05-11": {
+          "amount": 15.05,
+          "baseValue": "one"
+        },
+        "2007-05-18": {
+          "amount": 14.4,
+          "baseValue": "one"
+        },
+        "2007-05-25": {
+          "amount": 13,
+          "baseValue": "one"
+        },
+        "2007-06-01": {
+          "amount": 13.05,
+          "baseValue": "one"
+        },
+        "2007-06-08": {
+          "amount": 14.1,
+          "baseValue": "one"
+        },
+        "2007-06-15": {
+          "amount": 15.5,
+          "baseValue": "one"
+        },
+        "2007-06-22": {
+          "amount": 14.6,
+          "baseValue": "one"
+        },
+        "2007-06-29": {
+          "amount": 14.51,
+          "baseValue": "one"
+        },
+        "2007-07-06": {
+          "amount": 17.15,
+          "baseValue": "one"
+        },
+        "2007-07-13": {
+          "amount": 17.19,
+          "baseValue": "one"
+        },
+        "2007-07-20": {
+          "amount": 16.36,
+          "baseValue": "one"
+        },
+        "2007-07-27": {
+          "amount": 15.13,
+          "baseValue": "one"
+        },
+        "2007-08-03": {
+          "amount": 14.1,
+          "baseValue": "one"
+        },
+        "2007-08-10": {
+          "amount": 14.8,
+          "baseValue": "one"
+        },
+        "2007-08-17": {
+          "amount": 15,
+          "baseValue": "one"
+        },
+        "2007-08-23": {
+          "amount": 14.5,
+          "baseValue": "one"
+        },
+        "2007-08-31": {
+          "amount": 15,
+          "baseValue": "one"
+        },
+        "2007-09-07": {
+          "amount": 16.74,
+          "baseValue": "one"
+        },
+        "2007-09-14": {
+          "amount": 15.9,
+          "baseValue": "one"
+        },
+        "2007-09-21": {
+          "amount": 15.3,
+          "baseValue": "one"
+        },
+        "2007-09-28": {
+          "amount": 15.87,
+          "baseValue": "one"
+        },
+        "2007-10-05": {
+          "amount": 14.75,
+          "baseValue": "one"
+        },
+        "2007-10-12": {
+          "amount": 13.3,
+          "baseValue": "one"
+        },
+        "2007-10-19": {
+          "amount": 13,
+          "baseValue": "one"
+        },
+        "2007-10-26": {
+          "amount": 14,
+          "baseValue": "one"
+        },
+        "2007-11-02": {
+          "amount": 12.11,
+          "baseValue": "one"
+        },
+        "2007-11-09": {
+          "amount": 12.02,
+          "baseValue": "one"
+        },
+        "2007-11-16": {
+          "amount": 14.81,
+          "baseValue": "one"
+        },
+        "2007-11-23": {
+          "amount": 14.5,
+          "baseValue": "one"
+        },
+        "2007-11-30": {
+          "amount": 14,
+          "baseValue": "one"
+        },
+        "2007-12-07": {
+          "amount": 14.45,
+          "baseValue": "one"
+        },
+        "2007-12-14": {
+          "amount": 17.86,
+          "baseValue": "one"
+        },
+        "2007-12-20": {
+          "amount": 17.13,
+          "baseValue": "one"
+        },
+        "2007-12-28": {
+          "amount": 17.45,
+          "baseValue": "one"
+        },
+        "2008-01-04": {
+          "amount": 23.55,
+          "baseValue": "one"
+        },
+        "2008-01-11": {
+          "amount": 17.95,
+          "baseValue": "one"
+        },
+        "2008-01-18": {
+          "amount": 17.25,
+          "baseValue": "one"
+        },
+        "2008-01-25": {
+          "amount": 13.5,
+          "baseValue": "one"
+        },
+        "2008-02-01": {
+          "amount": 12.8,
+          "baseValue": "one"
+        },
+        "2008-02-08": {
+          "amount": 13.75,
+          "baseValue": "one"
+        },
+        "2008-02-15": {
+          "amount": 12.85,
+          "baseValue": "one"
+        },
+        "2008-02-22": {
+          "amount": 12.08,
+          "baseValue": "one"
+        },
+        "2008-02-29": {
+          "amount": 11.87,
+          "baseValue": "one"
+        },
+        "2008-03-07": {
+          "amount": 11.75,
+          "baseValue": "one"
+        },
+        "2008-03-14": {
+          "amount": 10.2,
+          "baseValue": "one"
+        },
+        "2008-03-19": {
+          "amount": 10,
+          "baseValue": "one"
+        },
+        "2008-03-28": {
+          "amount": 10.03,
+          "baseValue": "one"
+        },
+        "2008-04-03": {
+          "amount": 12.1,
+          "baseValue": "one"
+        },
+        "2008-04-10": {
+          "amount": 11.2,
+          "baseValue": "one"
+        },
+        "2008-04-17": {
+          "amount": 11.7,
+          "baseValue": "one"
+        },
+        "2008-04-24": {
+          "amount": 11.59,
+          "baseValue": "one"
+        },
+        "2008-04-30": {
+          "amount": 12.1,
+          "baseValue": "one"
+        },
+        "2008-05-09": {
+          "amount": 11.83,
+          "baseValue": "one"
+        },
+        "2008-05-16": {
+          "amount": 11.83,
+          "baseValue": "one"
+        },
+        "2008-05-23": {
+          "amount": 12,
+          "baseValue": "one"
+        },
+        "2008-05-28": {
+          "amount": 10.79,
+          "baseValue": "one"
+        },
+        "2008-06-05": {
+          "amount": 10,
+          "baseValue": "one"
+        },
+        "2008-06-13": {
+          "amount": 10,
+          "baseValue": "one"
+        },
+        "2008-06-20": {
+          "amount": 8.5,
+          "baseValue": "one"
+        },
+        "2008-06-27": {
+          "amount": 7.95,
+          "baseValue": "one"
+        },
+        "2008-07-04": {
+          "amount": 8.43,
+          "baseValue": "one"
+        },
+        "2008-07-11": {
+          "amount": 8.38,
+          "baseValue": "one"
+        },
+        "2008-07-15": {
+          "amount": 8.01,
+          "baseValue": "one"
+        },
+        "2008-07-25": {
+          "amount": 8.4,
+          "baseValue": "one"
+        },
+        "2008-08-01": {
+          "amount": 9.17,
+          "baseValue": "one"
+        },
+        "2008-08-07": {
+          "amount": 8.8,
+          "baseValue": "one"
+        },
+        "2008-08-14": {
+          "amount": 7.7,
+          "baseValue": "one"
+        },
+        "2008-08-21": {
+          "amount": 8.08,
+          "baseValue": "one"
+        },
+        "2008-08-29": {
+          "amount": 8.01,
+          "baseValue": "one"
+        },
+        "2008-09-01": {
+          "amount": 8.3,
+          "baseValue": "one"
+        },
+        "2008-09-11": {
+          "amount": 8.37,
+          "baseValue": "one"
+        },
+        "2008-09-19": {
+          "amount": 7.29,
+          "baseValue": "one"
+        },
+        "2008-09-25": {
+          "amount": 7.27,
+          "baseValue": "one"
+        },
+        "2008-10-01": {
+          "amount": 7.1,
+          "baseValue": "one"
+        },
+        "2008-10-10": {
+          "amount": 6.7,
+          "baseValue": "one"
+        },
+        "2008-10-17": {
+          "amount": 6.7,
+          "baseValue": "one"
+        },
+        "2008-10-24": {
+          "amount": 6.22,
+          "baseValue": "one"
+        },
+        "2008-10-31": {
+          "amount": 6.6,
+          "baseValue": "one"
+        },
+        "2008-11-07": {
+          "amount": 7,
+          "baseValue": "one"
+        },
+        "2008-11-14": {
+          "amount": 6.79,
+          "baseValue": "one"
+        },
+        "2008-11-18": {
+          "amount": 6.48,
+          "baseValue": "one"
+        },
+        "2008-12-01": {
+          "amount": 6.75,
+          "baseValue": "one"
+        },
+        "2008-12-12": {
+          "amount": 6.79,
+          "baseValue": "one"
+        },
+        "2008-12-17": {
+          "amount": 6.97,
+          "baseValue": "one"
+        },
+        "2008-12-22": {
+          "amount": 6.7,
+          "baseValue": "one"
+        },
+        "2009-01-02": {
+          "amount": 6.77,
+          "baseValue": "one"
+        },
+        "2009-01-07": {
+          "amount": 7.25,
+          "baseValue": "one"
+        },
+        "2009-01-21": {
+          "amount": 7.03,
+          "baseValue": "one"
+        },
+        "2009-02-13": {
+          "amount": 6.06,
+          "baseValue": "one"
+        },
+        "2009-02-16": {
+          "amount": 5.76,
+          "baseValue": "one"
+        },
+        "2009-02-24": {
+          "amount": 6.04,
+          "baseValue": "one"
+        },
+        "2009-03-06": {
+          "amount": 5.55,
+          "baseValue": "one"
+        },
+        "2009-03-13": {
+          "amount": 5.1,
+          "baseValue": "one"
+        },
+        "2009-03-16": {
+          "amount": 4.85,
+          "baseValue": "one"
+        },
+        "2009-03-27": {
+          "amount": 4.4,
+          "baseValue": "one"
+        },
+        "2009-04-09": {
+          "amount": 4.51,
+          "baseValue": "one"
+        },
+        "2009-04-17": {
+          "amount": 4.44,
+          "baseValue": "one"
+        },
+        "2009-04-23": {
+          "amount": 4.85,
+          "baseValue": "one"
+        },
+        "2009-04-29": {
+          "amount": 4.8,
+          "baseValue": "one"
+        },
+        "2009-05-08": {
+          "amount": 4.65,
+          "baseValue": "one"
+        },
+        "2009-05-12": {
+          "amount": 4.72,
+          "baseValue": "one"
+        },
+        "2009-05-21": {
+          "amount": 4.95,
+          "baseValue": "one"
+        },
+        "2009-05-29": {
+          "amount": 5.99,
+          "baseValue": "one"
+        },
+        "2009-06-05": {
+          "amount": 7.11,
+          "baseValue": "one"
+        },
+        "2009-06-12": {
+          "amount": 6,
+          "baseValue": "one"
+        },
+        "2009-06-17": {
+          "amount": 5.71,
+          "baseValue": "one"
+        },
+        "2009-06-26": {
+          "amount": 5.98,
+          "baseValue": "one"
+        },
+        "2009-07-03": {
+          "amount": 6.5,
+          "baseValue": "one"
+        },
+        "2009-07-06": {
+          "amount": 6.18,
+          "baseValue": "one"
+        },
+        "2009-07-15": {
+          "amount": 5.9,
+          "baseValue": "one"
+        },
+        "2009-07-21": {
+          "amount": 5.35,
+          "baseValue": "one"
+        },
+        "2009-08-03": {
+          "amount": 5.1,
+          "baseValue": "one"
+        },
+        "2009-08-21": {
+          "amount": 4.67,
+          "baseValue": "one"
+        },
+        "2009-08-28": {
+          "amount": 5.14,
+          "baseValue": "one"
+        },
+        "2009-09-03": {
+          "amount": 5.65,
+          "baseValue": "one"
+        },
+        "2009-09-11": {
+          "amount": 6.21,
+          "baseValue": "one"
+        },
+        "2009-09-18": {
+          "amount": 6.47,
+          "baseValue": "one"
+        },
+        "2009-09-25": {
+          "amount": 7.42,
+          "baseValue": "one"
+        },
+        "2009-10-01": {
+          "amount": 7.96,
+          "baseValue": "one"
+        },
+        "2009-10-09": {
+          "amount": 8.31,
+          "baseValue": "one"
+        },
+        "2009-10-16": {
+          "amount": 7.49,
+          "baseValue": "one"
+        },
+        "2009-10-23": {
+          "amount": 7.78,
+          "baseValue": "one"
+        },
+        "2009-10-30": {
+          "amount": 7.48,
+          "baseValue": "one"
+        },
+        "2009-11-06": {
+          "amount": 6.52,
+          "baseValue": "one"
+        },
+        "2009-11-13": {
+          "amount": 7,
+          "baseValue": "one"
+        },
+        "2009-11-20": {
+          "amount": 7.5,
+          "baseValue": "one"
+        },
+        "2009-11-27": {
+          "amount": 6.99,
+          "baseValue": "one"
+        },
+        "2009-12-02": {
+          "amount": 8.3,
+          "baseValue": "one"
+        },
+        "2009-12-11": {
+          "amount": 8.01,
+          "baseValue": "one"
+        },
+        "2009-12-17": {
+          "amount": 7.7,
+          "baseValue": "one"
+        },
+        "2009-12-24": {
+          "amount": 6.71,
+          "baseValue": "one"
+        },
+        "2009-12-31": {
+          "amount": 6.63,
+          "baseValue": "one"
+        },
+        "2010-01-08": {
+          "amount": 7.87,
+          "baseValue": "one"
+        },
+        "2010-01-15": {
+          "amount": 8.11,
+          "baseValue": "one"
+        },
+        "2010-01-22": {
+          "amount": 7.67,
+          "baseValue": "one"
+        },
+        "2010-01-28": {
+          "amount": 6.82,
+          "baseValue": "one"
+        },
+        "2010-02-02": {
+          "amount": 6.58,
+          "baseValue": "one"
+        },
+        "2010-02-19": {
+          "amount": 6.26,
+          "baseValue": "one"
+        },
+        "2010-02-26": {
+          "amount": 6.77,
+          "baseValue": "one"
+        },
+        "2010-03-05": {
+          "amount": 7.09,
+          "baseValue": "one"
+        },
+        "2010-03-12": {
+          "amount": 5.87,
+          "baseValue": "one"
+        },
+        "2010-03-17": {
+          "amount": 5.89,
+          "baseValue": "one"
+        },
+        "2010-03-26": {
+          "amount": 5.62,
+          "baseValue": "one"
+        },
+        "2010-03-31": {
+          "amount": 5.74,
+          "baseValue": "one"
+        },
+        "2010-04-07": {
+          "amount": 6,
+          "baseValue": "one"
+        },
+        "2010-04-13": {
+          "amount": 6.5,
+          "baseValue": "one"
+        },
+        "2010-04-23": {
+          "amount": 7.29,
+          "baseValue": "one"
+        },
+        "2010-04-29": {
+          "amount": 7.65,
+          "baseValue": "one"
+        },
+        "2010-05-04": {
+          "amount": 8,
+          "baseValue": "one"
+        },
+        "2010-05-13": {
+          "amount": 7.62,
+          "baseValue": "one"
+        },
+        "2010-05-21": {
+          "amount": 8.15,
+          "baseValue": "one"
+        },
+        "2010-05-28": {
+          "amount": 8.15,
+          "baseValue": "one"
+        },
+        "2010-06-04": {
+          "amount": 8.08,
+          "baseValue": "one"
+        },
+        "2010-06-11": {
+          "amount": 8.39,
+          "baseValue": "one"
+        },
+        "2010-06-17": {
+          "amount": 8.13,
+          "baseValue": "one"
+        },
+        "2010-06-25": {
+          "amount": 8.07,
+          "baseValue": "one"
+        },
+        "2010-07-02": {
+          "amount": 8.73,
+          "baseValue": "one"
+        },
+        "2010-07-06": {
+          "amount": 7.89,
+          "baseValue": "one"
+        },
+        "2010-07-16": {
+          "amount": 7.75,
+          "baseValue": "one"
+        },
+        "2010-07-19": {
+          "amount": 7.75,
+          "baseValue": "one"
+        },
+        "2010-07-28": {
+          "amount": 7.37,
+          "baseValue": "one"
+        },
+        "2010-08-03": {
+          "amount": 6.99,
+          "baseValue": "one"
+        },
+        "2010-08-12": {
+          "amount": 6.34,
+          "baseValue": "one"
+        },
+        "2010-08-20": {
+          "amount": 6.32,
+          "baseValue": "one"
+        },
+        "2010-08-27": {
+          "amount": 6.71,
+          "baseValue": "one"
+        },
+        "2010-09-03": {
+          "amount": 8.53,
+          "baseValue": "one"
+        },
+        "2010-09-09": {
+          "amount": 10.34,
+          "baseValue": "one"
+        },
+        "2010-09-17": {
+          "amount": 11.2,
+          "baseValue": "one"
+        },
+        "2010-09-24": {
+          "amount": 11.57,
+          "baseValue": "one"
+        },
+        "2010-10-01": {
+          "amount": 14.37,
+          "baseValue": "one"
+        },
+        "2010-10-08": {
+          "amount": 11.75,
+          "baseValue": "one"
+        },
+        "2010-10-15": {
+          "amount": 11.05,
+          "baseValue": "one"
+        },
+        "2010-10-22": {
+          "amount": 9.5,
+          "baseValue": "one"
+        },
+        "2010-10-29": {
+          "amount": 9.57,
+          "baseValue": "one"
+        },
+        "2010-11-04": {
+          "amount": 9.63,
+          "baseValue": "one"
+        },
+        "2010-11-12": {
+          "amount": 9.65,
+          "baseValue": "one"
+        },
+        "2010-11-19": {
+          "amount": 9.62,
+          "baseValue": "one"
+        },
+        "2010-11-26": {
+          "amount": 9.9,
+          "baseValue": "one"
+        },
+        "2010-12-02": {
+          "amount": 9.7,
+          "baseValue": "one"
+        },
+        "2010-12-10": {
+          "amount": 8.5,
+          "baseValue": "one"
+        },
+        "2010-12-16": {
+          "amount": 7.32,
+          "baseValue": "one"
+        },
+        "2010-12-23": {
+          "amount": 6.35,
+          "baseValue": "one"
+        },
+        "2010-12-31": {
+          "amount": 7.1,
+          "baseValue": "one"
+        },
+        "2011-01-07": {
+          "amount": 7.58,
+          "baseValue": "one"
+        },
+        "2011-01-14": {
+          "amount": 7.95,
+          "baseValue": "one"
+        },
+        "2011-01-20": {
+          "amount": 7.33,
+          "baseValue": "one"
+        },
+        "2011-01-24": {
+          "amount": 7.05,
+          "baseValue": "one"
+        },
+        "2011-02-03": {
+          "amount": 8.15,
+          "baseValue": "one"
+        },
+        "2011-02-08": {
+          "amount": 7.75,
+          "baseValue": "one"
+        },
+        "2011-02-17": {
+          "amount": 7.36,
+          "baseValue": "one"
+        },
+        "2011-02-21": {
+          "amount": 7.72,
+          "baseValue": "one"
+        },
+        "2011-02-28": {
+          "amount": 8.1,
+          "baseValue": "one"
+        },
+        "2011-03-14": {
+          "amount": 8.5,
+          "baseValue": "one"
+        },
+        "2011-03-25": {
+          "amount": 6.9,
+          "baseValue": "one"
+        },
+        "2011-03-31": {
+          "amount": 6.39,
+          "baseValue": "one"
+        },
+        "2011-04-05": {
+          "amount": 5.78,
+          "baseValue": "one"
+        },
+        "2011-04-20": {
+          "amount": 6.06,
+          "baseValue": "one"
+        },
+        "2011-04-28": {
+          "amount": 5.48,
+          "baseValue": "one"
+        },
+        "2011-05-04": {
+          "amount": 5.47,
+          "baseValue": "one"
+        },
+        "2011-05-13": {
+          "amount": 5.2,
+          "baseValue": "one"
+        },
+        "2011-06-01": {
+          "amount": 5.03,
+          "baseValue": "one"
+        },
+        "2011-06-10": {
+          "amount": 5.15,
+          "baseValue": "one"
+        },
+        "2011-06-17": {
+          "amount": 5.06,
+          "baseValue": "one"
+        },
+        "2011-06-23": {
+          "amount": 5.25,
+          "baseValue": "one"
+        },
+        "2011-06-27": {
+          "amount": 5.51,
+          "baseValue": "one"
+        },
+        "2011-07-07": {
+          "amount": 6.03,
+          "baseValue": "one"
+        },
+        "2011-07-14": {
+          "amount": 6,
+          "baseValue": "one"
+        },
+        "2011-07-18": {
+          "amount": 5.71,
+          "baseValue": "one"
+        },
+        "2011-07-29": {
+          "amount": 5.98,
+          "baseValue": "one"
+        },
+        "2011-08-03": {
+          "amount": 5.95,
+          "baseValue": "one"
+        },
+        "2011-08-12": {
+          "amount": 6.3,
+          "baseValue": "one"
+        },
+        "2011-08-17": {
+          "amount": 6.03,
+          "baseValue": "one"
+        },
+        "2011-08-24": {
+          "amount": 5.75,
+          "baseValue": "one"
+        },
+        "2011-09-09": {
+          "amount": 6.33,
+          "baseValue": "one"
+        },
+        "2011-09-16": {
+          "amount": 6.02,
+          "baseValue": "one"
+        },
+        "2011-09-29": {
+          "amount": 6,
+          "baseValue": "one"
+        },
+        "2011-10-13": {
+          "amount": 5.71,
+          "baseValue": "one"
+        },
+        "2011-10-20": {
+          "amount": 5.72,
+          "baseValue": "one"
+        },
+        "2011-10-28": {
+          "amount": 5.53,
+          "baseValue": "one"
+        },
+        "2011-11-11": {
+          "amount": 5.8,
+          "baseValue": "one"
+        },
+        "2011-11-18": {
+          "amount": 5.8,
+          "baseValue": "one"
+        },
+        "2011-12-07": {
+          "amount": 5.61,
+          "baseValue": "one"
+        },
+        "2011-12-15": {
+          "amount": 5.6,
+          "baseValue": "one"
+        },
+        "2011-12-23": {
+          "amount": 6.3,
+          "baseValue": "one"
+        },
+        "2011-12-30": {
+          "amount": 6.05,
+          "baseValue": "one"
+        },
+        "2012-01-16": {
+          "amount": 6.3,
+          "baseValue": "one"
+        },
+        "2012-01-30": {
+          "amount": 6,
+          "baseValue": "one"
+        },
+        "2012-02-08": {
+          "amount": 6,
+          "baseValue": "one"
+        },
+        "2012-02-17": {
+          "amount": 6.28,
+          "baseValue": "one"
+        },
+        "2012-02-24": {
+          "amount": 6.25,
+          "baseValue": "one"
+        },
+        "2012-03-02": {
+          "amount": 5.63,
+          "baseValue": "one"
+        },
+        "2012-03-09": {
+          "amount": 5.62,
+          "baseValue": "one"
+        },
+        "2012-03-16": {
+          "amount": 4.83,
+          "baseValue": "one"
+        },
+        "2012-03-23": {
+          "amount": 4.17,
+          "baseValue": "one"
+        },
+        "2012-03-27": {
+          "amount": 3.98,
+          "baseValue": "one"
+        },
+        "2012-04-13": {
+          "amount": 4.37,
+          "baseValue": "one"
+        },
+        "2012-04-20": {
+          "amount": 5.55,
+          "baseValue": "one"
+        },
+        "2012-04-27": {
+          "amount": 5.47,
+          "baseValue": "one"
+        },
+        "2012-05-03": {
+          "amount": 5.77,
+          "baseValue": "one"
+        },
+        "2012-05-10": {
+          "amount": 6.3,
+          "baseValue": "one"
+        },
+        "2012-05-18": {
+          "amount": 6.6,
+          "baseValue": "one"
+        },
+        "2012-05-23": {
+          "amount": 7.24,
+          "baseValue": "one"
+        },
+        "2012-07-06": {
+          "amount": 6.88,
+          "baseValue": "one"
+        },
+        "2012-07-13": {
+          "amount": 5.34,
+          "baseValue": "one"
+        },
+        "2012-07-20": {
+          "amount": 4.28,
+          "baseValue": "one"
+        },
+        "2012-07-26": {
+          "amount": 4.5,
+          "baseValue": "one"
+        },
+        "2012-07-30": {
+          "amount": 4.28,
+          "baseValue": "one"
+        },
+        "2012-08-17": {
+          "amount": 4.4,
+          "baseValue": "one"
+        },
+        "2012-10-11": {
+          "amount": 4.19,
+          "baseValue": "one"
+        },
+        "2012-10-17": {
+          "amount": 4.35,
+          "baseValue": "one"
+        },
+        "2012-10-22": {
+          "amount": 4.35,
+          "baseValue": "one"
+        },
+        "2012-10-29": {
+          "amount": 4.14,
+          "baseValue": "one"
+        },
+        "2012-11-08": {
+          "amount": 4,
+          "baseValue": "one"
+        },
+        "2012-11-16": {
+          "amount": 4,
+          "baseValue": "one"
+        },
+        "2012-11-29": {
+          "amount": 3.81,
+          "baseValue": "one"
+        },
+        "2012-12-07": {
+          "amount": 3.45,
+          "baseValue": "one"
+        },
+        "2013-01-03": {
+          "amount": 3.6,
+          "baseValue": "one"
+        },
+        "2013-01-11": {
+          "amount": 3.1,
+          "baseValue": "one"
+        },
+        "2013-01-18": {
+          "amount": 2.81,
+          "baseValue": "one"
+        },
+        "2013-01-22": {
+          "amount": 3,
+          "baseValue": "one"
+        },
+        "2013-01-31": {
+          "amount": 3.01,
+          "baseValue": "one"
+        },
+        "2013-02-06": {
+          "amount": 2.86,
+          "baseValue": "one"
+        },
+        "2013-02-13": {
+          "amount": 3,
+          "baseValue": "one"
+        },
+        "2013-02-21": {
+          "amount": 2.8,
+          "baseValue": "one"
+        },
+        "2013-03-01": {
+          "amount": 2.4,
+          "baseValue": "one"
+        },
+        "2013-03-15": {
+          "amount": 2.43,
+          "baseValue": "one"
+        },
+        "2013-03-19": {
+          "amount": 2.31,
+          "baseValue": "one"
+        },
+        "2013-04-17": {
+          "amount": 2.2,
+          "baseValue": "one"
+        },
+        "2013-04-25": {
+          "amount": 2.25,
+          "baseValue": "one"
+        },
+        "2013-05-10": {
+          "amount": 2.16,
+          "baseValue": "one"
+        },
+        "2013-07-10": {
+          "amount": 2.16,
+          "baseValue": "one"
+        },
+        "2013-09-27": {
+          "amount": 2.26,
+          "baseValue": "one"
+        },
+        "2013-10-24": {
+          "amount": 2.37,
+          "baseValue": "one"
+        },
+        "2013-11-08": {
+          "amount": 2.05,
+          "baseValue": "one"
+        },
+        "2013-12-13": {
+          "amount": 1.95,
+          "baseValue": "one"
+        },
+        "2013-12-31": {
+          "amount": 1.95,
+          "baseValue": "one"
+        },
+        "2014-04-04": {
+          "amount": 1.86,
+          "baseValue": "one"
+        },
+        "2014-04-30": {
+          "amount": 1.95,
+          "baseValue": "one"
+        },
+        "2014-05-15": {
+          "amount": 1.77,
+          "baseValue": "one"
+        },
+        "2014-05-23": {
+          "amount": 1.76,
+          "baseValue": "one"
+        },
+        "2014-05-30": {
+          "amount": 1.86,
+          "baseValue": "one"
+        },
+        "2014-06-06": {
+          "amount": 2.35,
+          "baseValue": "one"
+        },
+        "2014-06-13": {
+          "amount": 2.97,
+          "baseValue": "one"
+        },
+        "2014-06-20": {
+          "amount": 3.53,
+          "baseValue": "one"
+        },
+        "2014-06-27": {
+          "amount": 3.88,
+          "baseValue": "one"
+        },
+        "2014-07-04": {
+          "amount": 4.18,
+          "baseValue": "one"
+        },
+        "2014-07-11": {
+          "amount": 4.11,
+          "baseValue": "one"
+        },
+        "2014-07-16": {
+          "amount": 4.03,
+          "baseValue": "one"
+        },
+        "2014-07-23": {
+          "amount": 3.95,
+          "baseValue": "one"
+        },
+        "2014-08-08": {
+          "amount": 4.2,
+          "baseValue": "one"
+        },
+        "2014-08-14": {
+          "amount": 3.73,
+          "baseValue": "one"
+        },
+        "2014-09-04": {
+          "amount": 3.55,
+          "baseValue": "one"
+        },
+        "2014-09-12": {
+          "amount": 3,
+          "baseValue": "one"
+        },
+        "2014-09-18": {
+          "amount": 3.4,
+          "baseValue": "one"
+        },
+        "2014-09-26": {
+          "amount": 2.78,
+          "baseValue": "one"
+        },
+        "2014-10-01": {
+          "amount": 2.4,
+          "baseValue": "one"
+        },
+        "2014-10-09": {
+          "amount": 2.07,
+          "baseValue": "one"
+        },
+        "2014-10-17": {
+          "amount": 2.27,
+          "baseValue": "one"
+        },
+        "2014-10-23": {
+          "amount": 2.48,
+          "baseValue": "one"
+        },
+        "2014-10-31": {
+          "amount": 2.75,
+          "baseValue": "one"
+        },
+        "2014-11-07": {
+          "amount": 3.1,
+          "baseValue": "one"
+        },
+        "2014-11-14": {
+          "amount": 3.15,
+          "baseValue": "one"
+        },
+        "2014-11-18": {
+          "amount": 3.14,
+          "baseValue": "one"
+        },
+        "2014-11-28": {
+          "amount": 2.99,
+          "baseValue": "one"
+        },
+        "2014-12-12": {
+          "amount": 2.34,
+          "baseValue": "one"
+        },
+        "2014-12-17": {
+          "amount": 2.02,
+          "baseValue": "one"
+        },
+        "2014-12-26": {
+          "amount": 2.11,
+          "baseValue": "one"
+        },
+        "2015-01-02": {
+          "amount": 2.21,
+          "baseValue": "one"
+        },
+        "2015-01-09": {
+          "amount": 2.55,
+          "baseValue": "one"
+        },
+        "2015-01-16": {
+          "amount": 2.66,
+          "baseValue": "one"
+        },
+        "2015-01-23": {
+          "amount": 2.65,
+          "baseValue": "one"
+        },
+        "2015-01-30": {
+          "amount": 3.2,
+          "baseValue": "one"
+        },
+        "2015-02-13": {
+          "amount": 3.13,
+          "baseValue": "one"
+        },
+        "2015-02-19": {
+          "amount": 3.12,
+          "baseValue": "one"
+        },
+        "2015-03-02": {
+          "amount": 2.97,
+          "baseValue": "one"
+        },
+        "2015-03-13": {
+          "amount": 2.97,
+          "baseValue": "one"
+        },
+        "2015-03-19": {
+          "amount": 2.95,
+          "baseValue": "one"
+        },
+        "2015-03-24": {
+          "amount": 2.95,
+          "baseValue": "one"
+        },
+        "2015-04-01": {
+          "amount": 3.08,
+          "baseValue": "one"
+        },
+        "2015-04-09": {
+          "amount": 3.67,
+          "baseValue": "one"
+        },
+        "2015-04-17": {
+          "amount": 3.85,
+          "baseValue": "one"
+        },
+        "2015-04-23": {
+          "amount": 4.04,
+          "baseValue": "one"
+        },
+        "2015-04-29": {
+          "amount": 3.84,
+          "baseValue": "one"
+        },
+        "2015-05-08": {
+          "amount": 4.03,
+          "baseValue": "one"
+        },
+        "2015-06-05": {
+          "amount": 4.85,
+          "baseValue": "one"
+        },
+        "2015-06-12": {
+          "amount": 5.01,
+          "baseValue": "one"
+        },
+        "2015-06-18": {
+          "amount": 4.75,
+          "baseValue": "one"
+        },
+        "2015-06-26": {
+          "amount": 4.98,
+          "baseValue": "one"
+        },
+        "2015-07-03": {
+          "amount": 4.97,
+          "baseValue": "one"
+        },
+        "2015-07-10": {
+          "amount": 4.37,
+          "baseValue": "one"
+        },
+        "2015-07-17": {
+          "amount": 4.35,
+          "baseValue": "one"
+        },
+        "2015-07-24": {
+          "amount": 5.5,
+          "baseValue": "one"
+        },
+        "2015-07-31": {
+          "amount": 4.67,
+          "baseValue": "one"
+        },
+        "2015-08-07": {
+          "amount": 4.41,
+          "baseValue": "one"
+        },
+        "2015-08-12": {
+          "amount": 4.55,
+          "baseValue": "one"
+        },
+        "2015-08-21": {
+          "amount": 3.97,
+          "baseValue": "one"
+        },
+        "2015-08-27": {
+          "amount": 3.25,
+          "baseValue": "one"
+        },
+        "2015-09-01": {
+          "amount": 3.15,
+          "baseValue": "one"
+        },
+        "2015-09-11": {
+          "amount": 2.95,
+          "baseValue": "one"
+        },
+        "2015-09-24": {
+          "amount": 3.57,
+          "baseValue": "one"
+        },
+        "2015-10-01": {
+          "amount": 4.31,
+          "baseValue": "one"
+        },
+        "2015-10-07": {
+          "amount": 4.51,
+          "baseValue": "one"
+        },
+        "2015-10-16": {
+          "amount": 4.47,
+          "baseValue": "one"
+        },
+        "2015-10-23": {
+          "amount": 4.68,
+          "baseValue": "one"
+        },
+        "2015-10-30": {
+          "amount": 5.08,
+          "baseValue": "one"
+        },
+        "2015-11-06": {
+          "amount": 5.26,
+          "baseValue": "one"
+        },
+        "2015-11-13": {
+          "amount": 6.05,
+          "baseValue": "one"
+        },
+        "2015-11-20": {
+          "amount": 5.75,
+          "baseValue": "one"
+        },
+        "2015-11-27": {
+          "amount": 5.96,
+          "baseValue": "one"
+        },
+        "2015-12-04": {
+          "amount": 5.9,
+          "baseValue": "one"
+        },
+        "2015-12-11": {
+          "amount": 6.3,
+          "baseValue": "one"
+        },
+        "2015-12-18": {
+          "amount": 6.48,
+          "baseValue": "one"
+        },
+        "2015-12-24": {
+          "amount": 6.52,
+          "baseValue": "one"
+        },
+        "2016-01-01": {
+          "amount": 6.59,
+          "baseValue": "one"
+        },
+        "2016-01-07": {
+          "amount": 6.18,
+          "baseValue": "one"
+        },
+        "2016-01-15": {
+          "amount": 6.04,
+          "baseValue": "one"
+        },
+        "2016-01-18": {
+          "amount": 5.8,
+          "baseValue": "one"
+        },
+        "2016-01-27": {
+          "amount": 5.8,
+          "baseValue": "one"
+        },
+        "2016-02-05": {
+          "amount": 6.7,
+          "baseValue": "one"
+        },
+        "2016-02-12": {
+          "amount": 6.8,
+          "baseValue": "one"
+        },
+        "2016-02-19": {
+          "amount": 6.33,
+          "baseValue": "one"
+        },
+        "2016-02-26": {
+          "amount": 6.96,
+          "baseValue": "one"
+        },
+        "2016-03-04": {
+          "amount": 7.6,
+          "baseValue": "one"
+        },
+        "2016-03-11": {
+          "amount": 6.5,
+          "baseValue": "one"
+        },
+        "2016-03-16": {
+          "amount": 5.71,
+          "baseValue": "one"
+        },
+        "2016-03-23": {
+          "amount": 6.58,
+          "baseValue": "one"
+        },
+        "2016-04-01": {
+          "amount": 7.4,
+          "baseValue": "one"
+        },
+        "2016-04-08": {
+          "amount": 7.02,
+          "baseValue": "one"
+        },
+        "2016-04-11": {
+          "amount": 7.02,
+          "baseValue": "one"
+        },
+        "2016-04-21": {
+          "amount": 6.89,
+          "baseValue": "one"
+        },
+        "2016-04-26": {
+          "amount": 6.55,
+          "baseValue": "one"
+        },
+        "2016-05-06": {
+          "amount": 5.8,
+          "baseValue": "one"
+        },
+        "2016-05-13": {
+          "amount": 6.7,
+          "baseValue": "one"
+        },
+        "2016-05-19": {
+          "amount": 5.76,
+          "baseValue": "one"
+        },
+        "2016-05-30": {
+          "amount": 6,
+          "baseValue": "one"
+        },
+        "2016-06-10": {
+          "amount": 4.9,
+          "baseValue": "one"
+        },
+        "2016-06-13": {
+          "amount": 4.66,
+          "baseValue": "one"
+        },
+        "2016-06-21": {
+          "amount": 4.43,
+          "baseValue": "one"
+        },
+        "2016-06-28": {
+          "amount": 4.2,
+          "baseValue": "one"
+        },
+        "2016-07-15": {
+          "amount": 4.5,
+          "baseValue": "one"
+        },
+        "2016-07-21": {
+          "amount": 4.72,
+          "baseValue": "one"
+        },
+        "2016-07-29": {
+          "amount": 4.73,
+          "baseValue": "one"
+        },
+        "2016-08-05": {
+          "amount": 5.67,
+          "baseValue": "one"
+        },
+        "2016-08-12": {
+          "amount": 5.85,
+          "baseValue": "one"
+        },
+        "2016-08-19": {
+          "amount": 6.45,
+          "baseValue": "one"
+        },
+        "2016-08-26": {
+          "amount": 6.9,
+          "baseValue": "one"
+        },
+        "2016-09-02": {
+          "amount": 7.58,
+          "baseValue": "one"
+        },
+        "2016-09-09": {
+          "amount": 7.6,
+          "baseValue": "one"
+        },
+        "2016-09-16": {
+          "amount": 7.6,
+          "baseValue": "one"
+        },
+        "2016-09-23": {
+          "amount": 7.6,
+          "baseValue": "one"
+        },
+        "2016-09-29": {
+          "amount": 7.6,
+          "baseValue": "one"
+        },
+        "2016-10-07": {
+          "amount": 9.12,
+          "baseValue": "one"
+        },
+        "2016-10-14": {
+          "amount": 9.88,
+          "baseValue": "one"
+        },
+        "2016-10-21": {
+          "amount": 9.88,
+          "baseValue": "one"
+        },
+        "2016-11-04": {
+          "amount": 11.85,
+          "baseValue": "one"
+        },
+        "2016-11-11": {
+          "amount": 12.84,
+          "baseValue": "one"
+        },
+        "2016-11-18": {
+          "amount": 11.65,
+          "baseValue": "one"
+        },
+        "2016-11-25": {
+          "amount": 9.9,
+          "baseValue": "one"
+        },
+        "2016-12-02": {
+          "amount": 8.25,
+          "baseValue": "one"
+        },
+        "2016-12-09": {
+          "amount": 8.6,
+          "baseValue": "one"
+        },
+        "2016-12-16": {
+          "amount": 10.25,
+          "baseValue": "one"
+        },
+        "2016-12-23": {
+          "amount": 11,
+          "baseValue": "one"
+        },
+        "2016-12-30": {
+          "amount": 11.04,
+          "baseValue": "one"
+        },
+        "2017-01-06": {
+          "amount": 12.25,
+          "baseValue": "one"
+        },
+        "2017-01-13": {
+          "amount": 12.11,
+          "baseValue": "one"
+        },
+        "2017-01-20": {
+          "amount": 12.69,
+          "baseValue": "one"
+        },
+        "2017-01-24": {
+          "amount": 12.91,
+          "baseValue": "one"
+        },
+        "2017-02-03": {
+          "amount": 12.4,
+          "baseValue": "one"
+        },
+        "2017-02-10": {
+          "amount": 11.74,
+          "baseValue": "one"
+        },
+        "2017-02-16": {
+          "amount": 11.5,
+          "baseValue": "one"
+        },
+        "2017-02-23": {
+          "amount": 11.4,
+          "baseValue": "one"
+        },
+        "2017-03-02": {
+          "amount": 11.27,
+          "baseValue": "one"
+        },
+        "2017-03-10": {
+          "amount": 11.75,
+          "baseValue": "one"
+        },
+        "2017-03-16": {
+          "amount": 11.74,
+          "baseValue": "one"
+        },
+        "2017-03-24": {
+          "amount": 10.93,
+          "baseValue": "one"
+        },
+        "2017-03-31": {
+          "amount": 10.39,
+          "baseValue": "one"
+        },
+        "2017-04-07": {
+          "amount": 9.38,
+          "baseValue": "one"
+        },
+        "2017-04-13": {
+          "amount": 8.9,
+          "baseValue": "one"
+        },
+        "2017-04-21": {
+          "amount": 10,
+          "baseValue": "one"
+        },
+        "2017-04-28": {
+          "amount": 11,
+          "baseValue": "one"
+        },
+        "2017-05-05": {
+          "amount": 11.95,
+          "baseValue": "one"
+        },
+        "2017-05-11": {
+          "amount": 11.88,
+          "baseValue": "one"
+        },
+        "2017-06-02": {
+          "amount": 10.73,
+          "baseValue": "one"
+        },
+        "2017-06-06": {
+          "amount": 10.25,
+          "baseValue": "one"
+        },
+        "2017-06-16": {
+          "amount": 8.93,
+          "baseValue": "one"
+        },
+        "2017-06-20": {
+          "amount": 9.37,
+          "baseValue": "one"
+        },
+        "2017-06-28": {
+          "amount": 9.64,
+          "baseValue": "one"
+        },
+        "2017-07-04": {
+          "amount": 10.58,
+          "baseValue": "one"
+        },
+        "2017-07-14": {
+          "amount": 9.56,
+          "baseValue": "one"
+        },
+        "2017-07-21": {
+          "amount": 8.21,
+          "baseValue": "one"
+        },
+        "2017-07-27": {
+          "amount": 8.82,
+          "baseValue": "one"
+        },
+        "2017-08-18": {
+          "amount": 9.21,
+          "baseValue": "one"
+        },
+        "2017-08-31": {
+          "amount": 8.75,
+          "baseValue": "one"
+        },
+        "2017-09-14": {
+          "amount": 8.32,
+          "baseValue": "one"
+        },
+        "2017-09-22": {
+          "amount": 8.32,
+          "baseValue": "one"
+        },
+        "2017-09-29": {
+          "amount": 7.91,
+          "baseValue": "one"
+        },
+        "2017-10-06": {
+          "amount": 7.48,
+          "baseValue": "one"
+        },
+        "2017-10-13": {
+          "amount": 5.86,
+          "baseValue": "one"
+        },
+        "2017-10-17": {
+          "amount": 5.95,
+          "baseValue": "one"
+        },
+        "2017-10-25": {
+          "amount": 5.66,
+          "baseValue": "one"
+        },
+        "2017-10-31": {
+          "amount": 5.38,
+          "baseValue": "one"
+        },
+        "2017-11-06": {
+          "amount": 5.12,
+          "baseValue": "one"
+        },
+        "2017-11-17": {
+          "amount": 4.87,
+          "baseValue": "one"
+        },
+        "2017-11-24": {
+          "amount": 4.63,
+          "baseValue": "one"
+        },
+        "2017-12-08": {
+          "amount": 4.4,
+          "baseValue": "one"
+        },
+        "2017-12-22": {
+          "amount": 4.4,
+          "baseValue": "one"
+        },
+        "2017-12-28": {
+          "amount": 4.42,
+          "baseValue": "one"
+        },
+        "2018-01-05": {
+          "amount": 4.42,
+          "baseValue": "one"
+        },
+        "2018-01-12": {
+          "amount": 4.64,
+          "baseValue": "one"
+        },
+        "2018-01-19": {
+          "amount": 5.9,
+          "baseValue": "one"
+        },
+        "2018-01-25": {
+          "amount": 7.15,
+          "baseValue": "one"
+        },
+        "2018-02-02": {
+          "amount": 7.96,
+          "baseValue": "one"
+        },
+        "2018-02-05": {
+          "amount": 7.96,
+          "baseValue": "one"
+        },
+        "2018-02-12": {
+          "amount": 8.11,
+          "baseValue": "one"
+        },
+        "2018-02-20": {
+          "amount": 7.95,
+          "baseValue": "one"
+        },
+        "2018-02-26": {
+          "amount": 7.8,
+          "baseValue": "one"
+        },
+        "2018-03-12": {
+          "amount": 7.65,
+          "baseValue": "one"
+        },
+        "2018-03-19": {
+          "amount": 7.5,
+          "baseValue": "one"
+        },
+        "2018-03-26": {
+          "amount": 7.35,
+          "baseValue": "one"
+        },
+        "2018-04-02": {
+          "amount": 7.21,
+          "baseValue": "one"
+        },
+        "2018-04-20": {
+          "amount": 6.5,
+          "baseValue": "one"
+        },
+        "2018-04-25": {
+          "amount": 6.7,
+          "baseValue": "one"
+        },
+        "2018-07-23": {
+          "amount": 6.5,
+          "baseValue": "one"
+        },
+        "2018-07-30": {
+          "amount": 6.18,
+          "baseValue": "one"
+        },
+        "2018-09-03": {
+          "amount": 5.88,
+          "baseValue": "one"
+        },
+        "2018-09-17": {
+          "amount": 5.59,
+          "baseValue": "one"
+        },
+        "2019-11-29": {
+          "amount": 11.64,
+          "baseValue": "one"
+        },
+        "2019-12-06": {
+          "amount": 10.41,
+          "baseValue": "one"
+        },
+        "2019-12-13": {
+          "amount": 8.5,
+          "baseValue": "one"
+        },
+        "2019-12-16": {
+          "amount": 8.08,
+          "baseValue": "one"
+        },
+        "2019-12-27": {
+          "amount": 7.68,
+          "baseValue": "one"
+        },
+        "2020-01-03": {
+          "amount": 5.96,
+          "baseValue": "one"
+        },
+        "2020-01-09": {
+          "amount": 5.35,
+          "baseValue": "one"
+        },
+        "2020-01-14": {
+          "amount": 5.09,
+          "baseValue": "one"
+        },
+        "2020-01-24": {
+          "amount": 5.04,
+          "baseValue": "one"
+        },
+        "2020-01-28": {
+          "amount": 4.79,
+          "baseValue": "one"
+        },
+        "2020-02-07": {
+          "amount": 4.13,
+          "baseValue": "one"
+        },
+        "2020-02-14": {
+          "amount": 3.74,
+          "baseValue": "one"
+        },
+        "2020-02-17": {
+          "amount": 3.92,
+          "baseValue": "one"
+        },
+        "2020-02-28": {
+          "amount": 3.55,
+          "baseValue": "one"
+        },
+        "2020-03-06": {
+          "amount": 3.38,
+          "baseValue": "one"
+        },
+        "2020-03-09": {
+          "amount": 3.38,
+          "baseValue": "one"
+        },
+        "2020-03-16": {
+          "amount": 3.54,
+          "baseValue": "one"
+        },
+        "2020-04-03": {
+          "amount": 3.54,
+          "baseValue": "one"
+        },
+        "2020-04-08": {
+          "amount": 3.71,
+          "baseValue": "one"
+        },
+        "2020-04-17": {
+          "amount": 3.71,
+          "baseValue": "one"
+        },
+        "2020-04-22": {
+          "amount": 3.71,
+          "baseValue": "one"
+        },
+        "2020-07-03": {
+          "amount": 3.71,
+          "baseValue": "one"
+        },
+        "2020-08-07": {
+          "amount": 3.71,
+          "baseValue": "one"
+        },
+        "2020-08-10": {
+          "amount": 3.71,
+          "baseValue": "one"
+        },
+        "2020-08-17": {
+          "amount": 3.6,
+          "baseValue": "one"
+        },
+        "2020-08-28": {
+          "amount": 3.17,
+          "baseValue": "one"
+        },
+        "2020-09-04": {
+          "amount": 2.61,
+          "baseValue": "one"
+        },
+        "2020-09-11": {
+          "amount": 2.05,
+          "baseValue": "one"
+        },
+        "2020-09-17": {
+          "amount": 1.8,
+          "baseValue": "one"
+        },
+        "2020-09-25": {
+          "amount": 1.68,
+          "baseValue": "one"
+        },
+        "2020-10-01": {
+          "amount": 1.74,
+          "baseValue": "one"
+        },
+        "2020-10-09": {
+          "amount": 1.74,
+          "baseValue": "one"
+        },
+        "2020-10-15": {
+          "amount": 1.77,
+          "baseValue": "one"
+        },
+        "2020-10-23": {
+          "amount": 1.74,
+          "baseValue": "one"
+        },
+        "2020-10-29": {
+          "amount": 1.68,
+          "baseValue": "one"
+        },
+        "2020-11-06": {
+          "amount": 1.59,
+          "baseValue": "one"
+        },
+        "2020-11-14": {
+          "amount": 1.56,
+          "baseValue": "one"
+        },
+        "2020-11-20": {
+          "amount": 1.56,
+          "baseValue": "one"
+        },
+        "2020-11-25": {
+          "amount": 1.62,
+          "baseValue": "one"
+        },
+        "2020-12-04": {
+          "amount": 1.68,
+          "baseValue": "one"
+        },
+        "2020-12-11": {
+          "amount": 1.76,
+          "baseValue": "one"
+        },
+        "2020-12-18": {
+          "amount": 2.12,
+          "baseValue": "one"
+        },
+        "2020-12-24": {
+          "amount": 2.56,
+          "baseValue": "one"
+        },
+        "2021-01-01": {
+          "amount": 3.05,
+          "baseValue": "one"
+        },
+        "2021-01-08": {
+          "amount": 3.22,
+          "baseValue": "one"
+        },
+        "2021-01-15": {
+          "amount": 3.52,
+          "baseValue": "one"
+        },
+        "2021-01-22": {
+          "amount": 3.77,
+          "baseValue": "one"
+        },
+        "2021-01-29": {
+          "amount": 4.05,
+          "baseValue": "one"
+        },
+        "2021-02-05": {
+          "amount": 4.58,
+          "baseValue": "one"
+        },
+        "2021-02-11": {
+          "amount": 5.25,
+          "baseValue": "one"
+        },
+        "2021-02-16": {
+          "amount": 5.51,
+          "baseValue": "one"
+        },
+        "2021-02-26": {
+          "amount": 4.51,
+          "baseValue": "one"
+        },
+        "2021-03-04": {
+          "amount": 3.88,
+          "baseValue": "one"
+        },
+        "2021-03-12": {
+          "amount": 3.69,
+          "baseValue": "one"
+        },
+        "2021-03-19": {
+          "amount": 3.03,
+          "baseValue": "one"
+        },
+        "2021-03-25": {
+          "amount": 2.48,
+          "baseValue": "one"
+        },
+        "2021-04-01": {
+          "amount": 2.25,
+          "baseValue": "one"
+        },
+        "2021-04-06": {
+          "amount": 2.47,
+          "baseValue": "one"
+        },
+        "2021-04-16": {
+          "amount": 2.24,
+          "baseValue": "one"
+        },
+        "2021-04-22": {
+          "amount": 2.35,
+          "baseValue": "one"
+        },
+        "2021-04-30": {
+          "amount": 2.13,
+          "baseValue": "one"
+        },
+        "2021-05-06": {
+          "amount": 2.05,
+          "baseValue": "one"
+        },
+        "2021-05-10": {
+          "amount": 1.95,
+          "baseValue": "one"
+        },
+        "2021-05-28": {
+          "amount": 2.24,
+          "baseValue": "one"
+        },
+        "2021-06-04": {
+          "amount": 2.46,
+          "baseValue": "one"
+        },
+        "2021-06-17": {
+          "amount": 2.7,
+          "baseValue": "one"
+        },
+        "2021-06-25": {
+          "amount": 2.66,
+          "baseValue": "one"
+        },
+        "2021-07-01": {
+          "amount": 2.96,
+          "baseValue": "one"
+        },
+        "2021-07-08": {
+          "amount": 3.1,
+          "baseValue": "one"
+        },
+        "2021-07-16": {
+          "amount": 2.95,
+          "baseValue": "one"
+        },
+        "2021-07-23": {
+          "amount": 3.24,
+          "baseValue": "one"
+        },
+        "2021-07-30": {
+          "amount": 3.42,
+          "baseValue": "one"
+        },
+        "2021-08-05": {
+          "amount": 3.82,
+          "baseValue": "one"
+        },
+        "2021-08-13": {
+          "amount": 3.62,
+          "baseValue": "one"
+        },
+        "2021-08-20": {
+          "amount": 3.54,
+          "baseValue": "one"
+        },
+        "2021-08-26": {
+          "amount": 3.36,
+          "baseValue": "one"
+        },
+        "2021-09-03": {
+          "amount": 3.19,
+          "baseValue": "one"
+        },
+        "2021-09-08": {
+          "amount": 3.04,
+          "baseValue": "one"
+        },
+        "2021-09-17": {
+          "amount": 3.19,
+          "baseValue": "one"
+        },
+        "2021-09-20": {
+          "amount": 3.25,
+          "baseValue": "one"
+        },
+        "2021-10-01": {
+          "amount": 3.41,
+          "baseValue": "one"
+        },
+        "2021-10-06": {
+          "amount": 3.08,
+          "baseValue": "one"
+        },
+        "2021-10-14": {
+          "amount": 3,
+          "baseValue": "one"
+        },
+        "2021-10-21": {
+          "amount": 2.81,
+          "baseValue": "one"
+        },
+        "2021-10-28": {
+          "amount": 2.76,
+          "baseValue": "one"
+        },
+        "2021-11-03": {
+          "amount": 2.89,
+          "baseValue": "one"
+        },
+        "2021-11-18": {
+          "amount": 2.88,
+          "baseValue": "one"
+        },
+        "2021-11-25": {
+          "amount": 3.32,
+          "baseValue": "one"
+        },
+        "2021-12-03": {
+          "amount": 3.65,
+          "baseValue": "one"
+        },
+        "2021-12-09": {
+          "amount": 4.43,
+          "baseValue": "one"
+        },
+        "2021-12-17": {
+          "amount": 5.62,
+          "baseValue": "one"
+        },
+        "2021-12-24": {
+          "amount": 7.15,
+          "baseValue": "one"
+        },
+        "2021-12-31": {
+          "amount": 6.78,
+          "baseValue": "one"
+        },
+        "2022-01-07": {
+          "amount": 8.03,
+          "baseValue": "one"
+        },
+        "2022-01-10": {
+          "amount": 7.63,
+          "baseValue": "one"
+        },
+        "2022-01-17": {
+          "amount": 7.25,
+          "baseValue": "one"
+        },
+        "2022-01-31": {
+          "amount": 6.89,
+          "baseValue": "one"
+        },
+        "2022-02-07": {
+          "amount": 6.55,
+          "baseValue": "one"
+        },
+        "2022-02-18": {
+          "amount": 6.55,
+          "baseValue": "one"
+        },
+        "2022-02-24": {
+          "amount": 5.63,
+          "baseValue": "one"
+        },
+        "2022-03-04": {
+          "amount": 4.84,
+          "baseValue": "one"
+        },
+        "2022-03-11": {
+          "amount": 4.16,
+          "baseValue": "one"
+        },
+        "2022-03-17": {
+          "amount": 3.96,
+          "baseValue": "one"
+        },
+        "2022-03-24": {
+          "amount": 4.35,
+          "baseValue": "one"
+        },
+        "2022-04-01": {
+          "amount": 5.46,
+          "baseValue": "one"
+        },
+        "2022-04-08": {
+          "amount": 6.03,
+          "baseValue": "one"
+        },
+        "2022-04-13": {
+          "amount": 6.8,
+          "baseValue": "one"
+        },
+        "2022-04-22": {
+          "amount": 6.85,
+          "baseValue": "one"
+        },
+        "2022-04-29": {
+          "amount": 6.89,
+          "baseValue": "one"
+        },
+        "2022-05-06": {
+          "amount": 6.55,
+          "baseValue": "one"
+        },
+        "2022-05-13": {
+          "amount": 7.03,
+          "baseValue": "one"
+        },
+        "2022-05-20": {
+          "amount": 7.03,
+          "baseValue": "one"
+        },
+        "2022-06-17": {
+          "amount": 6.9,
+          "baseValue": "one"
+        },
+        "2022-06-24": {
+          "amount": 6.9,
+          "baseValue": "one"
+        },
+        "2022-07-01": {
+          "amount": 5.93,
+          "baseValue": "one"
+        },
+        "2022-07-08": {
+          "amount": 4.85,
+          "baseValue": "one"
+        },
+        "2022-07-12": {
+          "amount": 4.9,
+          "baseValue": "one"
+        },
+        "2022-07-21": {
+          "amount": 4.66,
+          "baseValue": "one"
+        },
+        "2022-07-29": {
+          "amount": 4.5,
+          "baseValue": "one"
+        },
+        "2022-08-05": {
+          "amount": 5.2,
+          "baseValue": "one"
+        },
+        "2022-08-12": {
+          "amount": 6.19,
+          "baseValue": "one"
+        },
+        "2022-08-19": {
+          "amount": 6.79,
+          "baseValue": "one"
+        },
+        "2022-08-26": {
+          "amount": 7.36,
+          "baseValue": "one"
+        },
+        "2022-09-01": {
+          "amount": 7.25,
+          "baseValue": "one"
+        },
+        "2022-09-09": {
+          "amount": 6.8,
+          "baseValue": "one"
+        },
+        "2022-09-14": {
+          "amount": 6.8,
+          "baseValue": "one"
+        },
+        "2022-09-23": {
+          "amount": 6.16,
+          "baseValue": "one"
+        },
+        "2022-09-30": {
+          "amount": 5.86,
+          "baseValue": "one"
+        },
+        "2022-10-06": {
+          "amount": 5.85,
+          "baseValue": "one"
+        },
+        "2022-10-14": {
+          "amount": 7.44,
+          "baseValue": "one"
+        },
+        "2022-10-17": {
+          "amount": 7.44,
+          "baseValue": "one"
+        },
+        "2022-10-28": {
+          "amount": 6.72,
+          "baseValue": "one"
+        },
+        "2022-11-03": {
+          "amount": 6.08,
+          "baseValue": "one"
+        },
+        "2022-12-02": {
+          "amount": 6.08,
+          "baseValue": "one"
+        },
+        "2022-12-07": {
+          "amount": 5.5,
+          "baseValue": "one"
+        },
+        "2022-12-21": {
+          "amount": 4.97,
+          "baseValue": "one"
+        },
+        "2022-12-26": {
+          "amount": 4.73,
+          "baseValue": "one"
+        },
+        "2023-01-05": {
+          "amount": 4.85,
+          "baseValue": "one"
+        },
+        "2023-01-13": {
+          "amount": 4.83,
+          "baseValue": "one"
+        },
+        "2023-01-20": {
+          "amount": 5.07,
+          "baseValue": "one"
+        },
+        "2023-01-27": {
+          "amount": 5,
+          "baseValue": "one"
+        },
+        "2023-01-31": {
+          "amount": 5.05,
+          "baseValue": "one"
+        },
+        "2023-02-09": {
+          "amount": 4.8,
+          "baseValue": "one"
+        },
+        "2023-02-17": {
+          "amount": 4.75,
+          "baseValue": "one"
+        },
+        "2023-03-03": {
+          "amount": 5.1,
+          "baseValue": "one"
+        },
+        "2023-03-10": {
+          "amount": 5.1,
+          "baseValue": "one"
+        },
+        "2023-03-17": {
+          "amount": 5.2,
+          "baseValue": "one"
+        },
+        "2023-03-23": {
+          "amount": 5.2,
+          "baseValue": "one"
+        },
+        "2023-03-29": {
+          "amount": 4.94,
+          "baseValue": "one"
+        },
+        "2023-04-06": {
+          "amount": 4.94,
+          "baseValue": "one"
+        },
+        "2023-04-12": {
+          "amount": 4.94,
+          "baseValue": "one"
+        },
+        "2023-04-18": {
+          "amount": 4.94,
+          "baseValue": "one"
+        },
+        "2023-04-28": {
+          "amount": 4.94,
+          "baseValue": "one"
+        },
+        "2023-05-05": {
+          "amount": 5,
+          "baseValue": "one"
+        },
+        "2023-05-12": {
+          "amount": 4.7,
+          "baseValue": "one"
+        },
+        "2023-05-17": {
+          "amount": 4.44,
+          "baseValue": "one"
+        },
+        "2023-05-26": {
+          "amount": 4.14,
+          "baseValue": "one"
+        },
+        "2023-06-09": {
+          "amount": 3.8,
+          "baseValue": "one"
+        },
+        "2023-06-13": {
+          "amount": 3.9,
+          "baseValue": "one"
+        },
+        "2023-06-23": {
+          "amount": 3.71,
+          "baseValue": "one"
+        },
+        "2023-06-30": {
+          "amount": 3.4,
+          "baseValue": "one"
+        },
+        "2023-07-05": {
+          "amount": 3.13,
+          "baseValue": "one"
+        },
+        "2023-07-14": {
+          "amount": 2.98,
+          "baseValue": "one"
+        },
+        "2023-07-21": {
+          "amount": 3.12,
+          "baseValue": "one"
+        },
+        "2023-07-24": {
+          "amount": 3,
+          "baseValue": "one"
+        },
+        "2023-08-04": {
+          "amount": 3.06,
+          "baseValue": "one"
+        },
+        "2023-08-08": {
+          "amount": 3.06,
+          "baseValue": "one"
+        },
+        "2023-08-14": {
+          "amount": 3.2,
+          "baseValue": "one"
+        },
+        "2023-08-21": {
+          "amount": 3.2,
+          "baseValue": "one"
+        },
+        "2023-08-31": {
+          "amount": 3.87,
+          "baseValue": "one"
+        },
+        "2023-09-08": {
+          "amount": 4.01,
+          "baseValue": "one"
+        },
+        "2023-09-15": {
+          "amount": 3.93,
+          "baseValue": "one"
+        },
+        "2023-09-21": {
+          "amount": 3.88,
+          "baseValue": "one"
+        },
+        "2023-09-29": {
+          "amount": 3.94,
+          "baseValue": "one"
+        },
+        "2023-10-06": {
+          "amount": 4.09,
+          "baseValue": "one"
+        },
+        "2023-10-13": {
+          "amount": 4.72,
+          "baseValue": "one"
+        },
+        "2023-10-20": {
+          "amount": 5.29,
+          "baseValue": "one"
+        },
+        "2023-10-27": {
+          "amount": 5.2,
+          "baseValue": "one"
+        },
+        "2023-11-03": {
+          "amount": 5.1,
+          "baseValue": "one"
+        },
+        "2023-11-12": {
+          "amount": 5.15,
+          "baseValue": "one"
+        },
+        "2023-11-16": {
+          "amount": 5.2,
+          "baseValue": "one"
+        },
+        "2023-11-24": {
+          "amount": 5.2,
+          "baseValue": "one"
+        },
+        "2023-12-01": {
+          "amount": 5.79,
+          "baseValue": "one"
+        },
+        "2023-12-08": {
+          "amount": 6.42,
+          "baseValue": "one"
+        },
+        "2023-12-15": {
+          "amount": 6.29,
+          "baseValue": "one"
+        },
+        "2023-12-21": {
+          "amount": 6.29,
+          "baseValue": "one"
+        },
+        "2023-12-29": {
+          "amount": 6.17,
+          "baseValue": "one"
+        },
+        "2024-01-05": {
+          "amount": 6.11,
+          "baseValue": "one"
+        },
+        "2024-01-12": {
+          "amount": 6.34,
+          "baseValue": "one"
+        },
+        "2024-01-20": {
+          "amount": 8.06,
+          "baseValue": "one"
+        },
+        "2024-01-25": {
+          "amount": 8.79,
+          "baseValue": "one"
+        },
+        "2024-02-02": {
+          "amount": 8.92,
+          "baseValue": "one"
+        },
+        "2024-02-09": {
+          "amount": 9.23,
+          "baseValue": "one"
+        },
+        "2024-02-16": {
+          "amount": 8.86,
+          "baseValue": "one"
+        },
+        "2024-02-23": {
+          "amount": 8.34,
+          "baseValue": "one"
+        },
+        "2024-03-02": {
+          "amount": 8,
+          "baseValue": "one"
+        },
+        "2024-03-07": {
+          "amount": 7.45,
+          "baseValue": "one"
+        },
+        "2024-03-15": {
+          "amount": 7,
+          "baseValue": "one"
+        },
+        "2024-03-22": {
+          "amount": 7.1,
+          "baseValue": "one"
+        },
+        "2024-03-27": {
+          "amount": 7.22,
+          "baseValue": "one"
+        },
+        "2024-04-04": {
+          "amount": 7.45,
+          "baseValue": "one"
+        },
+        "2024-04-12": {
+          "amount": 7.45,
+          "baseValue": "one"
+        },
+        "2024-04-18": {
+          "amount": 7.14,
+          "baseValue": "one"
+        },
+        "2024-04-26": {
+          "amount": 6.45,
+          "baseValue": "one"
+        },
+        "2024-05-03": {
+          "amount": 6.06,
+          "baseValue": "one"
+        },
+        "2024-05-10": {
+          "amount": 6.97,
+          "baseValue": "one"
+        },
+        "2024-05-17": {
+          "amount": 7.25,
+          "baseValue": "one"
+        },
+        "2024-05-24": {
+          "amount": 6.65,
+          "baseValue": "one"
+        },
+        "2024-05-31": {
+          "amount": 6.93,
+          "baseValue": "one"
+        },
+        "2024-06-07": {
+          "amount": 8.44,
+          "baseValue": "one"
+        },
+        "2024-06-14": {
+          "amount": 8,
+          "baseValue": "one"
+        },
+        "2024-06-21": {
+          "amount": 8.15,
+          "baseValue": "one"
+        },
+        "2024-06-28": {
+          "amount": 8.05,
+          "baseValue": "one"
+        },
+        "2024-07-05": {
+          "amount": 7.85,
+          "baseValue": "one"
+        },
+        "2024-07-12": {
+          "amount": 7.45,
+          "baseValue": "one"
+        },
+        "2024-07-19": {
+          "amount": 7.65,
+          "baseValue": "one"
+        },
+        "2024-07-26": {
+          "amount": 7.92,
+          "baseValue": "one"
+        },
+        "2024-08-02": {
+          "amount": 8.55,
+          "baseValue": "one"
+        },
+        "2024-08-09": {
+          "amount": 11.08,
+          "baseValue": "one"
+        },
+        "2024-08-13": {
+          "amount": 12.21,
+          "baseValue": "one"
+        },
+        "2024-09-23": {
+          "amount": 11.6,
+          "baseValue": "one"
+        },
+        "2024-09-30": {
+          "amount": 11.02,
+          "baseValue": "one"
+        },
+        "2024-12-02": {
+          "amount": 10.8,
+          "baseValue": "one"
+        },
+        "2024-12-13": {
+          "amount": 9.27,
+          "baseValue": "one"
+        },
+        "2024-12-20": {
+          "amount": 7.94,
+          "baseValue": "one"
+        },
+        "2024-12-27": {
+          "amount": 7.44,
+          "baseValue": "one"
+        },
+        "2025-01-03": {
+          "amount": 6.57,
+          "baseValue": "one"
+        },
+        "2025-01-10": {
+          "amount": 6.94,
+          "baseValue": "one"
+        },
+        "2025-01-17": {
+          "amount": 6.7,
+          "baseValue": "one"
+        },
+        "2025-01-24": {
+          "amount": 7.21,
+          "baseValue": "one"
+        },
+        "2025-01-30": {
+          "amount": 7.19,
+          "baseValue": "one"
+        },
+        "2025-02-07": {
+          "amount": 7.45,
+          "baseValue": "one"
+        },
+        "2025-02-14": {
+          "amount": 7.79,
+          "baseValue": "one"
+        },
+        "2025-02-21": {
+          "amount": 8.2,
+          "baseValue": "one"
+        },
+        "2025-02-28": {
+          "amount": 8.55,
+          "baseValue": "one"
+        },
+        "2025-03-07": {
+          "amount": 7.89,
+          "baseValue": "one"
+        },
+        "2025-03-13": {
+          "amount": 6.56,
+          "baseValue": "one"
+        },
+        "2025-03-21": {
+          "amount": 6.5,
+          "baseValue": "one"
+        },
+        "2025-03-28": {
+          "amount": 6.06,
+          "baseValue": "one"
+        },
+        "2025-04-04": {
+          "amount": 6.13,
+          "baseValue": "one"
+        },
+        "2025-04-11": {
+          "amount": 5.86,
+          "baseValue": "one"
+        },
+        "2025-04-17": {
+          "amount": 5.87,
+          "baseValue": "one"
+        },
+        "2025-04-25": {
+          "amount": 6.16,
+          "baseValue": "one"
+        },
+        "2025-04-30": {
+          "amount": 6.47,
+          "baseValue": "one"
+        },
+        "2025-05-09": {
+          "amount": 5.96,
+          "baseValue": "one"
+        },
+        "2025-05-15": {
+          "amount": 6.39,
+          "baseValue": "one"
+        },
+        "2025-05-23": {
+          "amount": 6.4,
+          "baseValue": "one"
+        },
+        "2025-05-30": {
+          "amount": 7.45,
+          "baseValue": "one"
+        },
+        "2025-06-06": {
+          "amount": 9.5,
+          "baseValue": "one"
+        },
+        "2025-06-13": {
+          "amount": 10.95,
+          "baseValue": "one"
+        },
+        "2025-06-27": {
+          "amount": 13.95,
+          "baseValue": "one"
+        },
+        "2025-07-04": {
+          "amount": 15.21,
+          "baseValue": "one"
+        },
+        "2025-07-11": {
+          "amount": 17.77,
+          "baseValue": "one"
+        },
+        "2025-07-18": {
+          "amount": 19.59,
+          "baseValue": "one"
+        },
+        "2025-07-25": {
+          "amount": 20.76,
+          "baseValue": "one"
+        },
+        "2025-08-01": {
+          "amount": 22.9,
+          "baseValue": "one"
+        },
+        "2025-08-08": {
+          "amount": 25.25,
+          "baseValue": "one"
+        },
+        "2025-08-14": {
+          "amount": 27.31,
+          "baseValue": "one"
+        },
+        "2025-08-22": {
+          "amount": 30.12,
+          "baseValue": "one"
+        },
+        "2025-08-29": {
+          "amount": 31.32,
+          "baseValue": "one"
+        },
+        "2025-09-05": {
+          "amount": 28.34,
+          "baseValue": "one"
+        },
+        "2025-09-12": {
+          "amount": 25.77,
+          "baseValue": "one"
+        },
+        "2025-09-19": {
+          "amount": 26.93,
+          "baseValue": "one"
+        },
+        "2025-09-26": {
+          "amount": 31.08,
+          "baseValue": "one"
+        },
+        "2025-10-03": {
+          "amount": 34.17,
+          "baseValue": "one"
+        },
+        "2025-10-10": {
+          "amount": 43.5,
+          "baseValue": "one"
+        },
+        "2025-10-17": {
+          "amount": 55.27,
+          "baseValue": "one"
+        },
+        "2025-10-24": {
+          "amount": 67.16,
+          "baseValue": "one"
+        },
+        "2025-10-31": {
+          "amount": 85.69,
+          "baseValue": "one"
+        },
+        "2025-11-07": {
+          "amount": 94.23,
+          "baseValue": "one"
+        },
+        "2025-11-14": {
+          "amount": 72.93,
+          "baseValue": "one"
+        },
+        "2025-11-21": {
+          "amount": 62.39,
+          "baseValue": "one"
+        },
+        "2025-11-28": {
+          "amount": 48.3,
+          "baseValue": "one"
+        },
+        "2025-12-05": {
+          "amount": 41.31,
+          "baseValue": "one"
+        }
+      },
+      "meta": {
+        "is_weekly": true
+      }
+    }
+  ]
+}

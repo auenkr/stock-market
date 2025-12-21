@@ -71,6 +71,12 @@ export type CompanyDetailList = {
    * @example 9.69
    */
   roce: number;
+
+  /**
+   * @description Skip the company.
+   * @example true
+   */
+  skip: boolean;
 };
 
 /**
@@ -125,6 +131,7 @@ export async function getCompanyList(
           salesQtr: safeParseFloat($(columns[8]).text()),
           qtrSalesVar: safeParseFloat($(columns[9]).text()),
           roce: safeParseFloat($(columns[10]).text()),
+          skip: false,
         };
         companies.push(company);
       }
