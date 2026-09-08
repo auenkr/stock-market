@@ -7,7 +7,9 @@
     "build": "bun build --target=bun --outdir=dist src/index.ts",
     "start": "bun run build && bun run dist/index.js",
     "dev": "bun run --watch src/index.ts",
-    "server": "bun run src/orchestrator/server.ts",
+    "server": "bun run src/server.ts",
+    "build:server": "bun build --target=bun --outdir=dist src/server.ts",
+    "start:server": "bun run dist/server.js",
     "worker": "bun run src/worker/index.ts",
     "metrics": "bun run src/metrics/index.ts"
   },
@@ -21,6 +23,7 @@
   "dependencies": {
     "axios": "^1.13.1",
     "cheerio": "^1.1.2",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "hono": "^4.13.7"
   }
 }
