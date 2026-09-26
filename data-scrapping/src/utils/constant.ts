@@ -14,6 +14,7 @@ export const COOKIE = process.env.COOKIE || "Enter Cookie here";
 export const outputDir = join(__dirname, "./../../gen");
 
 export const companyListFile = outputDir + "/company-list.json";
+export const upcomingIpoFile = join(outputDir, "upcoming-ipo.json");
 export const TotalCompanies = 5176;
 
 // All Company Data File

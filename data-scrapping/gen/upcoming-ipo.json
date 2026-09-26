@@ -1,0 +1,486 @@
+[
+  {
+    "id": "1286181",
+    "name": "A-One Steels",
+    "url": "/company/id/1286181/consolidated/",
+    "exchanges": [
+      {
+        "exchange": "NSE",
+        "url": "https://www.nseindia.com/market-data/issue-information?symbol=AONESTEELS&series=EQ&type=Active"
+      },
+      {
+        "exchange": "BSE",
+        "url": "https://www.bseindia.com/markets/publicIssues/DisplayIPO?id=4849&type=IPO&idtype=1&status=F&IPONo=7998&startdt=24/09/2026&series=mainboard"
+      }
+    ],
+    "subscription_period": {
+      "raw": "24th Sep - 28th Sep",
+      "start_date": "24th Sep",
+      "end_date": "28th Sep"
+    },
+    "price": {
+      "lower_band": 385,
+      "upper_band": 405,
+      "is_fixed_price": false
+    },
+    "listing_date": "1st Oct",
+    "market_cap_cr": 3128,
+    "subscription": {
+      "total_times": 1.4,
+      "breakdown": {
+        "institutional": {
+          "shares_offered": 2093531,
+          "bids_received": 196766
+        },
+        "non_institutional": {
+          "shares_offered": 1570130,
+          "bids_received": 3248304,
+          "above_10_lakh": {
+            "shares_offered": 1046753,
+            "bids_received": 1928514
+          },
+          "from_2_to_10_lakh": {
+            "shares_offered": 523377,
+            "bids_received": 1319790
+          }
+        },
+        "retail": {
+          "shares_offered": 3663637,
+          "bids_received": 6464788
+        },
+        "total": {
+          "shares_offered": 7384934,
+          "bids_received": 10001396
+        }
+      }
+    },
+    "pe": 64.9,
+    "roce_percentage": 12
+  },
+  {
+    "id": "1286200",
+    "name": "Moneyview",
+    "url": "/company/id/1286200/consolidated/",
+    "exchanges": [
+      {
+        "exchange": "NSE",
+        "url": "https://www.nseindia.com/market-data/issue-information?symbol=MONEYVIEW&series=EQ&type=Active"
+      },
+      {
+        "exchange": "BSE",
+        "url": "https://www.bseindia.com/markets/publicIssues/DisplayIPO?id=4846&type=IPO&idtype=1&status=L&IPONo=7995&startdt=24/09/2026&series=mainboard"
+      }
+    ],
+    "subscription_period": {
+      "raw": "24th Sep - 28th Sep",
+      "start_date": "24th Sep",
+      "end_date": "28th Sep"
+    },
+    "price": {
+      "lower_band": 32,
+      "upper_band": 34,
+      "is_fixed_price": false
+    },
+    "listing_date": "1st Oct",
+    "market_cap_cr": 5985,
+    "subscription": {
+      "total_times": 6,
+      "breakdown": {
+        "institutional": {
+          "shares_offered": 65089575,
+          "bids_received": 16582482
+        },
+        "non_institutional": {
+          "shares_offered": 50230380,
+          "bids_received": 774110673,
+          "above_10_lakh": {
+            "shares_offered": 33486920,
+            "bids_received": 479957499
+          },
+          "from_2_to_10_lakh": {
+            "shares_offered": 16743460,
+            "bids_received": 294153174
+          }
+        },
+        "retail": {
+          "shares_offered": 117204220,
+          "bids_received": 607380480
+        },
+        "total": {
+          "shares_offered": 232524175,
+          "bids_received": 1398073635
+        }
+      }
+    },
+    "pe": 15.3,
+    "roce_percentage": 18
+  },
+  {
+    "id": "1286201",
+    "name": "Peshwa Wheat",
+    "url": "/company/id/1286201/",
+    "exchanges": [
+      {
+        "exchange": "BSE-SME",
+        "url": "https://www.bseindia.com/markets/publicIssues/DisplayIPO?id=4850&type=IPO&idtype=1&status=F&IPONo=8000&startdt=24/09/2026&series=sme"
+      }
+    ],
+    "subscription_period": {
+      "raw": "24th Sep - 28th Sep",
+      "start_date": "24th Sep",
+      "end_date": "28th Sep"
+    },
+    "price": {
+      "lower_band": 95,
+      "upper_band": 101,
+      "is_fixed_price": false
+    },
+    "listing_date": "1st Oct",
+    "market_cap_cr": 192,
+    "subscription": {
+      "total_times": 2,
+      "breakdown": {
+        "institutional": {
+          "shares_offered": 49200,
+          "bids_received": 8714400
+        },
+        "non_institutional": {
+          "shares_offered": 2746800,
+          "bids_received": 532800,
+          "above_10_lakh": null,
+          "from_2_to_10_lakh": null
+        },
+        "retail": {
+          "shares_offered": 2503200,
+          "bids_received": 1216800
+        },
+        "total": {
+          "shares_offered": 5299200,
+          "bids_received": 10464000
+        }
+      }
+    },
+    "pe": 12.2,
+    "roce_percentage": 38
+  },
+  {
+    "id": "1286204",
+    "name": "Roopa Screen",
+    "url": "/company/id/1286204/",
+    "exchanges": [
+      {
+        "exchange": "BSE-SME",
+        "url": "https://www.bseindia.com/markets/publicIssues/DisplayIPO?id=4848&type=IPO&idtype=1&status=L&IPONo=7997&startdt=24/09/2026&series=sme"
+      }
+    ],
+    "subscription_period": {
+      "raw": "24th Sep - 28th Sep",
+      "start_date": "24th Sep",
+      "end_date": "28th Sep"
+    },
+    "price": {
+      "lower_band": 60,
+      "upper_band": 64,
+      "is_fixed_price": false
+    },
+    "listing_date": "1st Oct",
+    "market_cap_cr": 71,
+    "subscription": {
+      "total_times": 5,
+      "breakdown": {
+        "institutional": {
+          "shares_offered": 1390000,
+          "bids_received": 3568000
+        },
+        "non_institutional": {
+          "shares_offered": 630000,
+          "bids_received": 2158000,
+          "above_10_lakh": null,
+          "from_2_to_10_lakh": null
+        },
+        "retail": {
+          "shares_offered": 980000,
+          "bids_received": 9408000
+        },
+        "total": {
+          "shares_offered": 3000000,
+          "bids_received": 15134000
+        }
+      }
+    },
+    "pe": 10.9,
+    "roce_percentage": 46
+  },
+  {
+    "id": "1286188",
+    "name": "Sai Urja Indo",
+    "url": "/company/id/1286188/consolidated/",
+    "exchanges": [
+      {
+        "exchange": "BSE-SME",
+        "url": "https://www.bseindia.com/markets/publicIssues/DisplayIPO?id=4847&type=IPO&idtype=1&status=F&IPONo=7996&startdt=25/09/2026&series=sme"
+      }
+    ],
+    "subscription_period": {
+      "raw": "25th Sep - 29th Sep",
+      "start_date": "25th Sep",
+      "end_date": "29th Sep"
+    },
+    "price": {
+      "lower_band": 107,
+      "upper_band": 113,
+      "is_fixed_price": false
+    },
+    "listing_date": "5th Oct",
+    "market_cap_cr": 86,
+    "subscription": {
+      "total_times": 0,
+      "breakdown": {
+        "institutional": {
+          "shares_offered": 392400,
+          "bids_received": 0
+        },
+        "non_institutional": {
+          "shares_offered": 518400,
+          "bids_received": 20400,
+          "above_10_lakh": null,
+          "from_2_to_10_lakh": null
+        },
+        "retail": {
+          "shares_offered": 710400,
+          "bids_received": 38400
+        },
+        "total": {
+          "shares_offered": 1621200,
+          "bids_received": 58800
+        }
+      }
+    },
+    "pe": 20.4,
+    "roce_percentage": 48
+  },
+  {
+    "id": "1286207",
+    "name": "Orient Cables",
+    "url": "/company/id/1286207/consolidated/",
+    "exchanges": [
+      {
+        "exchange": "NSE",
+        "url": "https://www.nseindia.com/market-data/issue-information?symbol=ORIENTCABL&series=EQ&type=Active"
+      },
+      {
+        "exchange": "BSE",
+        "url": "https://www.bseindia.com/markets/publicIssues/DisplayIPO?id=4851&type=IPO&idtype=1&status=F&IPONo=8001&startdt=25/09/2026&series=mainboard"
+      }
+    ],
+    "subscription_period": {
+      "raw": "25th Sep - 29th Sep",
+      "start_date": "25th Sep",
+      "end_date": "29th Sep"
+    },
+    "price": {
+      "lower_band": 258,
+      "upper_band": 272,
+      "is_fixed_price": false
+    },
+    "listing_date": "5th Oct",
+    "market_cap_cr": 3095,
+    "subscription": {
+      "total_times": 2,
+      "breakdown": {
+        "institutional": {
+          "shares_offered": 4279069,
+          "bids_received": 58740
+        },
+        "non_institutional": {
+          "shares_offered": 3209302,
+          "bids_received": 11162030,
+          "above_10_lakh": {
+            "shares_offered": 2139535,
+            "bids_received": 5468430
+          },
+          "from_2_to_10_lakh": {
+            "shares_offered": 1069767,
+            "bids_received": 5693600
+          }
+        },
+        "retail": {
+          "shares_offered": 7488372,
+          "bids_received": 18176785
+        },
+        "total": {
+          "shares_offered": 14976743,
+          "bids_received": 29397555
+        }
+      }
+    },
+    "pe": 57.5,
+    "roce_percentage": 0
+  },
+  {
+    "id": "1286205",
+    "name": "AceVector",
+    "url": "/company/id/1286205/consolidated/",
+    "exchanges": [
+      {
+        "exchange": "NSE",
+        "url": "https://www.nseindia.com/market-data/issue-information?symbol=ACEVECTOR&series=EQ&type=Active"
+      },
+      {
+        "exchange": "BSE",
+        "url": "https://www.bseindia.com/markets/publicIssues/DisplayIPO?id=4852&type=IPO&idtype=1&status=L&IPONo=8002&startdt=25/09/2026&series=mainboard"
+      }
+    ],
+    "subscription_period": {
+      "raw": "25th Sep - 29th Sep",
+      "start_date": "25th Sep",
+      "end_date": "29th Sep"
+    },
+    "price": {
+      "lower_band": 30,
+      "upper_band": 32,
+      "is_fixed_price": false
+    },
+    "listing_date": "5th Oct",
+    "market_cap_cr": 1741,
+    "subscription": {
+      "total_times": 0.2,
+      "breakdown": {
+        "institutional": {
+          "shares_offered": 39921876,
+          "bids_received": 0
+        },
+        "non_institutional": {
+          "shares_offered": 20584374,
+          "bids_received": 8670168,
+          "above_10_lakh": {
+            "shares_offered": 13722916,
+            "bids_received": 3820752
+          },
+          "from_2_to_10_lakh": {
+            "shares_offered": 6861458,
+            "bids_received": 4849416
+          }
+        },
+        "retail": {
+          "shares_offered": 13722916,
+          "bids_received": 8574228
+        },
+        "total": {
+          "shares_offered": 74229166,
+          "bids_received": 17244396
+        }
+      }
+    },
+    "pe": 0,
+    "roce_percentage": 17
+  },
+  {
+    "id": "1286209",
+    "name": "Runwal Enterpri.",
+    "url": "/company/id/1286209/consolidated/",
+    "exchanges": [
+      {
+        "exchange": "NSE",
+        "url": "https://www.nseindia.com/market-data/issue-information?symbol=RUNWALENTR&series=EQ&type=Active"
+      }
+    ],
+    "subscription_period": {
+      "raw": "25th Sep - 29th Sep",
+      "start_date": "25th Sep",
+      "end_date": "29th Sep"
+    },
+    "price": {
+      "lower_band": 290,
+      "upper_band": 305,
+      "is_fixed_price": false
+    },
+    "listing_date": "5th Oct",
+    "market_cap_cr": 4507,
+    "subscription": {
+      "total_times": 0.2,
+      "breakdown": {
+        "institutional": {
+          "shares_offered": 3424137,
+          "bids_received": 1640079
+        },
+        "non_institutional": {
+          "shares_offered": 2568104,
+          "bids_received": 506905,
+          "above_10_lakh": {
+            "shares_offered": 1712070,
+            "bids_received": 381661
+          },
+          "from_2_to_10_lakh": {
+            "shares_offered": 856034,
+            "bids_received": 125244
+          }
+        },
+        "retail": {
+          "shares_offered": 5992242,
+          "bids_received": 761460
+        },
+        "total": {
+          "shares_offered": 12111294,
+          "bids_received": 2925986
+        }
+      }
+    },
+    "pe": 23.1,
+    "roce_percentage": 10
+  },
+  {
+    "id": "1286206",
+    "name": "German Green Ste",
+    "url": "/company/id/1286206/consolidated/",
+    "exchanges": [
+      {
+        "exchange": "NSE",
+        "url": "https://www.nseindia.com/market-data/issue-information?symbol=GERMAN&series=EQ&type=Active"
+      }
+    ],
+    "subscription_period": {
+      "raw": "25th Sep - 29th Sep",
+      "start_date": "25th Sep",
+      "end_date": "29th Sep"
+    },
+    "price": {
+      "lower_band": 132,
+      "upper_band": 139,
+      "is_fixed_price": false
+    },
+    "listing_date": "5th Oct",
+    "market_cap_cr": 1047,
+    "subscription": {
+      "total_times": 1.5,
+      "breakdown": {
+        "institutional": {
+          "shares_offered": 4578030,
+          "bids_received": 6064974
+        },
+        "non_institutional": {
+          "shares_offered": 3445455,
+          "bids_received": 7612087,
+          "above_10_lakh": {
+            "shares_offered": 2296970,
+            "bids_received": 5388841
+          },
+          "from_2_to_10_lakh": {
+            "shares_offered": 1148485,
+            "bids_received": 2223246
+          }
+        },
+        "retail": {
+          "shares_offered": 8039394,
+          "bids_received": 10058321
+        },
+        "total": {
+          "shares_offered": 16062879,
+          "bids_received": 23735382
+        }
+      }
+    },
+    "pe": 13.1,
+    "roce_percentage": 24
+  }
+]

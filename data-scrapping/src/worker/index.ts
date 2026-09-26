@@ -3,16 +3,20 @@ import type { CompanyDetailListServer } from "../orchestrator/server";
 import { GetCompanyData } from "../helper/getCompanyData";
 dotenv.config();
 
-const ServerURL = process.env.SERVER_URL || "http://localhost:3000";
+const PORT = process.env.PORT ?? 3000;
+const ORCHESTRATOR_URL =
+  process.env.ORCHESTRATOR_URL || `http://localhost:${PORT}`;
 
 async function workerTask() {
   let companyName = "";
   try {
-    let response = await fetch(`${ServerURL}/api/worker/task`);
-    const companyData = (await response.json()) as CompanyDetailListServer;
-    if (companyData.name === null) {
+    const response = await fetch(`${ORCHESTRATOR_URL}/api/worker/task`);
+    const companyData = (await response.json()) as
+      | CompanyDetailListServer
+      | { company: null };
+    if ("company" in companyData) {
       console.log("No task found. Sleeping for 100 second...");
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100_000));
       return null;
     }
     companyName = companyData.name;
@@ -21,7 +25,7 @@ async function workerTask() {
     const data = await GetCompanyData(companyData.url);
     console.log("Company data fetched:", companyData.name);
 
-    const resp = await fetch(`${ServerURL}/api/task`, {
+    const resp = await fetch(`${ORCHESTRATOR_URL}/api/task`, {
       method: "POST",
       body: JSON.stringify({
         data,
@@ -42,7 +46,7 @@ async function workerTask() {
       throw new Error("Task failed");
     }
   } catch (error) {
-    const resp = await fetch(`${ServerURL}/api/worker/task`, {
+    const resp = await fetch(`${ORCHESTRATOR_URL}/api/worker/task`, {
       method: "POST",
       body: JSON.stringify({ name: companyName }),
     });
