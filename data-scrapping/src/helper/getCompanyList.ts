@@ -1,4 +1,5 @@
 import axios from "axios";
+import { sendReq } from "../utils/sendReq";
 import * as cheerio from "cheerio";
 import { BASE_URL, COOKIE } from "../utils/constant";
 
@@ -105,15 +106,19 @@ export async function getCompanyList(
   // These headers are important to mimic a real browser request.
   const headers = {
     cookie: COOKIE,
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/131 Safari/537.36",
   };
 
   try {
-    const response = await axios.get(url, { headers });
+    const response = await sendReq(() => axios.get(url, { headers }));
     const html = response.data;
     const $ = cheerio.load(html);
 
     const companies: CompanyDetailList[] = [];
-    const tableRows = $("table.data-table tr[data-row-company-id]");
+    // Screener may omit the data attribute depending on the response variant.
+    const tableRows = $(
+      "table.data-table tr[data-row-company-id], table.data-table tbody tr"
+    );
 
     tableRows.each((index, element) => {
       const columns = $(element).find("td");
@@ -136,17 +141,18 @@ export async function getCompanyList(
         companies.push(company);
       }
     });
+    if (companies.length === 0) {
+      const isLoginPage = /login|register/i.test($("title").text()) ||
+        $("form[action*='login']").length > 0;
+      throw new Error(
+        isLoginPage
+          ? "Screener returned a login page. Set a valid COOKIE in data-scrapping/.env."
+          : "Screener returned no company rows."
+      );
+    }
+
     return companies;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`Axios Error fetching data: ${error.message}`);
-      console.error(
-        `Status: ${error.response?.status} - ${error.response?.statusText}`
-      );
-    } else {
-      console.error("An unexpected error occurred:", error);
-    }
-    // Return an empty array or throw the error, depending on desired error handling
-    return [];
+    throw error;
   }
 }

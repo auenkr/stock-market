@@ -1,6 +1,7 @@
 import { BASE_URL, COOKIE, DELAY_BETWEEN_API_REQUEST } from "../utils/constant";
 import * as cheerio from "cheerio";
 import axios from "axios";
+import { sendReq } from "../utils/sendReq";
 import { getCompanyMetrics, type CompanyMetricDataType } from "./getCompanyMetric";
 
 // ***************************************************************
@@ -243,7 +244,7 @@ async function extractFinancialTable<T>(
       sectionId.split("#")[1]
     }&consolidated=`;
 
-    const response = await axios.get(url);
+    const response = await sendReq(() => axios.get(url));
     const data = response.data;
     // deplay to avoid rate limiting
     await new Promise((resolve) =>
@@ -344,7 +345,7 @@ export async function GetCompanyData(
 ): Promise<CompanyDataType> {
   try {
     // 1. Fetch HTML from the endpoint
-    const response = await axios.get(`${BASE_URL}${endpoint}`);
+    const response = await sendReq(() => axios.get(`${BASE_URL}${endpoint}`));
     const html = response.data;
 
     // 2. Load HTML into Cheerio for parsing
@@ -587,14 +588,14 @@ async function getEnterpriseValue(
   $: cheerio.CheerioAPI
 ): Promise<NumberDataType> {
   const warehouseNo = $("#company-info").data("warehouse-id");
-  const response = await axios.get(
+  const response = await sendReq(() => axios.get(
     `${BASE_URL}/api/company/${warehouseNo}/quick_ratios`,
     {
       headers: {
         cookie: COOKIE,
       },
     }
-  );
+  ));
   const html = response.data;
   const $$ = cheerio.load(html);
   // Extract the list item containing "Enterprise Value"
@@ -615,9 +616,9 @@ async function getPeerCompanies(
   const sectorNode = $('p[class="sub"]').first();
   const sectorValue = sectorNode.text().trim().replace(/\s+/g, " ").trim();
 
-  const response = await axios.get(
+  const response = await sendReq(() => axios.get(
     `${BASE_URL}/api/company/${warehouseNo}/peers`
-  );
+  ));
   const html = response.data;
   const $$ = cheerio.load(html);
 

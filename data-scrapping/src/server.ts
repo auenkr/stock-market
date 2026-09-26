@@ -1,12 +1,14 @@
 import { Hono } from "hono";
 import { GetCompanyData } from "./helper/getCompanyData";
 import { getCompanyList } from "./helper/getCompanyList";
+import { sendReq } from "./utils/sendReq";
 
 const COMPANY_PAGE_SIZE = 100;
 
 const PORT = process.env.PORT ?? 3000;
 
-export const app = new Hono();
+const app = new Hono();
+const companyDataCache = new Map<string, Awaited<ReturnType<typeof GetCompanyData>>>();
 
 app.get("/", (c) => {
   return c.html(`
@@ -69,26 +71,18 @@ app.get("/api/company-data", async (c) => {
       return c.json({ error: "endpoint parameter is required" }, 400);
     }
 
+    const cachedCompanyData = companyDataCache.get(endpoint);
+    if (cachedCompanyData) {
+      return c.json({ companyData: cachedCompanyData });
+    }
+
     const companyData = await GetCompanyData(endpoint);
+    companyDataCache.set(endpoint, companyData);
 
     return c.json({ companyData });
   } catch (error) {
-    console.error("Failed to scrape company data:", error);
     return c.json({ error: "Could not scrape company data" }, 500);
   }
 });
 
-export function startServer() {
-  const port = PORT;
-  const server = Bun.serve({
-    port,
-    fetch: app.fetch,
-  });
-
-  console.log(`Server running at ${server.url}`);
-  return server;
-}
-
-if (import.meta.main) {
-  startServer();
-}
+export default app;
