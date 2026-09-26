@@ -1,0 +1,51 @@
+# data-scrapping
+
+To install dependencies:
+
+```bash
+bun install
+```
+
+To run:
+
+```bash
+bun run index.ts
+```
+
+This project was created using `bun init` in bun v1.2.20. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+
+## API
+
+Base URL: `https://stock-market-api.auenkumar64.workers.dev`
+
+### List companies
+
+`GET /api/list-of-company?page=1`
+
+The optional `page` parameter is a positive integer. Each page contains up to 100 companies.
+
+```bash
+curl "https://stock-market-api.auenkumar64.workers.dev/api/list-of-company?page=1"
+```
+
+### Search companies
+
+`GET /api/company-search?q=<company-name>`
+
+The `q` parameter is required and can contain part of a company name.
+
+```bash
+curl "https://stock-market-api.auenkumar64.workers.dev/api/company-search?q=reli"
+```
+
+### Get company data
+
+`GET /api/company-data?endpoint=<company-endpoint>`
+
+The `endpoint` parameter is required. This request can take around 20 seconds.
+
+```bash
+curl "https://stock-market-api.auenkumar64.workers.dev/api/company-data?endpoint=/company/example"
+```
+
+Invalid query parameters return a JSON response with an `error` field and an appropriate HTTP status code.
