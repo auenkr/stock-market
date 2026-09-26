@@ -1,6 +1,8 @@
 import { Hono } from "hono";
+import axios from "axios";
 import { GetCompanyData } from "./helper/getCompanyData";
 import { getCompanyList } from "./helper/getCompanyList";
+import { BASE_URL } from "./utils/constant";
 import { sendReq } from "./utils/sendReq";
 
 const COMPANY_PAGE_SIZE = 100;
@@ -39,6 +41,11 @@ app.get("/", (c) => {
         <p>The <code>endpoint</code> parameter is required. This request can take around 20 seconds.</p>
         <pre><code>curl "http://localhost:${PORT}/api/company-data?endpoint=/company/example"</code></pre>
 
+        <h2>Search companies</h2>
+        <p><code>GET /api/company-search?q=&lt;company-name&gt;</code></p>
+        <p>The <code>q</code> parameter is required and can contain part of a company name.</p>
+        <pre><code>curl "http://localhost:${PORT}/api/company-search?q=reli"</code></pre>
+
         <h2>Errors</h2>
         <p>Invalid query parameters return a JSON response with an <code>error</code> field and an appropriate HTTP status code.</p>
       </body>
@@ -61,6 +68,25 @@ app.get("/api/list-of-company", async (c) => {
     limit: COMPANY_PAGE_SIZE,
     companies,
   });
+});
+
+app.get("/api/company-search", async (c) => {
+  const query = c.req.query("q")?.trim();
+  if (!query) {
+    return c.json({ error: "q parameter is required" }, 400);
+  }
+
+  try {
+    const response = await sendReq(() =>
+      axios.get(`${BASE_URL}/api/company/search/`, {
+        params: { q: query },
+      }),
+    );
+
+    return c.json(response.data);
+  } catch {
+    return c.json({ error: "Could not search companies" }, 500);
+  }
 });
 
 // This takes around 20 sec to run
