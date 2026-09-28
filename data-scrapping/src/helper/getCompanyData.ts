@@ -4,6 +4,15 @@ import axios from "axios";
 import { sendReq } from "../utils/sendReq";
 import { getCompanyMetrics, type CompanyMetricDataType } from "./getCompanyMetric";
 
+export interface NewsItem {
+  link_src: string;
+  link_track: string;
+  pdt_dis_nm: string;
+  name: string;
+  sc_id: string;
+  stock_name: string;
+}
+
 // ***************************************************************
 //                        ALL DATA TYPES
 // ***************************************************************
@@ -41,6 +50,7 @@ export type CompanyDataType = {
   ratioStatements: RatioStatementType[];
   shareholdingPatternStatements: ShareholdingPatternStatementType[];
   metrics: CompanyMetricDataType[];
+  news: NewsItem[];
 };
 
 type CompanySummaryDataType = {
@@ -240,9 +250,8 @@ async function extractFinancialTable<T>(
   const allDataMap: Map<string, Map<string, Map<string, string>>> = new Map();
 
   for (const field of detailFields) {
-    const url = `${BASE_URL}/api/company/${refId}/schedules/?parent=${field}&section=${
-      sectionId.split("#")[1]
-    }&consolidated=`;
+    const url = `${BASE_URL}/api/company/${refId}/schedules/?parent=${field}&section=${sectionId.split("#")[1]
+      }&consolidated=`;
 
     const response = await sendReq(() => axios.get(url));
     const data = response.data;
@@ -571,7 +580,19 @@ export async function GetCompanyData(
       ratioStatements,
       shareholdingPatternStatements,
       metrics: metricsData,
+      news: [],
     };
+
+    // Call new req
+    const query = companyData.name.replace(/[^a-zA-Z0-9]+/g, " ").trim();
+    const newsResponse = await sendReq(() =>
+      axios.get("https://www.moneycontrol.com/mccode/common/autosuggestion_solr.php", {
+        params: { query, type: 3, format: "json" },
+      }),
+    );
+    companyData.news = Array.isArray(newsResponse.data)
+      ? (newsResponse.data as NewsItem[])
+      : [];
 
     return companyData;
   } catch (error) {

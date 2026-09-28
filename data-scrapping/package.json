@@ -7,7 +7,7 @@
     "build": "bun build --target=bun --outdir=dist src/index.ts",
     "start": "bun run build && bun run dist/index.js",
     "dev": "bun run --watch src/index.ts",
-    "server": "bun run src/server.ts",
+    "dev:server": "bun run --hot src/server.ts",
     "build:server": "bun build --target=browser --outdir=dist src/server.ts",
     "start:server": "bun run dist/server.js",
     "deploy": "wrangler deploy",

@@ -56,6 +56,12 @@ export interface CompanyIPOData {
   subscription: SubscriptionInfo;
   pe: number;
   roce_percentage: number;
+  gmp_percentage: number | null;
+}
+
+interface GMPRecord {
+  company_short_name: string;
+  gmp_perc: string;
 }
 
 // -------------------------------------------------------------
@@ -175,6 +181,66 @@ function hasCompleteIPOData(ipo: CompanyIPOData): boolean {
     hasCompleteSubscriptionRow(breakdown.retail) &&
     hasCompleteSubscriptionRow(breakdown.total)
   );
+}
+
+function normalizeCompanyName(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function getNameTokens(name: string): string[] {
+  return name
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+}
+
+function findGMPPercentage(name: string, records: GMPRecord[]): number | null {
+  const normalizedName = normalizeCompanyName(name);
+  const exactMatch = records.find((record) => normalizeCompanyName(record.company_short_name) === normalizedName);
+  if (exactMatch) return Number(exactMatch.gmp_perc);
+
+  const nameTokens = getNameTokens(name);
+  let bestMatch: GMPRecord | undefined;
+  let bestScore = 0;
+
+  for (const record of records) {
+    const recordTokens = getNameTokens(record.company_short_name);
+    const allTokensMatch = nameTokens.every((token) =>
+      recordTokens.some((recordToken) => recordToken.startsWith(token) || token.startsWith(recordToken)),
+    );
+    if (!allTokensMatch) continue;
+
+    const score = nameTokens.reduce((total, token) => {
+      const matchedToken = recordTokens.find(
+        (recordToken) => recordToken.startsWith(token) || token.startsWith(recordToken),
+      );
+      return total + (matchedToken ? Math.min(token.length, matchedToken.length) : 0);
+    }, 0);
+
+    if (score > bestScore) {
+      bestMatch = record;
+      bestScore = score;
+    }
+  }
+
+  return bestMatch ? Number(bestMatch.gmp_perc) : null;
+}
+
+async function getGMPRecords(): Promise<GMPRecord[]> {
+  const response = await sendReq(() =>
+    axios.get("https://webnodejs.investorgain.com/cloud/v2/index/gmp-data"),
+  );
+  const records = (response.data?.gmpList ?? []) as GMPRecord[];
+  return records.filter((record) => record.company_short_name && Number.isFinite(Number(record.gmp_perc)));
+}
+
+async function enrichIPOData(results: CompanyIPOData[]): Promise<CompanyIPOData[]> {
+  const gmpRecords = await getGMPRecords();
+
+  return results.map((ipo) => ({
+    ...ipo,
+    gmp_percentage: findGMPPercentage(ipo.name, gmpRecords),
+  }));
 }
 
 // -------------------------------------------------------------
@@ -307,6 +373,7 @@ function parseUpcomingIPOs($: cheerio.CheerioAPI): CompanyIPOData[] {
       },
       pe,
       roce_percentage,
+      gmp_percentage: null,
     });
   });
 
@@ -329,7 +396,7 @@ export async function ListUpcommingIpo() {
 
     // Pagination
     if (!canContinuePagination) {
-      return results;
+      return enrichIPOData(results);
     }
 
     for (let i = 0; i < pagination.length; i++) {
@@ -361,7 +428,7 @@ export async function ListUpcommingIpo() {
         break;
       }
     }
-    return results;
+    return enrichIPOData(results);
   } catch (error) {
     throw error;
   }
