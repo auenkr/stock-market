@@ -2,7 +2,13 @@ import { join } from "node:path";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
-export { BASE_URL, COOKIE, API_PORT, ORCHESTRATOR_PORT } from "./env.js";
+export {
+  BASE_URL,
+  COOKIE,
+  API_PORT,
+  ORCHESTRATOR_PORT,
+  PUBLIC_URL,
+} from "./env.js";
 
 dotenv.config();
 

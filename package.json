@@ -6,11 +6,13 @@
     "build": "nx run-many -t build",
     "typecheck": "nx run-many -t typecheck",
     "dev:api": "nx dev @stock-market/api",
+    "dev:web": "nx dev @stock-market/web",
     "dev:orchestrator": "nx dev @stock-market/orchestrator",
     "dev:worker": "nx dev @stock-market/worker",
     "scrape": "nx scrape @stock-market/cli",
     "metrics": "nx metrics @stock-market/cli",
-    "deploy:api": "nx deploy:api @stock-market/api"
+    "deploy:api": "nx deploy:api @stock-market/api",
+    "db:push": "pnpm --filter @stock-market/web db:push"
   },
   "devDependencies": {
     "@nx/js": "^21.5.2",

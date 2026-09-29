@@ -6,3 +6,4 @@ export const BASE_URL =
 export const COOKIE = nodeEnv?.COOKIE || "Enter Cookie here";
 export const API_PORT = Number(nodeEnv?.API_PORT ?? 8787);
 export const ORCHESTRATOR_PORT = Number(nodeEnv?.ORCHESTRATOR_PORT ?? 3000);
+export const PUBLIC_URL = nodeEnv?.PUBLIC_URL || "http://localhost:8787";
