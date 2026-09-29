@@ -1,6 +1,6 @@
 import axios from "axios";
 import { sendReq } from "../utils/sendReq.js";
-import { BASE_URL, COOKIE } from "@stock-market/common/config";
+import { BASE_URL, COOKIE } from "@stock-market/common/env";
 import * as cheerio from "cheerio";
 
 /**
@@ -146,7 +146,7 @@ export async function getCompanyList(
         $("form[action*='login']").length > 0;
       throw new Error(
         isLoginPage
-          ? "Screener returned a login page. Set a valid COOKIE in data-scrapping/.env."
+           ? "Screener returned a login page. Set a valid COOKIE in the root .env."
           : "Screener returned no company rows."
       );
     }

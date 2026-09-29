@@ -1,4 +1,4 @@
-import { BASE_URL, COOKIE } from "@stock-market/common/config";
+import { BASE_URL, COOKIE } from "@stock-market/common/env";
 import { DELAY_BETWEEN_API_REQUEST } from "../utils/constant.js";
 import * as cheerio from "cheerio";
 import axios from "axios";

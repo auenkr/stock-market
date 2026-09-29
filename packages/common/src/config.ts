@@ -1,15 +1,13 @@
 import { join } from "node:path";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
+export { BASE_URL, COOKIE, API_PORT, ORCHESTRATOR_PORT } from "./env.js";
 
 dotenv.config();
 
-export const BASE_URL =
-  process.env.BASE_URL ||
-  "Enter Base URL here, eg: https://www.my-website-testing.com";
-export const COOKIE = process.env.COOKIE || "Enter Cookie here";
-export const PORT = Number(process.env.PORT ?? 3000);
-
-export const outputDir = join(process.cwd(), "data-scrapping/gen");
+const repositoryRoot = join(dirname(fileURLToPath(import.meta.url)), "../../..");
+export const outputDir = join(repositoryRoot, "gen");
 export const companyListFile = join(outputDir, "company-list.json");
 export const upcomingIpoFile = join(outputDir, "upcoming-ipo.json");
 export const allCompanyDataDir = join(outputDir, "companyData");

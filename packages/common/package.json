@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "esbuild src/config.ts src/env.ts --format=esm --platform=node --target=es2022 --outdir=dist",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "exports": {
@@ -14,5 +14,8 @@
   },
   "dependencies": {
     "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
   }
 }

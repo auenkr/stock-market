@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "esbuild src/index.ts --bundle --format=esm --platform=node --target=es2022 --outfile=../../dist/apps/cli/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "scrape": "tsx src/index.ts",
     "metrics": "tsx ../../packages/scraper/src/metrics/index.ts"
@@ -11,5 +11,8 @@
   "dependencies": {
     "@stock-market/common": "workspace:*",
     "@stock-market/scraper": "workspace:*"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
   }
 }

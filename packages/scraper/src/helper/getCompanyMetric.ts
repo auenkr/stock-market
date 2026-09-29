@@ -1,4 +1,4 @@
-import { BASE_URL } from "@stock-market/common/config";
+import { BASE_URL } from "@stock-market/common/env";
 import axios from "axios";
 import { sendReq } from "../utils/sendReq.js";
 import { parseNumberData, type NumberDataType } from "./getCompanyData.js";

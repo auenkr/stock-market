@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import axios from "axios";
-import { BASE_URL } from "@stock-market/common/config";
+import { BASE_URL } from "@stock-market/common/env";
 import { COMPANY_PAGE_SIZE, HomePageData } from "./config.js";
 import { GetCompanyData } from "@stock-market/scraper/helper/getCompanyData";
 import { getCompanyList } from "@stock-market/scraper/helper/getCompanyList";

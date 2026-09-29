@@ -2,6 +2,10 @@ data
 wrangler.jsonc
 node_modules
 dist
+gen
 .nx
+.env
+.env.*
+!.env.sample
 
 .DS_Store

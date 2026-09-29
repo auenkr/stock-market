@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "esbuild src/server.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=../../dist/apps/api/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "dev": "wrangler dev --port ${API_PORT:-8787}",
+    "deploy:api": "wrangler deploy"
   },
   "dependencies": {
     "@stock-market/common": "workspace:*",
@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260926.1",
+    "esbuild": "^0.28.1",
     "wrangler": "^4.141.0"
   }
 }

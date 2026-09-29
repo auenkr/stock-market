@@ -3,7 +3,11 @@ import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import dotenv from "dotenv";
-import { allCompanyDataDir, companyListFile, PORT } from "@stock-market/common/config";
+import {
+  allCompanyDataDir,
+  companyListFile,
+  ORCHESTRATOR_PORT,
+} from "@stock-market/common/config";
 import type { CompanyDataType } from "@stock-market/scraper/helper/getCompanyData";
 import type { CompanyDetailListServer } from "@stock-market/scraper/types";
 
@@ -116,6 +120,6 @@ const server = createServer(async (request, response) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+server.listen(ORCHESTRATOR_PORT, () => {
+  console.log(`Server running at http://localhost:${ORCHESTRATOR_PORT}`);
 });

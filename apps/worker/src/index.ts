@@ -1,11 +1,11 @@
 import dotenv from "dotenv";
-import { PORT } from "@stock-market/common/config";
+import { ORCHESTRATOR_PORT } from "@stock-market/common/config";
 import { GetCompanyData } from "@stock-market/scraper/helper/getCompanyData";
 import type { CompanyDetailListServer } from "@stock-market/scraper/types";
 dotenv.config();
 
 const ORCHESTRATOR_URL =
-  process.env.ORCHESTRATOR_URL || `http://localhost:${PORT}`;
+  process.env.ORCHESTRATOR_URL || `http://localhost:${ORCHESTRATOR_PORT}`;
 
 async function workerTask() {
   let companyName = "";

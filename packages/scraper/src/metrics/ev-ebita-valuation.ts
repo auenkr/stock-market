@@ -1,11 +1,12 @@
 import type { CompanyDataType } from "../helper/getCompanyData.js";
 import { join } from "node:path";
 import fs from "node:fs";
+import { allCompanyDataDir } from "@stock-market/common/config";
 import { getEnterpriseValue, getAnnualEBITA, getShareOutstanding, getCompanyMonthPrice } from "./utils.js";
 import { GetBaseValue } from "../utils/helper.js";
 
 function readCompanyData(fileName: string): CompanyDataType {
-    const filePath = join(__dirname, "../../gen/companyData", fileName);
+    const filePath = join(allCompanyDataDir, fileName);
     const data = fs.readFileSync(filePath, "utf8");
     return JSON.parse(data) as CompanyDataType;
 }

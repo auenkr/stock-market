@@ -1,5 +1,5 @@
 import * as cheerio from "cheerio";
-import { BASE_URL } from "@stock-market/common/config";
+import { BASE_URL } from "@stock-market/common/env";
 import { sendReq } from "../utils/sendReq.js";
 import axios from "axios";
 import type { AnyNode } from "domhandler";

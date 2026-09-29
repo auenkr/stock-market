@@ -1,7 +1,7 @@
-import { PORT } from "@stock-market/common/config";
-
 export const COMPANY_PAGE_SIZE = 100;
-const PUBLIC_URL = process.env.PUBLIC_URL || `http://localhost:${PORT}`;
+const PUBLIC_URL =
+  (typeof process === "undefined" ? undefined : process.env.PUBLIC_URL) ||
+  "http://localhost:3000";
 
 export const HomePageData = `
     <!doctype html>
