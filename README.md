@@ -1,3 +1,26 @@
+## Stock Market Monorepo
+
+This repository uses Nx and pnpm to organize the stock-market data pipeline:
+
+- `packages/common`: shared environment and filesystem configuration
+- `packages/scraper`: shared scraping, metrics, types, and file helpers
+- `apps/orchestrator`: assigns worker tasks and persists results
+- `apps/worker`: processes tasks from the orchestrator
+- `apps/api`: public Hono API
+- `apps/cli`: one-off scraping and metrics commands
+
+Install dependencies with `pnpm install`. TypeScript is compiled with `tsc` and Node.js runs the services.
+
+Common commands:
+
+```bash
+pnpm dev:api
+pnpm dev:orchestrator
+pnpm dev:worker
+pnpm build
+pnpm deploy
+```
+
 ## API
 
 Base URL: `https://stock-market-api.auenkr.com`

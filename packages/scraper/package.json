@@ -1,0 +1,21 @@
+{
+  "name": "@stock-market/scraper",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "exports": {
+    "./*": {
+      "types": "./src/*.ts",
+      "import": "./dist/*.js"
+    }
+  },
+  "dependencies": {
+    "@stock-market/common": "workspace:*",
+    "axios": "^1.13.1",
+    "cheerio": "^1.1.2",
+    "domhandler": "^5.0.3"
+  }
+}
