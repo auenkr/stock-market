@@ -47,6 +47,8 @@ The optional `page` parameter is a positive integer. Each page contains up to 10
 curl "https://stock-market-api.auenkr.com/v1/list-of-company?page=1"
 ```
 
+Company rows expose the source `url`, without `symbol` or the internal `skip` flag. The response contains only `{meta, data}`. Pagination is in `meta`: `currentPage`, `limit`, `count`, `isNextPageAvailable`, `nextPage`, and `previousPage`. Page size is fixed at 100; unavailable next/previous pages are `null`.
+
 ### List upcoming IPOs
 
 `GET /v1/list-of-ipo`
@@ -69,13 +71,21 @@ curl "https://stock-market-api.auenkr.com/v1/company-search?q=reli"
 
 ### Get company data
 
-`GET /api/company-data?symbol=<stock-symbol>` (also `/v1/company-data`)
+`GET /api/company-data?companyUrl=<company-path>` (also `/v1/company-data`)
 
-The `symbol` parameter is required and replaces the previous `endpoint` input for this route. For example, `symbol=RELIANCE` loads `/company/RELIANCE/consolidated/`. Symbols are normalized to uppercase; use `symbol=M%26M` for M&M. This request can take around 20 seconds on a cache miss. It returns `{data, companyData}` with the same object in both fields and caches it for 15 minutes.
+The required `companyUrl` parameter accepts the original relative `url` from company listing or search results. Paths such as `/company/id/1286218/`, `/company/RELIANCE/`, and `/company/RELIANCE/consolidated/` are fetched as supplied; the API does not construct a path from a symbol. Absolute URLs and non-company paths are rejected. Use query encoding for paths containing `&`, such as `/company/GVT&D/`.
 
 ```bash
-curl "https://stock-market-api.auenkr.com/api/company-data?symbol=RELIANCE"
+curl --get "https://stock-market-api.auenkr.com/v1/company-data" \
+  --data-urlencode "companyUrl=/company/id/1286218/"
 ```
+
+```js
+const query = new URLSearchParams({ companyUrl: company.url });
+const response = await fetch(`/v1/company-data?${query}`);
+```
+
+This request can take around 20 seconds on a cache miss. It returns `{data, companyData}` with the same object in both fields and caches it for 15 minutes. The former `symbol` and `endpoint` inputs no longer satisfy this route.
 
 Invalid query parameters return a JSON response with an `error` field and an appropriate HTTP status code.
 

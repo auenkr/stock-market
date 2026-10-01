@@ -33,7 +33,7 @@ export const legacySchemas: Record<string, Schema> = {
     metrics: { ...array({}), maxItems: 0, description: "Always empty on public API routes; market-price history downloads are disabled." },
     news: { ...array(object(Object.fromEntries(["link_src", "link_track", "pdt_dis_nm", "name", "sc_id", "stock_name"].map((field) => [field, string])), [])), description: "Supplementary Moneycontrol search results; empty if the optional source fails." },
   }),
-  LegacyDirectoryCompany: object({ name: string, url: string, ...Object.fromEntries(["cmp", "pe", "marketCap", "divYld", "npQtr", "qtrProfitVar", "salesQtr", "qtrSalesVar", "roce"].map((field) => [field, number])), skip: { type: "boolean" } }),
+  LegacyDirectoryCompany: object({ name: string, url: { type: "string", example: "/company/id/1286218/" }, ...Object.fromEntries(["cmp", "pe", "marketCap", "divYld", "npQtr", "qtrProfitVar", "salesQtr", "qtrSalesVar", "roce"].map((field) => [field, number])) }),
   LegacySubscriptionRow: { ...object({ shares_offered: nullableNumber, bids_received: nullableNumber }), nullable: true },
   LegacyIPO: object({
     id: string, name: string, url: string, exchanges: array(object({ exchange: string, url: string })),
@@ -43,11 +43,19 @@ export const legacySchemas: Record<string, Schema> = {
   }),
 };
 
+const companyPagination: Record<string, Schema> = {
+  currentPage: { type: "integer", minimum: 1 },
+  limit: { type: "integer", example: 100 },
+  count: { type: "integer", minimum: 0, description: "Number of companies returned on this page." },
+  isNextPageAvailable: { type: "boolean", description: "Whether the source links to a later page." },
+  nextPage: { type: "integer", minimum: 1, nullable: true },
+  previousPage: { type: "integer", minimum: 1, nullable: true },
+};
 const directory = array(ref("LegacyDirectoryCompany"));
 const ipos = array(ref("LegacyIPO"));
 const search = array({ type: "object", additionalProperties: true });
 export const legacyResponses: Record<string, Schema> = {
-  "list-of-company": object({ data: directory, companies: directory, page: { type: "integer", minimum: 1 }, limit: { type: "integer", example: 100 }, meta: object({ page: { type: "integer", minimum: 1 }, limit: { type: "integer", example: 100 } }) }),
+  "list-of-company": object({ meta: object(companyPagination), data: directory }),
   "list-of-ipo": object({ data: ipos, ipos }),
   "company-search": object({ data: search, results: search }),
   "company-data": object({ data: ref("LegacyCompanyData"), companyData: ref("LegacyCompanyData") }),

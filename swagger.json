@@ -3526,7 +3526,8 @@
             "type": "string"
           },
           "url": {
-            "type": "string"
+            "type": "string",
+            "example": "/company/id/1286218/"
           },
           "cmp": {
             "type": "number"
@@ -3554,9 +3555,6 @@
           },
           "roce": {
             "type": "number"
-          },
-          "skip": {
-            "type": "boolean"
           }
         },
         "required": [
@@ -3570,8 +3568,7 @@
           "qtrProfitVar",
           "salesQtr",
           "qtrSalesVar",
-          "roce",
-          "skip"
+          "roce"
         ]
       },
       "LegacySubscriptionRow": {
@@ -21924,7 +21921,7 @@
     "/v1/list-of-company": {
       "get": {
         "summary": "List companies",
-        "description": "One-based pages of 100 companies. data and companies contain the same rows; pagination is repeated in meta and the top-level page/limit fields. Legacy numeric fields may use zero for unavailable source cells.",
+        "description": "One-based pages of 100 companies. data contains company rows with their original relative source url. Symbol and the internal scraper skip flag are omitted. Pagination appears only in meta before company rows: currentPage, limit, count, isNextPageAvailable, nextPage and previousPage. Next-page availability comes from source pagination links; nextPage and previousPage are null when unavailable. Legacy numeric fields may use zero for unavailable source cells.",
         "parameters": [
           {
             "name": "page",
@@ -21963,50 +21960,56 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/LegacyDirectoryCompany"
-                      }
-                    },
-                    "companies": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/LegacyDirectoryCompany"
-                      }
-                    },
-                    "page": {
-                      "type": "integer",
-                      "minimum": 1
-                    },
-                    "limit": {
-                      "type": "integer",
-                      "example": 100
-                    },
                     "meta": {
                       "type": "object",
                       "properties": {
-                        "page": {
+                        "currentPage": {
                           "type": "integer",
                           "minimum": 1
                         },
                         "limit": {
                           "type": "integer",
                           "example": 100
+                        },
+                        "count": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Number of companies returned on this page."
+                        },
+                        "isNextPageAvailable": {
+                          "type": "boolean",
+                          "description": "Whether the source links to a later page."
+                        },
+                        "nextPage": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "nullable": true
+                        },
+                        "previousPage": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "nullable": true
                         }
                       },
                       "required": [
-                        "page",
-                        "limit"
+                        "currentPage",
+                        "limit",
+                        "count",
+                        "isNextPageAvailable",
+                        "nextPage",
+                        "previousPage"
                       ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LegacyDirectoryCompany"
+                      }
                     }
                   },
                   "required": [
-                    "data",
-                    "companies",
-                    "page",
-                    "limit",
-                    "meta"
+                    "meta",
+                    "data"
                   ]
                 }
               }
@@ -22119,7 +22122,7 @@
     "/api/list-of-company": {
       "get": {
         "summary": "List companies",
-        "description": "One-based pages of 100 companies. data and companies contain the same rows; pagination is repeated in meta and the top-level page/limit fields. Legacy numeric fields may use zero for unavailable source cells.",
+        "description": "One-based pages of 100 companies. data contains company rows with their original relative source url. Symbol and the internal scraper skip flag are omitted. Pagination appears only in meta before company rows: currentPage, limit, count, isNextPageAvailable, nextPage and previousPage. Next-page availability comes from source pagination links; nextPage and previousPage are null when unavailable. Legacy numeric fields may use zero for unavailable source cells.",
         "parameters": [
           {
             "name": "page",
@@ -22158,50 +22161,56 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/LegacyDirectoryCompany"
-                      }
-                    },
-                    "companies": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/LegacyDirectoryCompany"
-                      }
-                    },
-                    "page": {
-                      "type": "integer",
-                      "minimum": 1
-                    },
-                    "limit": {
-                      "type": "integer",
-                      "example": 100
-                    },
                     "meta": {
                       "type": "object",
                       "properties": {
-                        "page": {
+                        "currentPage": {
                           "type": "integer",
                           "minimum": 1
                         },
                         "limit": {
                           "type": "integer",
                           "example": 100
+                        },
+                        "count": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "description": "Number of companies returned on this page."
+                        },
+                        "isNextPageAvailable": {
+                          "type": "boolean",
+                          "description": "Whether the source links to a later page."
+                        },
+                        "nextPage": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "nullable": true
+                        },
+                        "previousPage": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "nullable": true
                         }
                       },
                       "required": [
-                        "page",
-                        "limit"
+                        "currentPage",
+                        "limit",
+                        "count",
+                        "isNextPageAvailable",
+                        "nextPage",
+                        "previousPage"
                       ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LegacyDirectoryCompany"
+                      }
                     }
                   },
                   "required": [
-                    "data",
-                    "companies",
-                    "page",
-                    "limit",
-                    "meta"
+                    "meta",
+                    "data"
                   ]
                 }
               }
@@ -22959,20 +22968,18 @@
     },
     "/v1/company-data": {
       "get": {
-        "summary": "Get detailed consolidated company data",
-        "description": "Supply a single symbol, for example RELIANCE, to load /company/RELIANCE/consolidated/. symbol replaces the former endpoint input. data and companyData contain the same detailed object. Cold requests can take around 20 seconds because expanded schedules are fetched serially. Responses are cached for 15 minutes. Read legacy amount/baseValue units; blank source cells may become zero. metrics is always empty because market-price history is excluded. Optional news failures leave news empty.",
+        "summary": "Get detailed company data",
+        "description": "Supply companyUrl using the exact relative url returned by list-of-company or company-search, for example /company/id/1286218/. Symbol-based, numeric-ID, standalone and consolidated paths are supported and fetched as supplied. URL-encode the query value, especially ampersands. data and companyData contain the same detailed object. Cold requests can take around 20 seconds because expanded schedules are fetched serially. Responses are cached for 15 minutes. Read legacy amount/baseValue units; blank source cells may become zero. metrics is always empty because market-price history is excluded. Optional news failures leave news empty.",
         "parameters": [
           {
-            "name": "symbol",
+            "name": "companyUrl",
             "in": "query",
             "required": true,
-            "description": "Single stock symbol; trimmed, normalized to uppercase and URL-encoded into /company/<symbol>/consolidated/. For M&M, use symbol=M%26M. Lists and company paths are invalid.",
+            "description": "Relative company path returned by discovery endpoints. Pass it unchanged using URLSearchParams or curl --data-urlencode. Absolute URLs and paths outside /company/ are invalid.",
             "schema": {
-              "type": "string",
-              "pattern": "^[A-Za-z0-9][A-Za-z0-9&_-]{0,49}$",
-              "maxLength": 50
+              "type": "string"
             },
-            "example": "RELIANCE"
+            "example": "/company/id/1286218/"
           }
         ],
         "operationId": "get__v1_company_data",
@@ -23136,20 +23143,18 @@
     },
     "/api/company-data": {
       "get": {
-        "summary": "Get detailed consolidated company data",
-        "description": "Supply a single symbol, for example RELIANCE, to load /company/RELIANCE/consolidated/. symbol replaces the former endpoint input. data and companyData contain the same detailed object. Cold requests can take around 20 seconds because expanded schedules are fetched serially. Responses are cached for 15 minutes. Read legacy amount/baseValue units; blank source cells may become zero. metrics is always empty because market-price history is excluded. Optional news failures leave news empty.",
+        "summary": "Get detailed company data",
+        "description": "Supply companyUrl using the exact relative url returned by list-of-company or company-search, for example /company/id/1286218/. Symbol-based, numeric-ID, standalone and consolidated paths are supported and fetched as supplied. URL-encode the query value, especially ampersands. data and companyData contain the same detailed object. Cold requests can take around 20 seconds because expanded schedules are fetched serially. Responses are cached for 15 minutes. Read legacy amount/baseValue units; blank source cells may become zero. metrics is always empty because market-price history is excluded. Optional news failures leave news empty.",
         "parameters": [
           {
-            "name": "symbol",
+            "name": "companyUrl",
             "in": "query",
             "required": true,
-            "description": "Single stock symbol; trimmed, normalized to uppercase and URL-encoded into /company/<symbol>/consolidated/. For M&M, use symbol=M%26M. Lists and company paths are invalid.",
+            "description": "Relative company path returned by discovery endpoints. Pass it unchanged using URLSearchParams or curl --data-urlencode. Absolute URLs and paths outside /company/ are invalid.",
             "schema": {
-              "type": "string",
-              "pattern": "^[A-Za-z0-9][A-Za-z0-9&_-]{0,49}$",
-              "maxLength": 50
+              "type": "string"
             },
-            "example": "RELIANCE"
+            "example": "/company/id/1286218/"
           }
         ],
         "operationId": "get__api_company_data",

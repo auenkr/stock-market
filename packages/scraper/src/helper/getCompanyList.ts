@@ -1,5 +1,6 @@
 import { sourceGet, type SourceOptions } from "../utils/source.js";
 import * as cheerio from "cheerio";
+import { nextPage } from "./getCompanySnapshot.js";
 
 /**
  * Represents the detailed information for a single company.
@@ -100,6 +101,15 @@ export async function getCompanyList(
   pageNo: number = 1,
   source: SourceOptions = {}
 ): Promise<CompanyDetailList[]> {
+  return (await getCompanyListPage(limit, pageNo, source)).companies;
+}
+
+/** Fetch company rows and pagination from the same source response. */
+export async function getCompanyListPage(
+  limit: number = 50,
+  pageNo: number = 1,
+  source: SourceOptions = {}
+): Promise<{ companies: CompanyDetailList[]; nextPage: number | null }> {
   const url = `/screens/357649/all-listed-companies/?limit=${limit}&page=${pageNo}`;
   try {
     const response = await sourceGet<string>(url, source, { headers: {
@@ -145,7 +155,7 @@ export async function getCompanyList(
       );
     }
 
-    return companies;
+    return { companies, nextPage: nextPage(html, pageNo) };
   } catch (error) {
     throw error;
   }

@@ -30,8 +30,10 @@ Response examples are synthetic schema illustrations, explicitly labeled, not li
 
 ## Recent API changes
 
-`GET /api/company-data?symbol=RELIANCE` and its `/v1/company-data` alias accept one required symbol. They trim and uppercase the symbol and construct an encoded consolidated source path. The previous `endpoint` input no longer satisfies this route. `M&M` is sent as `symbol=M%26M`. The docs search includes aliases, and the company-data form has only the `symbol` input.
+`GET /api/company-data?companyUrl=/company/id/1286218/` and its `/v1/company-data` alias accept one required `companyUrl`. Use the original relative `url` from list/search results. Standalone, consolidated and numeric-ID paths are fetched as supplied. Encode the query value with `URLSearchParams` or `curl --data-urlencode`, particularly for paths containing ampersands. Absolute URLs, non-company paths and traversal are rejected. The former `symbol` and `endpoint` inputs no longer satisfy this route. The docs form exposes only `companyUrl`.
 
-`/api/extract` and `/v1/extract` retain `endpoint` and `type`. The generated schemas document `{data, companyData}`, `{data, companies, page, limit, meta}`, `{data, ipos}`, `{data, results}` and extraction `{data, meta}`. Company-data and extraction share a 15-minute cache; `X-Cache: HIT` is present on a hit, and company-data also returns `Cache-Control: private, max-age=900`.
+Company lists return `{meta, data}`; rows contain `url` without `symbol` or `skip`. Pagination appears only in `meta`: `currentPage`, `limit`, `count`, `isNextPageAvailable`, `nextPage` and `previousPage`.
+
+`/api/extract` and `/v1/extract` retain `endpoint` and `type`. The generated schemas document `{data, companyData}`, company-list `{meta, data}`, `{data, ipos}`, `{data, results}` and extraction `{data, meta}`. Company-data and extraction share a 15-minute cache; `X-Cache: HIT` is present on a hit, and company-data also returns `Cache-Control: private, max-age=900`.
 
 Swagger includes `X-Request-ID`, quota retry information and legacy 400/404/429/500/502 errors. Legacy values retain `{amount, baseValue}`; missing cells may become zero and absent source rows may be omitted. These differ from compatibility resources, which use rupees and null for missing financial values. Public legacy `metrics` remains empty; optional news/GMP failures preserve the main response.

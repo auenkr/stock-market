@@ -2,7 +2,7 @@ import { Hono, type Context } from "hono";
 import { cors } from "hono/cors";
 import { errorDetails, log } from "@stock-market/common/logger";
 import { GetCompanyData } from "@stock-market/scraper/helper/getCompanyData";
-import { getCompanyList } from "@stock-market/scraper/helper/getCompanyList";
+import { getCompanyListPage } from "@stock-market/scraper/helper/getCompanyList";
 import { ListUpcommingIpo } from "@stock-market/scraper/helper/getUpcommingIPO";
 import { sourceGet, SourceError, type SourceOptions } from "@stock-market/scraper/utils/source";
 import { COMPANY_PAGE_SIZE, HomePageData } from "./config.js";
@@ -112,18 +112,24 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider) {
   api.get("/list-of-company", async (c) => {
     const pageParam = c.req.query("page") ?? "1";
     const page = Number(pageParam);
-    if (!Number.isInteger(page) || page < 1) {
+    if (!Number.isSafeInteger(page) || page < 1) {
       return errorResponse(c, "page must be a positive integer", 400);
     }
 
     try {
-      const companies = await getCompanyList(COMPANY_PAGE_SIZE, page, sourceOptions(c));
-      return c.json({
-        data: companies,
-        meta: { page, limit: COMPANY_PAGE_SIZE },
-        page,
+      const result = await getCompanyListPage(COMPANY_PAGE_SIZE, page, sourceOptions(c));
+      const companies = result.companies.map(({ skip, ...company }) => company);
+      const pagination = {
+        currentPage: page,
         limit: COMPANY_PAGE_SIZE,
-        companies,
+        count: companies.length,
+        isNextPageAvailable: result.nextPage !== null,
+        nextPage: result.nextPage,
+        previousPage: page > 1 ? page - 1 : null,
+      };
+      return c.json({
+        meta: pagination,
+        data: companies,
       });
     } catch (error) {
       return upstreamFailure(c, error);
@@ -152,12 +158,11 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider) {
   });
 
   api.get("/company-data", async (c) => {
-    const symbol = c.req.query("symbol")?.trim().toUpperCase();
-    if (!symbol) return errorResponse(c, "symbol parameter is required", 400);
-    if (!/^[A-Z0-9][A-Z0-9&_-]{0,49}$/.test(symbol)) {
-      return errorResponse(c, "symbol must be a single valid stock symbol", 400);
+    const endpoint = c.req.query("companyUrl")?.trim();
+    if (!endpoint) return errorResponse(c, "companyUrl parameter is required", 400);
+    if (!validCompanyPath(endpoint)) {
+      return errorResponse(c, "companyUrl must be a company path", 400);
     }
-    const endpoint = `/company/${encodeURIComponent(symbol)}/consolidated/`;
 
     try {
       const result = await getCachedCompanyData(endpoint, sourceOptions(c));

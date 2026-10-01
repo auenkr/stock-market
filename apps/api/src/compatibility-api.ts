@@ -22,7 +22,7 @@ export function validDate(value: string) {
   return /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value;
 }
 export function validCompanyPath(path: string) {
-  return /^\/company\/(?:[A-Z0-9][A-Z0-9_-]*|id\/\d+)\/(?:consolidated\/)?$/i.test(path.endsWith("/") ? path : `${path}/`);
+  return /^\/company\/(?:[A-Z0-9](?:[A-Z0-9&_-]|%26)*|id\/\d+)\/(?:consolidated\/)?$/i.test(path.endsWith("/") ? path : `${path}/`);
 }
 
 function validate(c: Context, contract: EndpointContract): DataQuery {

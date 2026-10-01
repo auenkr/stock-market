@@ -37,8 +37,8 @@ export const HomePageData = `
         <p><code>GET /api/list-of-ipo</code></p>
         <pre><code>curl "${PUBLIC_URL}/v1/list-of-ipo"</code></pre>
         <h2>Get company data</h2>
-        <p><code>GET /api/company-data?symbol=&lt;stock-symbol&gt;</code></p>
-        <pre><code>curl "${PUBLIC_URL}/v1/company-data?symbol=RELIANCE"</code></pre>
+        <p><code>GET /api/company-data?companyUrl=&lt;company-path&gt;</code></p>
+        <pre><code>curl "${PUBLIC_URL}/v1/company-data?companyUrl=%2Fcompany%2Fid%2F1286218%2F"</code></pre>
         <h2>Search companies</h2>
         <p><code>GET /api/company-search?q=&lt;company-name&gt;</code></p>
         <pre><code>curl "${PUBLIC_URL}/v1/company-search?q=reli"</code></pre>
