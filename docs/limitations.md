@@ -1,0 +1,46 @@
+# Current limitations and SaaS work
+
+## Datasets that cannot be supplied from the current connections
+
+These paths return `501 DATASET_UNAVAILABLE`, and their query/response contracts are included in OpenAPI for planning. They are not functional integrations.
+
+- Name and symbol changes: need exchange event records with reliable old/new names and effective dates.
+- Segment revenue: the current account exposes segment names but numeric values are premium-gated. A working permitted source and period/statement mapping are needed before enabling the adapter.
+- Statutory notes: expanded financial schedules supply selected breakdowns, not complete structured filing notes. Independent filing parsing is still required.
+- Ownership declarations and significant beneficial owners: inspected tables supply aggregate percentages and selected holder names, but not declaration flags, control/voting rights, acquisition dates or statutory beneficial-owner records.
+- Current index feed, index master and precomputed index returns: need a current index dataset, identifiers, constituents and valuations. FinEdge's index codes are not inferred from names.
+- Commodity lookup/percentage changes: the reference covers monthly industry/core infrastructure indices, not merely traded commodity quotes. Need the relevant independent statistical dataset and code mapping.
+- Holiday calendar: no exchange holiday dataset was found in Screener's inspected tools/Market Pulse pages. An authoritative exchange calendar is still needed.
+- Enterprise `refreshed-stocks`: needs a persisted ingestion log with dataset-specific update timestamps. Scrape/cache access times do not indicate when company filings changed.
+
+Nine reference market-history paths are deliberately excluded, including adjusted daily stock prices, daily/annual price-ratio series, historical index prices/valuations and commodity price trends. Financial statement histories, ownership filings, and corporate events remain in scope. Offline CLI valuation jobs are separate from the public API.
+
+## Remaining gaps within working adapters
+
+- Named current/historical holders, ownership summary/distribution, corporate actions, dividends and upcoming results now have partial Screener adapters. These are no longer wholly unavailable datasets. Ownership share counts, voting rights, pledges, warrants and other statutory fields remain null.
+- Company dividend amounts are rupees per share; global dividend lists expose percentages of face value, so global amounts stay null. Adjusted historical dividends, complete action archives and exact publication timestamps remain unavailable. Company-specific rights history uses a searched, paginated market list with exact-symbol filtering.
+- Balance-sheet schedules now expose inventories, receivables, cash, payables and long/short-term borrowing fields. Complete filing sublines, current/noncurrent totals and bank/insurance adapters remain incomplete.
+- Upcoming results are a paginated future calendar. Historical result calendars are not supplied. Latest market-wide announcements are connected, but do not expose a stable complete historical cursor or dates for every record.
+- Profitability ratios, cumulative metrics and basic P&L have verified mappings; other ratio/metric/basic-statement variants still return 501. Financial period coverage is documented per operation in Swagger.
+
+## Source constraints observed through 2026-10-01
+
+- Screener company pages, industry directory, peer classification pages and IPO pages were reachable. The company master screen redirects unauthenticated requests to login; it worked using the existing local source session.
+- A direct NSE quote request returned HTTP 403. No NSE adapter is presented as validated. An archive request also failed in this environment.
+- Some transcript links are unavailable for the source session, while presentation links are exposed. Source HTML markup, login requirements, available periods and link visibility can change.
+- The supplied temporary free account was used to sign in through the shared browser. Company actions, named holder expansions, upcoming results and Market Pulse action lists were accessible. Segment values and commodity tools remain premium-gated. See [browser exploration evidence](screener-exploration.md).
+- A rapid taxonomy refresh received Screener HTTP 429. The refresh command now spaces source requests; a subsequent run saved 280 classification names/paths. Source 429 is exposed as 503 `SOURCE_RATE_LIMITED`, not an empty successful dataset. Refreshing classification names is separate from market history.
+- Statement values are rounded source aggregates. Detailed filing sublines and sector-specific bank/insurance schemas are not established by the new snapshot parser. Nulls and shorter field sets are explicit compatibility differences.
+- Only up to 25 symbols are accepted per source-backed batch. On-demand scraping, local caches and source credentials cannot support unrestricted all-market bulk requests or reliable streaming.
+
+## What remains for a paid API service
+
+1. Acquire sources that allow the intended commercial distribution and cover the missing datasets. Product documentation and public test responses describe a contract; they are not a production data supply. FinEdge's pricing page distinguishes commercial licensing from personal plans: [source](https://www.finedgeapi.com/financial-data-api-pricing).
+2. Persist company/security identity mappings, source provenance, parsed financial records and update timestamps. Add scheduled ingestion, retries with bounded backoff, source circuit breakers, and revision tracking. Serve customers from stored data rather than scrape on every cold request.
+3. Validate dashboard-issued key hashes, expiry and revocation in the API deployment; enforce the stored per-key limits. The web application already manages PostgreSQL key records, but the Worker is not connected to that validation flow.
+4. Use shared quota/metering storage across Worker isolates and replicas. Arbitrary headers must not establish a billable identity. Add billing, plans, entitlements, usage accounting and tenant-visible limits.
+5. Configure production source secrets separately from source-code variables. Source sessions are read from environment/Worker bindings; browser exploration credentials are not stored in repository docs or generated Swagger.
+6. Measure source freshness and endpoint latency under expected customer load. Add source health/status, request correlation, structured error reporting and operational monitoring. `/health` currently measures process availability, not upstream dataset readiness.
+7. Complete field/period/sector parity against representative independently sourced fixtures. Verify real standalone/consolidated examples, financial-unit conversions, missing values, non-March fiscal years and reporting revisions. Passing route tests proves the implemented subset, not all 53 datasets.
+
+Deployment was not requested in this change. A local build does not establish live routing, source access from Cloudflare, or which Worker version the custom domain serves.

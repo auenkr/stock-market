@@ -1,8 +1,7 @@
-import { BASE_URL, COOKIE } from "@stock-market/common/env";
+import { sourceGet, type SourceOptions } from "../utils/source.js";
+import { errorDetails, log } from "@stock-market/common/logger";
 import { DELAY_BETWEEN_API_REQUEST } from "../utils/constant.js";
 import * as cheerio from "cheerio";
-import axios from "axios";
-import { sendReq } from "../utils/sendReq.js";
 import { getCompanyMetrics, type CompanyMetricDataType } from "./getCompanyMetric.js";
 
 export interface NewsItem {
@@ -229,7 +228,9 @@ async function extractFinancialTable<T>(
   $: cheerio.CheerioAPI,
   sectionId: string,
   rowToFieldMap: Map<string, string>,
-  detailFields: Set<string>
+  detailFields: Set<string>,
+  consolidated = false,
+  source: SourceOptions = {}
 ): Promise<T[]> {
   const table = $(`${sectionId} table`);
   if (table.length === 0) return [];
@@ -251,10 +252,10 @@ async function extractFinancialTable<T>(
   const allDataMap: Map<string, Map<string, Map<string, string>>> = new Map();
 
   for (const field of detailFields) {
-    const url = `${BASE_URL}/api/company/${refId}/schedules/?parent=${field}&section=${sectionId.split("#")[1]
-      }&consolidated=`;
+    const url = `/api/company/${refId}/schedules/?parent=${field}&section=${sectionId.split("#")[1]
+      }&consolidated=${consolidated ? "true" : ""}`;
 
-    const response = await sendReq(() => axios.get(url));
+    const response = await sourceGet(url, source);
     const data = response.data;
     // deplay to avoid rate limiting
     await new Promise((resolve) =>
@@ -351,11 +352,12 @@ async function extractFinancialTable<T>(
  * @returns A promise that resolves to the structured company data.
  */
 export async function GetCompanyData(
-  endpoint: string
+  endpoint: string,
+  options: SourceOptions & { includeMarketHistory?: boolean } = {}
 ): Promise<CompanyDataType> {
   try {
     // 1. Fetch HTML from the endpoint
-    const response = await sendReq(() => axios.get(`${BASE_URL}${endpoint}`));
+    const response = await sourceGet<string>(endpoint, options);
     const html = response.data;
 
     // 2. Load HTML into Cheerio for parsing
@@ -364,6 +366,8 @@ export async function GetCompanyData(
     // 3. Extract Data
     const refId = $("#company-info").attr("data-company-id") || "";
     const name = $("h1.margin-0.show-from-tablet-landscape").text().trim();
+    if (!refId || !name) throw new Error("Source did not return a company page");
+    const consolidated = endpoint.includes("/consolidated");
     const url = $('.company-links a[href^="http"]').first().attr("href") || "";
     const about = $(".about p").text().trim();
     const keyPoints = $("div.title:contains('Key Points')")
@@ -417,7 +421,7 @@ export async function GetCompanyData(
       .get();
 
     // TODO: Peer Companies
-    const peerCompanies = await getPeerCompanies($); // TODO: Implement this
+    const peerCompanies = await getPeerCompanies($, options); // TODO: Implement this
 
     // -- Quarterly Results --
     const quarterlyMap = new Map([
@@ -448,7 +452,9 @@ export async function GetCompanyData(
         $,
         "#quarters",
         quarterlyMap,
-        quarterlyDetailFields
+        quarterlyDetailFields,
+        consolidated,
+        options
       );
     // Add source URLs
     $("#quarters tbody tr.font-size-14.ink-600 td a").each((i, el) => {
@@ -464,7 +470,9 @@ export async function GetCompanyData(
         $,
         "#profit-loss",
         quarterlyMap,
-        profitAndLossDetailFields
+        profitAndLossDetailFields,
+        consolidated,
+        options
       );
 
     // -- Balance Sheet --
@@ -492,7 +500,9 @@ export async function GetCompanyData(
         $,
         "#balance-sheet",
         balanceSheetMap,
-        balanceSheetDetailFields
+        balanceSheetDetailFields,
+        consolidated,
+        options
       );
 
     // -- Cash Flow --
@@ -512,7 +522,9 @@ export async function GetCompanyData(
         $,
         "#cash-flow",
         cashFlowMap,
-        cashFlowDetailFields
+        cashFlowDetailFields,
+        consolidated,
+        options
       );
 
     // -- Ratios --
@@ -529,7 +541,9 @@ export async function GetCompanyData(
       $,
       "#ratios",
       ratioMap,
-      ratioDetailFields
+      ratioDetailFields,
+      consolidated,
+      options
     );
 
     // -- Shareholding Pattern --
@@ -554,14 +568,17 @@ export async function GetCompanyData(
         $,
         "#quarterly-shp",
         shareHoldingMap,
-        shareholdingPatternDetailFields
+        shareholdingPatternDetailFields,
+        consolidated,
+        options
       );
 
-    // Getting company price history
-    const metricsData = await getCompanyMetrics(refId);
-    await new Promise((resolve) =>
-      setTimeout(resolve, DELAY_BETWEEN_API_REQUEST)
-    );
+    // Offline valuation jobs can still opt into price charts. Public API
+    // consumers explicitly disable them because market history is out of scope.
+    const metricsData = options.includeMarketHistory === false ? [] : await getCompanyMetrics(refId, options);
+    if (options.includeMarketHistory !== false) {
+      await new Promise((resolve) => setTimeout(resolve, DELAY_BETWEEN_API_REQUEST));
+    }
 
     // Assemble the final data object
     const companyData: CompanyDataType = {
@@ -586,38 +603,29 @@ export async function GetCompanyData(
 
     // Call new req
     const query = companyData.name.replace(/[^a-zA-Z0-9]+/g, " ").trim();
-    const newsResponse = await sendReq(() =>
-      axios.get("https://www.moneycontrol.com/mccode/common/autosuggestion_solr.php", {
+    try {
+      const newsResponse = await sourceGet("https://www.moneycontrol.com/mccode/common/autosuggestion_solr.php", { requestId: options.requestId, cookie: "" }, {
         params: { query, type: 3, format: "json" },
-      }),
-    );
-    companyData.news = Array.isArray(newsResponse.data)
-      ? (newsResponse.data as NewsItem[])
-      : [];
+      });
+      companyData.news = Array.isArray(newsResponse.data) ? newsResponse.data as NewsItem[] : [];
+    } catch (error) {
+      log("warn", "company.news.unavailable", { requestId: options.requestId, error: errorDetails(error) });
+    }
 
     return companyData;
   } catch (error) {
-    console.error(
-      `Failed to get company data for endpoint: ${endpoint}`,
-      error
-    );
-    throw new Error("Could not fetch or parse company data.");
+    log("error", "company.load.failed", { endpoint, requestId: options.requestId, error: errorDetails(error) });
+    throw error;
   }
 }
 
 // Get enterprise value
 async function getEnterpriseValue(
-  $: cheerio.CheerioAPI
+  $: cheerio.CheerioAPI,
+  source: SourceOptions = {}
 ): Promise<NumberDataType> {
   const warehouseNo = $("#company-info").data("warehouse-id");
-  const response = await sendReq(() => axios.get(
-    `${BASE_URL}/api/company/${warehouseNo}/quick_ratios`,
-    {
-      headers: {
-        cookie: COOKIE,
-      },
-    }
-  ));
+  const response = await sourceGet(`/api/company/${warehouseNo}/quick_ratios`, source);
   const html = response.data;
   const $$ = cheerio.load(html);
   // Extract the list item containing "Enterprise Value"
@@ -632,15 +640,14 @@ async function getEnterpriseValue(
 }
 
 async function getPeerCompanies(
-  $: cheerio.CheerioAPI
+  $: cheerio.CheerioAPI,
+  source: SourceOptions = {}
 ): Promise<CompanyPeerCompaniesDataType[]> {
   const warehouseNo = $("#company-info").data("warehouse-id");
   const sectorNode = $('p[class="sub"]').first();
   const sectorValue = sectorNode.text().trim().replace(/\s+/g, " ").trim();
 
-  const response = await sendReq(() => axios.get(
-    `${BASE_URL}/api/company/${warehouseNo}/peers`
-  ));
+  const response = await sourceGet(`/api/company/${warehouseNo}/peers`, source);
   const html = response.data;
   const $$ = cheerio.load(html);
 

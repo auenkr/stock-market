@@ -5,7 +5,7 @@
   "scripts": {
     "build": "esbuild src/index.ts --bundle --format=esm --platform=node --target=es2022 --outfile=../../dist/apps/worker/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "dev": "tsx src/index.ts"
+    "dev": "node ../../scripts/dev-app.mjs worker"
   },
   "dependencies": {
     "@stock-market/common": "workspace:*",

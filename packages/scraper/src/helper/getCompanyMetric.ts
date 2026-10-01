@@ -1,6 +1,4 @@
-import { BASE_URL } from "@stock-market/common/env";
-import axios from "axios";
-import { sendReq } from "../utils/sendReq.js";
+import { sourceGet, type SourceOptions } from "../utils/source.js";
 import { parseNumberData, type NumberDataType } from "./getCompanyData.js";
 
 type CompanyPriceDataTypeResponse = {
@@ -23,8 +21,8 @@ export type CompanyMetricDataType = {
     };
 };
 
-export async function getCompanyMetrics(companyRefId: string) : Promise<CompanyMetricDataType[]> {
-  const response = await sendReq(() => axios.get(`${BASE_URL}/api/company/${companyRefId}/chart/?q=Price&days=10000&consolidated=true`));
+export async function getCompanyMetrics(companyRefId: string, source: SourceOptions = {}) : Promise<CompanyMetricDataType[]> {
+  const response = await sourceGet(`/api/company/${companyRefId}/chart/?q=Price&days=10000&consolidated=true`, source);
   const data = response.data as unknown as CompanyPriceDataTypeResponse;
  
   // Converting price to number

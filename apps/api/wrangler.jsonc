@@ -1,0 +1,25 @@
+{
+  "name": "stock-market-api",
+  "main": "../../dist/apps/api/server.js",
+  "compatibility_date": "2026-09-26",
+  "build": {
+    "command": "pnpm nx build @stock-market/api",
+    "watch_dir": [
+      "src",
+      "../../packages/common/src",
+      "../../packages/scraper/src"
+    ]
+  },
+  "vars": {
+    "BASE_URL": "https://www.screener.in",
+    "PUBLIC_URL": "https://stock-market-api.auenkr.com"
+  },
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "stock-market-api.auenkr.com",
+      "custom_domain": true
+    }
+  ]
+}

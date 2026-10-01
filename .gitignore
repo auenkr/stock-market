@@ -4,8 +4,19 @@ node_modules
 dist
 gen
 .nx
+.next/
+.next-*/
+.wrangler/
+*.tsbuildinfo
 .env
 .env.*
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
 !.env.sample
+!.env.example
 
 .DS_Store
+
+# Worker configuration contains public settings only; credentials stay in .env/secrets.
+!apps/api/wrangler.jsonc

@@ -3,9 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/server.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=../../dist/apps/api/server.js",
+    "test": "node --import tsx --test src/*.test.ts",
+    "build": "esbuild src/server.ts --bundle --conditions=source --format=esm --platform=browser --target=es2022 --outfile=../../dist/apps/api/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "dev": "wrangler dev --port ${API_PORT:-8787}",
+    "dev": "node ../../scripts/dev-app.mjs api",
     "deploy:api": "wrangler deploy"
   },
   "dependencies": {

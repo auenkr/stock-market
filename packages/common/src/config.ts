@@ -10,7 +10,7 @@ export {
   PUBLIC_URL,
 } from "./env.js";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const repositoryRoot = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 export const outputDir = join(repositoryRoot, "gen");

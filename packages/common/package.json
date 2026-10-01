@@ -3,12 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/config.ts src/env.ts --format=esm --platform=node --target=es2022 --outdir=dist",
+    "build": "esbuild src/config.ts src/env.ts src/logger.ts --format=esm --platform=node --target=es2022 --outdir=dist",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "exports": {
     "./*": {
       "types": "./src/*.ts",
+      "source": "./src/*.ts",
       "import": "./dist/*.js"
     }
   },

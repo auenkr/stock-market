@@ -25,7 +25,11 @@ export const HomePageData = `
       </head>
       <body><main>
         <p>MARKET DATA / API v1</p><h1>Build on better market data.</h1>
-        <p>Structured Indian equity and IPO data for research tools, dashboards, and automated workflows. Explore the contract at <a href="/openapi.json">/openapi.json</a>.</p>
+        <p>Independent Indian company fundamentals, ownership, corporate actions and IPO data. Explore <a href="/docs">the API reference</a>, download <a href="/swagger.json">swagger.json</a>, or check <a href="/v1/coverage">current coverage</a>. Source-backed adapters have partial coverage; market history is excluded.</p>
+        <h2>Company fundamentals</h2>
+        <pre><code>curl "${PUBLIC_URL}/v1/financials/ITC?statement_type=c&amp;statement_code=pl&amp;period=annual"</code></pre>
+        <h2>Dividends and ownership</h2>
+        <p><code>GET /v1/dividend/ITC</code> · <code>GET /v1/shareholdings/ownership-current/ITC</code></p>
         <h2>List companies</h2>
         <p><code>GET /api/list-of-company?page=1</code></p>
         <pre><code>curl "${PUBLIC_URL}/v1/list-of-company?page=1"</code></pre>
@@ -33,8 +37,8 @@ export const HomePageData = `
         <p><code>GET /api/list-of-ipo</code></p>
         <pre><code>curl "${PUBLIC_URL}/v1/list-of-ipo"</code></pre>
         <h2>Get company data</h2>
-        <p><code>GET /api/company-data?endpoint=&lt;company-endpoint&gt;</code></p>
-        <pre><code>curl "${PUBLIC_URL}/v1/company-data?endpoint=/company/example"</code></pre>
+        <p><code>GET /api/company-data?symbol=&lt;stock-symbol&gt;</code></p>
+        <pre><code>curl "${PUBLIC_URL}/v1/company-data?symbol=RELIANCE"</code></pre>
         <h2>Search companies</h2>
         <p><code>GET /api/company-search?q=&lt;company-name&gt;</code></p>
         <pre><code>curl "${PUBLIC_URL}/v1/company-search?q=reli"</code></pre>

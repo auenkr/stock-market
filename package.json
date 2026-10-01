@@ -3,7 +3,12 @@
   "private": true,
   "packageManager": "pnpm@10.15.0",
   "scripts": {
+    "docs:generate": "tsx apps/api/scripts/generate-swagger.ts",
+    "docs:check": "tsx apps/api/scripts/generate-swagger.ts --check",
+    "source:taxonomy": "pnpm --filter @stock-market/scraper build && node --env-file=.env --import tsx apps/api/scripts/refresh-taxonomy.ts",
+    "test:api": "pnpm --filter @stock-market/common build && pnpm --filter @stock-market/scraper build && pnpm --filter @stock-market/api test",
     "build": "nx run-many -t build",
+    "dev": "node scripts/dev.mjs",
     "typecheck": "nx run-many -t typecheck",
     "dev:api": "nx dev @stock-market/api",
     "dev:web": "nx dev @stock-market/web",

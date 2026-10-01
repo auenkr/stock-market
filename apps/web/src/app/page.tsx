@@ -1,8 +1,5 @@
-import { redirect } from "next/navigation";
-import { auth } from "@stock-market/auth";
-import { headers } from "next/headers";
+import Link from "next/link";
 
-export default async function Home() {
-  const session = await auth.api.getSession({ headers: await headers() });
-  redirect(session ? "/dashboard" : "/signin");
+export default function Home() {
+  return <main className="landing"><nav className="landing-nav"><Link className="brand" href="/"><span className="brand-mark">ll</span> ledgerline</Link><Link className="button" href="/signin">Sign in</Link></nav><section className="landing-hero"><span className="eyebrow" style={{ color: "#c9f36b" }}>Indian market data, built for builders</span><h1>Ship smarter products with <em>clean market data.</em></h1><p className="landing-copy">A focused API for Indian equities, company fundamentals, and upcoming IPOs. One predictable contract, ready for your next dashboard, research tool, or workflow.</p><div className="landing-actions"><Link className="button secondary" href="/signin">Start building free</Link><Link className="button" href="/docs">Explore the docs</Link></div></section><section className="feature-strip"><div className="feature"><strong>60 RPM</strong><span>Predictable rate limits for every key</span></div><div className="feature"><strong>15 min</strong><span>Smart caching for detailed company data</span></div><div className="feature"><strong>/v1</strong><span>Versioned endpoints that stay stable</span></div></section></main>;
 }

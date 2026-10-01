@@ -5,7 +5,7 @@
   "scripts": {
     "build": "esbuild src/server.ts --bundle --format=esm --platform=node --target=es2022 --outfile=../../dist/apps/orchestrator/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "dev": "tsx src/server.ts"
+    "dev": "node ../../scripts/dev-app.mjs orchestrator"
   },
   "dependencies": {
     "@stock-market/common": "workspace:*",

@@ -1,78 +1,53 @@
-import dotenv from "dotenv";
 import { ORCHESTRATOR_PORT } from "@stock-market/common/config";
+import { errorDetails, log } from "@stock-market/common/logger";
 import { GetCompanyData } from "@stock-market/scraper/helper/getCompanyData";
 import type { CompanyDetailListServer } from "@stock-market/scraper/types";
-dotenv.config();
 
-const ORCHESTRATOR_URL =
-  process.env.ORCHESTRATOR_URL || `http://localhost:${ORCHESTRATOR_PORT}`;
+const orchestratorUrl = process.env.ORCHESTRATOR_URL || `http://localhost:${ORCHESTRATOR_PORT}`;
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function request<T>(path: string, body?: unknown): Promise<T> {
+  const response = await fetch(`${orchestratorUrl}${path}`, {
+    method: body === undefined ? "GET" : "POST",
+    headers: { "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (!response.ok) {
+    log("error", "worker.orchestrator.failed", { path, status: response.status, requestId: response.headers.get("X-Request-ID") });
+    throw new Error(`Orchestrator returned HTTP ${response.status}`);
+  }
+  return response.json() as Promise<T>;
+}
 
 async function workerTask() {
-  let companyName = "";
+  let companyName: string | undefined;
   try {
-    const response = await fetch(`${ORCHESTRATOR_URL}/api/worker/task`);
-    const companyData = (await response.json()) as
-      | CompanyDetailListServer
-      | { company: null };
-    if ("company" in companyData) {
-      console.log("No task found. Sleeping for 100 second...");
-      await new Promise((resolve) => setTimeout(resolve, 100_000));
-      return null;
+    const company = await request<CompanyDetailListServer | { company: null }>("/api/worker/task");
+    if ("company" in company) {
+      log("info", "worker.idle", { retryInMs: 100_000 });
+      await sleep(100_000);
+      return;
     }
-    companyName = companyData.name;
-    console.log("Task found:", companyData.name);
-
-    const data = await GetCompanyData(companyData.url);
-    console.log("Company data fetched:", companyData.name);
-
-    const resp = await fetch(`${ORCHESTRATOR_URL}/api/task`, {
-      method: "POST",
-      body: JSON.stringify({
-        data,
-        name: companyData.name,
-      }),
-    });
-    const updatedCompanyData = (await resp.json()) as CompanyDetailListServer;
-    console.log(updatedCompanyData);
-
-    if (
-      updatedCompanyData?.status &&
-      updatedCompanyData.status === "completed"
-    ) {
-      console.log("Task completed:", companyData.name);
-      return null;
-    } else {
-      console.log("Task failed:", companyData.name);
-      throw new Error("Task failed");
-    }
+    companyName = company.name;
+    log("info", "worker.task.started", { company: companyName });
+    const data = await GetCompanyData(company.url);
+    const updated = await request<CompanyDetailListServer>("/api/task", { data, name: companyName });
+    if (updated.status !== "completed") throw new Error("Task was not marked completed");
+    log("info", "worker.task.completed", { company: companyName });
   } catch (error) {
-    const resp = await fetch(`${ORCHESTRATOR_URL}/api/worker/task`, {
-      method: "POST",
-      body: JSON.stringify({ name: companyName }),
-    });
-    const updatedCompanyData = (await resp.json()) as CompanyDetailListServer;
-    if (updatedCompanyData?.status && updatedCompanyData.status === "pending") {
-      console.log("Task failed:", companyName);
-      throw new Error("Task failed");
+    log("error", "worker.task.failed", { company: companyName, error: errorDetails(error), retryInMs: 1000 });
+    // Startup/connection failures have no task to reset. A reset failure must
+    // never terminate polling or hide the original failure.
+    if (companyName) {
+      const skip = (error as { response?: { status?: number } }).response?.status === 404;
+      if (skip) log("warn", "worker.task.skipped", { company: companyName, reason: "Source company no longer exists" });
+      try { await request("/api/worker/task", { name: companyName, skip }); }
+      catch (resetError) { log("error", "worker.task.reset.failed", { company: companyName, error: errorDetails(resetError) }); }
     }
-    console.error("Error getting task:", error);
-    console.log("Retrying in 1 second...");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    return null;
+    await sleep(1000);
   }
 }
 
-async function main() {
-  try {
-    while (true) {
-      await workerTask();
-    }
-  } catch (error) {
-    console.error("Error getting task:", error);
-    console.log("Retrying in 1 second...");
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    main();
-  }
-}
-
-main();
+log("info", "worker.started", { orchestratorUrl });
+while (true) await workerTask();

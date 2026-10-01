@@ -1,7 +1,6 @@
 import * as cheerio from "cheerio";
-import { BASE_URL } from "@stock-market/common/env";
-import { sendReq } from "../utils/sendReq.js";
-import axios from "axios";
+import { sourceGet, type SourceOptions } from "../utils/source.js";
+import { errorDetails, log } from "@stock-market/common/logger";
 import type { AnyNode } from "domhandler";
 
 // -------------------------------------------------------------
@@ -226,16 +225,17 @@ function findGMPPercentage(name: string, records: GMPRecord[]): number | null {
   return bestMatch ? Number(bestMatch.gmp_perc) : null;
 }
 
-async function getGMPRecords(): Promise<GMPRecord[]> {
-  const response = await sendReq(() =>
-    axios.get("https://webnodejs.investorgain.com/cloud/v2/index/gmp-data"),
-  );
+async function getGMPRecords(source: SourceOptions): Promise<GMPRecord[]> {
+  const response = await sourceGet("https://webnodejs.investorgain.com/cloud/v2/index/gmp-data", { requestId: source.requestId, cookie: "" });
   const records = (response.data?.gmpList ?? []) as GMPRecord[];
   return records.filter((record) => record.company_short_name && Number.isFinite(Number(record.gmp_perc)));
 }
 
-async function enrichIPOData(results: CompanyIPOData[]): Promise<CompanyIPOData[]> {
-  const gmpRecords = await getGMPRecords();
+async function enrichIPOData(results: CompanyIPOData[], source: SourceOptions): Promise<CompanyIPOData[]> {
+  if (!results.length) return results;
+  let gmpRecords: GMPRecord[] = [];
+  try { gmpRecords = await getGMPRecords(source); }
+  catch (error) { log("warn", "ipo.gmp.unavailable", { requestId: source.requestId, error: errorDetails(error) }); }
 
   return results.map((ipo) => ({
     ...ipo,
@@ -253,7 +253,7 @@ async function enrichIPOData(results: CompanyIPOData[]): Promise<CompanyIPOData[
  * @param html The raw HTML string.
  * @returns Array of CompanyIPOData objects.
  */
-function parseUpcomingIPOs($: cheerio.CheerioAPI): CompanyIPOData[] {
+export function parseUpcomingIPOs($: cheerio.CheerioAPI): CompanyIPOData[] {
   const results: CompanyIPOData[] = [];
 
   const rows = $("table.data-table > tbody > tr");
@@ -380,10 +380,14 @@ function parseUpcomingIPOs($: cheerio.CheerioAPI): CompanyIPOData[] {
   return results;
 }
 
-export async function ListUpcommingIpo() {
+export function parseUpcomingIpoHtml(html: string): CompanyIPOData[] {
+  return parseUpcomingIPOs(cheerio.load(html));
+}
+
+export async function ListUpcommingIpo(source: SourceOptions = {}) {
   try {
-    const url = `${BASE_URL}/ipo`;
-    const response = await sendReq(() => axios.get(url));
+    const url = `/ipo`;
+    const response = await sourceGet<string>(url, source);
     const html = response.data;
 
     const mainHtml = cheerio.load(html);
@@ -396,7 +400,7 @@ export async function ListUpcommingIpo() {
 
     // Pagination
     if (!canContinuePagination) {
-      return enrichIPOData(results);
+      return enrichIPOData(results, source);
     }
 
     for (let i = 0; i < pagination.length; i++) {
@@ -414,8 +418,8 @@ export async function ListUpcommingIpo() {
 
       console.log(`Page ${pageNo} running`)
 
-      const url = `${BASE_URL}/ipo?page=${pageNo}`;
-      const response = await sendReq(() => axios.get(url));
+      const url = `/ipo?page=${pageNo}`;
+      const response = await sourceGet<string>(url, source);
       const html = response.data;
 
       const $ = cheerio.load(html);
@@ -428,7 +432,7 @@ export async function ListUpcommingIpo() {
         break;
       }
     }
-    return enrichIPOData(results);
+    return enrichIPOData(results, source);
   } catch (error) {
     throw error;
   }

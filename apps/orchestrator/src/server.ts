@@ -1,8 +1,8 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { existsSync } from "node:fs";
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import dotenv from "dotenv";
+import { errorDetails, log } from "@stock-market/common/logger";
 import {
   allCompanyDataDir,
   companyListFile,
@@ -11,7 +11,9 @@ import {
 import type { CompanyDataType } from "@stock-market/scraper/helper/getCompanyData";
 import type { CompanyDetailListServer } from "@stock-market/scraper/types";
 
-dotenv.config();
+await mkdir(allCompanyDataDir, { recursive: true });
+try { await writeFile(companyListFile, "[]", { flag: "wx" }); }
+catch (error) { if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error; }
 
 async function readCompanyList() {
   const data = await readFile(companyListFile, "utf8");
@@ -40,12 +42,22 @@ function sendJson(
 }
 
 const server = createServer(async (request, response) => {
+  const requestId = crypto.randomUUID();
+  const startedAt = Date.now();
+  response.setHeader("X-Request-ID", requestId);
+  const path = new URL(request.url ?? "/", "http://localhost").pathname;
+  response.on("finish", () => log(response.statusCode >= 500 ? "error" : "info", "orchestrator.request.completed", {
+    requestId, method: request.method, path, status: response.statusCode, durationMs: Date.now() - startedAt,
+  }));
   try {
-    const path = new URL(request.url ?? "/", `http://${request.headers.host ?? "localhost"}`).pathname;
+    if (path === "/health" && request.method === "GET") {
+      sendJson(response, { status: "ok", service: "stock-market-orchestrator" });
+      return;
+    }
 
     if (path === "/api/worker/task" && request.method === "GET") {
       const companyListData = await readCompanyList();
-      const company = companyListData.find((item) => item.status === "pending");
+      const company = companyListData.find((item) => item.status === "pending" && !item.skip);
 
       if (company === undefined) {
         sendJson(response, { company: null });
@@ -62,7 +74,10 @@ const server = createServer(async (request, response) => {
       const body = (await readBody(request)) as CompanyDetailListServer;
       const companyListData = await readCompanyList();
       companyListData.forEach((company) => {
-        if (company.name === body.name) company.status = "pending";
+        if (company.name === body.name) {
+          company.status = "pending";
+          if (body.skip) company.skip = true;
+        }
       });
       await writeCompanyList(companyListData);
       sendJson(response, {});
@@ -115,11 +130,15 @@ const server = createServer(async (request, response) => {
 
     sendJson(response, { error: "Not Found" }, 404);
   } catch (error) {
-    console.error(error);
+    log("error", "orchestrator.request.failed", { requestId, method: request.method, path, error: errorDetails(error) });
     sendJson(response, { error: "Internal Server Error" }, 500);
   }
 });
 
 server.listen(ORCHESTRATOR_PORT, () => {
-  console.log(`Server running at http://localhost:${ORCHESTRATOR_PORT}`);
+  log("info", "orchestrator.started", { url: `http://localhost:${ORCHESTRATOR_PORT}`, companyListFile });
+});
+server.on("error", (error) => {
+  log("error", "orchestrator.start.failed", { port: ORCHESTRATOR_PORT, error: errorDetails(error) });
+  process.exitCode = 1;
 });

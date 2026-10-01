@@ -1,6 +1,4 @@
-import axios from "axios";
-import { sendReq } from "../utils/sendReq.js";
-import { BASE_URL, COOKIE } from "@stock-market/common/env";
+import { sourceGet, type SourceOptions } from "../utils/source.js";
 import * as cheerio from "cheerio";
 
 /**
@@ -87,7 +85,7 @@ export type CompanyDetailList = {
  * @returns The parsed number or 0.
  */
 const safeParseFloat = (value: string): number => {
-  const parsed = parseFloat(value);
+  const parsed = parseFloat(value.replace(/,/g, ""));
   return isNaN(parsed) ? 0 : parsed;
 };
 
@@ -99,18 +97,14 @@ const safeParseFloat = (value: string): number => {
  */
 export async function getCompanyList(
   limit: number = 50,
-  pageNo: number = 1
+  pageNo: number = 1,
+  source: SourceOptions = {}
 ): Promise<CompanyDetailList[]> {
-  const url = `${BASE_URL}/screens/357649/all-listed-companies/?limit=${limit}&page=${pageNo}`;
-
-  // These headers are important to mimic a real browser request.
-  const headers = {
-    cookie: COOKIE,
-    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/131 Safari/537.36",
-  };
-
+  const url = `/screens/357649/all-listed-companies/?limit=${limit}&page=${pageNo}`;
   try {
-    const response = await sendReq(() => axios.get(url, { headers }));
+    const response = await sourceGet<string>(url, source, { headers: {
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/131 Safari/537.36",
+    } });
     const html = response.data;
     const $ = cheerio.load(html);
 
@@ -146,7 +140,7 @@ export async function getCompanyList(
         $("form[action*='login']").length > 0;
       throw new Error(
         isLoginPage
-           ? "Screener returned a login page. Set a valid COOKIE in the root .env."
+           ? "Screener returned a login page. Configure a valid Screener COOKIE."
           : "Screener returned no company rows."
       );
     }

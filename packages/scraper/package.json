@@ -3,12 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/helper/getCompanyList.ts src/helper/getUpcommingIPO.ts src/helper/getCompanyMetric.ts src/helper/getCompanyData.ts src/types.ts src/utils/sendReq.ts src/utils/helper.ts src/utils/constant.ts src/metrics/ev-ebita-valuation.ts src/metrics/index.ts src/metrics/utils.ts --format=esm --platform=node --target=es2022 --packages=external --outbase=src --outdir=dist",
+    "build": "esbuild src/helper/getCompanyList.ts src/helper/getUpcommingIPO.ts src/helper/getCompanyMetric.ts src/helper/getCompanyData.ts src/helper/getCompanySnapshot.ts src/types.ts src/utils/sendReq.ts src/utils/source.ts src/utils/helper.ts src/utils/constant.ts src/metrics/ev-ebita-valuation.ts src/metrics/index.ts src/metrics/utils.ts --format=esm --platform=node --target=es2022 --packages=external --outbase=src --outdir=dist",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "exports": {
     "./*": {
       "types": "./src/*.ts",
+      "source": "./src/*.ts",
       "import": "./dist/*.js"
     }
   },

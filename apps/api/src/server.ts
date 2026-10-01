@@ -1,15 +1,17 @@
-import axios from "axios";
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import { cors } from "hono/cors";
-import { BASE_URL } from "@stock-market/common/env";
+import { errorDetails, log } from "@stock-market/common/logger";
 import { GetCompanyData } from "@stock-market/scraper/helper/getCompanyData";
 import { getCompanyList } from "@stock-market/scraper/helper/getCompanyList";
 import { ListUpcommingIpo } from "@stock-market/scraper/helper/getUpcommingIPO";
-import { sendReq } from "@stock-market/scraper/utils/sendReq";
+import { sourceGet, SourceError, type SourceOptions } from "@stock-market/scraper/utils/source";
 import { COMPANY_PAGE_SIZE, HomePageData } from "./config.js";
+import { createCompatibilityApi, defaultProvider, validCompanyPath, type ProviderFactory, type Bindings } from "./compatibility-api.js";
+import { openApi } from "./openapi.js";
+import { apiDocsHtml } from "./api-docs.js";
+import { DataError } from "./screener-provider.js";
 
-type ApiBindings = {
-};
+type ApiBindings = Bindings;
 
 type CachedCompanyData = {
   value: Awaited<ReturnType<typeof GetCompanyData>>;
@@ -17,11 +19,12 @@ type CachedCompanyData = {
 };
 
 const companyDataCache = new Map<string, CachedCompanyData>();
-const rateLimit = new Map<string, { count: number; resetAt: number }>();
 const cacheTtlMs = 15 * 60 * 1000;
+const extractTypes = ["quarterly", "profit-loss", "balance-sheet", "cash-flow", "ratios", "shareholding", "peers"] as const;
+type ExtractType = (typeof extractTypes)[number];
 
 function requestKey(c: { req: { header: (name: string) => string | undefined } }): string {
-  return c.req.header("x-api-key") || c.req.header("authorization")?.replace(/^Bearer\s+/i, "") || "anonymous";
+  return c.req.header("x-api-key") || c.req.header("authorization")?.replace(/^Bearer\s+/i, "") || c.req.header("cf-connecting-ip") || "anonymous";
 }
 
 function errorResponse(c: any, message: string, status: 400 | 401 | 404 | 429 | 500) {
@@ -31,111 +34,174 @@ function errorResponse(c: any, message: string, status: 400 | 401 | 404 | 429 | 
   }, status);
 }
 
-const api = new Hono<{ Bindings: ApiBindings }>();
+function sourceOptions(c: Context<{ Bindings: ApiBindings }>): SourceOptions {
+  return { baseUrl: c.env?.BASE_URL, cookie: c.env?.COOKIE, requestId: c.res.headers.get("X-Request-ID") ?? undefined };
+}
 
-api.use("*", async (c, next) => {
-  const key = requestKey(c);
-  const limit = 60;
-  const now = Date.now();
-  const current = rateLimit.get(key);
-  const bucket = !current || current.resetAt <= now
-    ? { count: 0, resetAt: now + 60_000 }
-    : current;
+function upstreamFailure(c: Context, error: unknown) {
+  log("error", "api.request.failed", { requestId: c.res.headers.get("X-Request-ID"), method: c.req.method, path: c.req.path, error: errorDetails(error) });
+  const upstream = error as { response?: { status?: number }; code?: string };
+  const failure = error instanceof DataError ? error
+    : error instanceof SourceError ? new DataError(error.message, 502, error.code)
+    : upstream.response?.status === 404 ? new DataError("Company or source resource not found", 404, "NOT_FOUND")
+    : new DataError("The data source could not be loaded", 502, "UPSTREAM_UNAVAILABLE");
+  c.header("Cache-Control", "no-store");
+  return c.json({ error: failure.message, code: failure.code }, failure.status);
+}
 
-  bucket.count += 1;
-  rateLimit.set(key, bucket);
-  if (Number.isFinite(limit) && limit > 0 && bucket.count > limit) {
-    c.header("Retry-After", String(Math.ceil((bucket.resetAt - now) / 1000)));
-    return errorResponse(c, "Rate limit exceeded", 429);
-  }
+function isExtractType(value: string | undefined): value is ExtractType {
+  return Boolean(value && extractTypes.includes(value as ExtractType));
+}
 
-  await next();
-});
+async function getCachedCompanyData(endpoint: string, source: SourceOptions) {
+  const key = JSON.stringify([source.baseUrl, source.cookie, endpoint]);
+  const cached = companyDataCache.get(key);
+  if (cached && cached.expiresAt > Date.now()) return { value: cached.value, hit: true };
+  const value = await GetCompanyData(endpoint, { ...source, includeMarketHistory: false });
+  companyDataCache.set(key, { value, expiresAt: Date.now() + cacheTtlMs });
+  if (companyDataCache.size > 100) companyDataCache.delete(companyDataCache.keys().next().value!);
+  return { value, hit: false };
+}
 
-api.get("/list-of-company", async (c) => {
-  const pageParam = c.req.query("page") ?? "1";
-  const page = Number(pageParam);
-  if (!Number.isInteger(page) || page < 1) {
-    return errorResponse(c, "page must be a positive integer", 400);
-  }
-
-  try {
-    const companies = await getCompanyList(COMPANY_PAGE_SIZE, page);
-    return c.json({
-      data: companies,
-      meta: { page, limit: COMPANY_PAGE_SIZE },
-      page,
-      limit: COMPANY_PAGE_SIZE,
-      companies,
+export function createApp(providerFactory: ProviderFactory = defaultProvider) {
+  const app = new Hono<{ Bindings: ApiBindings }>();
+  const rateLimit = new Map<string, { count: number; resetAt: number }>();
+  app.use("*", async (c, next) => {
+    const requestId = crypto.randomUUID();
+    const startedAt = Date.now();
+    c.header("X-Request-ID", requestId);
+    log("info", "api.request.started", { requestId, method: c.req.method, path: c.req.path });
+    await next();
+    log(c.res.status >= 500 ? "error" : c.res.status >= 400 ? "warn" : "info", "api.request.completed", {
+      requestId, method: c.req.method, path: c.req.path, status: c.res.status, durationMs: Date.now() - startedAt,
+      cache: c.res.headers.get("X-Cache"),
     });
-  } catch {
-    return errorResponse(c, "Could not load company data", 500);
-  }
-});
+  });
+  app.onError((error, c) => {
+    log("error", "api.unhandled", { requestId: c.res.headers.get("X-Request-ID"), path: c.req.path, error: errorDetails(error) });
+    return errorResponse(c, "Internal Server Error", 500);
+  });
+  app.use("*", cors({ origin: "*", allowHeaders: ["Content-Type", "Authorization", "X-API-Key"], exposeHeaders: ["X-Request-ID", "X-Page", "X-Next-Page", "X-Data-Coverage", "X-Data-Source", "Retry-After"] }));
+  app.use("*", async (c, next) => {
+    if (!["/v1/", "/v2/", "/api/", "/enterprise/"].some((prefix) => c.req.path.startsWith(prefix))) return next();
+    const key = requestKey(c);
+    const limit = 60;
+    const now = Date.now();
+    const current = rateLimit.get(key);
+    if (!current && rateLimit.size >= 5000) {
+      for (const [id, entry] of rateLimit) if (entry.resetAt <= now) rateLimit.delete(id);
+      if (rateLimit.size >= 5000) return errorResponse(c, "Rate limit exceeded", 429);
+    }
+    const bucket = !current || current.resetAt <= now
+      ? { count: 0, resetAt: now + 60_000 }
+      : current;
 
-api.get("/list-of-ipo", async (c) => {
-  try {
-    const ipos = await ListUpcommingIpo();
-    return c.json({ data: ipos, ipos });
-  } catch {
-    return errorResponse(c, "Could not load IPO data", 500);
-  }
-});
+    bucket.count += 1;
+    rateLimit.set(key, bucket);
+    if (rateLimit.size > 5000) for (const [id, entry] of rateLimit) if (entry.resetAt <= now) rateLimit.delete(id);
+    if (Number.isFinite(limit) && limit > 0 && bucket.count > limit) {
+      c.header("Retry-After", String(Math.ceil((bucket.resetAt - now) / 1000)));
+      return errorResponse(c, "Rate limit exceeded", 429);
+    }
 
-api.get("/company-search", async (c) => {
-  const query = c.req.query("q")?.trim();
-  if (!query) return errorResponse(c, "q parameter is required", 400);
+    await next();
+  });
 
-  try {
-    const response = await sendReq(() => axios.get(`${BASE_URL}/api/company/search/`, { params: { q: query } }));
-    return c.json({ data: response.data, results: response.data });
-  } catch {
-    return errorResponse(c, "Could not search companies", 500);
-  }
-});
+  const api = new Hono<{ Bindings: ApiBindings }>();
 
-api.get("/company-data", async (c) => {
-  const endpoint = c.req.query("endpoint")?.trim();
-  if (!endpoint) return errorResponse(c, "endpoint parameter is required", 400);
-  if (!/^\/company\/[a-z0-9_/-]+\/?$/i.test(endpoint)) {
-    return errorResponse(c, "endpoint must be a company path", 400);
-  }
+  api.get("/list-of-company", async (c) => {
+    const pageParam = c.req.query("page") ?? "1";
+    const page = Number(pageParam);
+    if (!Number.isInteger(page) || page < 1) {
+      return errorResponse(c, "page must be a positive integer", 400);
+    }
 
-  const cached = companyDataCache.get(endpoint);
-  if (cached && cached.expiresAt > Date.now()) {
-    c.header("X-Cache", "HIT");
-    return c.json({ data: cached.value, companyData: cached.value });
-  }
+    try {
+      const companies = await getCompanyList(COMPANY_PAGE_SIZE, page, sourceOptions(c));
+      return c.json({
+        data: companies,
+        meta: { page, limit: COMPANY_PAGE_SIZE },
+        page,
+        limit: COMPANY_PAGE_SIZE,
+        companies,
+      });
+    } catch (error) {
+      return upstreamFailure(c, error);
+    }
+  });
 
-  try {
-    const companyData = await GetCompanyData(endpoint);
-    companyDataCache.set(endpoint, { value: companyData, expiresAt: Date.now() + cacheTtlMs });
-    c.header("Cache-Control", "private, max-age=900");
-    return c.json({ data: companyData, companyData });
-  } catch {
-    return errorResponse(c, "Could not load company data", 500);
-  }
-});
+  api.get("/list-of-ipo", async (c) => {
+    try {
+      const ipos = await ListUpcommingIpo(sourceOptions(c));
+      return c.json({ data: ipos, ipos });
+    } catch (error) {
+      return upstreamFailure(c, error);
+    }
+  });
 
-const app = new Hono<{ Bindings: ApiBindings }>();
-app.use("*", cors({ origin: "*", allowHeaders: ["Content-Type", "Authorization", "X-API-Key"] }));
+  api.get("/company-search", async (c) => {
+    const query = c.req.query("q")?.trim();
+    if (!query) return errorResponse(c, "q parameter is required", 400);
 
-app.get("/", (c) => c.html(HomePageData));
-app.get("/health", (c) => c.json({ status: "ok", service: "stock-market-api", version: "1.0.0" }));
-app.get("/openapi.json", (c) => c.json({
-  openapi: "3.0.3",
-  info: { title: "Stock Market API", version: "1.0.0", description: "Structured Indian market data for applications." },
-  servers: [{ url: new URL(c.req.url).origin }],
-  security: [{ apiKey: [] }],
-  components: { securitySchemes: { apiKey: { type: "apiKey", in: "header", name: "X-API-Key" } } },
-  paths: {
-    "/v1/list-of-company": { get: { summary: "List companies", parameters: [{ name: "page", in: "query", schema: { type: "integer", minimum: 1 } }] } },
-    "/v1/list-of-ipo": { get: { summary: "List upcoming IPOs" } },
-    "/v1/company-search": { get: { summary: "Search companies", parameters: [{ name: "q", in: "query", required: true, schema: { type: "string" } }] } },
-    "/v1/company-data": { get: { summary: "Get detailed company data", parameters: [{ name: "endpoint", in: "query", required: true, schema: { type: "string" } }] } },
-  },
-}));
-app.route("/v1", api);
-app.route("/api", api);
+    try {
+      const response = await sourceGet("/api/company/search/", sourceOptions(c), { params: { q: query } });
+      return c.json({ data: response.data, results: response.data });
+    } catch (error) {
+      return upstreamFailure(c, error);
+    }
+  });
 
-export default app;
+  api.get("/company-data", async (c) => {
+    const symbol = c.req.query("symbol")?.trim().toUpperCase();
+    if (!symbol) return errorResponse(c, "symbol parameter is required", 400);
+    if (!/^[A-Z0-9][A-Z0-9&_-]{0,49}$/.test(symbol)) {
+      return errorResponse(c, "symbol must be a single valid stock symbol", 400);
+    }
+    const endpoint = `/company/${encodeURIComponent(symbol)}/consolidated/`;
+
+    try {
+      const result = await getCachedCompanyData(endpoint, sourceOptions(c));
+      if (result.hit) c.header("X-Cache", "HIT");
+      c.header("Cache-Control", "private, max-age=900");
+      return c.json({ data: result.value, companyData: result.value });
+    } catch (error) {
+      return upstreamFailure(c, error);
+    }
+  });
+
+  api.get("/extract", async (c) => {
+    const endpoint = c.req.query("endpoint")?.trim();
+    const type = c.req.query("type");
+    if (!endpoint) return errorResponse(c, "endpoint parameter is required", 400);
+    if (!validCompanyPath(endpoint)) return errorResponse(c, "endpoint must be a company path", 400);
+    if (!isExtractType(type)) return errorResponse(c, `type must be one of: ${extractTypes.join(", ")}`, 400);
+
+    try {
+      const result = await getCachedCompanyData(endpoint, sourceOptions(c));
+      if (result.hit) c.header("X-Cache", "HIT");
+      const data = type === "quarterly" ? result.value.quarterlyResultStatements
+        : type === "profit-loss" ? result.value.profitAndLossStatements
+        : type === "balance-sheet" ? result.value.balanceSheetStatements
+        : type === "cash-flow" ? result.value.cashFlowStatements
+        : type === "ratios" ? result.value.ratioStatements
+        : type === "shareholding" ? result.value.shareholdingPatternStatements
+        : result.value.peerCompanies;
+      return c.json({ data, meta: { endpoint, type, cached: result.hit } });
+    } catch (error) {
+      return upstreamFailure(c, error);
+    }
+  });
+
+  app.get("/", (c) => c.html(HomePageData));
+  app.get("/health", (c) => c.json({ status: "ok", service: "stock-market-api", version: "1.2.0" }));
+  app.get("/openapi.json", (c) => c.json(openApi(new URL(c.req.url).origin)));
+  app.get("/swagger.json", (c) => c.json(openApi(new URL(c.req.url).origin)));
+  app.get("/docs", (c) => c.html(apiDocsHtml));
+  app.route("/", createCompatibilityApi(providerFactory));
+  app.route("/v1", api);
+  app.route("/api", api);
+  app.notFound((c) => c.json({ error: "Endpoint not found", code: "NOT_FOUND" }, 404));
+  return app;
+}
+
+export default createApp();
