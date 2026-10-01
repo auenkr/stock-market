@@ -1,0 +1,92 @@
+.reference-page { max-width: 1680px; padding: 24px 3vw 0; --docs-soft: light-dark(#f4f7f4, #1c2b22); --docs-accent: light-dark(#385c42, #b8d991); }
+.reference-page .reference-topbar { padding-bottom: 20px; }
+.reference-page .reference-hero { padding: 20px 0; align-items: center; }
+.reference-page .reference-hero h1 { font-size: 36px; margin: 10px 0; }
+.reference-page .reference-hero .subtle { font-size: 14px; max-width: none; }
+.reference-contract { font-size: 13px; color: #45674e; }
+.connection-bar { display: grid; grid-template-columns: 1fr 1fr auto; align-items: start; gap: 24px; padding: 16px; background: white; border: 1px solid var(--line); border-radius: 10px; }
+.connection-bar label { display: grid; gap: 8px; font-size: 13px; font-weight: 600; }
+.connection-bar .input { width: 100%; font-size: 13px; padding: 11px 12px; }
+.connection-bar small { font-size: 11px; color: #60716c; font-weight: 400; }
+.connection-bar > a { font-size: 12px; margin-top: 37px; }
+.reference-page .reference-notice { margin-top: 14px; padding: 10px 16px; }
+.reference-page .reference-notice p, .reference-page .reference-notice a { font-size: 12px; }
+.reference-page .reference-layout { grid-template-columns: 270px minmax(0, 1fr); gap: 26px; padding-top: 26px; }
+.reference-page .reference-nav { min-height: 0; }
+.reference-page .search-label { display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+.search-label kbd { font-size: 10px; color: #697b72; border: 1px solid var(--line); border-radius: 4px; padding: 3px 5px; }
+.reference-page .reference-filters label, .reference-page .reference-list-count { font-size: 11px; }
+.reference-page .reference-filters select { font-size: 12px; }
+.reference-page .operation-nav { min-height: 0; scrollbar-width: thin; }
+.reference-page .operation-nav button { padding: 12px 10px; }
+.reference-page .operation-nav button > span { font-size: 13px; line-height: 1.5; gap: 8px; }
+.reference-page .operation-nav code { font-size: 11px; line-height: 1.6; margin-bottom: 0; color: #61716b; }
+.operation-nav code b { color: #397253; font-size: 10px; }
+.reference-page .operation-nav button.selected { background: #eaf3e6; box-shadow: none; border-color: #c7d9be; }
+.reference-page .operation-heading { padding: 24px; background: white; }
+.reference-page .operation-heading h2 { font-size: 27px; margin: 16px 0; }
+.reference-page .operation-heading p { font-size: 13px; line-height: 1.8; }
+.reference-page .operation-path { font-size: 14px; background: #f4f7f4; border: 1px solid #e3eae2; padding: 12px; border-radius: 6px; }
+.reference-page .reference-tabs { padding: 0 24px; }
+.reference-page .reference-tabs button { font-size: 13px; }
+.reference-page .operation-body { padding: 24px; }
+.reference-page .request-workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+.request-inputs, .request-example { min-width: 0; }
+.reference-page .parameter-heading { margin: 0 0 12px; }
+.reference-page .parameter-heading h3, .response-toolbar h3 { font-size: 14px; margin: 0; }
+.reference-page .parameter-row { grid-template-columns: 1fr; gap: 9px; padding: 16px 0; }
+.reference-page .parameter-row label { padding: 0; }
+.reference-page .parameter-row label code { font-size: 13px; }
+.reference-page .parameter-row small { font-size: 11px; }
+.reference-page .parameter-row p { font-size: 12px; line-height: 1.7; }
+.reference-page .parameter-row .input { font-size: 13px; width: 100%; }
+.reference-page .request-code-heading { margin: 0; min-height: 38px; gap: 10px; }
+.request-code-heading label { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.request-code-heading select { font: inherit; color: var(--ink); border: 1px solid var(--line); border-radius: 5px; background: white; padding: 6px; }
+.reference-page pre { font-size: 12px; line-height: 1.85; border-radius: 8px; padding: 18px; tab-size: 2; max-width: 100%; }
+.reference-page .request-example pre { min-height: 180px; background: #14241f; color: #dcebdd; }
+.reference-page .copy-button, .cancel-request { padding: 6px 9px; font-size: 11px; border: 1px solid #d5dfd5; background: white; border-radius: 5px; color: #385c42; cursor: pointer; white-space: nowrap; }
+.snippet-hint { font-size: 11px; color: #62746b; line-height: 1.8; overflow-wrap: anywhere; }
+.reference-page .send-row { flex-wrap: wrap; gap: 10px; }
+.reference-page .send-row p { font-size: 11px; }
+.reference-page .live-response { grid-column: 1 / -1; margin: 0; border-top: 1px solid var(--line); padding-top: 20px; min-width: 0; }
+.response-toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.response-toolbar .copy-button { margin-left: auto; }
+.response-toolbar small { font: 11px monospace; color: #62746b; }
+.response-ok, .response-error { font: 11px monospace; padding: 5px 8px; border-radius: 5px; background: #eaf6ec; color: #22633a; }
+.response-error { background: #fff0e9; color: #a5432c; }
+.response-placeholder { text-align: center; background: #f7f9f6; border: 1px dashed #d5dfd5; border-radius: 8px; padding: 32px 16px; margin-top: 16px; }
+.response-placeholder span { font-size: 14px; font-weight: 600; }
+.response-placeholder p { font-size: 12px; color: #62746b; line-height: 1.7; }
+.response-headers dl { font: 12px monospace; }
+.response-headers dl div { display: grid; grid-template-columns: minmax(100px, 1fr) 2fr; gap: 16px; border-bottom: 1px solid var(--line); padding: 10px 0; overflow-wrap: anywhere; }
+.response-headers dd { margin: 0; }
+.reference-page .reference-conventions ul { font-size: 13px; }
+.reference-page :is(button, a, input, select, summary):focus-visible { outline: 2px solid #467b47; outline-offset: 3px; }
+.empty-endpoints { font-size: 13px; padding: 12px; }
+@media (max-width: 1180px) { .reference-page .request-workspace { grid-template-columns: 1fr; }.connection-bar { gap: 16px; } }
+/* Theme-aware surfaces also cover the schema and response views. */
+.reference-page :is(.connection-bar, .operation-panel, .operation-heading, .reference-filters select, .request-code-heading select, .copy-button, .cancel-request) { background: var(--card); color: var(--ink); border-color: var(--line); }
+.reference-page :is(.operation-path, .response-placeholder) { background: var(--docs-soft); border-color: var(--line); }
+.reference-page .reference-notice { background: light-dark(#eff5e8, #223021); border-color: light-dark(#cfdfc9, #3b5031); }
+.reference-page .operation-nav button.selected { background: light-dark(#eaf3e6, #293d27); border-color: light-dark(#c7d9be, #4a6340); }
+.reference-page .operation-nav button:hover { background: var(--docs-soft); }
+.reference-page :is(.subtle, .operation-heading p, .parameter-row p, .parameter-row small, .schema-type, .schema-field p, .schema-leaf p, .connection-bar small, .snippet-hint, .response-placeholder p, .reference-list-count, .operation-nav code, .reference-conventions ul, .reference-filters label, .response-toolbar small) { color: var(--muted); }
+.reference-page :is(.reference-contract, .copy-button, .cancel-request, .operation-nav code b, .reference-links, .code-label, .eyebrow) { color: var(--docs-accent); }
+.reference-page pre { background: #14241f; color: #dcebdd; }
+.reference-page .docs-actions { flex-wrap: wrap; }
+.reference-page .schema-tree { border-color: var(--line); }
+.reference-page .eyebrow { font-size: 11px; }
+@media (max-width: 760px) {
+  .reference-page { padding: 18px 16px 0; }
+  .reference-page .reference-hero { gap: 12px; align-items: flex-start; }
+  .reference-page .reference-hero h1 { font-size: 30px; }
+  .connection-bar { grid-template-columns: 1fr; padding: 16px; }
+  .connection-bar > a { margin-top: 0; }
+  .reference-page .reference-layout { display: block; }
+  .reference-page .reference-nav { height: auto; position: static; }
+  .reference-page .operation-nav { max-height: 220px; }
+  .reference-page .operation-heading, .reference-page .operation-body { padding: 18px; }
+  .reference-page .reference-tabs { padding: 0 18px; }
+  .reference-page .send-row { flex-direction: row; align-items: center; }
+}

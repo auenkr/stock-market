@@ -135,12 +135,47 @@ Start the dashboard with the same single application setting:
 DB_CONNECTION_URL="postgresql://stock_market:stock_market@localhost:5432/stock_market" pnpm dev:web
 ```
 
-Open `http://localhost:3001`. API keys are shown only once at creation and stored as SHA-256 hashes.
+Open `http://localhost:3001`. New accounts complete a profile form with a required name and optional company before accessing the dashboard. Saved profiles are reused on subsequent sign-ins. API keys can be revealed or copied from the dashboard after a reload; their hashes are used for verification and their secrets are encrypted at rest. The docs explorer shares an entered `X-API-Key` across all endpoint request forms for the current page session.
+
+New user, session, account, verification, and API-key IDs use UUIDv7 for time-ordered database indexing. Existing IDs and references are preserved.
+
+### Google sign-in
+
+Set these server environment variables in the root `.env` locally and in your hosting environment for production:
+
+```dotenv
+BETTER_AUTH_URL=http://localhost:3001
+BETTER_AUTH_SECRET=<a-random-secret-of-at-least-32-characters>
+API_KEY_ENCRYPTION_SECRET=<a-different-random-secret-of-at-least-32-characters>
+GOOGLE_CLIENT_ID=<your-google-oauth-client-id>
+GOOGLE_CLIENT_SECRET=<your-google-oauth-client-secret>
+```
+
+Generate the auth secret with `openssl rand -base64 32`. Keep it stable between deployments; changing it signs users out. `BETTER_AUTH_URL` must be the actual dashboard origin, including your configured `WEB_PORT` locally; use the HTTPS dashboard domain in production. `WEB_URL` can contain comma-separated additional trusted dashboard origins. Both Google credentials are required to enable the Google button; email sign-in remains available without them.
+
+Generate `API_KEY_ENCRYPTION_SECRET` separately with `openssl rand -base64 32` and keep it stable. If it is omitted, the dashboard derives the encryption key from `BETTER_AUTH_SECRET`. API keys are encrypted at rest so their owners can reveal or copy them from the dashboard after a reload. Losing or changing the configured encryption secret (or the auth secret when using the fallback) prevents existing encrypted keys from being revealed.
+
+Create a **Web application** OAuth client in [Google Cloud Console](https://console.cloud.google.com/apis/credentials) and register the exact redirect URI `http://localhost:3001/api/auth/callback/google` locally and `https://<your-dashboard-domain>/api/auth/callback/google` in production. Add your accounts as test users if the consent screen is in testing mode. This follows [Better Auth's Google configuration](https://www.better-auth.com/docs/authentication/google). Restart the web server after changing environment variables.
+
+Google fills the initial name and email. First-time users are sent to `/onboarding`; returning users go to `/dashboard`. Accounts that leave onboarding unfinished must complete it when they return. A Google account matching an existing unverified email/password account must use its existing email login.
+
+### Upgrade an existing dashboard database
+
+Before running `pnpm db:push` against a database created before profile onboarding was added, apply the migration once. This command reads `DB_CONNECTION_URL` from the root `.env`:
+
+```bash
+pnpm db:migrate:onboarding
+```
+
+The migration adds the profile fields, preserves access for existing users, and requires profile completion for future accounts. For a fresh database, `pnpm db:push` creates the full schema directly. Apply the schema before deploying the updated dashboard.
+
+Before deploying persistent API-key reveal, run `pnpm db:push` to add the nullable `encrypted_secret` column to existing databases. Previously created keys cannot be recovered because they were stored only as hashes; create replacements for those keys.
 
 ## Development validation
 
 ```bash
 pnpm test:api
+pnpm test:auth
 pnpm typecheck
 pnpm --filter @stock-market/api build
 ```

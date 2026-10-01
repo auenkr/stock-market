@@ -7,6 +7,7 @@
     "docs:check": "tsx apps/api/scripts/generate-swagger.ts --check",
     "source:taxonomy": "pnpm --filter @stock-market/scraper build && node --env-file=.env --import tsx apps/api/scripts/refresh-taxonomy.ts",
     "test:api": "pnpm --filter @stock-market/common build && pnpm --filter @stock-market/scraper build && pnpm --filter @stock-market/api test",
+    "test:auth": "pnpm --filter @stock-market/db build && tsx --test packages/db/src/id.test.ts packages/auth/src/config.test.ts apps/web/src/lib/profile.test.ts",
     "build": "nx run-many -t build",
     "dev": "node scripts/dev.mjs",
     "typecheck": "nx run-many -t typecheck",
@@ -17,7 +18,10 @@
     "scrape": "nx scrape @stock-market/cli",
     "metrics": "nx metrics @stock-market/cli",
     "deploy:api": "nx deploy:api @stock-market/api",
-    "db:push": "pnpm --filter @stock-market/web db:push"
+    "db:push": "pnpm --filter @stock-market/web db:push",
+    "db:migrate:api-keys": "node --env-file=.env packages/db/scripts/migrate-api-key-encryption.mjs",
+    "db:migrate:onboarding": "node --env-file=.env packages/db/scripts/migrate-onboarding.mjs",
+    "db:migrate:usage-policy": "node --env-file=.env packages/db/scripts/migrate-usage-policy.mjs"
   },
   "devDependencies": {
     "@nx/js": "^21.5.2",

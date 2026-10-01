@@ -3,7 +3,7 @@
   "info": {
     "title": "Ledgerline Stock Market API",
     "version": "1.2.0",
-    "description": "Independent Indian financial data with FinEdge-style resource contracts, sourced from Screener. Successful adapters are partial; unsupported datasets and query variants return explicit 501 errors. Market-price history is excluded. API keys currently identify development quota buckets; dashboard key validation, billing and shared quotas are pending."
+    "description": "Indian company financials, ownership, corporate actions, and market information for your applications. Coverage varies by dataset; unavailable datasets and query variants return HTTP 501. Historical market prices are not included."
   },
   "servers": [
     {
@@ -55,7 +55,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "X-API-Key",
-        "description": "Optional development quota identifier. Keys are not validated against dashboard records yet."
+        "description": "Send your API key in the X-API-Key header."
       }
     },
     "schemas": {
@@ -4195,7 +4195,7 @@
         "tags": [
           "personal"
         ],
-        "description": "One Screener directory page per request. NSE/BSE identifiers may be missing. Requires a source session. Follow X-Next-Page.",
+        "description": "Paginated company directory. NSE/BSE identifiers may be missing. Follow X-Next-Page for more results.",
         "parameters": [
           {
             "name": "page",
@@ -4299,7 +4299,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4343,7 +4343,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4362,7 +4362,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4390,7 +4390,7 @@
         "tags": [
           "personal"
         ],
-        "description": "One Screener directory page per request. NSE/BSE identifiers may be missing. Requires a source session. Follow X-Next-Page.",
+        "description": "Paginated company directory. NSE/BSE identifiers may be missing. Follow X-Next-Page for more results.",
         "parameters": [
           {
             "name": "page",
@@ -4494,7 +4494,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4538,7 +4538,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4557,7 +4557,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4585,7 +4585,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Company description, website, exchange identifiers, four classification levels and market capitalization in crores. Missing values are null.",
+        "description": "Company description, website, exchange identifiers, classification, and market capitalization in INR crores. Missing values are null.",
         "parameters": [
           {
             "name": "symbol",
@@ -4688,7 +4688,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4732,7 +4732,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4751,7 +4751,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4779,7 +4779,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Company description, website, exchange identifiers, four classification levels and market capitalization in crores. Missing values are null.",
+        "description": "Company description, website, exchange identifiers, classification, and market capitalization in INR crores. Missing values are null.",
         "parameters": [
           {
             "name": "symbol",
@@ -4882,7 +4882,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4926,7 +4926,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4945,7 +4945,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4973,7 +4973,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Exact case-insensitive classification name at macro_sector, industry, sector or sub_industry level. Uses the refreshed Screener taxonomy. Results are paginated; this is classification search, not name search.",
+        "description": "Find companies by exact, case-insensitive macro_sector, industry, sector, or sub_industry name. Results are paginated. Use company-search to search by company name.",
         "parameters": [
           {
             "name": "group",
@@ -5103,7 +5103,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5147,7 +5147,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5166,7 +5166,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5194,7 +5194,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Exact case-insensitive classification name at macro_sector, industry, sector or sub_industry level. Uses the refreshed Screener taxonomy. Results are paginated; this is classification search, not name search.",
+        "description": "Find companies by exact, case-insensitive macro_sector, industry, sector, or sub_industry name. Results are paginated. Use company-search to search by company name.",
         "parameters": [
           {
             "name": "group",
@@ -5324,7 +5324,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5368,7 +5368,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5387,7 +5387,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5415,7 +5415,7 @@
         "tags": [
           "personal"
         ],
-        "description": "The inspected Screener profile/action pages do not expose a structured old/new company name history with effective dates.",
+        "description": "Company name-change history is currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "from_date",
@@ -5484,7 +5484,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5528,7 +5528,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5547,7 +5547,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5575,7 +5575,7 @@
         "tags": [
           "personal"
         ],
-        "description": "The inspected Screener profile/action pages do not expose a structured old/new company name history with effective dates.",
+        "description": "Company name-change history is currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "from_date",
@@ -5644,7 +5644,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5688,7 +5688,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5707,7 +5707,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5735,7 +5735,7 @@
         "tags": [
           "personal"
         ],
-        "description": "The inspected pages do not expose a structured old/new exchange ticker history with effective dates.",
+        "description": "Exchange symbol-change history is currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "from_date",
@@ -5804,7 +5804,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5848,7 +5848,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5867,7 +5867,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5895,7 +5895,7 @@
         "tags": [
           "personal"
         ],
-        "description": "The inspected pages do not expose a structured old/new exchange ticker history with effective dates.",
+        "description": "Exchange symbol-change history is currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "from_date",
@@ -5964,7 +5964,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6008,7 +6008,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6027,7 +6027,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6055,7 +6055,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Supports annual P&L, balance sheets and cash flows, quarterly P&L, and source-provided P&L TTM. Other combinations return 501. Monetary fields are rupees; EPS is rupees per share. Annual balance sheets include expandable inventories, receivables, cash, payables and borrowings. Current/noncurrent splits and detailed filing parity remain unavailable.",
+        "description": "Annual profit and loss, balance sheets, cash flows, quarterly profit and loss, and available trailing-twelve-month figures. Amounts are INR rupees; EPS is INR per share. Unsupported combinations return HTTP 501. Current/noncurrent splits may be unavailable.",
         "parameters": [
           {
             "name": "symbol",
@@ -6204,7 +6204,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6248,7 +6248,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6267,7 +6267,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6295,7 +6295,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Supports annual P&L, balance sheets and cash flows, quarterly P&L, and source-provided P&L TTM. Other combinations return 501. Monetary fields are rupees; EPS is rupees per share. Annual balance sheets include expandable inventories, receivables, cash, payables and borrowings. Current/noncurrent splits and detailed filing parity remain unavailable.",
+        "description": "Annual profit and loss, balance sheets, cash flows, quarterly profit and loss, and available trailing-twelve-month figures. Amounts are INR rupees; EPS is INR per share. Unsupported combinations return HTTP 501. Current/noncurrent splits may be unavailable.",
         "parameters": [
           {
             "name": "symbol",
@@ -6444,7 +6444,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6488,7 +6488,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6507,7 +6507,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6535,7 +6535,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Product segment names are visible, but values return an upgrade-to-premium gate for the current account. No numeric adapter is enabled.",
+        "description": "Segment revenue figures are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "symbol",
@@ -6636,7 +6636,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6680,7 +6680,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6699,7 +6699,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6727,7 +6727,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Product segment names are visible, but values return an upgrade-to-premium gate for the current account. No numeric adapter is enabled.",
+        "description": "Segment revenue figures are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "symbol",
@@ -6828,7 +6828,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6872,7 +6872,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6891,7 +6891,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6919,7 +6919,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Expanded schedules expose selected financial breakdowns, not full structured statutory notes. Independently parsed filings are still required.",
+        "description": "Structured financial statement notes are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "symbol",
@@ -7004,7 +7004,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7048,7 +7048,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7067,7 +7067,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7095,7 +7095,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Expanded schedules expose selected financial breakdowns, not full structured statutory notes. Independently parsed filings are still required.",
+        "description": "Structured financial statement notes are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "symbol",
@@ -7180,7 +7180,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7224,7 +7224,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7243,7 +7243,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7271,7 +7271,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Source-linked annual report URLs. Fiscal closing dates are not exposed and remain null.",
+        "description": "Annual report links. Fiscal closing dates may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -7374,7 +7374,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7418,7 +7418,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7437,7 +7437,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7465,7 +7465,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Source-linked annual report URLs. Fiscal closing dates are not exposed and remain null.",
+        "description": "Annual report links. Fiscal closing dates may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -7568,7 +7568,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7612,7 +7612,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7631,7 +7631,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7659,7 +7659,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Only ratio_type=pr is supported. Profitability ratios use fractions (0.25 means 25%). Aggregate-based formulas may differ from filing-based ratios; unsupported types return 501.",
+        "description": "Profitability ratios with ratio_type=pr. Ratios are fractions: 0.25 means 25%. Unsupported types return HTTP 501.",
         "parameters": [
           {
             "name": "symbol",
@@ -7792,7 +7792,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7836,7 +7836,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7855,7 +7855,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7883,7 +7883,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Only ratio_type=pr is supported. Profitability ratios use fractions (0.25 means 25%). Aggregate-based formulas may differ from filing-based ratios; unsupported types return 501.",
+        "description": "Profitability ratios with ratio_type=pr. Ratios are fractions: 0.25 means 25%. Unsupported types return HTTP 501.",
         "parameters": [
           {
             "name": "symbol",
@@ -8016,7 +8016,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8060,7 +8060,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8079,7 +8079,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8107,7 +8107,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Only ratio_type=cu is supported: cumulative cash flows over three consecutive annual periods, in rupees. Growth and average variants return 501.",
+        "description": "Cumulative cash flows over three consecutive annual periods, in INR rupees, with ratio_type=cu. Growth and average variants are unavailable.",
         "parameters": [
           {
             "name": "symbol",
@@ -8239,7 +8239,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8283,7 +8283,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8302,7 +8302,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8330,7 +8330,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Only ratio_type=cu is supported: cumulative cash flows over three consecutive annual periods, in rupees. Growth and average variants return 501.",
+        "description": "Cumulative cash flows over three consecutive annual periods, in INR rupees, with ratio_type=cu. Growth and average variants are unavailable.",
         "parameters": [
           {
             "name": "symbol",
@@ -8462,7 +8462,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8506,7 +8506,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8525,7 +8525,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8553,7 +8553,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Only statement_code=pl is supported. EBIT, EBITDA, operating profit/revenue and tax fraction are mapped. Adjusted capital, share counts and cost of goods sold remain null.",
+        "description": "Profit-and-loss metrics with statement_code=pl, including EBIT, EBITDA, operating profit, revenue, and tax fraction. Adjusted capital, share counts, and cost of goods sold may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -8685,7 +8685,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8729,7 +8729,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8748,7 +8748,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8776,7 +8776,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Only statement_code=pl is supported. EBIT, EBITDA, operating profit/revenue and tax fraction are mapped. Adjusted capital, share counts and cost of goods sold remain null.",
+        "description": "Profit-and-loss metrics with statement_code=pl, including EBIT, EBITDA, operating profit, revenue, and tax fraction. Adjusted capital, share counts, and cost of goods sold may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -8908,7 +8908,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8952,7 +8952,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8971,7 +8971,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8999,7 +8999,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Symbol is needed by this adapter even though optional in the reference contract. Comma-separated or repeated symbol values support up to 25 symbols. Delayed source summary, not a live exchange feed. Market cap is crores; shares, trade time and volume are null.",
+        "description": "Requires symbol. Supports up to 25 comma-separated or repeated symbols. Quotes are delayed, not real-time. Market capitalization is INR crores; shares, trade time, and volume may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -9109,7 +9109,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9153,7 +9153,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9172,7 +9172,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9200,7 +9200,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Symbol is needed by this adapter even though optional in the reference contract. Comma-separated or repeated symbol values support up to 25 symbols. Delayed source summary, not a live exchange feed. Market cap is crores; shares, trade time and volume are null.",
+        "description": "Requires symbol. Supports up to 25 comma-separated or repeated symbols. Quotes are delayed, not real-time. Market capitalization is INR crores; shares, trade time, and volume may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -9310,7 +9310,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9354,7 +9354,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9373,7 +9373,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9401,7 +9401,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Symbol is needed by this adapter even though optional in the reference contract. Comma-separated or repeated symbol values support up to 25 symbols. Delayed source summary, not a live exchange feed. Market cap is crores; shares, trade time and volume are null.",
+        "description": "Requires symbol. Supports up to 25 comma-separated or repeated symbols. Quotes are delayed, not real-time. Market capitalization is INR crores; shares, trade time, and volume may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -9511,7 +9511,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9555,7 +9555,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9574,7 +9574,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9602,7 +9602,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Symbol is needed by this adapter even though optional in the reference contract. Comma-separated or repeated symbol values support up to 25 symbols. Delayed source summary, not a live exchange feed. Market cap is crores; shares, trade time and volume are null.",
+        "description": "Requires symbol. Supports up to 25 comma-separated or repeated symbols. Quotes are delayed, not real-time. Market capitalization is INR crores; shares, trade time, and volume may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -9712,7 +9712,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9756,7 +9756,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9775,7 +9775,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9803,7 +9803,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Individual index snapshots are visible, but a complete current index feed with reference identifiers, OHLC and turnover is not connected.",
+        "description": "The current index market-price feed is currently unavailable. Requests return HTTP 501.",
         "parameters": [],
         "x-coverage": "unavailable",
         "x-resource": "index/market-price/daily-feed",
@@ -9849,7 +9849,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9893,7 +9893,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9912,7 +9912,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9940,7 +9940,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Individual index snapshots are visible, but a complete current index feed with reference identifiers, OHLC and turnover is not connected.",
+        "description": "The current index market-price feed is currently unavailable. Requests return HTTP 501.",
         "parameters": [],
         "x-coverage": "unavailable",
         "x-resource": "index/market-price/daily-feed",
@@ -9986,7 +9986,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10030,7 +10030,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10049,7 +10049,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10077,7 +10077,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Screener index pages expose individual names and paginated constituents, but no verified complete index directory or FinEdge identifier mapping is connected.",
+        "description": "The complete index directory is currently unavailable. Requests return HTTP 501.",
         "parameters": [],
         "x-coverage": "unavailable",
         "x-resource": "index/master",
@@ -10123,7 +10123,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10167,7 +10167,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10186,7 +10186,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10214,7 +10214,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Screener index pages expose individual names and paginated constituents, but no verified complete index directory or FinEdge identifier mapping is connected.",
+        "description": "The complete index directory is currently unavailable. Requests return HTTP 501.",
         "parameters": [],
         "x-coverage": "unavailable",
         "x-resource": "index/master",
@@ -10260,7 +10260,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10304,7 +10304,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10323,7 +10323,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10351,7 +10351,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Source index cards expose selected CAGR values. They do not establish all requested simple-return windows or exact start/end dates.",
+        "description": "Index price-return series are currently unavailable. Requests return HTTP 501.",
         "parameters": [],
         "x-coverage": "unavailable",
         "x-resource": "index/price-returns",
@@ -10397,7 +10397,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10441,7 +10441,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10460,7 +10460,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10488,7 +10488,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Source index cards expose selected CAGR values. They do not establish all requested simple-return windows or exact start/end dates.",
+        "description": "Index price-return series are currently unavailable. Requests return HTTP 501.",
         "parameters": [],
         "x-coverage": "unavailable",
         "x-resource": "index/price-returns",
@@ -10534,7 +10534,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10578,7 +10578,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10597,7 +10597,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10625,7 +10625,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Companies in the requested classification level, excluding the requested symbol. Follow X-Next-Page.",
+        "description": "Companies in the requested classification level, excluding the requested company. Follow X-Next-Page for more results.",
         "parameters": [
           {
             "name": "symbol",
@@ -10755,7 +10755,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10799,7 +10799,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10818,7 +10818,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10846,7 +10846,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Companies in the requested classification level, excluding the requested symbol. Follow X-Next-Page.",
+        "description": "Companies in the requested classification level, excluding the requested company. Follow X-Next-Page for more results.",
         "parameters": [
           {
             "name": "symbol",
@@ -10976,7 +10976,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11020,7 +11020,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11039,7 +11039,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11067,7 +11067,7 @@
         "tags": [
           "personal"
         ],
-        "description": "The inspected ownership tables do not expose statutory declaration flags. Structured shareholding filings are required.",
+        "description": "Statutory shareholding declarations are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "symbol",
@@ -11138,7 +11138,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11182,7 +11182,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11201,7 +11201,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11229,7 +11229,7 @@
         "tags": [
           "personal"
         ],
-        "description": "The inspected ownership tables do not expose statutory declaration flags. Structured shareholding filings are required.",
+        "description": "Statutory shareholding declarations are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "symbol",
@@ -11300,7 +11300,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11344,7 +11344,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11363,7 +11363,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11391,7 +11391,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Reporting header, total shareholder count and promoter percentage where exposed. Share counts, voting rights, pledges, warrants and other filing details remain null.",
+        "description": "Reporting period, total shareholder count, and promoter percentage where available. Share counts, voting rights, pledges, and warrants may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -11508,7 +11508,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11552,7 +11552,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11571,7 +11571,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11599,7 +11599,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Reporting header, total shareholder count and promoter percentage where exposed. Share counts, voting rights, pledges, warrants and other filing details remain null.",
+        "description": "Reporting period, total shareholder count, and promoter percentage where available. Share counts, voting rights, pledges, and warrants may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -11716,7 +11716,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11760,7 +11760,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11779,7 +11779,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11807,7 +11807,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Aggregate groups and source-disclosed named holders with reporting-period percentages. Annual uses the source yearly table; quarterly uses its quarterly table. Missing holder-period values are null, not zero. This is not a complete shareholder register.",
+        "description": "Annual or quarterly ownership percentages for categories and disclosed holders. Missing percentages are null. This is not a complete shareholder register.",
         "parameters": [
           {
             "name": "symbol",
@@ -11924,7 +11924,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11968,7 +11968,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11987,7 +11987,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12015,7 +12015,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Aggregate groups and source-disclosed named holders with reporting-period percentages. Annual uses the source yearly table; quarterly uses its quarterly table. Missing holder-period values are null, not zero. This is not a complete shareholder register.",
+        "description": "Annual or quarterly ownership percentages for categories and disclosed holders. Missing percentages are null. This is not a complete shareholder register.",
         "parameters": [
           {
             "name": "symbol",
@@ -12132,7 +12132,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12176,7 +12176,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12195,7 +12195,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12223,7 +12223,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Reporting-period groups and shareholding percentages. Category-specific counts, voting rights and share totals remain null.",
+        "description": "Ownership categories and percentages by reporting period. Category-specific counts, voting rights, and share totals may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -12340,7 +12340,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12384,7 +12384,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12403,7 +12403,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12431,7 +12431,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Reporting-period groups and shareholding percentages. Category-specific counts, voting rights and share totals remain null.",
+        "description": "Ownership categories and percentages by reporting period. Category-specific counts, voting rights, and share totals may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -12548,7 +12548,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12592,7 +12592,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12611,7 +12611,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12639,7 +12639,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Latest source reporting quarter: disclosed holder names, source group and shareholding percentage. Other identity and statutory filing fields remain null. Does not include every shareholder.",
+        "description": "Disclosed holder names, categories, and percentages for the latest available quarter. Does not include every shareholder; additional filing fields may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -12742,7 +12742,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12786,7 +12786,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12805,7 +12805,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12833,7 +12833,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Latest source reporting quarter: disclosed holder names, source group and shareholding percentage. Other identity and statutory filing fields remain null. Does not include every shareholder.",
+        "description": "Disclosed holder names, categories, and percentages for the latest available quarter. Does not include every shareholder; additional filing fields may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -12936,7 +12936,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12980,7 +12980,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12999,7 +12999,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13027,7 +13027,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Disclosed holder names, source group and percentage over the available annual/quarterly reporting periods. Missing periods are omitted for each holder. Other statutory fields remain null.",
+        "description": "Disclosed holder names, categories, and percentages across available annual or quarterly periods. Missing periods are omitted; additional filing fields may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -13144,7 +13144,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13188,7 +13188,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13207,7 +13207,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13235,7 +13235,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Disclosed holder names, source group and percentage over the available annual/quarterly reporting periods. Missing periods are omitted for each holder. Other statutory fields remain null.",
+        "description": "Disclosed holder names, categories, and percentages across available annual or quarterly periods. Missing periods are omitted; additional filing fields may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -13352,7 +13352,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13396,7 +13396,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13415,7 +13415,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13443,7 +13443,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Named shareholders do not establish significant beneficial owners, control/voting rights or acquisition dates. Structured beneficial-ownership filings are required.",
+        "description": "Significant beneficial ownership records are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "symbol",
@@ -13514,7 +13514,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13558,7 +13558,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13577,7 +13577,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13605,7 +13605,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Named shareholders do not establish significant beneficial owners, control/voting rights or acquisition dates. Structured beneficial-ownership filings are required.",
+        "description": "Significant beneficial ownership records are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "symbol",
@@ -13676,7 +13676,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13720,7 +13720,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13739,7 +13739,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13767,7 +13767,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Without symbol, returns one page each of bonus, split, rights and dividend lists (or one action filter). With symbol, serves its action modal; rights require the dedicated rights route, and page>1 is unsupported for the modal. Global dividend values are face-value percentages, so amount remains null. Dates use YYYY-MM-DD; timestamps and adjusted amounts remain null. Follow X-Next-Page for market lists; date filters apply to the requested page.",
+        "description": "Paginated bonus, split, rights, and dividend records. Filter by action or symbol. Use the dedicated rights endpoint for company rights records. Market-wide dividend amounts may be null. Date filters apply to the requested page; follow X-Next-Page.",
         "parameters": [
           {
             "name": "symbol",
@@ -13913,7 +13913,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13957,7 +13957,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13976,7 +13976,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14004,7 +14004,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Without symbol, returns one page each of bonus, split, rights and dividend lists (or one action filter). With symbol, serves its action modal; rights require the dedicated rights route, and page>1 is unsupported for the modal. Global dividend values are face-value percentages, so amount remains null. Dates use YYYY-MM-DD; timestamps and adjusted amounts remain null. Follow X-Next-Page for market lists; date filters apply to the requested page.",
+        "description": "Paginated bonus, split, rights, and dividend records. Filter by action or symbol. Use the dedicated rights endpoint for company rights records. Market-wide dividend amounts may be null. Date filters apply to the requested page; follow X-Next-Page.",
         "parameters": [
           {
             "name": "symbol",
@@ -14150,7 +14150,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14194,7 +14194,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14213,7 +14213,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14241,7 +14241,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Company bonus and split records from Equity History; rights records from the paginated rights list, filtered to the exact symbol. Dates use YYYY-MM-DD. Split action text retains old/new face values. Rights support page. Source completeness and historical adjustment factors are not established.",
+        "description": "Company bonus, split, and rights records. Dates use YYYY-MM-DD. Split descriptions include old and new face values. Rights results are paginated. Historical adjustment factors are unavailable.",
         "parameters": [
           {
             "name": "symbol",
@@ -14370,7 +14370,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14414,7 +14414,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14433,7 +14433,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14461,7 +14461,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Company bonus and split records from Equity History; rights records from the paginated rights list, filtered to the exact symbol. Dates use YYYY-MM-DD. Split action text retains old/new face values. Rights support page. Source completeness and historical adjustment factors are not established.",
+        "description": "Company bonus, split, and rights records. Dates use YYYY-MM-DD. Split descriptions include old and new face values. Rights results are paginated. Historical adjustment factors are unavailable.",
         "parameters": [
           {
             "name": "symbol",
@@ -14590,7 +14590,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14634,7 +14634,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14653,7 +14653,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14681,7 +14681,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Company dividend dates, rupees per share, source type and subject. Dates use YYYY-MM-DD; adjusted historical amounts remain null.",
+        "description": "Dividend dates, INR per share, type, and description. Dates use YYYY-MM-DD; historically adjusted amounts are unavailable.",
         "parameters": [
           {
             "name": "symbol",
@@ -14784,7 +14784,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14828,7 +14828,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14847,7 +14847,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14875,7 +14875,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Company dividend dates, rupees per share, source type and subject. Dates use YYYY-MM-DD; adjusted historical amounts remain null.",
+        "description": "Dividend dates, INR per share, type, and description. Dates use YYYY-MM-DD; historically adjusted amounts are unavailable.",
         "parameters": [
           {
             "name": "symbol",
@@ -14978,7 +14978,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15022,7 +15022,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15041,7 +15041,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15069,7 +15069,7 @@
         "tags": [
           "personal"
         ],
-        "description": "With symbol, recent company-page PDF links. Without symbol, the latest market-wide All feed using a valid session; it has no stable historical cursor. Exact date filters return 501 if any source record lacks a date. Market feed timestamps are preserved where supplied; exchange identifiers can be missing.",
+        "description": "Recent company announcement links, or the latest market-wide announcements without symbol. Historical pagination is unavailable. Exact date filtering requires complete publication dates; exchange identifiers may be missing.",
         "parameters": [
           {
             "name": "symbol",
@@ -15194,7 +15194,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15238,7 +15238,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15257,7 +15257,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15285,7 +15285,7 @@
         "tags": [
           "personal"
         ],
-        "description": "With symbol, recent company-page PDF links. Without symbol, the latest market-wide All feed using a valid session; it has no stable historical cursor. Exact date filters return 501 if any source record lacks a date. Market feed timestamps are preserved where supplied; exchange identifiers can be missing.",
+        "description": "Recent company announcement links, or the latest market-wide announcements without symbol. Historical pagination is unavailable. Exact date filtering requires complete publication dates; exchange identifiers may be missing.",
         "parameters": [
           {
             "name": "symbol",
@@ -15410,7 +15410,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15454,7 +15454,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15473,7 +15473,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15501,7 +15501,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Requires symbol. Source-linked rating documents and dates where supplied. Historical exchange metadata and publication time may be null.",
+        "description": "Requires symbol. Rating documents and available publication dates. Exchange metadata and publication time may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -15626,7 +15626,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15670,7 +15670,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15689,7 +15689,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15717,7 +15717,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Requires symbol. Source-linked rating documents and dates where supplied. Historical exchange metadata and publication time may be null.",
+        "description": "Requires symbol. Rating documents and available publication dates. Exchange metadata and publication time may be null.",
         "parameters": [
           {
             "name": "symbol",
@@ -15842,7 +15842,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15886,7 +15886,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15905,7 +15905,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15933,7 +15933,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Requires symbol. Only public transcript anchors are mapped. Gated transcript buttons are unavailable with the current free account; returns 501 when none are exposed. Month-only dates cannot support exact day filters.",
+        "description": "Requires symbol. Available public transcript links. Returns HTTP 501 when transcripts are unavailable. Exact day filters are unavailable for month-only publication dates.",
         "parameters": [
           {
             "name": "symbol",
@@ -16058,7 +16058,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16102,7 +16102,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16121,7 +16121,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16149,7 +16149,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Requires symbol. Only public transcript anchors are mapped. Gated transcript buttons are unavailable with the current free account; returns 501 when none are exposed. Month-only dates cannot support exact day filters.",
+        "description": "Requires symbol. Available public transcript links. Returns HTTP 501 when transcripts are unavailable. Exact day filters are unavailable for month-only publication dates.",
         "parameters": [
           {
             "name": "symbol",
@@ -16274,7 +16274,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16318,7 +16318,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16337,7 +16337,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16365,7 +16365,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Requires symbol. Public presentation PDF links. Month-only publication labels leave exact dates null; day-level filtering then returns 501.",
+        "description": "Requires symbol. Public presentation PDF links. Exact dates may be null; exact day filtering then returns HTTP 501.",
         "parameters": [
           {
             "name": "symbol",
@@ -16490,7 +16490,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16534,7 +16534,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16553,7 +16553,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16581,7 +16581,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Requires symbol. Public presentation PDF links. Month-only publication labels leave exact dates null; day-level filtering then returns 501.",
+        "description": "Requires symbol. Public presentation PDF links. Exact dates may be null; exact day filtering then returns HTTP 501.",
         "parameters": [
           {
             "name": "symbol",
@@ -16706,7 +16706,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16750,7 +16750,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16769,7 +16769,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16797,7 +16797,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Screener commodity tools are premium-gated and use product identifiers that differ from the reference monthly_index/core_infra statistical categories.",
+        "description": "Commodity series listings are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "category",
@@ -16858,7 +16858,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16902,7 +16902,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16921,7 +16921,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16949,7 +16949,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Screener commodity tools are premium-gated and use product identifiers that differ from the reference monthly_index/core_infra statistical categories.",
+        "description": "Commodity series listings are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "category",
@@ -17010,7 +17010,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17054,7 +17054,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17073,7 +17073,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17101,7 +17101,7 @@
         "tags": [
           "personal"
         ],
-        "description": "No verified statistical-series code mapping or requested percentage-change windows are exposed by the connected source.",
+        "description": "Commodity percentage-change series are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "code",
@@ -17158,7 +17158,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17202,7 +17202,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17221,7 +17221,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17249,7 +17249,7 @@
         "tags": [
           "personal"
         ],
-        "description": "No verified statistical-series code mapping or requested percentage-change windows are exposed by the connected source.",
+        "description": "Commodity percentage-change series are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "code",
@@ -17306,7 +17306,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17350,7 +17350,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17369,7 +17369,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17397,7 +17397,7 @@
         "tags": [
           "personal"
         ],
-        "description": "No authoritative exchange holiday calendar was found in the inspected Screener tools or Market Pulse pages.",
+        "description": "Exchange holiday calendars are currently unavailable. Requests return HTTP 501.",
         "parameters": [],
         "x-coverage": "unavailable",
         "x-resource": "holidays-calendar",
@@ -17443,7 +17443,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17487,7 +17487,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17506,7 +17506,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17534,7 +17534,7 @@
         "tags": [
           "personal"
         ],
-        "description": "No authoritative exchange holiday calendar was found in the inspected Screener tools or Market Pulse pages.",
+        "description": "Exchange holiday calendars are currently unavailable. Requests return HTTP 501.",
         "parameters": [],
         "x-coverage": "unavailable",
         "x-resource": "holidays-calendar",
@@ -17580,7 +17580,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17624,7 +17624,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17643,7 +17643,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17671,7 +17671,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Upcoming results from Screener Market Pulse using a valid session. Requires a YYYY-MM-DD date window; filters apply to each requested page. Dates are expected publication dates, not financial reporting headers. Past calendars are not supplied.",
+        "description": "Upcoming results within a YYYY-MM-DD date window. Filters apply to each requested page. Dates indicate expected publication dates. Past calendars are unavailable.",
         "parameters": [
           {
             "name": "from_date",
@@ -17797,7 +17797,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17841,7 +17841,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17860,7 +17860,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17888,7 +17888,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Upcoming results from Screener Market Pulse using a valid session. Requires a YYYY-MM-DD date window; filters apply to each requested page. Dates are expected publication dates, not financial reporting headers. Past calendars are not supplied.",
+        "description": "Upcoming results within a YYYY-MM-DD date window. Filters apply to each requested page. Dates indicate expected publication dates. Past calendars are unavailable.",
         "parameters": [
           {
             "name": "from_date",
@@ -18014,7 +18014,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18058,7 +18058,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18077,7 +18077,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18105,7 +18105,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Source-listed IPOs for the requested page. Status/security type may be missing. Source labels without a year use the current source year. Follow X-Next-Page.",
+        "description": "Paginated IPO listings. Status and security type may be missing. Follow X-Next-Page for more results.",
         "parameters": [
           {
             "name": "from_date",
@@ -18231,7 +18231,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18275,7 +18275,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18294,7 +18294,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18322,7 +18322,7 @@
         "tags": [
           "personal"
         ],
-        "description": "Source-listed IPOs for the requested page. Status/security type may be missing. Source labels without a year use the current source year. Follow X-Next-Page.",
+        "description": "Paginated IPO listings. Status and security type may be missing. Follow X-Next-Page for more results.",
         "parameters": [
           {
             "name": "from_date",
@@ -18448,7 +18448,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18492,7 +18492,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18511,7 +18511,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18539,7 +18539,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Company description, website, exchange identifiers, four classification levels and market capitalization in crores. Missing values are null.",
+        "description": "Company description, website, exchange identifiers, classification, and market capitalization in INR crores. Missing values are null.",
         "parameters": [
           {
             "name": "symbols",
@@ -18662,7 +18662,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18706,7 +18706,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18725,7 +18725,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18753,7 +18753,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Supports annual P&L, balance sheets and cash flows, quarterly P&L, and source-provided P&L TTM. Other combinations return 501. Monetary fields are rupees; EPS is rupees per share. Annual balance sheets include expandable inventories, receivables, cash, payables and borrowings. Current/noncurrent splits and detailed filing parity remain unavailable.",
+        "description": "Annual profit and loss, balance sheets, cash flows, quarterly profit and loss, and available trailing-twelve-month figures. Amounts are INR rupees; EPS is INR per share. Unsupported combinations return HTTP 501. Current/noncurrent splits may be unavailable.",
         "parameters": [
           {
             "name": "symbols",
@@ -18922,7 +18922,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18966,7 +18966,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18985,7 +18985,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19013,7 +19013,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Product segment names are visible, but values return an upgrade-to-premium gate for the current account. No numeric adapter is enabled.",
+        "description": "Segment revenue figures are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "symbols",
@@ -19124,7 +19124,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19168,7 +19168,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19187,7 +19187,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19215,7 +19215,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Expanded schedules expose selected financial breakdowns, not full structured statutory notes. Independently parsed filings are still required.",
+        "description": "Structured financial statement notes are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "symbols",
@@ -19310,7 +19310,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19354,7 +19354,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19373,7 +19373,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19401,7 +19401,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Only ratio_type=pr is supported. Profitability ratios use fractions (0.25 means 25%). Aggregate-based formulas may differ from filing-based ratios; unsupported types return 501.",
+        "description": "Profitability ratios with ratio_type=pr. Ratios are fractions: 0.25 means 25%. Unsupported types return HTTP 501.",
         "parameters": [
           {
             "name": "symbols",
@@ -19554,7 +19554,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19598,7 +19598,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19617,7 +19617,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19645,7 +19645,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Only ratio_type=cu is supported: cumulative cash flows over three consecutive annual periods, in rupees. Growth and average variants return 501.",
+        "description": "Cumulative cash flows over three consecutive annual periods, in INR rupees, with ratio_type=cu. Growth and average variants are unavailable.",
         "parameters": [
           {
             "name": "symbols",
@@ -19797,7 +19797,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19841,7 +19841,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19860,7 +19860,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19888,7 +19888,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Only statement_code=pl is supported. EBIT, EBITDA, operating profit/revenue and tax fraction are mapped. Adjusted capital, share counts and cost of goods sold remain null.",
+        "description": "Profit-and-loss metrics with statement_code=pl, including EBIT, EBITDA, operating profit, revenue, and tax fraction. Adjusted capital, share counts, and cost of goods sold may be null.",
         "parameters": [
           {
             "name": "symbols",
@@ -20040,7 +20040,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20084,7 +20084,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20103,7 +20103,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20131,7 +20131,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Symbol is needed by this adapter. Up to 25 comma-separated or repeated values. Enterprise OHLC, volume, shares and trade time remain null. stream=true returns 501.",
+        "description": "Requires symbol. Supports up to 25 comma-separated or repeated symbols. OHLC, volume, shares, and trade time may be null. Streaming is unavailable.",
         "parameters": [
           {
             "name": "symbol",
@@ -20251,7 +20251,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20295,7 +20295,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20314,7 +20314,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20342,7 +20342,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "The inspected ownership tables do not expose statutory declaration flags. Structured shareholding filings are required.",
+        "description": "Statutory shareholding declarations are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "symbols",
@@ -20423,7 +20423,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20467,7 +20467,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20486,7 +20486,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20514,7 +20514,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Reporting header, total shareholder count and promoter percentage where exposed. Share counts, voting rights, pledges, warrants and other filing details remain null.",
+        "description": "Reporting period, total shareholder count, and promoter percentage where available. Share counts, voting rights, pledges, and warrants may be null.",
         "parameters": [
           {
             "name": "symbols",
@@ -20651,7 +20651,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20695,7 +20695,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20714,7 +20714,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20742,7 +20742,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Aggregate groups and source-disclosed named holders with reporting-period percentages. Annual uses the source yearly table; quarterly uses its quarterly table. Missing holder-period values are null, not zero. This is not a complete shareholder register.",
+        "description": "Annual or quarterly ownership percentages for categories and disclosed holders. Missing percentages are null. This is not a complete shareholder register.",
         "parameters": [
           {
             "name": "symbols",
@@ -20879,7 +20879,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20923,7 +20923,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20942,7 +20942,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20970,7 +20970,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Latest source reporting quarter: disclosed holder names, source group and shareholding percentage. Other identity and statutory filing fields remain null. Does not include every shareholder.",
+        "description": "Disclosed holder names, categories, and percentages for the latest available quarter. Does not include every shareholder; additional filing fields may be null.",
         "parameters": [
           {
             "name": "symbols",
@@ -21093,7 +21093,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21137,7 +21137,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21156,7 +21156,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21184,7 +21184,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Disclosed holder names, source group and percentage over the available annual/quarterly reporting periods. Missing periods are omitted for each holder. Other statutory fields remain null.",
+        "description": "Disclosed holder names, categories, and percentages across available annual or quarterly periods. Missing periods are omitted; additional filing fields may be null.",
         "parameters": [
           {
             "name": "symbols",
@@ -21321,7 +21321,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21365,7 +21365,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21384,7 +21384,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21412,7 +21412,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Named shareholders do not establish significant beneficial owners, control/voting rights or acquisition dates. Structured beneficial-ownership filings are required.",
+        "description": "Significant beneficial ownership records are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "symbols",
@@ -21493,7 +21493,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21537,7 +21537,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21556,7 +21556,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21584,7 +21584,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "With symbol, recent company-page PDF links. Without symbol, the latest market-wide All feed using a valid session; it has no stable historical cursor. Exact date filters return 501 if any source record lacks a date. Market feed timestamps are preserved where supplied; exchange identifiers can be missing.",
+        "description": "Recent company announcement links, or the latest market-wide announcements without symbol. Historical pagination is unavailable. Exact date filtering requires complete publication dates; exchange identifiers may be missing.",
         "parameters": [
           {
             "name": "symbol",
@@ -21687,7 +21687,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21731,7 +21731,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21750,7 +21750,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21778,7 +21778,7 @@
         "tags": [
           "enterprise"
         ],
-        "description": "Requires a stored ingestion/revision log. Current scrape/cache times do not identify source dataset update times.",
+        "description": "Dataset update listings are currently unavailable. Requests return HTTP 501.",
         "parameters": [
           {
             "name": "days",
@@ -21834,7 +21834,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21878,7 +21878,7 @@
             }
           },
           "502": {
-            "description": "Source failure, authentication failure or changed markup",
+            "description": "Data could not be retrieved",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21897,7 +21897,7 @@
             }
           },
           "503": {
-            "description": "Source concurrency capacity or source rate limit reached",
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21921,7 +21921,7 @@
     "/v1/list-of-company": {
       "get": {
         "summary": "List companies",
-        "description": "One-based pages of 100 companies. data contains company rows with their original relative source url. Symbol and the internal scraper skip flag are omitted. Pagination appears only in meta before company rows: currentPage, limit, count, isNextPageAvailable, nextPage and previousPage. Next-page availability comes from source pagination links; nextPage and previousPage are null when unavailable. Legacy numeric fields may use zero for unavailable source cells.",
+        "description": "One-based pages of 100 companies. Each row includes a relative company URL for requesting detailed data. Pagination is provided in meta: currentPage, limit, count, isNextPageAvailable, nextPage, and previousPage. Unavailable next and previous pages are null. Missing numeric values may be zero.",
         "parameters": [
           {
             "name": "page",
@@ -21945,7 +21945,7 @@
         "x-timeout-ms": 60000,
         "responses": {
           "200": {
-            "description": "Legacy data envelope; original field names and units are preserved.",
+            "description": "Original field names and units are preserved.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22035,7 +22035,7 @@
             }
           },
           "404": {
-            "description": "Source resource not found",
+            "description": "Resource not found",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22054,7 +22054,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22079,7 +22079,7 @@
             }
           },
           "500": {
-            "description": "Unhandled server failure",
+            "description": "Unexpected service error",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22098,7 +22098,7 @@
             }
           },
           "502": {
-            "description": "SOURCE_AUTH_REQUIRED for an expired source session; UPSTREAM_UNAVAILABLE for other source failures. Error responses are not cached.",
+            "description": "Data could not be retrieved; retry later.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22122,7 +22122,7 @@
     "/api/list-of-company": {
       "get": {
         "summary": "List companies",
-        "description": "One-based pages of 100 companies. data contains company rows with their original relative source url. Symbol and the internal scraper skip flag are omitted. Pagination appears only in meta before company rows: currentPage, limit, count, isNextPageAvailable, nextPage and previousPage. Next-page availability comes from source pagination links; nextPage and previousPage are null when unavailable. Legacy numeric fields may use zero for unavailable source cells.",
+        "description": "One-based pages of 100 companies. Each row includes a relative company URL for requesting detailed data. Pagination is provided in meta: currentPage, limit, count, isNextPageAvailable, nextPage, and previousPage. Unavailable next and previous pages are null. Missing numeric values may be zero.",
         "parameters": [
           {
             "name": "page",
@@ -22146,7 +22146,7 @@
         "x-timeout-ms": 60000,
         "responses": {
           "200": {
-            "description": "Legacy data envelope; original field names and units are preserved.",
+            "description": "Original field names and units are preserved.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22236,7 +22236,7 @@
             }
           },
           "404": {
-            "description": "Source resource not found",
+            "description": "Resource not found",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22255,7 +22255,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22280,7 +22280,7 @@
             }
           },
           "500": {
-            "description": "Unhandled server failure",
+            "description": "Unexpected service error",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22299,7 +22299,7 @@
             }
           },
           "502": {
-            "description": "SOURCE_AUTH_REQUIRED for an expired source session; UPSTREAM_UNAVAILABLE for other source failures. Error responses are not cached.",
+            "description": "Data could not be retrieved; retry later.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22335,7 +22335,7 @@
         "x-timeout-ms": 60000,
         "responses": {
           "200": {
-            "description": "Legacy data envelope; original field names and units are preserved.",
+            "description": "Original field names and units are preserved.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22391,7 +22391,7 @@
             }
           },
           "404": {
-            "description": "Source resource not found",
+            "description": "Resource not found",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22410,7 +22410,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22435,7 +22435,7 @@
             }
           },
           "500": {
-            "description": "Unhandled server failure",
+            "description": "Unexpected service error",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22454,7 +22454,7 @@
             }
           },
           "502": {
-            "description": "SOURCE_AUTH_REQUIRED for an expired source session; UPSTREAM_UNAVAILABLE for other source failures. Error responses are not cached.",
+            "description": "Data could not be retrieved; retry later.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22490,7 +22490,7 @@
         "x-timeout-ms": 60000,
         "responses": {
           "200": {
-            "description": "Legacy data envelope; original field names and units are preserved.",
+            "description": "Original field names and units are preserved.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22546,7 +22546,7 @@
             }
           },
           "404": {
-            "description": "Source resource not found",
+            "description": "Resource not found",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22565,7 +22565,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22590,7 +22590,7 @@
             }
           },
           "500": {
-            "description": "Unhandled server failure",
+            "description": "Unexpected service error",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22609,7 +22609,7 @@
             }
           },
           "502": {
-            "description": "SOURCE_AUTH_REQUIRED for an expired source session; UPSTREAM_UNAVAILABLE for other source failures. Error responses are not cached.",
+            "description": "Data could not be retrieved; retry later.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22656,7 +22656,7 @@
         "x-timeout-ms": 60000,
         "responses": {
           "200": {
-            "description": "Legacy data envelope; original field names and units are preserved.",
+            "description": "Original field names and units are preserved.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22714,7 +22714,7 @@
             }
           },
           "404": {
-            "description": "Source resource not found",
+            "description": "Resource not found",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22733,7 +22733,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22758,7 +22758,7 @@
             }
           },
           "500": {
-            "description": "Unhandled server failure",
+            "description": "Unexpected service error",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22777,7 +22777,7 @@
             }
           },
           "502": {
-            "description": "SOURCE_AUTH_REQUIRED for an expired source session; UPSTREAM_UNAVAILABLE for other source failures. Error responses are not cached.",
+            "description": "Data could not be retrieved; retry later.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22824,7 +22824,7 @@
         "x-timeout-ms": 60000,
         "responses": {
           "200": {
-            "description": "Legacy data envelope; original field names and units are preserved.",
+            "description": "Original field names and units are preserved.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22882,7 +22882,7 @@
             }
           },
           "404": {
-            "description": "Source resource not found",
+            "description": "Resource not found",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22901,7 +22901,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22926,7 +22926,7 @@
             }
           },
           "500": {
-            "description": "Unhandled server failure",
+            "description": "Unexpected service error",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22945,7 +22945,7 @@
             }
           },
           "502": {
-            "description": "SOURCE_AUTH_REQUIRED for an expired source session; UPSTREAM_UNAVAILABLE for other source failures. Error responses are not cached.",
+            "description": "Data could not be retrieved; retry later.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22969,7 +22969,7 @@
     "/v1/company-data": {
       "get": {
         "summary": "Get detailed company data",
-        "description": "Supply companyUrl using the exact relative url returned by list-of-company or company-search, for example /company/id/1286218/. Symbol-based, numeric-ID, standalone and consolidated paths are supported and fetched as supplied. URL-encode the query value, especially ampersands. data and companyData contain the same detailed object. Cold requests can take around 20 seconds because expanded schedules are fetched serially. Responses are cached for 15 minutes. Read legacy amount/baseValue units; blank source cells may become zero. metrics is always empty because market-price history is excluded. Optional news failures leave news empty.",
+        "description": "Use the companyUrl returned by company discovery or search. Supports standalone and consolidated company paths. data and companyData contain the same company information. Check amount/baseValue for monetary units. Missing cells may be zero; news may be empty. Historical market prices are not included.",
         "parameters": [
           {
             "name": "companyUrl",
@@ -22992,7 +22992,7 @@
         "x-timeout-ms": 60000,
         "responses": {
           "200": {
-            "description": "Legacy data envelope; original field names and units are preserved.",
+            "description": "Original field names and units are preserved.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23002,7 +23002,7 @@
                 }
               },
               "X-Cache": {
-                "description": "HIT when the company object was reused from the 15-minute cache; omitted on a miss.",
+                "description": "Response reuse status, when available.",
                 "schema": {
                   "type": "string",
                   "enum": [
@@ -23011,7 +23011,7 @@
                 }
               },
               "Cache-Control": {
-                "description": "private, max-age=900",
+                "description": "HTTP cache directive.",
                 "schema": {
                   "type": "string"
                 }
@@ -23057,7 +23057,7 @@
             }
           },
           "404": {
-            "description": "Source resource not found",
+            "description": "Resource not found",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23076,7 +23076,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23101,7 +23101,7 @@
             }
           },
           "500": {
-            "description": "Unhandled server failure",
+            "description": "Unexpected service error",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23120,7 +23120,7 @@
             }
           },
           "502": {
-            "description": "SOURCE_AUTH_REQUIRED for an expired source session; UPSTREAM_UNAVAILABLE for other source failures. Error responses are not cached.",
+            "description": "Data could not be retrieved; retry later.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23144,7 +23144,7 @@
     "/api/company-data": {
       "get": {
         "summary": "Get detailed company data",
-        "description": "Supply companyUrl using the exact relative url returned by list-of-company or company-search, for example /company/id/1286218/. Symbol-based, numeric-ID, standalone and consolidated paths are supported and fetched as supplied. URL-encode the query value, especially ampersands. data and companyData contain the same detailed object. Cold requests can take around 20 seconds because expanded schedules are fetched serially. Responses are cached for 15 minutes. Read legacy amount/baseValue units; blank source cells may become zero. metrics is always empty because market-price history is excluded. Optional news failures leave news empty.",
+        "description": "Use the companyUrl returned by company discovery or search. Supports standalone and consolidated company paths. data and companyData contain the same company information. Check amount/baseValue for monetary units. Missing cells may be zero; news may be empty. Historical market prices are not included.",
         "parameters": [
           {
             "name": "companyUrl",
@@ -23167,7 +23167,7 @@
         "x-timeout-ms": 60000,
         "responses": {
           "200": {
-            "description": "Legacy data envelope; original field names and units are preserved.",
+            "description": "Original field names and units are preserved.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23177,7 +23177,7 @@
                 }
               },
               "X-Cache": {
-                "description": "HIT when the company object was reused from the 15-minute cache; omitted on a miss.",
+                "description": "Response reuse status, when available.",
                 "schema": {
                   "type": "string",
                   "enum": [
@@ -23186,7 +23186,7 @@
                 }
               },
               "Cache-Control": {
-                "description": "private, max-age=900",
+                "description": "HTTP cache directive.",
                 "schema": {
                   "type": "string"
                 }
@@ -23232,7 +23232,7 @@
             }
           },
           "404": {
-            "description": "Source resource not found",
+            "description": "Resource not found",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23251,7 +23251,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23276,7 +23276,7 @@
             }
           },
           "500": {
-            "description": "Unhandled server failure",
+            "description": "Unexpected service error",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23295,7 +23295,7 @@
             }
           },
           "502": {
-            "description": "SOURCE_AUTH_REQUIRED for an expired source session; UPSTREAM_UNAVAILABLE for other source failures. Error responses are not cached.",
+            "description": "Data could not be retrieved; retry later.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23319,13 +23319,13 @@
     "/v1/extract": {
       "get": {
         "summary": "Extract a company dataset",
-        "description": "Requires endpoint and type. Loads the full company data, then selects the requested dataset. Shares the 15-minute company cache; meta.cached indicates a hit. Rows keep original field names and amount/baseValue units; absent source rows may be omitted and blank cells may become zero. Market-history extraction is excluded. Cold requests may take around 20 seconds.",
+        "description": "Select a financial statement, ratios, ownership, or peers using endpoint and type. Check amount/baseValue for monetary units. Missing rows may be omitted and missing cells may be zero. Historical market prices are not included.",
         "parameters": [
           {
             "name": "endpoint",
             "in": "query",
             "required": true,
-            "description": "Relative Screener company path, optionally consolidated; absolute URLs are rejected.",
+            "description": "Relative company path, optionally consolidated; absolute URLs are rejected.",
             "schema": {
               "type": "string"
             },
@@ -23361,7 +23361,7 @@
         "x-timeout-ms": 60000,
         "responses": {
           "200": {
-            "description": "Legacy data envelope; original field names and units are preserved.",
+            "description": "Original field names and units are preserved.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23371,7 +23371,7 @@
                 }
               },
               "X-Cache": {
-                "description": "HIT when the company object was reused from the 15-minute cache; omitted on a miss.",
+                "description": "Response reuse status, when available.",
                 "schema": {
                   "type": "string",
                   "enum": [
@@ -23468,7 +23468,7 @@
             }
           },
           "404": {
-            "description": "Source resource not found",
+            "description": "Resource not found",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23487,7 +23487,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23512,7 +23512,7 @@
             }
           },
           "500": {
-            "description": "Unhandled server failure",
+            "description": "Unexpected service error",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23531,7 +23531,7 @@
             }
           },
           "502": {
-            "description": "SOURCE_AUTH_REQUIRED for an expired source session; UPSTREAM_UNAVAILABLE for other source failures. Error responses are not cached.",
+            "description": "Data could not be retrieved; retry later.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23555,13 +23555,13 @@
     "/api/extract": {
       "get": {
         "summary": "Extract a company dataset",
-        "description": "Requires endpoint and type. Loads the full company data, then selects the requested dataset. Shares the 15-minute company cache; meta.cached indicates a hit. Rows keep original field names and amount/baseValue units; absent source rows may be omitted and blank cells may become zero. Market-history extraction is excluded. Cold requests may take around 20 seconds.",
+        "description": "Select a financial statement, ratios, ownership, or peers using endpoint and type. Check amount/baseValue for monetary units. Missing rows may be omitted and missing cells may be zero. Historical market prices are not included.",
         "parameters": [
           {
             "name": "endpoint",
             "in": "query",
             "required": true,
-            "description": "Relative Screener company path, optionally consolidated; absolute URLs are rejected.",
+            "description": "Relative company path, optionally consolidated; absolute URLs are rejected.",
             "schema": {
               "type": "string"
             },
@@ -23597,7 +23597,7 @@
         "x-timeout-ms": 60000,
         "responses": {
           "200": {
-            "description": "Legacy data envelope; original field names and units are preserved.",
+            "description": "Original field names and units are preserved.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23607,7 +23607,7 @@
                 }
               },
               "X-Cache": {
-                "description": "HIT when the company object was reused from the 15-minute cache; omitted on a miss.",
+                "description": "Response reuse status, when available.",
                 "schema": {
                   "type": "string",
                   "enum": [
@@ -23704,7 +23704,7 @@
             }
           },
           "404": {
-            "description": "Source resource not found",
+            "description": "Resource not found",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23723,7 +23723,7 @@
             }
           },
           "429": {
-            "description": "Development quota exhausted (60/minute per key or IP, per isolate)",
+            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23748,7 +23748,7 @@
             }
           },
           "500": {
-            "description": "Unhandled server failure",
+            "description": "Unexpected service error",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23767,7 +23767,7 @@
             }
           },
           "502": {
-            "description": "SOURCE_AUTH_REQUIRED for an expired source session; UPSTREAM_UNAVAILABLE for other source failures. Error responses are not cached.",
+            "description": "Data could not be retrieved; retry later.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",

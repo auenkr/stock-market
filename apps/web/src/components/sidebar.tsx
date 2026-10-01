@@ -8,8 +8,8 @@ export function Sidebar() {
       <Link href="/dashboard">Overview</Link>
       <Link href="/dashboard/keys">API keys</Link>
       <span className="eyebrow" style={{ color: "#73858d", padding: "18px 13px 5px" }}>Resources</span>
-      <Link href="/docs">Documentation</Link>
+      <Link href="/docs" target="_blank" rel="noopener noreferrer">Documentation ↗</Link>
     </nav>
-    <div className="sidebar-foot">MARKET DATA INFRASTRUCTURE<br />v1.0.0 · INDIA EQUITIES</div>
+    <div className="sidebar-foot">INDIAN MARKET DATA<br />Built for your next product</div>
   </aside>;
 }
