@@ -3,7 +3,7 @@ import test from "node:test";
 import { createApp } from "./server.js";
 import { freeCompanySymbols } from "./endpoint-access.js";
 
-function setup(plan: "free" | "paid") {
+function setup(plan: "free" | "personal" | "professional") {
   const calls: { resource: string; symbol?: string }[] = [];
   const app = createApp(() => ({ execute: async (resource, query) => {
     calls.push({ resource, symbol: query.symbol });
@@ -43,7 +43,9 @@ test("free accounts cannot bypass paid tiers through compatibility or legacy ali
 test("other free resources stay available, and paid users can access all companies and both tiers", async () => {
   const free = setup("free");
   for (const path of ["/v1/stock-symbols", "/v1/stock-search?group=sector&value=Banking", "/v1/results-calendar?from_date=2026-10-01&to_date=2026-10-02", "/v1/ipo-calendar", "/v1/coverage", "/health"]) assert.equal((await free.app.request(path)).status, 200, path);
-  const paid = setup("paid");
-  for (const path of ["/v1/company-profile/TCS", "/v1/financials/ITC?statement_type=c&statement_code=pl&period=annual", "/enterprise/api/company-profile?symbols=TCS,ITC"]) assert.equal((await paid.app.request(path)).status, 200, path);
-  assert(paid.calls.some((call) => call.symbol === "TCS"));
+  for (const plan of ["personal", "professional"] as const) {
+    const paid = setup(plan);
+    for (const path of ["/v1/company-profile/TCS", "/v1/financials/ITC?statement_type=c&statement_code=pl&period=annual", "/enterprise/api/company-profile?symbols=TCS,ITC"]) assert.equal((await paid.app.request(path)).status, 200, path);
+    assert(paid.calls.some((call) => call.symbol === "TCS"));
+  }
 });

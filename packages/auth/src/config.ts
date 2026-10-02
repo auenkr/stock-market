@@ -1,5 +1,6 @@
 import type { BetterAuthOptions } from "better-auth";
 import { createId } from "@stock-market/db/id";
+import { consentUserHook } from "./consent.js";
 
 type AuthEnvironment = Record<string, string | undefined>;
 
@@ -32,8 +33,12 @@ export function createAuthOptions(env: AuthEnvironment) {
         profileCompleted: {
           type: "boolean", required: false, defaultValue: false, input: false,
         },
+        termsAcceptedAt: { type: "date", required: false, input: false },
+        termsVersion: { type: "string", required: false, input: false },
+        privacyVersion: { type: "string", required: false, input: false },
       },
     },
     session: { expiresIn: 60 * 60 * 24 * 30, updateAge: 60 * 60 * 24 },
+    databaseHooks: { user: { create: { before: consentUserHook(env.BETTER_AUTH_SECRET || "stock-market-local-development-secret") } } },
   } as const satisfies BetterAuthOptions;
 }

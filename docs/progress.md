@@ -69,3 +69,9 @@ Validation: all 20 API tests passed, including actual response envelopes checked
 The cold web-runner request using lowercase `symbol=reliance` also returned 200 after 20.1 seconds, verifying normalization and the extended browser timeout. The Worker docs viewer found the `/api/company-data` alias, displayed its single symbol parameter and included request-ID response headers.
 
 The final coverage remains 36 partial, 17 unavailable and 9 excluded reference paths. Missing datasets and SaaS infrastructure remain tracked in [limitations](limitations.md). No deployment was performed.
+## Monthly subscriptions and legal consent (2026-10-02)
+
+- Added Basic (existing 10/minute), Personal (₹2,000/month, 300/minute), and Professional (₹5,000/month, 500/minute with commercial use).
+- Integrated the Better Auth Polar plugin for authenticated checkout, customer creation, billing portal, and verified subscription/customer-state updates. Access expires at the paid-period deadline; retries and delayed events are safe.
+- Added public pricing, Terms of Service, Privacy Policy, and Plans & billing pages. Google signup requires explicit acceptance with server-verified consent and stored policy versions.
+- Added an upgrade migration, a detailed [Polar account setup guide](polar-setup.md), billing integration/migration tests, and a disposable-database E2E suite. Pre-push checks now include full E2E coverage.

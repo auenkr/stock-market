@@ -8,5 +8,6 @@ This directory records endpoint coverage, source limitations, implementation pro
 - [Progress](progress.md): completed work and validation evidence.
 - [Screener exploration](screener-exploration.md): browser findings, source paths and remaining access/data gaps.
 - [Swagger maintenance](swagger.md): contract generation, docs explorer and drift checks.
+- [Polar setup](polar-setup.md): monthly subscriptions, legal consent, deployment migration, and Polar account configuration.
 
 Update these records when a route, source, response mapping, or deployment capability changes. A route returning `501 DATASET_UNAVAILABLE` is a documented gap, not a completed data integration.

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { validateProfileInput } from "@/lib/profile";
 
-export function ProfileForm({ name: initialName, email, company: initialCompany }: { name: string; email: string; company: string }) {
+export function ProfileForm({ name: initialName, email, company: initialCompany, destination = "/dashboard" }: { name: string; email: string; company: string; destination?: string }) {
   const [name, setName] = useState(initialName);
   const [company, setCompany] = useState(initialCompany);
   const [error, setError] = useState("");
@@ -30,7 +30,7 @@ export function ProfileForm({ name: initialName, email, company: initialCompany 
         setPending(false);
         return;
       }
-      window.location.assign("/dashboard");
+      window.location.assign(destination);
     } catch {
       setError("Could not save your profile. Please try again.");
       setPending(false);

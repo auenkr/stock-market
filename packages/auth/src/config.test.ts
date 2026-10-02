@@ -4,6 +4,7 @@ import { betterAuth } from "better-auth";
 import { memoryAdapter } from "better-auth/adapters/memory";
 import { hashPassword } from "better-auth/crypto";
 import { createAuthOptions } from "./config.js";
+import { consentCookieName, signConsent } from "./consent.js";
 
 test("Google is enabled only with both credentials and auth origins follow the web port", () => {
   const defaults = createAuthOptions({});
@@ -60,7 +61,7 @@ test("Google OAuth sends new users to onboarding, preserves returnees, and keeps
     data: { sub: "google-user-1", name: "Google Name", email: "new@example.com", email_verified: true },
   });
 
-  async function signIn() {
+  async function signIn(includeConsent = true) {
     const start = await auth.handler(new Request(`${options.baseURL}/api/auth/sign-in/social`, {
       method: "POST", headers: { "content-type": "application/json", origin: options.baseURL },
       body: JSON.stringify({
@@ -78,9 +79,12 @@ test("Google OAuth sends new users to onboarding, preserves returnees, and keeps
     const callback = new URL(`${options.baseURL}/api/auth/callback/google`);
     callback.searchParams.set("state", authorization.searchParams.get("state")!);
     callback.searchParams.set("code", "test-authorization-code");
-    return auth.handler(new Request(callback, { headers: { cookie: cookies(start) } }));
+    return auth.handler(new Request(callback, { headers: { cookie: `${cookies(start)}${includeConsent ? `; ${consentCookieName}=${signConsent(options.secret!)}` : ""}` } }));
   }
 
+  const rejected = await signIn(false);
+  assert.equal(rejected.status, 302);
+  assert.equal(database.user.length, 0, "OAuth cannot create an account without server-verified consent");
   const first = await signIn();
   assert.equal(first.status, 302);
   assert.equal(first.headers.get("location"), `${options.baseURL}/onboarding`);

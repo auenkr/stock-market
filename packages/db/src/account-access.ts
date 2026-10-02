@@ -1,6 +1,7 @@
 import postgres from "postgres";
+import type { ApiPlan } from "./plans.js";
+export type { ApiPlan } from "./plans.js";
 
-export type ApiPlan = "free" | "paid";
 export type AccessDecision = { status: "allowed"; plan: ApiPlan } | { status: "unauthorized" } | { status: "unavailable" } | { status: "limited"; retryAfter: number };
 export type AccountAccessBindings = { DB_CONNECTION_URL?: string; ACCOUNT_SERVICE_URL?: string; ACCOUNT_SERVICE_SECRET?: string };
 export type AuthorizeRequest = (secret: string | undefined, bindings: AccountAccessBindings, sharedSql?: postgres.Sql) => Promise<AccessDecision>;
@@ -18,7 +19,7 @@ async function authorizeViaService(secret: string, bindings: AccountAccessBindin
     });
     if (!response.ok) return { status: "unavailable" };
     const decision = await response.json() as AccessDecision;
-    if (decision.status === "allowed") return decision.plan === "free" || decision.plan === "paid" ? decision : { status: "unavailable" };
+    if (decision.status === "allowed") return ["free", "personal", "professional"].includes(decision.plan) ? decision : { status: "unavailable" };
     if (["unauthorized", "unavailable"].includes(decision.status)) return decision;
     if (decision.status === "limited" && Number.isInteger(decision.retryAfter) && decision.retryAfter > 0) return decision;
     return { status: "unavailable" };
@@ -39,9 +40,11 @@ export const authorizeAccountRequest: AuthorizeRequest = async (secret, bindings
   const sql = sharedSql ?? postgres(databaseUrl, { max: 1, prepare: false, connect_timeout: 5 });
   try {
     const lookupKey = () => sql<{ user_id: string; request_limit: number; api_plan: ApiPlan }[]>`
-      SELECT k.user_id, u.api_plan, COALESCE(p.request_limit, CASE WHEN u.api_plan = 'paid' THEN 60 ELSE 10 END) AS request_limit
+      SELECT k.user_id, entitlement.plan AS api_plan,
+        COALESCE(p.request_limit, CASE entitlement.plan WHEN 'personal' THEN 300 WHEN 'professional' THEN 500 ELSE 10 END) AS request_limit
       FROM api_key k JOIN "user" u ON u.id = k.user_id
-      LEFT JOIN usage_policy p ON p.id = CASE WHEN u.api_plan = 'paid' THEN 'paid' ELSE 'default' END
+      CROSS JOIN LATERAL (SELECT CASE WHEN u.plan_expires_at > now() AND u.api_plan IN ('personal', 'professional') THEN u.api_plan ELSE 'free' END AS plan) entitlement
+      LEFT JOIN usage_policy p ON p.id = CASE WHEN entitlement.plan = 'free' THEN 'default' ELSE entitlement.plan END
       WHERE k.key_hash = ${hash} AND k.revoked_at IS NULL
         AND (k.expires_at IS NULL OR k.expires_at > now()) AND u.profile_completed = true
       LIMIT 1

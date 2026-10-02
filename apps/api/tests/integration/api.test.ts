@@ -200,7 +200,7 @@ test('revoked, expired, unknown and incomplete-profile keys are rejected; live r
 });
 
 test('two keys and two HTTP API instances share an atomic account quota, with isolation and window reset', async () => {
-  await fixture.sql`UPDATE usage_policy SET request_limit = 10 WHERE id = 'paid'`;
+  await fixture.sql`UPDATE usage_policy SET request_limit = 10 WHERE id = 'professional'`;
   try {
     const owner = await fixture.account(); const keys = [await fixture.key(owner), await fixture.key(owner)];
     const responses = await Promise.all(Array.from({ length: 14 }, (_, i) => fixture.request('/v1/coverage', keys[i % 2], i % 2)));
@@ -216,7 +216,7 @@ test('two keys and two HTTP API instances share an atomic account quota, with is
     await fixture.sql`UPDATE account_usage SET window_started_at = now() - interval '61 seconds' WHERE user_id = ${owner}`;
     assert.equal((await fixture.request('/v1/coverage', keys[1], 1)).status, 200);
     const [reset] = await fixture.sql`SELECT request_count FROM account_usage WHERE user_id = ${owner}`; assert.equal(reset!.request_count, 1);
-  } finally { await fixture.sql`UPDATE usage_policy SET request_limit = 10000 WHERE id = 'paid'`; }
+  } finally { await fixture.sql`UPDATE usage_policy SET request_limit = 10000 WHERE id = 'professional'`; }
 });
 
 
@@ -247,7 +247,7 @@ test('signed account-service HTTP bridge uses real storage and rejects forged, s
     for (const malformed of ['not-json', 'x'.repeat(513)]) assert.equal((await fetch(service.url, { method: 'POST', headers: sign(malformed), body: malformed })).status, 400);
     const [beforeAccess] = await fixture.sql`SELECT count(*)::int AS connections FROM pg_stat_activity WHERE datname = current_database() AND application_name = 'postgres.js'`;
     const valid = await fetch(service.url, { method: 'POST', headers: sign(body), body });
-    assert.equal(valid.status, 200); assert.deepEqual(await valid.json(), { status: 'allowed', plan: 'paid' });
+    assert.equal(valid.status, 200); assert.deepEqual(await valid.json(), { status: 'allowed', plan: 'professional' });
     const [afterAccess] = await fixture.sql`SELECT count(*)::int AS connections FROM pg_stat_activity WHERE datname = current_database() AND application_name = 'postgres.js'`;
     assert.equal(afterAccess!.connections, beforeAccess!.connections, 'Account service must close its connection before responding');
     const bridged = await fixture.startApi({ ...fixture.bindings, ACCOUNT_SERVICE_URL: service.url, ACCOUNT_SERVICE_SECRET: process.env.ACCOUNT_SERVICE_SECRET });
@@ -257,11 +257,11 @@ test('signed account-service HTTP bridge uses real storage and rejects forged, s
     const broken = await fixture.startApi({ ...fixture.bindings, ACCOUNT_SERVICE_URL: service.url, ACCOUNT_SERVICE_SECRET: 'wrong-secret' });
     assert.equal((await request(broken)).status, 503);
     const owner = await fixture.account(); const token = await fixture.key(owner);
-    await fixture.sql`UPDATE usage_policy SET request_limit = 10 WHERE id = 'paid'`;
+    await fixture.sql`UPDATE usage_policy SET request_limit = 10 WHERE id = 'professional'`;
     try {
       for (let i = 0; i < 10; i++) assert.equal((await request(bridged, token)).status, 200);
       const limited = await request(bridged, token); assert.equal(limited.status, 429); assert(Number(limited.headers.get('retry-after')) > 0);
-    } finally { await fixture.sql`UPDATE usage_policy SET request_limit = 10000 WHERE id = 'paid'`; }
+    } finally { await fixture.sql`UPDATE usage_policy SET request_limit = 10000 WHERE id = 'professional'`; }
   } finally {
     await close(service.server);
     if (previousDb === undefined) delete process.env.DB_CONNECTION_URL; else process.env.DB_CONNECTION_URL = previousDb;

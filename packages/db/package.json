@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/index.ts src/schema.ts src/id.ts src/account-access.ts --format=esm --platform=node --target=es2022 --packages=external --outbase=src --outdir=dist",
+    "build": "esbuild src/index.ts src/schema.ts src/id.ts src/account-access.ts src/plans.ts --format=esm --platform=node --target=es2022 --packages=external --outbase=src --outdir=dist",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "exports": {
@@ -19,6 +19,7 @@
       "types": "./src/id.ts",
       "import": "./dist/id.js"
     },
+    "./plans": { "types": "./src/plans.ts", "import": "./dist/plans.js" },
     "./account-access": {
       "types": "./src/account-access.ts",
       "import": "./dist/account-access.js"

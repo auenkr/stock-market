@@ -8,7 +8,7 @@ The API provides structured Indian equity and IPO data for applications. The ver
 
 `GET /health` returns service status. `GET /swagger.json` and `/openapi.json` return the same OpenAPI 3.0.3 contract. The API's `/docs` page reads that contract; the web `/documentation` overview explains free/paid access and rate limits, and links to the `/docs` API reference with search, tier filtering, request forms, schema browsing, and a request runner.
 
-The API validates dashboard-issued keys against PostgreSQL, including expiration and revocation. The allowance is **10 requests/minute for free accounts and 60 for paid accounts**, shared across all of that account's keys and API instances using atomic database counters. Health and OpenAPI remain public. Free/paid endpoint and company entitlements are enforced; billing automation is not implemented.
+The API validates dashboard-issued keys against PostgreSQL, including expiration and revocation. Allowances are **10 requests/minute for Basic, 300 for Personal, and 500 for Professional**, shared across all account keys and API instances using atomic database counters. Personal (₹2,000/month) and Professional (₹5,000/month) unlock all endpoints; Professional also permits commercial use. Better Auth + Polar handle monthly checkout, billing portal, and verified subscription synchronization. See [Polar account setup](docs/polar-setup.md).
 
 ### Endpoint tiers
 
@@ -175,7 +175,7 @@ Key creation uses a dialog with a required name and expiration choice. The serve
 
 The package also exports `PageMotion` from `@stock-market/ui/motion`. The homepage progressively enhances its server-rendered content with Motion entrances, one-time scroll reveals, spring card hovers, and pointer-following code-panel labels. Motion loads only on pages that opt in, respects changes to `prefers-reduced-motion`, and keeps content visible without JavaScript. `/` and `/docs` are prerendered at build time; the docs use Fuse.js fuzzy endpoint search, shared Select controls, and short CSS endpoint/control transitions without loading Motion. The dashboard animates card entrances, saved key rows, and key reveals. The single theme button defaults to the system preference and reveals a toggled theme outward from the button using View Transitions, with an immediate fallback for reduced motion or unsupported browsers.
 
-Run `pnpm db:migrate:request-limit`, then `pnpm db:migrate:account-usage`, then `pnpm db:migrate:api-plans` to apply the **10/minute free and 60/minute paid** policies, account plans, and shared counters to existing databases. The API-plan migration sets the free policy to 10 and the paid policy to 60; existing accounts default to free. Paid status is assigned server-side through `user.api_plan`. Apply the earlier timestamp migration first. The web backend uses `DB_CONNECTION_URL` from the root `.env`. Local Workers send timestamped, HMAC-signed requests to `/api/internal/account-access`; their scoped signing secret is derived from `BETTER_AUTH_SECRET` unless `ACCOUNT_SERVICE_SECRET` is configured. This supports PostgreSQL servers whose TLS configuration is incompatible with Workers' direct sockets. For production, set a dedicated `ACCOUNT_SERVICE_SECRET` on both services, configure the Worker's `ACCOUNT_SERVICE_URL` to the deployed web endpoint, and store its signing secret with `pnpm --filter @stock-market/api exec wrangler secret put ACCOUNT_SERVICE_SECRET`. Authorization fails closed if account storage or the signed service is unavailable. Health and OpenAPI stay public.
+For old databases, apply `pnpm db:migrate:request-limit`, `pnpm db:migrate:account-usage`, `pnpm db:migrate:api-plans`, then **`pnpm db:migrate:billing`**, in that order after the timestamp migration. The final migration installs the three plans and consent fields; legacy manual Paid flags become Basic until a verified subscription activates paid access. Do not rerun the old API-plan migration after billing. The web backend uses `DB_CONNECTION_URL` from the root `.env`. Local Workers send timestamped, HMAC-signed requests to `/api/internal/account-access`; their scoped signing secret is derived from `BETTER_AUTH_SECRET` unless `ACCOUNT_SERVICE_SECRET` is configured. For production, set a dedicated `ACCOUNT_SERVICE_SECRET` on both services, configure the Worker's `ACCOUNT_SERVICE_URL` to the deployed web endpoint, and store its signing secret with `pnpm --filter @stock-market/api exec wrangler secret put ACCOUNT_SERVICE_SECRET`. Authorization fails closed if account storage or the signed service is unavailable. Health and OpenAPI stay public.
 
 ```bash
 pnpm dlx shadcn@latest add <component> --cwd packages/ui
@@ -213,6 +213,7 @@ See [integration and k6 performance testing](docs/testing.md) for disposable dat
 
 ```bash
 pnpm test:integration
+pnpm test:e2e
 pnpm test:performance
 SCENARIO=quota pnpm test:performance
 ```

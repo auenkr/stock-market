@@ -3,7 +3,7 @@
   "info": {
     "title": "Ledgerline Stock Market API",
     "version": "1.2.0",
-    "description": "Indian company financials, ownership, corporate actions, and market information for your applications. Coverage varies by dataset; unavailable datasets and query variants return HTTP 501. Historical market prices are not included. Free users can access free endpoints; company-specific requests are limited to RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN (top five by market capitalization at 2026-10-01 close). Discovery, calendars, and service endpoints remain accessible. Paid users can access all documented endpoints and companies, subject to source coverage. Send a valid API key. Allowances are 10 requests per minute for free accounts and 60 for paid accounts, shared across all their keys."
+    "description": "Indian company financials, ownership, corporate actions, and market information for your applications. Coverage varies by dataset; unavailable datasets and query variants return HTTP 501. Historical market prices are not included. Basic users can access free endpoints; company-specific requests are limited to RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN (top five by market capitalization at 2026-10-01 close). Discovery, calendars, and service endpoints remain accessible. Personal and Professional subscribers can access all documented endpoints and companies, subject to source coverage. Only Professional permits commercial use. Send a valid API key. Allowances are 10 requests per minute for Basic, 300 for Personal, and 500 for Professional, shared across all account keys. Paid subscriptions are billed monthly."
   },
   "x-access-policy": {
     "freeCompanies": [
@@ -17,8 +17,12 @@
     "asOf": "2026-10-01",
     "requestsPerMinute": {
       "free": 10,
-      "paid": 60
+      "personal": 300,
+      "professional": 500
     },
+    "commercialUse": [
+      "professional"
+    ],
     "companyScopedResources": [
       "company-profile",
       "basic-financials",

@@ -10,7 +10,7 @@ import { Button } from "@stock-market/ui/components/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@stock-market/ui/components/dialog";
 
 type Key = { id: string; name: string; secret: string | null; createdAt: string; expiresAt: string | null; revokedAt: string | null };
-type Policy = { plan: "free" | "paid"; title: string; description: string; requestLimit: number };
+type Policy = { plan: "free" | "personal" | "professional"; title: string; description: string; requestLimit: number };
 type KeysResponse = { keys: Key[]; policy: Policy };
 type ErrorResponse = { error: string };
 
@@ -77,7 +77,7 @@ export function KeyManager() {
         <CreateKeyDialog onCreated={created} />
         {error && <p className="error">{error}</p>}
     </section>
-    {policy && <section className="usage-summary"><span className="eyebrow">{policy.plan === "paid" ? "Paid plan" : "Free plan"}</span><span className="pill">{policy.requestLimit} requests / minute per account</span><span className="subtle">Shared across all your API keys.</span></section>}
+    {policy && <section className="usage-summary"><span className="eyebrow">{policy.plan === "free" ? "Basic" : policy.plan === "personal" ? "Personal" : "Professional"} plan</span><span className="pill">{policy.requestLimit} requests / minute per account</span><span className="subtle">Shared across all your API keys.</span></section>}
     {newKey && <div className="notice new-key-notice" data-visible={keyVisible} style={{ marginTop: 18 }}><div><strong>Your new API key.</strong> {newKey.expiresAt ? `Expires ${new Date(newKey.expiresAt).toLocaleString()}.` : "Never expires — until you manually revoke it."}</div>
       <div className="created-key">
         <div className="created-key-value"><KeySecret id="created-api-key" label="New API key" secret={newKey.key} visible={keyVisible} /></div>

@@ -13,7 +13,7 @@ const brewPrefix = spawnSync('brew', ['--prefix', 'postgresql@17'], { encoding: 
 const pgBin = process.env.POSTGRES_BIN ?? (brewPrefix.status === 0 ? join(brewPrefix.stdout.trim(), 'bin') : '');
 const pgTool = name => pgBin ? join(pgBin, name) : name;
 const pgEnv = { ...process.env, LC_ALL: 'C' };
-if (!['integration', 'performance'].includes(mode)) throw new Error('Use integration or performance');
+if (!['integration', 'performance', 'e2e'].includes(mode)) throw new Error('Use integration, performance, or e2e');
 const database = `stock_test_${process.pid}_${Date.now()}`;
 let directory, container, admin, child, clusterStarted = false;
 const port = async () => {
@@ -60,7 +60,17 @@ try {
   await run('pnpm', ['--filter', '@stock-market/scraper', 'build'], env);
   // Apply the real application schema, including auth and foreign keys.
   await run('pnpm', ['--filter', '@stock-market/web', 'exec', 'drizzle-kit', 'push', '--force'], env);
-  await run('node', ['--import', 'tsx', ...(mode === 'integration' ? ['--test', '--test-timeout=60000', 'apps/api/tests/integration/api.test.ts'] : ['apps/api/tests/performance/run.ts'])], env);
+  if (mode === 'e2e') {
+    const testEnv = { ...env, ENVIRONMENT: 'dev', DEV_USERNAME: 'dev', DEV_PASSWORD: 'test-development-password',
+      BETTER_AUTH_URL: 'http://127.0.0.1:3105', BETTER_AUTH_SECRET: 'e2e-auth-secret-at-least-thirty-two-characters',
+      API_KEY_ENCRYPTION_SECRET: 'e2e-api-encryption-secret-at-least-thirty-two-characters',
+      GOOGLE_CLIENT_ID: 'e2e-google-client', GOOGLE_CLIENT_SECRET: 'e2e-google-secret',
+      POLAR_ACCESS_TOKEN: 'test-polar-token', POLAR_WEBHOOK_SECRET: 'billing-test-webhook-secret', POLAR_ENVIRONMENT: 'sandbox',
+      POLAR_PERSONAL_PRODUCT_ID: '11111111-1111-4111-8111-111111111111', POLAR_PROFESSIONAL_PRODUCT_ID: '22222222-2222-4222-8222-222222222222' };
+    await run('pnpm', ['--filter', '@stock-market/auth', 'build'], testEnv);
+    await run('pnpm', ['--filter', '@stock-market/auth', 'seed:dev'], testEnv);
+    await run('pnpm', ['--filter', '@stock-market/web', 'test'], testEnv);
+  } else await run('node', ['--import', 'tsx', ...(mode === 'integration' ? ['--test', '--test-concurrency=1', '--test-timeout=60000', 'apps/api/tests/integration/api.test.ts', 'packages/auth/tests/billing.integration.test.ts'] : ['apps/api/tests/performance/run.ts'])], env);
 } catch (error) {
   if (directory && !clusterStarted) console.error(await readFile(join(directory, 'postgres.log'), 'utf8').catch(() => 'PostgreSQL startup log unavailable'));
   console.error(error.message); process.exitCode = 1;

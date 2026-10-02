@@ -1,20 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 
-export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError = "" }: {
+export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError = "", destination = "/dashboard" }: {
   mode: "login" | "signup";
   googleEnabled: boolean;
   devEnabled?: boolean;
   initialError?: string;
+  destination?: string;
 }) {
   const [error, setError] = useState(initialError);
   const [pending, setPending] = useState<"google" | "dev" | null>(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [accepted, setAccepted] = useState(false);
+  const [ready, setReady] = useState(false);
+  useEffect(() => { setReady(true); }, []);
   const isLogin = mode === "login";
+  const onboarding = destination === "/dashboard/billing" ? "/onboarding?next=/dashboard/billing" : "/onboarding";
 
   async function signInDev(event: React.FormEvent) {
     event.preventDefault();
@@ -22,12 +27,12 @@ export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError
     setPending("dev");
     try {
       const result = await authClient.signIn.email({
-        email: `${username.trim().toLowerCase()}@ledgerline.test`, password, callbackURL: "/dashboard",
+        email: `${username.trim().toLowerCase()}@ledgerline.test`, password, callbackURL: destination,
       });
       if (result.error) {
         setError(result.error.message || "Could not sign in.");
         setPending(null);
-      } else window.location.assign("/dashboard");
+      } else window.location.assign(destination);
     } catch {
       setError("Could not connect. Please try again.");
       setPending(null);
@@ -36,12 +41,17 @@ export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError
 
   async function continueWithGoogle() {
     setError("");
+    if (!isLogin && !accepted) { setError("Please agree to the Terms of Service and Privacy Policy."); return; }
     setPending("google");
     try {
+      if (!isLogin) {
+        const response = await fetch("/api/legal/consent", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ accepted }) });
+        if (!response.ok) throw new Error("Consent could not be recorded");
+      }
       const result = await authClient.signIn.social({
         provider: "google",
-        callbackURL: isLogin ? "/dashboard" : "/onboarding",
-        newUserCallbackURL: "/onboarding",
+        callbackURL: isLogin ? destination : onboarding,
+        newUserCallbackURL: onboarding,
         errorCallbackURL: isLogin ? "/signin" : "/signup",
       });
       if (result.error) {
@@ -60,7 +70,8 @@ export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError
       <span className="eyebrow">Developer console</span>
       <h1>{isLogin ? "Welcome back." : "Start building."}</h1>
       <p className="subtle">{isLogin ? "Sign in to manage your market data access." : "Create your workspace and issue your first API key."}</p>
-      <button className="button google-button" type="button" disabled={!googleEnabled || pending !== null} onClick={() => void continueWithGoogle()}>
+      {!isLogin && <label className="legal-consent"><input type="checkbox" checked={accepted} onChange={(event) => setAccepted(event.target.checked)} disabled={!ready || pending !== null} /><span>I agree to the <Link href="/terms-of-service" target="_blank" rel="noopener noreferrer">Terms of Service</Link> and <Link href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link>.</span></label>}
+      <button className="button google-button" type="button" disabled={!googleEnabled || pending !== null || (!isLogin && !accepted)} onClick={() => void continueWithGoogle()}>
         <GoogleMark />{pending === "google" ? "Connecting to Google…" : isLogin ? "Continue with Google" : "Sign up with Google"}
       </button>
       {!googleEnabled && <p className="auth-hint subtle">Google authentication is currently unavailable.</p>}
@@ -73,7 +84,7 @@ export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError
         </form>
       </>}
       {error && <div className="error" role="alert">{error}</div>}
-      <p className="subtle" style={{ marginBottom: 0 }}>{isLogin ? "New here?" : "Already have an account?"} <Link className="text-button" href={isLogin ? "/signup" : "/signin"}>{isLogin ? "Create an account" : "Sign in"}</Link></p>
+      <p className="subtle" style={{ marginBottom: 0 }}>{isLogin ? "New here?" : "Already have an account?"} <Link className="text-button" href={`${isLogin ? "/signup" : "/signin"}${destination === "/dashboard/billing" ? "?next=/dashboard/billing" : ""}`}>{isLogin ? "Create an account" : "Sign in"}</Link></p>
     </div>
   </section></main>;
 }

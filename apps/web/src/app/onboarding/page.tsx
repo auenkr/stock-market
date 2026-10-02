@@ -3,10 +3,12 @@ import { redirect } from "next/navigation";
 import { auth } from "@stock-market/auth";
 import { ProfileForm } from "@/components/profile-form";
 
-export default async function OnboardingPage() {
+export default async function OnboardingPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+  const { next } = await searchParams;
+  const destination = next === "/dashboard/billing" ? next : "/dashboard";
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) redirect("/signin");
-  if (session.user.profileCompleted) redirect("/dashboard");
+  if (session.user.profileCompleted) redirect(destination);
 
-  return <ProfileForm name={session.user.name} email={session.user.email} company={session.user.company ?? ""} />;
+  return <ProfileForm name={session.user.name} email={session.user.email} company={session.user.company ?? ""} destination={destination} />;
 }

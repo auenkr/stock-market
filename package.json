@@ -3,6 +3,7 @@
   "private": true,
   "packageManager": "pnpm@10.15.0",
   "scripts": {
+    "db:migrate:billing": "node --env-file=.env packages/db/scripts/migrate-billing.mjs",
     "docs:generate": "tsx apps/api/scripts/generate-swagger.ts",
     "docs:check": "tsx apps/api/scripts/generate-swagger.ts --check",
     "source:taxonomy": "pnpm --filter @stock-market/scraper build && node --env-file=.env --import tsx apps/api/scripts/refresh-taxonomy.ts",
@@ -31,6 +32,7 @@
     "test:keys": "tsx --test apps/web/src/lib/key-expiration.test.ts",
     "db:seed:dev": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/auth seed:dev",
     "test:integration": "pnpm --filter @stock-market/api test:integration",
+    "test:e2e": "node apps/api/tests/run.mjs e2e",
     "test:integration:finedge": "node --env-file=.env --import tsx --test apps/api/tests/live/finedge.test.ts",
     "test:performance": "pnpm --filter @stock-market/api test:performance",
     "test:web": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/web test",
