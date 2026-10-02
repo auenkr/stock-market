@@ -21,3 +21,7 @@ gen
 # Worker configuration contains public settings only; credentials stay in .env/secrets.
 !apps/api/wrangler.jsonc
 .vercel
+
+# Browser regression artifacts
+test-results/
+playwright-report/

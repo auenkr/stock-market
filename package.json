@@ -32,7 +32,9 @@
     "db:seed:dev": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/auth seed:dev",
     "test:integration": "pnpm --filter @stock-market/api test:integration",
     "test:integration:finedge": "node --env-file=.env --import tsx --test apps/api/tests/live/finedge.test.ts",
-    "test:performance": "pnpm --filter @stock-market/api test:performance"
+    "test:performance": "pnpm --filter @stock-market/api test:performance",
+    "test:web": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/web test",
+    "hooks:install": "git config core.hooksPath .githooks"
   },
   "devDependencies": {
     "@nx/js": "^21.5.2",

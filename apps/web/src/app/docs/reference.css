@@ -116,3 +116,9 @@
   .reference-page .reference-tabs { padding: 0 18px; }
   .reference-page .send-row { flex-direction: row; align-items: center; }
 }
+
+.reference-page .reference-filters { grid-template-columns: 1fr; }
+@media (max-width: 600px) {
+  .reference-page .reference-topbar { flex-wrap: wrap; }
+  .reference-page .docs-actions { flex-wrap: wrap; flex-shrink: 1; }
+}

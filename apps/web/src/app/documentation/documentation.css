@@ -1,0 +1,36 @@
+.documentation-page { max-width: 1160px; margin: auto; padding: 28px 32px 0; }
+.documentation-header { display: flex; align-items: center; gap: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.documentation-header nav { display: flex; gap: 24px; margin-left: auto; font-size: 13px; }
+.documentation-header nav a { color: var(--muted); }
+.documentation-header nav a[aria-current] { color: var(--ink); font-weight: 700; }
+.documentation-hero { padding: 64px 0 52px; max-width: 730px; }
+.documentation-hero h1 { font-size: clamp(34px, 5vw, 52px); letter-spacing: -2px; line-height: 1.1; margin: 16px 0 20px; }
+.documentation-hero p { color: var(--muted); font-size: 16px; line-height: 1.8; margin-bottom: 28px; }
+.documentation-page .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+.documentation-layout { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 52px; border-top: 1px solid var(--line); padding-top: 36px; }
+.documentation-nav { display: grid; align-content: start; gap: 18px; position: sticky; top: 28px; height: max-content; font-size: 13px; color: var(--muted); }
+.documentation-content { min-width: 0; }
+.documentation-content section { padding-bottom: 48px; scroll-margin-top: 28px; }
+.documentation-content h2 { font-size: 27px; letter-spacing: -.8px; margin: 10px 0 22px; }
+.documentation-content p { color: var(--muted); font-size: 14px; line-height: 1.9; }
+.documentation-content p a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.documentation-content code { font-size: 12px; overflow-wrap: anywhere; }
+.documentation-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.documentation-content table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+.documentation-content th, .documentation-content td { padding: 16px; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.7; }
+.documentation-content thead { background: var(--paper); }
+.documentation-content tbody th { font-weight: 500; }
+.documentation-content tr:last-child td, .documentation-content tr:last-child th { border-bottom: 0; }
+.documentation-symbols { display: flex; flex-wrap: wrap; gap: 10px; padding: 0; list-style: none; }
+.documentation-symbols li { padding: 10px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+.documentation-limits { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.documentation-limits > div { display: grid; gap: 12px; padding: 22px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+.documentation-limits span { color: var(--muted); font-size: 13px; }
+.documentation-limits strong { font-size: 32px; }
+.documentation-limits small { font-size: 12px; font-weight: 400; color: var(--muted); }
+.documentation-content pre { padding: 18px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+.documentation-content .documentation-reference { border-top: 1px solid var(--line); padding-top: 28px; }
+.documentation-reference-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.documentation-footer { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid var(--line); padding: 24px 0; font-size: 12px; color: var(--muted); }
+.documentation-footer a { display: inline-flex; align-items: center; gap: 8px; }
+@media (max-width: 760px) { .documentation-page { padding: 22px 20px 0; }.documentation-header { flex-wrap: wrap; gap: 18px; }.documentation-header nav { order: 3; width: 100%; margin: 0; }.documentation-header > .theme-picker { margin-left: auto; }.documentation-hero { padding: 40px 0; }.documentation-layout { grid-template-columns: 1fr; gap: 28px; }.documentation-nav { display: flex; flex-wrap: wrap; gap: 14px 20px; position: static; }.documentation-nav .eyebrow { width: 100%; }.documentation-limits { grid-template-columns: 1fr; }.documentation-content th, .documentation-content td { padding: 12px; } }

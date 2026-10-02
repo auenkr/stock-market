@@ -80,3 +80,11 @@ BASE_URL=http://localhost:8787 API_KEY="$TEST_API_KEY" SYMBOL=ITC SYMBOL_2=RELIA
 The script defaults to ACME/DEMO fixture symbols; set `SYMBOL` and `SYMBOL_2` to a deployment's seeded test symbols. Provision sufficient allowance before a capacity run. For direct quota runs, set `QUOTA_KEY` and `QUOTA_KEY_2` to unused keys for the same account with a 10/minute allowance. Direct runs do not create or delete deployment accounts. The Node runner always targets its own disposable local app and ignores `BASE_URL`/`API_KEY` from the environment.
 
 Scenario configuration and lifecycle follow the [Grafana k6 scenario documentation](https://grafana.com/docs/k6/latest/using-k6/scenarios/) and [test lifecycle documentation](https://grafana.com/docs/k6/latest/using-k6/test-lifecycle/).
+
+## Web browser regressions and pre-push checks
+
+Run `pnpm --filter @stock-market/web exec playwright install chromium` once, then `pnpm test:web`. Tests cover theme switching on `/`, `/documentation`, and `/docs`, persisted preferences, system dark mode, reduced motion, and unavailable View Transitions/storage. They also check smooth documentation anchor scrolling and that development and production builds use separate output directories, preventing missing client bundles and unresponsive controls.
+
+The test runner starts its own loopback server on port 3105 in a temporary window of the `stock-market` tmux session. It uses `.next-theme-tests`, then closes its window and restores Next's generated TypeScript inputs. The normal dev server uses `.next-dev`; production uses `.next`. Browser artifacts are ignored by Git.
+
+Run `pnpm hooks:install` once per checkout to enable the checked-in `.githooks/pre-push` hook. It runs `pnpm test:web` and blocks pushes when the tests fail. The hook is installed in the current checkout; cloned checkouts must install it too. Browser tests exercise public pages without sending email or changing user accounts.

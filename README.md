@@ -6,7 +6,7 @@ The API provides structured Indian equity and IPO data for applications. The ver
 
 ### Health and contract
 
-`GET /health` returns service status. `GET /swagger.json` and `/openapi.json` return the same OpenAPI 3.0.3 contract. The API's `/docs` page reads that contract; the web `/docs` explorer includes search, coverage filters, request forms, schema browsing, and a request runner.
+`GET /health` returns service status. `GET /swagger.json` and `/openapi.json` return the same OpenAPI 3.0.3 contract. The API's `/docs` page reads that contract; the web `/documentation` overview explains free/paid access and rate limits, and links to the `/docs` API reference with search, tier filtering, request forms, schema browsing, and a request runner.
 
 The API validates dashboard-issued keys against PostgreSQL, including expiration and revocation. The allowance is **10 requests/minute for free accounts and 60 for paid accounts**, shared across all of that account's keys and API instances using atomic database counters. Health and OpenAPI remain public. Free/paid endpoint and company entitlements are enforced; billing automation is not implemented.
 
