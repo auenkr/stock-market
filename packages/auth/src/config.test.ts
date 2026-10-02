@@ -145,7 +145,7 @@ test("password sign-in works only in dev and public password signup stays disabl
     const now = new Date();
     const auth = betterAuth({
       ...options, database: memoryAdapter({
-        user: [{ id: "dev-user", name: "Dev", email: "dev@ledgerline.test", emailVerified: true, profileCompleted: true, createdAt: now, updatedAt: now }],
+        user: [{ id: "dev-user", name: "Dev", email: "dev@auenkr.com", emailVerified: true, profileCompleted: true, createdAt: now, updatedAt: now }],
         account: [{ id: "dev-account", userId: "dev-user", accountId: "dev-user", providerId: "credential", password: passwordHash, createdAt: now, updatedAt: now }],
         session: [], verification: [],
       }),
@@ -153,7 +153,7 @@ test("password sign-in works only in dev and public password signup stays disabl
     });
     const response = await auth.handler(new Request(`${options.baseURL}/api/auth/sign-in/email`, {
       method: "POST", headers: { "content-type": "application/json", origin: options.baseURL },
-      body: JSON.stringify({ email: "dev@ledgerline.test", password }),
+      body: JSON.stringify({ email: "dev@auenkr.com", password }),
     }));
     if (environment === "dev") {
       assert.equal(response.status, 200);

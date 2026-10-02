@@ -7,7 +7,7 @@ const username = process.env.DEV_USERNAME?.trim().toLowerCase() || "dev";
 const password = process.env.DEV_PASSWORD;
 if (!/^[a-z0-9_-]+$/.test(username)) throw new Error("DEV_USERNAME must contain only letters, numbers, underscores, or hyphens");
 if (!password || password.length < 8) throw new Error("DEV_PASSWORD must contain at least 8 characters");
-const email = `${username}@ledgerline.test`;
+const email = `${username}@auenkr.com`;
 try {
   const passwordHash = await hashPassword(password);
   await db.transaction(async (tx) => {

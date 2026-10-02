@@ -98,7 +98,7 @@ h2 { font-size: 20px; letter-spacing: -.04em; margin: 0 0 9px; }
 .key-row:not(.key-skeleton) .key-secret-field { grid-column: 1 / -1; margin-top: 0; }
 .key-row .key-secret-display { min-height: 40px; }
 .key-row .key-reveal { height: 40px; }
-.pill { background: #e1f6e8; border-radius: 100px; color: #28724b; padding: 4px 8px; font: 10px "DM Mono", monospace; }
+.pill { background: light-dark(#e1f6e8, #293c25); border-radius: 100px; color: light-dark(#28724b, #c1e893); padding: 4px 8px; font: 10px "DM Mono", monospace; }
 .empty { color: var(--muted); padding: 10px 0 4px; font-size: 13px; }
 .notice { background: light-dark(#effbd4, #24351c); border: 1px solid light-dark(#cde890, #48652f); border-radius: 10px; padding: 15px; font-size: 12px; line-height: 1.6; margin-bottom: 17px; }
 .docs-page { max-width: 1100px; }

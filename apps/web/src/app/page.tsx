@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ThemePicker } from "../components/theme-picker";
+import { PublicNavbar } from "../components/public-navbar";
+import { PublicFooter } from "../components/public-footer";
 import { PageMotion } from "@stock-market/ui/motion";
 import { ExternalLink } from "lucide-react";
 import { FaqList } from "../components/faq-list";
@@ -32,7 +33,7 @@ const faqs = [
 export default function Home() {
   return <main className="product-page" id="product-home">
     <PageMotion rootId="product-home" />
-    <nav className="product-nav" aria-label="Main navigation"><Link className="brand" href="/"><span className="brand-mark">LL</span>Ledgerline</Link><div className="product-nav-links"><a href="#datasets">Data</a><Link href="/pricing">Pricing</Link><Link href="/documentation">Documentation</Link><a href="#faq">FAQ</a></div><div className="product-nav-actions"><ThemePicker /><Link className="signin-link" href="/signin">Sign in</Link><Link className="button secondary" href="/signup">Get an API key <ExternalLink size={14} aria-hidden="true" /></Link></div></nav>
+    <PublicNavbar />
     <section className="product-hero" data-motion-hero>
       <div className="hero-ambient" aria-hidden="true"><span /><span /></div>
       <div className="product-hero-copy"><span className="product-eyebrow" data-reveal><span /> Indian market data. Developer-first.</span><h1 data-reveal>Your next financial product.<br /><em>Powered by one API.</em></h1><p className="product-lead" data-reveal>Indian stock market data, ready to build with. Bring company fundamentals, ownership and corporate events into your app through a straightforward REST API.</p><div className="product-actions" data-reveal><Link className="button secondary" href="/signup">Get your API key <ExternalLink size={14} aria-hidden="true" /></Link><Link className="button outline" href="/docs">Explore the API</Link></div><p className="product-hero-note" data-reveal>JSON responses. Documented schemas. More time for your product.</p></div>
@@ -43,6 +44,6 @@ export default function Home() {
     <section className="product-section integration-section" data-motion-section><div data-reveal><span className="eyebrow">FROM IDEA TO FIRST REQUEST</span><h2>A short path<br />to your first integration.</h2><p>For stock screeners, research dashboards, portfolio tools and financial workflows. Start with an endpoint, then make it your own.</p><Link className="inline-link" href="/docs">Open the developer playground <ExternalLink size={14} aria-hidden="true" /></Link></div><ol className="integration-steps"><li data-reveal><span>01</span><div><h3>Create your API key</h3><p>Sign up and manage your keys from one dashboard.</p></div></li><li data-reveal><span>02</span><div><h3>Make your first request</h3><p>Choose a dataset, add your key and test it in the interactive API reference.</p></div></li><li data-reveal><span>03</span><div><h3>Build it into your product</h3><p>Copy a cURL, JavaScript or Python example. Inspect schemas and handle responses with confidence.</p></div></li></ol></section>
     <section className="product-section faq-section" id="faq" data-motion-section><div data-reveal><span className="eyebrow">GOOD QUESTIONS. CLEAR ANSWERS.</span><h2>Before you build.</h2><p>Everything starts with understanding the data.</p></div><FaqList items={faqs} /></section>
     <section className="product-cta" data-motion-section><div data-reveal><span className="eyebrow">BUILD YOUR NEXT IDEA</span><h2>You build the experience.<br />We provide the data.</h2><p>Connect your product to Indian company data with Ledgerline.</p><div className="product-actions"><Link className="button secondary" href="/signup">Get your API key <ExternalLink size={14} aria-hidden="true" /></Link><Link className="button outline" href="/documentation">Read the documentation</Link></div></div></section>
-    <footer className="product-footer"><Link className="brand" href="/"><span className="brand-mark">LL</span>Ledgerline</Link><p>Indian market data for the products of tomorrow.</p><div><Link href="/pricing">Pricing</Link><Link href="/docs">API reference</Link><Link href="/dashboard">Dashboard</Link><Link href="/terms-of-service">Terms of Service</Link><Link href="/privacy-policy">Privacy Policy</Link><a href="/swagger.json" download="swagger_ledgerline.json">OpenAPI</a></div><p className="product-copyright">© {new Date().getFullYear()} Ledgerline. All rights reserved.</p></footer>
+    <PublicFooter />
   </main>;
 }

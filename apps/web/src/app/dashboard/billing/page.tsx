@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import Link from "next/link";
 import { auth, isBillingEnabled } from "@stock-market/auth";
 import { db, user } from "@stock-market/db";
 import { eq } from "drizzle-orm";
@@ -16,5 +17,6 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   return <><section className="hero"><div className="hero-copy"><span className="eyebrow">Subscription & billing</span><h1>A plan for your next step.</h1><p className="subtle">Your current plan is {plans[current].name}. All paid plans renew monthly.</p></div></section>
     {checkout === "success" && <p className="subtle" role="status">Checkout completed. Your plan activates after Polar confirms payment. Refresh subscription status if it is still processing.</p>}
     {current !== "free" && account.planExpiresAt && <p className="subtle">Current paid access through {account.planExpiresAt.toLocaleDateString("en-IN", { timeZone: "UTC" })}. Manage renewals, plan changes, payment details, and cancellations in Polar.</p>}
-    <BillingControls current={current} enabled={isBillingEnabled} hasCustomer={Boolean(account.polarCustomerId)} consentRecorded={Boolean(account.termsAcceptedAt)} /></>;
+    <BillingControls current={current} enabled={isBillingEnabled} hasCustomer={Boolean(account.polarCustomerId)} consentRecorded={Boolean(account.termsAcceptedAt)} />
+    <p className="subtle billing-help">Secure payments through Polar. Taxes are shown at checkout. <Link href="/support">Need help?</Link> · <Link href="/terms-of-service">Terms</Link> · <Link href="/privacy-policy">Privacy</Link></p></>;
 }

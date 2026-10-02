@@ -27,7 +27,7 @@ export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError
     setPending("dev");
     try {
       const result = await authClient.signIn.email({
-        email: `${username.trim().toLowerCase()}@ledgerline.test`, password, callbackURL: destination,
+        email: `${username.trim().toLowerCase()}@auenkr.com`, password, callbackURL: destination,
       });
       if (result.error) {
         setError(result.error.message || "Could not sign in.");

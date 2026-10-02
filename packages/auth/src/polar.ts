@@ -15,8 +15,13 @@ export async function syncBillingAccount(env: BillingEnvironment, sql: Database[
     if ((error as { statusCode?: number }).statusCode !== 404) throw error;
     // Existing Ledgerline accounts predate the signup plugin. Link them by the
     // authenticated user ID, never by user-supplied checkout metadata or email.
-    const developmentAccount = config.environment === "sandbox" && env.ENVIRONMENT === "dev" && account.email.endsWith("@ledgerline.test");
+    // Reserved test domains are undeliverable, so those accounts use the
+    // configured billing email; the same applies when the login address
+    // already equals the billing email.
     const developmentEmail = env.DEV_BILLING_EMAIL?.trim();
+    const reservedDomain = /\.(test|invalid|example)$|^[^@]+@localhost$/i.test(account.email);
+    const developmentAccount = config.environment === "sandbox" && env.ENVIRONMENT === "dev"
+      && (reservedDomain || (!!developmentEmail && account.email === developmentEmail));
     if (developmentAccount && !developmentEmail) throw new Error("Set DEV_BILLING_EMAIL to an email you own for sandbox billing.");
     await createCustomers(client)({
       email: developmentAccount ? developmentEmail! : account.email,
@@ -61,7 +66,7 @@ export function createBillingPlugin(env: BillingEnvironment, sql: Database["$cli
     client, createCustomerOnSignUp: true,
     use: [
       checkout({ products: [{ productId: config.personal, slug: "personal" }, { productId: config.professional, slug: "professional" }],
-        authenticatedUsersOnly: true, successUrl: "/dashboard/billing?checkout=success", returnUrl: "/dashboard/billing" }),
+        authenticatedUsersOnly: true, successUrl: new URL("/dashboard/billing?checkout=success", baseURL).href, returnUrl: new URL("/dashboard/billing", baseURL).href }),
       portal({ returnUrl: new URL("/dashboard/billing", baseURL).href }),
       webhooks({ secret: config.secret,
         onCustomerStateChanged: async (payload) => { await saveCustomerState(sql, payload.data, payload.timestamp, config); },

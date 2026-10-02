@@ -118,7 +118,7 @@ Build and restart/deploy the web application and data API. For the signed accoun
 
 Existing accounts created before billing was configured are lazily created in Polar on first checkout/status refresh, using the authenticated Better Auth user ID as Polar's external customer ID. An existing conflicting customer email is not silently reassigned; resolve such conflicts in Polar.
 
-Polar validates deliverable email domains even in sandbox, so it rejects both `@ledgerline.test` and example domains. Set `DEV_BILLING_EMAIL` to an email address you own to test the seeded development account. With `ENVIRONMENT=dev` and `POLAR_ENVIRONMENT=sandbox`, its Polar customer uses that configured email, is marked as a development account, and remains linked to the normal Better Auth user ID. Google accounts use their actual account email.
+Polar validates deliverable email domains even in sandbox and rejects reserved domains such as `@ledgerline.test`, `.invalid`, and `.example`. Accounts using those fall back to `DEV_BILLING_EMAIL`. The seeded development account signs in as `dev@auenkr.com`, which matches `DEV_BILLING_EMAIL`, so its Polar customer uses that address directly, is marked as a development account, and remains linked to the normal Better Auth user ID. Google accounts use their actual account email.
 
 ## Configured local sandbox
 
@@ -134,7 +134,13 @@ The CLI is authenticated to the **AuenKr** sandbox organization (`fd5c7016-c171-
 
 The connected database's billing migration has been applied. The organization uses INR as its default currency, prorated subscription changes, one subscription per customer, and customer-portal plan changes. Both products are INR-only and have no trial. Keep ngrok forwarding to port 3000 while testing; update the webhook URL if the tunnel address changes.
 
-Verified with the live sandbox: Personal checkout shows ₹2,000/month, Professional checkout shows ₹5,000/month, the authenticated customer portal opens, and Polar's `customer.state_changed` delivery through ngrok returns HTTP 200. Unsigned webhook requests return HTTP 403. Checkout sessions were opened for verification; no payment was submitted and the development account remains on Basic.
+Verified with the live sandbox: Personal checkout shows ₹2,000/month (+ applicable taxes at checkout), Professional checkout shows ₹5,000/month (+ taxes), the authenticated customer portal opens, and Polar's `customer.state_changed` delivery through ngrok returns HTTP 200. Unsigned webhook requests return HTTP 403.
+
+Automated payment coverage:
+
+- `pnpm test:integration` — `packages/auth/tests/payment.integration.test.ts` runs a loopback Polar/Stripe substitute (real auth, checkout creation, signature verification, and quota storage): declined cards grant nothing, a `4242 4242 4242 4242` retry activates the existing key only after verified payment webhooks, renewals extend expiry, failed renewals fall back to Basic, recovery reactivates, refunds alone cannot revoke, revocation returns to Basic, and duplicate deliveries are safe. No real charge is made.
+- `pnpm test:e2e` — `apps/web/tests/browser/payment.spec.ts` drives the same loopback checkout form in a real browser: declined card, retry with `4242 4242 4242 4242`, activation, renewal failure/recovery, and revocation for both plans.
+- `pnpm test:payments:live` — `apps/web/tests/payments-live/payment.spec.ts` signs in as `dev@auenkr.com` (`test-development-password`) against the running dev app, completes real sandbox checkout for both plans (manual `4242 4242 4242 4242` entry on a fresh customer, saved-card reuse on later runs), verifies the paid order, INR/monthly subscription, webhook-driven plan activation, and the updated key allowance, then revokes each test subscription via the Polar CLI and confirms the account returns to Basic. Requires the dev servers, ngrok webhook, and sandbox `.env` from this guide.
 
 ## Automated verification
 

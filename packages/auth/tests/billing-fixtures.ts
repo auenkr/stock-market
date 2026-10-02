@@ -11,7 +11,7 @@ export function customerState(userId: string, plan: "free" | "personal" | "profe
   const now = new Date().toISOString();
   return {
     id: "33333333-3333-4333-8333-333333333333", external_id: userId, created_at: now, modified_at: now,
-    type: "individual", email: "dev@ledgerline.test", email_verified: true, name: "Billing Tester", metadata: {},
+    type: "individual", email: "dev@auenkr.com", email_verified: true, name: "Billing Tester", metadata: {},
     billing_name: null, billing_address: null, tax_id: null, deleted_at: null, first_user_event_at: null, avatar_url: null,
     organization_id: "44444444-4444-4444-8444-444444444444", granted_benefits: [], active_meters: [],
     active_subscriptions: plan === "free" ? [] : [{

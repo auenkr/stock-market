@@ -53,14 +53,14 @@ before(async () => {
   const now = new Date();
   auth = betterAuth({ ...options,
     database: memoryAdapter({
-      user: [{ id: userId, name: "Billing tester", email: "dev@ledgerline.test", emailVerified: true, profileCompleted: true, termsAcceptedAt: now, termsVersion: legalVersion, privacyVersion: legalVersion, createdAt: now, updatedAt: now }],
+      user: [{ id: userId, name: "Billing tester", email: "dev@auenkr.com", emailVerified: true, profileCompleted: true, termsAcceptedAt: now, termsVersion: legalVersion, privacyVersion: legalVersion, createdAt: now, updatedAt: now }],
       account: [{ id: randomUUID(), userId, accountId: userId, providerId: "credential", password: await hashPassword("billing-test-password"), createdAt: now, updatedAt: now }], session: [], verification: [],
     }),
     plugins: [createBillingPlugin(billingTestEnvironment, db.$client, baseURL, transport)!],
     hooks: { before: createCheckoutHook((user) => syncBillingAccount(billingTestEnvironment, db.$client, user, transport)) },
     rateLimit: { enabled: false }, logger: { disabled: true },
   });
-  const login = await auth.handler(new Request(`${baseURL}/api/auth/sign-in/email`, { method: "POST", headers: { origin: baseURL, "content-type": "application/json" }, body: JSON.stringify({ email: "dev@ledgerline.test", password: "billing-test-password" }) }));
+  const login = await auth.handler(new Request(`${baseURL}/api/auth/sign-in/email`, { method: "POST", headers: { origin: baseURL, "content-type": "application/json" }, body: JSON.stringify({ email: "dev@auenkr.com", password: "billing-test-password" }) }));
   assert.equal(login.status, 200);
   cookie = login.headers.getSetCookie().map((value) => value.split(";")[0]).join("; ");
 });
@@ -110,10 +110,11 @@ test("real Polar signature verification rejects unsigned, tampered, stale, and m
 test("legacy development accounts use the configured sandbox billing email and retain their authenticated user ID", async () => {
   missingCustomer = true;
   const transport = createPolarCore({ accessToken: "test-polar-token", baseUrl: remote.url });
+  // A reserved-domain address intentionally exercises the undeliverable-domain alias path.
   await assert.rejects(syncBillingAccount({ ...billingTestEnvironment, ENVIRONMENT: "dev" }, db.$client,
-    { id: userId, email: "dev@ledgerline.test", name: "Development Tester" }, transport), /DEV_BILLING_EMAIL/);
+    { id: userId, email: "undeliverable@payments.invalid", name: "Development Tester" }, transport), /DEV_BILLING_EMAIL/);
   await syncBillingAccount({ ...billingTestEnvironment, ENVIRONMENT: "dev", DEV_BILLING_EMAIL: "billing@example.org" }, db.$client,
-    { id: userId, email: "dev@ledgerline.test", name: "Development Tester" }, transport);
+    { id: userId, email: "undeliverable@payments.invalid", name: "Development Tester" }, transport);
   const created = customerRequests.at(-1)!;
   assert.equal(created.email, "billing@example.org");
   assert.equal(created.external_id, userId);

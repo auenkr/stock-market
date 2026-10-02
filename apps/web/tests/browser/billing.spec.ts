@@ -1,4 +1,5 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { test } from "./database-fixture";
 import { createHash, createHmac } from "node:crypto";
 import { db } from "@stock-market/db";
 import { customerState, signedEvent } from "../../../../packages/auth/tests/billing-fixtures";
@@ -17,10 +18,10 @@ test("pricing and legal documents are linked, monthly, and usable on mobile", as
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole("link", { name: "Terms of Service", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Terms of Service", exact: true })).toBeVisible();
-  await expect(page.getByText("3. Monthly billing, renewals, changes, and cancellation")).toBeVisible();
-  await page.locator(".legal-footer").getByRole("link", { name: "Privacy Policy" }).click();
+  await expect(page.getByRole("heading", { name: "Payments & cancellation" })).toBeVisible();
+  await page.locator("footer").getByRole("link", { name: "Privacy Policy" }).click();
   await expect(page.getByRole("heading", { name: "Privacy Policy", exact: true })).toBeVisible();
-  await expect(page.getByText("7. Your choices and rights")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Your rights", exact: true })).toBeVisible();
 });
 
 test("signup requires an unchecked-by-default consent checkbox before starting Google OAuth", async ({ page, context }) => {
@@ -47,7 +48,7 @@ test("signup requires an unchecked-by-default consent checkbox before starting G
 
 test("real console and signed Polar webhook upgrade existing keys, downgrade on revocation, and never trust the success URL", async ({ page, request }) => {
   test.skip(!process.env.INTEGRATION_DATABASE_URL, "Run pnpm test:e2e for isolated billing lifecycle coverage");
-  const [account] = await db.$client`SELECT id FROM "user" WHERE email = 'dev@ledgerline.test'`;
+  const [account] = await db.$client`SELECT id FROM "user" WHERE email = 'dev@auenkr.com'`;
   const userId = account!.id as string;
   await page.goto("/pricing");
   await page.getByRole("link", { name: "Choose Personal", exact: true }).click();
@@ -92,5 +93,3 @@ test("real console and signed Polar webhook upgrade existing keys, downgrade on 
   await page.getByRole("link", { name: "API keys", exact: true }).click();
   await expect(page.getByText("10 requests / minute per account", { exact: true })).toBeVisible();
 });
-
-test.afterAll(async () => { await db.$client.end(); });

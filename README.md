@@ -193,7 +193,7 @@ DEV_USERNAME=dev
 DEV_PASSWORD=ledgerline-dev-password
 ```
 
-Run `pnpm db:seed:dev`, restart the dev server, and sign in at `/signin` using the username and password. The seed is repeatable, hashes the password, and creates a profile-complete testing account. Usernames map to `<username>@ledgerline.test` internally, so no extra username column is needed. Public password signup remains disabled. Set `ENVIRONMENT=production` on production deployments.
+Run `pnpm db:seed:dev`, restart the dev server, and sign in at `/signin` using the username and password. The seed is repeatable, hashes the password, and creates a profile-complete testing account. Usernames map to `<username>@auenkr.com` internally, so no extra username column is needed. Public password signup remains disabled. Set `ENVIRONMENT=production` on production deployments.
 
 ### Profile migration
 
