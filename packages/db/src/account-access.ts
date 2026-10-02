@@ -38,7 +38,7 @@ export const authorizeAccountRequest: AuthorizeRequest = async (secret, bindings
   // Workers sockets belong to their request; do not share a client across requests.
   const sql = sharedSql ?? postgres(databaseUrl, { max: 1, prepare: false, connect_timeout: 5 });
   try {
-    const [key] = await sql<{ user_id: string; request_limit: number; api_plan: ApiPlan }[]>`
+    const lookupKey = () => sql<{ user_id: string; request_limit: number; api_plan: ApiPlan }[]>`
       SELECT k.user_id, u.api_plan, COALESCE(p.request_limit, CASE WHEN u.api_plan = 'paid' THEN 60 ELSE 10 END) AS request_limit
       FROM api_key k JOIN "user" u ON u.id = k.user_id
       LEFT JOIN usage_policy p ON p.id = CASE WHEN u.api_plan = 'paid' THEN 'paid' ELSE 'default' END
@@ -46,6 +46,18 @@ export const authorizeAccountRequest: AuthorizeRequest = async (secret, bindings
         AND (k.expires_at IS NULL OR k.expires_at > now()) AND u.profile_completed = true
       LIMIT 1
     `;
+    // Retry only the read before spending quota, so retries cannot count twice.
+    // Request-scoped clients close after each decision, releasing scarce slots.
+    let key: { user_id: string; request_limit: number; api_plan: ApiPlan } | undefined;
+    for (let attempt = 0; ; attempt++) {
+      try {
+        [key] = await lookupKey();
+        break;
+      } catch (error) {
+        if ((error as { code?: string }).code !== "53300" || attempt >= 30) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 200));
+      }
+    }
     if (!key) return { status: "unauthorized" };
     const allowance = await sql`
       INSERT INTO account_usage (user_id, window_started_at, request_count)

@@ -1,6 +1,5 @@
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
-import { db } from "@stock-market/db";
 import { authorizeAccountRequest } from "@stock-market/db/account-access";
 
 export async function POST(request: Request) {
@@ -18,6 +17,6 @@ export async function POST(request: Request) {
   if (!timingSafeEqual(expected, Buffer.from(signature, "hex"))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   let key: unknown;
   try { key = (JSON.parse(body) as { key?: unknown }).key; } catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
-  const result = await authorizeAccountRequest(typeof key === "string" ? key : undefined, { DB_CONNECTION_URL: process.env.DB_CONNECTION_URL }, db.$client);
+  const result = await authorizeAccountRequest(typeof key === "string" ? key : undefined, { DB_CONNECTION_URL: process.env.DB_CONNECTION_URL });
   return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
 }

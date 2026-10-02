@@ -245,8 +245,11 @@ test('signed account-service HTTP bridge uses real storage and rejects forged, s
       assert.equal((await fetch(service.url, { method: 'POST', headers, body })).status, 401);
     }
     for (const malformed of ['not-json', 'x'.repeat(513)]) assert.equal((await fetch(service.url, { method: 'POST', headers: sign(malformed), body: malformed })).status, 400);
+    const [beforeAccess] = await fixture.sql`SELECT count(*)::int AS connections FROM pg_stat_activity WHERE datname = current_database() AND application_name = 'postgres.js'`;
     const valid = await fetch(service.url, { method: 'POST', headers: sign(body), body });
     assert.equal(valid.status, 200); assert.deepEqual(await valid.json(), { status: 'allowed', plan: 'paid' });
+    const [afterAccess] = await fixture.sql`SELECT count(*)::int AS connections FROM pg_stat_activity WHERE datname = current_database() AND application_name = 'postgres.js'`;
+    assert.equal(afterAccess!.connections, beforeAccess!.connections, 'Account service must close its connection before responding');
     const bridged = await fixture.startApi({ ...fixture.bindings, ACCOUNT_SERVICE_URL: service.url, ACCOUNT_SERVICE_SECRET: process.env.ACCOUNT_SERVICE_SECRET });
     const request = (url: string, token = fixture.secret) => bufferedFetch(url + '/v1/coverage', { headers: { 'X-API-Key': token } });
     assert.equal((await request(bridged)).status, 200);

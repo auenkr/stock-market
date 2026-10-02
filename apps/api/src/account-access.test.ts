@@ -66,3 +66,28 @@ test("accounts share an atomic quota across keys and API instances; other accoun
     await sql.end();
   }
 });
+
+
+test("connection exhaustion retries only the key read and never spends quota twice", async () => {
+  let reads = 0;
+  let writes = 0;
+  let failWrite = false;
+  const client = async (strings: TemplateStringsArray) => {
+    if (strings.join("").includes("FROM api_key")) {
+      reads++;
+      if (reads <= 2) throw Object.assign(new Error("Connection slots full"), { code: "53300" });
+      return [{ user_id: "quota-test", api_plan: "free", request_limit: 10 }];
+    }
+    writes++;
+    if (failWrite) throw Object.assign(new Error("Write failed"), { code: "53300" });
+    return [{ user_id: "quota-test" }];
+  };
+  const sql = client as unknown as NonNullable<Parameters<typeof authorizeAccountRequest>[2]>;
+  assert.deepEqual(await authorizeAccountRequest(secret(), { DB_CONNECTION_URL: "test" }, sql), { status: "allowed", plan: "free" });
+  assert.equal(reads, 3);
+  assert.equal(writes, 1);
+  failWrite = true;
+  assert.deepEqual(await authorizeAccountRequest(secret(), { DB_CONNECTION_URL: "test" }, sql), { status: "unavailable" });
+  assert.equal(reads, 4);
+  assert.equal(writes, 2);
+});
