@@ -8,7 +8,7 @@ let child: ReturnType<typeof spawn> | undefined;
 for (const signal of ['SIGINT', 'SIGTERM'] as const) process.on(signal, () => child?.kill(signal));
 try {
   const mode = process.env.SCENARIO ?? 'smoke';
-  await fixture.sql`UPDATE usage_policy SET request_limit = ${mode === 'quota' ? 10 : 1000000} WHERE id = 'default'`;
+  await fixture.sql`UPDATE usage_policy SET request_limit = ${mode === 'quota' ? 10 : 1000000} WHERE id = 'paid'`;
   const quotaOwner = await fixture.account();
   const keys = [await fixture.key(quotaOwner), await fixture.key(quotaOwner)];
   const results = fileURLToPath(new URL('./results/', import.meta.url));

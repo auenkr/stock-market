@@ -25,17 +25,21 @@ export const coverageDetails: Record<string, string> = {
   "investor-presentations": "Requires symbol. Public presentation PDF links. Exact dates may be null; exact day filtering then returns HTTP 501.",
   "ipo-calendar": "Paginated IPO listings. Status and security type may be missing. Follow X-Next-Page for more results.",
   "results-calendar": "Upcoming results within a YYYY-MM-DD date window. Filters apply to each requested page. Dates indicate expected publication dates. Past calendars are unavailable.",
-  "segment-revenue": "Segment revenue figures are currently unavailable. Requests return HTTP 501.",
-  "notes": "Structured financial statement notes are currently unavailable. Requests return HTTP 501.",
-  "shareholdings/declaration": "Statutory shareholding declarations are currently unavailable. Requests return HTTP 501.",
-  "shareholdings/beneficial-owners": "Significant beneficial ownership records are currently unavailable. Requests return HTTP 501.",
-  "index/master": "The complete index directory is currently unavailable. Requests return HTTP 501.",
-  "index/market-price/daily-feed": "The current index market-price feed is currently unavailable. Requests return HTTP 501.",
-  "index/price-returns": "Index price-return series are currently unavailable. Requests return HTTP 501.",
+  "segment-revenue": "FinEdge segment revenue and results in INR rupees. Requires FINEDGE_API_KEY and symbol entitlement; Basic access is limited to ITC, RELIANCE and HDFCBANK.",
+  "notes": "FinEdge filing-note records with FinancialResults, Segments and period_end where supplied. Notes may contain HTML. Requires FINEDGE_API_KEY and symbol entitlement.",
+  "shareholdings/declaration": "FinEdge statutory declaration flags by annual or quarterly reporting period. Requires FINEDGE_API_KEY and symbol entitlement.",
+  "shareholdings/beneficial-owners": "FinEdge significant beneficial ownership filings by reporting period; an empty list means no supplied records. Requires FINEDGE_API_KEY and symbol entitlement.",
+  "index/master": "FinEdge index identifiers, classifications and constituents. Requires FINEDGE_API_KEY.",
+  "index/market-price/daily-feed": "FinEdge current index prices and available valuation fields. Requires FINEDGE_API_KEY; missing upstream values remain null.",
+  "index/price-returns": "FinEdge precomputed index return horizons and their reference dates. Requires FINEDGE_API_KEY; this is not a historical price-series endpoint.",
   "commodity-list": "Commodity series listings are currently unavailable. Requests return HTTP 501.",
   "commodity-pct-change": "Commodity percentage-change series are currently unavailable. Requests return HTTP 501.",
-  "holidays-calendar": "Exchange holiday calendars are currently unavailable. Requests return HTTP 501.",
-  "name-changes": "Company name-change history is currently unavailable. Requests return HTTP 501.",
-  "symbol-changes": "Exchange symbol-change history is currently unavailable. Requests return HTTP 501.",
+  "holidays-calendar": "FinEdge exchange holiday calendar; trading_date uses DD-Mon-YYYY. Requires FINEDGE_API_KEY.",
+  "name-changes": "FinEdge company name changes within the requested date range. Requires FINEDGE_API_KEY.",
+  "symbol-changes": "FinEdge security symbol changes within the requested date range. Requires FINEDGE_API_KEY.",
   "refreshed-stocks": "Dataset update listings are currently unavailable. Requests return HTTP 501.",
 };
+
+for (const resource of ["financials", "ratios", "financial-metrics", "basic-financials", "investor-call-transcripts", "investor-presentations", "corp-announcements", "results-calendar"]) {
+  coverageDetails[resource] += " When the Screener mapping returns 501, configured FinEdge personal endpoints supply the requested variant, subject to subscription access. Missing credentials return DATASET_UNAVAILABLE; denied access returns SOURCE_PLAN_RESTRICTED (501).";
+}

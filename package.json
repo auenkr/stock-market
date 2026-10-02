@@ -26,10 +26,12 @@
     "db:migrate:timestamps": "node --env-file=.env packages/db/scripts/migrate-application-timestamps.mjs",
     "db:migrate:key-expiration": "node --env-file=.env packages/db/scripts/migrate-api-key-expiration.mjs",
     "db:migrate:request-limit": "node --env-file=.env packages/db/scripts/migrate-default-request-limit.mjs",
+    "db:migrate:api-plans": "node --env-file=.env packages/db/scripts/migrate-api-plans.mjs",
     "db:migrate:account-usage": "node --env-file=.env packages/db/scripts/migrate-account-usage.mjs",
     "test:keys": "tsx --test apps/web/src/lib/key-expiration.test.ts",
     "db:seed:dev": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/auth seed:dev",
     "test:integration": "pnpm --filter @stock-market/api test:integration",
+    "test:integration:finedge": "node --env-file=.env --import tsx --test apps/api/tests/live/finedge.test.ts",
     "test:performance": "pnpm --filter @stock-market/api test:performance"
   },
   "devDependencies": {

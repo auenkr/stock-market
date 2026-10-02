@@ -1,6 +1,27 @@
 # API compatibility
 
-The competitor reference is [FinEdge's documentation](https://www.finedgeapi.com/financial-data-api-documentation), inspected through its browser UI on 2026-09-30. Endpoint names, arguments, resource envelopes, and field names are compatibility targets. Runtime data comes from the independently configured Screener source.
+The reference is [FinEdge's documentation](https://www.finedgeapi.com/financial-data-api-documentation). Endpoint names, arguments, resource envelopes, and field names are compatibility targets. Runtime data comes from Screener and configured FinEdge personal endpoints, verified with Basic access on 2026-10-02.
+
+## Endpoint tiers
+
+Every documented operation is classified as **free** or **paid**. The catalog defines these tiers independently of the personal, enterprise, legacy, and service API formats; paths and response shapes retain their existing contracts. Aliases always share their canonical endpoint's tier.
+
+| Tier | Endpoints |
+| --- | --- |
+| Free | Stock symbols, company profiles, sector/industry search, basic financials, daily quotes (v1/v2), peers, index master, holiday/results/IPO calendars, legacy company list/search/IPO list, health, and coverage. |
+| Paid | Detailed financial statements, segment revenue, notes, reports, ratios, financial metrics, ownership/shareholdings, corporate actions, dividends, announcements, credit ratings, transcripts, presentations, commodities, full legacy company data/extraction, and every enterprise batch/feed endpoint. |
+
+This is Ledgerline's endpoint classification, inspired by [FinEdge's documentation](https://www.finedgeapi.com/financial-data-api-documentation). [FinEdge's pricing](https://www.finedgeapi.com/financial-data-api-pricing) offers free samples for ITC, RELIANCE, and HDFCBANK rather than this endpoint split. Coverage is separate from tier: unavailable resources still return 501, and excluded market history is not exposed. Account plans are enforced by the API: free users cannot call paid endpoints. Billing automation is not implemented; paid status is assigned server-side in `user.api_plan`.
+
+Free accounts can call company profiles, basic financials, quotes (v1/v2), and peers only for **RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN**. These are the top five by **market capitalization** at the 2026-10-01 close, verified against [the ranking](https://www.equitymaster.com/stock-screener/high-marketcap-companies). This is a versioned access list, not a live ranking: update `apps/api/src/endpoint-access.ts` and these docs together when revising it. Market share across different industries is not used as a ranking metric.
+
+Free stock-symbol/company discovery and searches, calendars, index master, health, and coverage remain available. Discovery can list other companies, but company data for them requires paid access. Peer results can include other symbols as discovery references. Free quotes with no `symbol` default to the five allowed companies. Explicit comma-separated, JSON-array, and repeated `symbol` inputs must contain only allowed companies; a mixed request is rejected in full before source access.
+
+Free accounts have **10 requests/minute** and paid accounts **60 requests/minute**, shared across all keys and API instances. Paid accounts can access both tiers and all companies, subject to existing dataset/source availability. The API returns `403 PAID_PLAN_REQUIRED` for paid endpoints, `403 FREE_COMPANY_RESTRICTED` for other companies on free company endpoints, and `429` with `Retry-After` after exhausting the allowance. Rejected authenticated requests consume the allowance; invalid keys do not. Health and OpenAPI are public and unmetered.
+
+Apply `pnpm db:migrate:api-plans` after the account-usage migration. Existing and new accounts default to free; an authorized server-side update of `user.api_plan` to `paid` enables paid access and its allowance on the next request. Client headers and profile updates cannot set the plan. The migration sets the free policy (`usage_policy.id = 'default'`) to 10 and the paid policy (`id = 'paid'`) to 60; repeat runs restore those limits.
+
+OpenAPI exposes `x-tier` and `x-api-style` on each operation. `/v1/coverage` includes `tier` and `apiStyle` for reference endpoints. The docs explorer filters by Free/Paid.
 
 ## Routes and shapes
 
@@ -24,7 +45,21 @@ curl 'http://localhost:8787/v1/coverage'
 
 ## Source and field coverage
 
-Every successful compatibility response has `X-Data-Coverage: partial` and `X-Data-Source: screener`. Missing values are `null`; an unavailable dataset or query variation returns 501 rather than a fabricated successful response. Source HTML is cached for 15 minutes, with bounded storage, concurrent-request coalescing, and an eight-request source concurrency limit. Source request timeout is 15 seconds. There is no guaranteed real-time refresh schedule.
+Every successful compatibility response has `X-Data-Coverage: partial` and `X-Data-Source: screener` or `finedge`. Missing values are `null` or omitted upstream fields; an unavailable dataset or query variation returns 501. Source responses are cached for 15 minutes, with bounded storage, concurrent-request coalescing, and an eight-request concurrency limit per provider. Source request timeout is 15 seconds. There is no guaranteed real-time refresh schedule.
+
+### FinEdge fallback
+
+Set `FINEDGE_API_KEY` in the local git-ignored `.env` or as a Worker secret. `FINEDGE_BASE_URL` defaults to `https://data.finedgeapi.com`; local HTTP fixture tests override it. The dev launcher passes both bindings to Wrangler. Credentials are server-only and are never included in public schemas or error messages.
+
+FinEdge supplies name/symbol changes, segment revenue, filing notes, ownership declarations/beneficial owners, index master/current feed/precomputed returns, and holidays. The endpoint inventory now has **50 partial, 3 unavailable, and 9 excluded** reference paths. FinEdge-only endpoints return `501 DATASET_UNAVAILABLE` if the key is missing.
+
+Existing Screener subsets below remain the primary mappings. If a supported mapping returns 501, FinEdge supplies the requested statement, ratio, metric, basic-financial, transcript, presentation, announcement or results-calendar variant. It does not merge individual null fields into an otherwise successful Screener response. Source failures (502/503) remain explicit failures. Enterprise batches use per-symbol personal requests, preserving our response conventions; an Enterprise upstream subscription is not required for those batches.
+
+Basic company access is limited to **ITC, RELIANCE and HDFCBANK**, subject to the key's actual entitlements. The supplied key returned `ER0012` for TCS and `ER017` for commodities. Denials become `501 SOURCE_PLAN_RESTRICTED`; invalid source credentials become `502 SOURCE_AUTH_REQUIRED`. Commodity endpoints and enterprise refreshed-stocks remain unavailable. A local per-provider 300-call/minute budget supplements upstream rate-limit handling; this is not a distributed subscription-wide limiter.
+
+FinEdge amounts are already rupees and are retained without crore conversion. Dynamic financial rows retain sector- and variant-specific fields. Basic BS/CF upstream `ratios` are normalized to `basic_financials`; upstream `declaration` is normalized to `declarations`. Notes use `{symbol, notes: [...]}` with `FinancialResults`, `Segments`, and numeric `period_end` in YYYYMMDD format when present; text may contain HTML. Holiday dates retain `DD-Mon-YYYY`. A successful empty filing array is retained, not replaced with invented records.
+
+The table below describes the primary Screener subsets; its 501 combinations can now use the configured FinEdge fallback.
 
 | Resource | Supported behavior and differences |
 | --- | --- |
@@ -59,4 +94,4 @@ Financial monetary statement amounts are converted from source crores to **rupee
 
 Errors use `{ "error": "...", "code": "..." }` with optional `endpoint` and `docs`. Compatibility failures return 400 for invalid input, 404 for a missing source resource, 429 for quota exhaustion, 501 for an unsupported dataset/variation, 502 for upstream/authentication/parse failures, and 503 for source capacity or source rate limiting (`SOURCE_RATE_LIMITED`). Error responses are not cached.
 
-The API validates dashboard-issued keys, including expiration and revocation. The default limit is 10 requests/minute per user account, shared by all of its keys. Atomic PostgreSQL counters keep the allowance consistent across Worker isolates and API instances. Exhausted accounts receive HTTP 429 with Retry-After; invalid keys receive HTTP 401. Health/OpenAPI remain public. See [SaaS limitations](limitations.md) for remaining billing and data-supply work.
+The API validates dashboard-issued keys, including expiration and revocation. The limit is 10 requests/minute for free accounts and 60 for paid accounts, shared by all of their keys. Atomic PostgreSQL counters keep the allowance consistent across Worker isolates and API instances. Exhausted accounts receive HTTP 429 with Retry-After; invalid keys receive HTTP 401. Health/OpenAPI remain public. See [SaaS limitations](limitations.md) for remaining billing and data-supply work.

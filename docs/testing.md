@@ -39,6 +39,18 @@ The suite sends requests over real loopback HTTP through Hono's production app, 
 
 This suite does not exercise Wrangler/workerd sockets, actual Screener availability, Google OAuth, dashboard UI journeys, or migration upgrade paths. Signed account-service tests invoke the actual route handler in an HTTP adapter rather than starting Next.js. The production default API factory is used; authorization decisions and the compatibility provider are not mocked.
 
+## FinEdge integration
+
+`pnpm test:integration` includes deterministic FinEdge HTTP fixtures through the production API factory and PostgreSQL authorization. It checks source credentials, personal aliases, enterprise per-symbol batches, notes/declaration/basic-financial envelope normalization, financial-unit preservation, 501 fallback routing, concurrent-request coalescing/cache reuse, plan restrictions, malformed upstream responses, and uncached failures. The fixture harness explicitly disables local FinEdge credentials unless the test configures a fixture provider.
+
+For opt-in live subscription verification, put `FINEDGE_API_KEY` in the git-ignored root `.env`, then run:
+
+```sh
+pnpm test:integration:finedge
+```
+
+This suite calls real FinEdge endpoints through compatibility routes, checks ten newly connected datasets and four financial variants using ITC, and verifies Basic denial for TCS. It consumes up to 15 upstream calls. It exercises the real provider and compatibility router; PostgreSQL authentication is covered by the offline HTTP integration suite. No source credential is printed or stored in fixtures. The live suite is separate from routine offline tests.
+
 ## k6 workloads and results
 
 | Scenario | Workload |

@@ -1,6 +1,6 @@
 // Own a disposable PostgreSQL cluster/database; never load the application's .env.
 import { spawn, spawnSync } from 'node:child_process';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createServer } from 'node:net';
@@ -12,6 +12,7 @@ const mode = process.argv[2] ?? 'integration';
 const brewPrefix = spawnSync('brew', ['--prefix', 'postgresql@17'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
 const pgBin = process.env.POSTGRES_BIN ?? (brewPrefix.status === 0 ? join(brewPrefix.stdout.trim(), 'bin') : '');
 const pgTool = name => pgBin ? join(pgBin, name) : name;
+const pgEnv = { ...process.env, LC_ALL: 'C' };
 if (!['integration', 'performance'].includes(mode)) throw new Error('Use integration or performance');
 const database = `stock_test_${process.pid}_${Date.now()}`;
 let directory, container, admin, child, clusterStarted = false;
@@ -34,8 +35,9 @@ try {
     const databasePort = await port();
     if (spawnSync(pgTool('postgres'), ['--version'], { stdio: 'ignore' }).status === 0) {
       directory = await mkdtemp(join(tmpdir(), 'stock-market-tests-'));
-      await run(pgTool('initdb'), [...(brewPrefix.status === 0 && !process.env.POSTGRES_BIN ? ['-L', join(brewPrefix.stdout.trim(), 'share/postgresql')] : []), '-D', directory, '-U', 'stock_test', '-A', 'trust', '--no-locale']);
-      await run(pgTool('pg_ctl'), ['-D', directory, '-l', join(directory, 'postgres.log'), '-o', `-h 127.0.0.1 -p ${databasePort} -k ${directory}`, '-w', 'start']);
+      await run(pgTool('initdb'), [...(brewPrefix.status === 0 && !process.env.POSTGRES_BIN ? ['-L', join(brewPrefix.stdout.trim(), 'share/postgresql')] : []), '-D', directory, '-U', 'stock_test', '-A', 'trust', '--no-locale'], pgEnv);
+      // Loopback TCP avoids macOS's short Unix-socket path limit in long temp paths.
+      await run(pgTool('pg_ctl'), ['-D', directory, '-l', join(directory, 'postgres.log'), '-o', `-h 127.0.0.1 -p ${databasePort} -k ''`, '-w', 'start'], pgEnv);
       clusterStarted = true;
     } else {
       container = database;
@@ -60,6 +62,7 @@ try {
   await run('pnpm', ['--filter', '@stock-market/web', 'exec', 'drizzle-kit', 'push', '--force'], env);
   await run('node', ['--import', 'tsx', ...(mode === 'integration' ? ['--test', '--test-timeout=60000', 'apps/api/tests/integration/api.test.ts'] : ['apps/api/tests/performance/run.ts'])], env);
 } catch (error) {
+  if (directory && !clusterStarted) console.error(await readFile(join(directory, 'postgres.log'), 'utf8').catch(() => 'PostgreSQL startup log unavailable'));
   console.error(error.message); process.exitCode = 1;
 } finally {
   try {

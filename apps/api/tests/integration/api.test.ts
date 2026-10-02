@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { endpointCatalog, type Schema } from '../../src/endpoint-catalog.js';
 import { responseSchemas } from '../../src/reference-schemas.js';
+import { finedgeOnlyResources } from '../../src/finedge-resources.js';
 import { setup, listen, close, bufferedFetch } from '../harness.js';
 import { createHmac } from 'node:crypto';
 import { db } from '@stock-market/db';
@@ -28,6 +29,61 @@ function shape(value: any, schema: Schema, path: string) {
   if (schema.type === 'number') assert(Number.isFinite(value), path);
   if (schema.enum) assert(schema.enum.includes(value), path);
 }
+
+test('FinEdge fallback uses real upstream HTTP, authentication, aliases, batching, normalization and safe failures', async () => {
+  const requests: URL[] = [];
+  let failure = 0;
+  const source = await listen((req, res) => {
+    const url = new URL(req.url!, 'http://fixture'); requests.push(url);
+    res.setHeader('Content-Type', 'application/json');
+    if (failure) { res.writeHead(failure); res.end('ER017 - user not premium fixture-source-secret'); return; }
+    if (url.pathname.includes('/notes/')) { res.end(JSON.stringify({ symbol: url.pathname.split('/').at(-1), notes: [{ FinancialResults: 'Filing note', period_end: 20260331 }] })); return; }
+    if (url.pathname.includes('/shareholdings/declaration/')) { res.end(JSON.stringify({ symbol: 'ACME', declaration: [{ header: 'Mar 2026', issuedWarrants: false }] })); return; }
+    if (url.pathname.includes('/basic-financials/')) { res.end(JSON.stringify({ symbol: 'ACME', ratios: [{ header: 'Mar 2026', year: 2026, totalAssets: 123000000 }] })); return; }
+    if (url.pathname.includes('/financials/')) { res.end(JSON.stringify({ symbol: 'ACME', financials: [{ header: 'Mar 2026', year: 2026, currentAssets: 123000000 }] })); return; }
+    if (url.pathname.includes('/holidays-calendar')) { res.end('{"error":"invalid envelope"}'); return; }
+    res.end(JSON.stringify([{ date: '2026-03-01', new_name: 'New', old_name: 'Old', symbol: 'ACME' }]));
+  });
+  try {
+    const base = await fixture.startApi({ ...fixture.bindings, FINEDGE_BASE_URL: source.url, FINEDGE_API_KEY: 'fixture-source-secret' });
+    const request = (path: string, key = fixture.secret) => bufferedFetch(base + path, { headers: { 'X-API-Key': key } });
+    assert.equal((await request('/v1/notes/ACME?statement_type=c&period=annual', 'invalid')).status, 401);
+    assert.equal(requests.length, 0);
+    const notesPath = '/v1/notes/ACME?statement_type=c&period=annual';
+    const responses = await Promise.all(Array.from({ length: 3 }, () => request(notesPath)));
+    for (const response of responses) {
+      assert.equal(response.status, 200); assert.equal(response.headers.get('x-data-source'), 'finedge');
+      assert.equal(response.headers.get('cache-control'), 'no-store');
+      shape(await response.json(), responseSchemas.notes!, notesPath);
+    }
+    assert.equal(requests.length, 1);
+    assert.equal(requests[0]!.pathname, '/api/v1/notes/ACME');
+    assert.equal(requests[0]!.searchParams.get('token'), 'fixture-source-secret');
+    assert.equal(requests[0]!.searchParams.get('statement_type'), 'c');
+    assert.equal((await request('/api' + notesPath)).status, 200); assert.equal(requests.length, 1);
+    const batch = await request('/enterprise/api/notes?symbols=ACME,DEMO&statement_type=c&period=annual');
+    assert.equal(batch.status, 200); assert.deepEqual((await batch.json() as any[]).map(row => row.symbol), ['ACME', 'DEMO']);
+    const declarations = await (await request('/v1/shareholdings/declaration/ACME?period=quarterly')).json() as any;
+    assert.equal(declarations.declarations[0].issuedWarrants, false);
+    shape(declarations, responseSchemas.shareholdings_declaration!, 'declarations');
+    const financial = await request('/v1/financials/ACME?statement_type=c&statement_code=bs&period=quarterly');
+    assert.equal(financial.status, 200); assert.equal((await financial.json() as any).financials[0].currentAssets, 123000000);
+    const basic = await request('/v1/basic-financials/ACME?statement_type=c&statement_code=bs');
+    assert.equal(basic.status, 200); assert.equal((await basic.json() as any).basic_financials[0].totalAssets, 123000000);
+    const count = requests.length;
+    assert.equal((await request('/v1/company-profile/ACME')).status, 200); assert.equal(requests.length, count);
+    assert.equal((await request('/v1/notes/ACME?statement_type=x&period=annual')).status, 400); assert.equal(requests.length, count);
+    assert.equal((await request('/v1/holidays-calendar')).status, 502);
+    failure = 401;
+    for (let i = 0; i < 2; i++) {
+      const denied = await request('/v1/notes/TCS?statement_type=c&period=annual');
+      assert.equal(denied.status, 501);
+      const body = await denied.json() as any; assert.equal(body.code, 'SOURCE_PLAN_RESTRICTED');
+      assert(!JSON.stringify(body).includes('fixture-source-secret'));
+    }
+    assert.equal(requests.filter(url => url.pathname.endsWith('/TCS')).length, 2);
+  } finally { await close(source.server); }
+});
 
 test('public health, docs and contracts; CORS preflight; protected paths fail closed', async () => {
   for (const path of ['/', '/health', '/docs', '/openapi.json', '/swagger.json']) {
@@ -58,11 +114,12 @@ test('every catalogue route preserves its schema, coverage, gaps and personal al
     if (contract.resource === 'financial-metrics') query.set('ratio_type', 'cu');
     const path = contract.path.replace(/\{([^}]+)\}/g, (_, name: string) => values[name]!) + `?${query}`;
     const response = await fixture.request(path);
-    assert.equal(response.status, contract.status === 'excluded' ? 404 : contract.status === 'unavailable' ? 501 : 200, path);
+    const unavailable = contract.status === 'unavailable' || finedgeOnlyResources.has(contract.resource);
+    assert.equal(response.status, contract.status === 'excluded' ? 404 : unavailable ? 501 : 200, path);
     const body = await response.json() as any;
     assert.equal(response.headers.get('cache-control'), 'no-store', path);
-    if (contract.status === 'partial') { shape(body, contract.response, path); assert.equal(response.headers.get('x-data-coverage'), 'partial'); }
-    if (contract.status === 'unavailable') assert.equal(body.code, 'DATASET_UNAVAILABLE', path);
+    if (contract.status === 'partial' && !unavailable) { shape(body, contract.response, path); assert.equal(response.headers.get('x-data-coverage'), 'partial'); }
+    if (unavailable) assert.equal(body.code, 'DATASET_UNAVAILABLE', path);
     if (contract.path.startsWith('/api/v') && contract.status !== 'excluded') {
       const alias = await fixture.request(path.replace(/^\/api/, '')); assert.equal(alias.status, response.status); assert.deepEqual(await alias.json(), body, path);
     }
@@ -143,7 +200,7 @@ test('revoked, expired, unknown and incomplete-profile keys are rejected; live r
 });
 
 test('two keys and two HTTP API instances share an atomic account quota, with isolation and window reset', async () => {
-  await fixture.sql`UPDATE usage_policy SET request_limit = 10 WHERE id = 'default'`;
+  await fixture.sql`UPDATE usage_policy SET request_limit = 10 WHERE id = 'paid'`;
   try {
     const owner = await fixture.account(); const keys = [await fixture.key(owner), await fixture.key(owner)];
     const responses = await Promise.all(Array.from({ length: 14 }, (_, i) => fixture.request('/v1/coverage', keys[i % 2], i % 2)));
@@ -159,7 +216,7 @@ test('two keys and two HTTP API instances share an atomic account quota, with is
     await fixture.sql`UPDATE account_usage SET window_started_at = now() - interval '61 seconds' WHERE user_id = ${owner}`;
     assert.equal((await fixture.request('/v1/coverage', keys[1], 1)).status, 200);
     const [reset] = await fixture.sql`SELECT request_count FROM account_usage WHERE user_id = ${owner}`; assert.equal(reset!.request_count, 1);
-  } finally { await fixture.sql`UPDATE usage_policy SET request_limit = 10000 WHERE id = 'default'`; }
+  } finally { await fixture.sql`UPDATE usage_policy SET request_limit = 10000 WHERE id = 'paid'`; }
 });
 
 
@@ -189,7 +246,7 @@ test('signed account-service HTTP bridge uses real storage and rejects forged, s
     }
     for (const malformed of ['not-json', 'x'.repeat(513)]) assert.equal((await fetch(service.url, { method: 'POST', headers: sign(malformed), body: malformed })).status, 400);
     const valid = await fetch(service.url, { method: 'POST', headers: sign(body), body });
-    assert.equal(valid.status, 200); assert.deepEqual(await valid.json(), { status: 'allowed' });
+    assert.equal(valid.status, 200); assert.deepEqual(await valid.json(), { status: 'allowed', plan: 'paid' });
     const bridged = await fixture.startApi({ ...fixture.bindings, ACCOUNT_SERVICE_URL: service.url, ACCOUNT_SERVICE_SECRET: process.env.ACCOUNT_SERVICE_SECRET });
     const request = (url: string, token = fixture.secret) => bufferedFetch(url + '/v1/coverage', { headers: { 'X-API-Key': token } });
     assert.equal((await request(bridged)).status, 200);
@@ -197,11 +254,11 @@ test('signed account-service HTTP bridge uses real storage and rejects forged, s
     const broken = await fixture.startApi({ ...fixture.bindings, ACCOUNT_SERVICE_URL: service.url, ACCOUNT_SERVICE_SECRET: 'wrong-secret' });
     assert.equal((await request(broken)).status, 503);
     const owner = await fixture.account(); const token = await fixture.key(owner);
-    await fixture.sql`UPDATE usage_policy SET request_limit = 10 WHERE id = 'default'`;
+    await fixture.sql`UPDATE usage_policy SET request_limit = 10 WHERE id = 'paid'`;
     try {
       for (let i = 0; i < 10; i++) assert.equal((await request(bridged, token)).status, 200);
       const limited = await request(bridged, token); assert.equal(limited.status, 429); assert(Number(limited.headers.get('retry-after')) > 0);
-    } finally { await fixture.sql`UPDATE usage_policy SET request_limit = 10000 WHERE id = 'default'`; }
+    } finally { await fixture.sql`UPDATE usage_policy SET request_limit = 10000 WHERE id = 'paid'`; }
   } finally {
     await close(service.server);
     if (previousDb === undefined) delete process.env.DB_CONNECTION_URL; else process.env.DB_CONNECTION_URL = previousDb;

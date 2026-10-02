@@ -30,7 +30,7 @@ export async function GET() {
     ...key,
     secret: encryptedSecret ? decryptApiKey(encryptedSecret) : null,
   }));
-  return NextResponse.json({ keys: visibleKeys, policy: await getUsagePolicy() }, { headers: { "Cache-Control": "no-store" } });
+  return NextResponse.json({ keys: visibleKeys, policy: await getUsagePolicy(current.id) }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function POST(request: Request) {

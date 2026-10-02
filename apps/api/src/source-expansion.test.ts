@@ -63,5 +63,5 @@ test("Swagger aliases match, schema refs resolve and operation IDs are unique", 
   assert.deepEqual(await (await app.request("/openapi.json")).json<any>(), spec); assert.equal((await app.request("/docs")).status, 200);
   const ids = Object.values(spec.paths).map((p: any) => p.get.operationId); assert.equal(new Set(ids).size, ids.length);
   function verifyRefs(value: any) { if (!value || typeof value !== "object") return; if (value.$ref) assert(spec.components.schemas[value.$ref.split("/").at(-1)!], value.$ref); for (const child of Object.values(value)) verifyRefs(child); }
-  verifyRefs(spec); assert.equal(spec["x-coverage-summary"].partial, 36); assert.equal(spec["x-coverage-summary"].unavailable, 17);
+  verifyRefs(spec); assert.equal(spec["x-coverage-summary"].partial, 50); assert.equal(spec["x-coverage-summary"].unavailable, 3);
 });

@@ -53,3 +53,23 @@ const periodValues: Schema = { type: "object", additionalProperties: { type: "nu
 const patternRow = responseSchemas.shareholdings_pattern!.properties!.rows!.items!;
 patternRow.properties!.data = periodValues;
 patternRow.properties!.shareholders!.items!.properties!.data = periodValues;
+
+// Row fields vary by financial statement/ratio type; preserve sector-specific fields.
+for (const [schema, envelope] of [["financials", "financials"], ["ratios", "ratios"], ["basic_financials", "basic_financials"]]) {
+  const row = responseSchemas[schema!]!.properties![envelope!]!.items!;
+  row.required = ["header", "year"];
+  row.additionalProperties = true;
+}
+responseSchemas.financial_metrics!.properties!.financial_metrics!.required = [];
+responseSchemas.financial_metrics!.properties!.financial_metrics!.additionalProperties = { type: "number", nullable: true };
+responseSchemas.index_master!.items!.properties!.constituents!.nullable = true;
+responseSchemas.index_price_returns!.items!.properties!.dates!.nullable = true;
+responseSchemas.notes = {
+  type: "object", required: ["notes", "symbol"], properties: {
+    symbol: { type: "string", nullable: true }, notes: { type: "array", items: {
+      type: "object", additionalProperties: { type: "string", nullable: true }, properties: {
+        FinancialResults: { type: "string", nullable: true }, Segments: { type: "string", nullable: true }, period_end: { type: "number", nullable: true, description: "Reporting date as YYYYMMDD, for example 20260331." },
+      },
+    } },
+  },
+};

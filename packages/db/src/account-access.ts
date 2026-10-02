@@ -1,6 +1,7 @@
 import postgres from "postgres";
 
-export type AccessDecision = { status: "allowed" } | { status: "unauthorized" } | { status: "unavailable" } | { status: "limited"; retryAfter: number };
+export type ApiPlan = "free" | "paid";
+export type AccessDecision = { status: "allowed"; plan: ApiPlan } | { status: "unauthorized" } | { status: "unavailable" } | { status: "limited"; retryAfter: number };
 export type AccountAccessBindings = { DB_CONNECTION_URL?: string; ACCOUNT_SERVICE_URL?: string; ACCOUNT_SERVICE_SECRET?: string };
 export type AuthorizeRequest = (secret: string | undefined, bindings: AccountAccessBindings, sharedSql?: postgres.Sql) => Promise<AccessDecision>;
 
@@ -17,7 +18,8 @@ async function authorizeViaService(secret: string, bindings: AccountAccessBindin
     });
     if (!response.ok) return { status: "unavailable" };
     const decision = await response.json() as AccessDecision;
-    if (["allowed", "unauthorized", "unavailable"].includes(decision.status)) return decision;
+    if (decision.status === "allowed") return decision.plan === "free" || decision.plan === "paid" ? decision : { status: "unavailable" };
+    if (["unauthorized", "unavailable"].includes(decision.status)) return decision;
     if (decision.status === "limited" && Number.isInteger(decision.retryAfter) && decision.retryAfter > 0) return decision;
     return { status: "unavailable" };
   } catch {
@@ -36,10 +38,10 @@ export const authorizeAccountRequest: AuthorizeRequest = async (secret, bindings
   // Workers sockets belong to their request; do not share a client across requests.
   const sql = sharedSql ?? postgres(databaseUrl, { max: 1, prepare: false, connect_timeout: 5 });
   try {
-    const [key] = await sql<{ user_id: string; request_limit: number }[]>`
-      SELECT k.user_id, COALESCE(p.request_limit, 10) AS request_limit
+    const [key] = await sql<{ user_id: string; request_limit: number; api_plan: ApiPlan }[]>`
+      SELECT k.user_id, u.api_plan, COALESCE(p.request_limit, CASE WHEN u.api_plan = 'paid' THEN 60 ELSE 10 END) AS request_limit
       FROM api_key k JOIN "user" u ON u.id = k.user_id
-      LEFT JOIN usage_policy p ON p.id = 'default'
+      LEFT JOIN usage_policy p ON p.id = CASE WHEN u.api_plan = 'paid' THEN 'paid' ELSE 'default' END
       WHERE k.key_hash = ${hash} AND k.revoked_at IS NULL
         AND (k.expires_at IS NULL OR k.expires_at > now()) AND u.profile_completed = true
       LIMIT 1
@@ -57,7 +59,7 @@ export const authorizeAccountRequest: AuthorizeRequest = async (secret, bindings
         OR account_usage.request_count < ${key.request_limit}
       RETURNING user_id
     `;
-    if (allowance.length) return { status: "allowed" };
+    if (allowance.length) return { status: "allowed", plan: key.api_plan };
     const [window] = await sql<{ retry_after: number }[]>`
       SELECT GREATEST(1, CEIL(EXTRACT(EPOCH FROM window_started_at + interval '1 minute' - now())))::integer AS retry_after
       FROM account_usage WHERE user_id = ${key.user_id}

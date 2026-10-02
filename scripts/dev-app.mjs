@@ -13,6 +13,8 @@ if (app === "api") {
   const bindings = {
     BASE_URL: process.env.BASE_URL ?? "https://www.screener.in",
     COOKIE: process.env.COOKIE ?? "",
+    FINEDGE_API_KEY: process.env.FINEDGE_API_KEY ?? "",
+    FINEDGE_BASE_URL: process.env.FINEDGE_BASE_URL ?? "https://data.finedgeapi.com",
     ACCOUNT_SERVICE_URL: process.env.ACCOUNT_SERVICE_URL ?? `http://localhost:${process.env.WEB_PORT ?? "3001"}/api/internal/account-access`,
     ACCOUNT_SERVICE_SECRET: process.env.ACCOUNT_SERVICE_SECRET ?? (process.env.BETTER_AUTH_SECRET
       ? createHash("sha256").update(`${process.env.BETTER_AUTH_SECRET}:account-access-v1`).digest("hex") : ""),

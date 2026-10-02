@@ -7,6 +7,7 @@ import { GetCompanyData } from "@stock-market/scraper/helper/getCompanyData";
 import { createTestApp as createApp } from "./test-app.js";
 import { createApp as createRuntimeApp } from "./server.js";
 import { endpointCatalog, type Schema } from "./endpoint-catalog.js";
+import { finedgeOnlyResources } from "./finedge-resources.js";
 import { responseSchemas } from "./reference-schemas.js";
 import { ScreenerProvider } from "./screener-provider.js";
 import { numericValue, parseCompanySnapshot } from "@stock-market/scraper/helper/getCompanySnapshot";
@@ -67,10 +68,11 @@ test("all reference routes are registered with real response shapes or explicit 
     if (contract.resource === "financial-metrics") query.set("ratio_type", "cu");
     path += `?${query}`;
     const response = await app.request(path, { headers: { "X-API-Key": contract.path } });
-    assert.equal(response.status, contract.status === "excluded" ? 404 : contract.status === "unavailable" ? 501 : 200, contract.path);
+    const unavailable = contract.status === "unavailable" || finedgeOnlyResources.has(contract.resource);
+    assert.equal(response.status, contract.status === "excluded" ? 404 : unavailable ? 501 : 200, contract.path);
     const body = await response.json<any>();
-    if (contract.status === "partial") { assertShape(body, contract.response, contract.path); assert.equal(response.headers.get("x-data-coverage"), "partial"); }
-    else if (contract.status === "unavailable") assert.equal(body.code, "DATASET_UNAVAILABLE");
+    if (contract.status === "partial" && !unavailable) { assertShape(body, contract.response, contract.path); assert.equal(response.headers.get("x-data-coverage"), "partial"); }
+    else if (unavailable) assert.equal(body.code, "DATASET_UNAVAILABLE");
     if (contract.status !== "excluded" && contract.path.startsWith("/api/v")) {
       const alias = await app.request(path.replace(/^\/api/, ""), { headers: { "X-API-Key": "alias-" + contract.path } });
       assert.equal(alias.status, response.status, "alias " + contract.path);

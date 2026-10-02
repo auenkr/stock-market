@@ -5,7 +5,7 @@ import { errorDetails, log } from "@stock-market/common/logger";
 import taxonomy from "./screener-taxonomy.json" with { type: "json" };
 
 export class DataError extends Error {
-  constructor(message: string, public status: 400 | 404 | 429 | 501 | 502 | 503 = 501, public code = "DATASET_UNAVAILABLE") { super(message); }
+  constructor(message: string, public status: 400 | 403 | 404 | 429 | 501 | 502 | 503 = 501, public code = "DATASET_UNAVAILABLE") { super(message); }
 }
 
 export type DataResult = { body: unknown; headers?: Record<string, string> };

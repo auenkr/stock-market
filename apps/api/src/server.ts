@@ -1,3 +1,5 @@
+import { legacyEndpointTiers } from "./endpoint-catalog.js";
+import type { AccessVariables } from "./endpoint-access.js";
 import { Hono, type Context } from "hono";
 import { cors } from "hono/cors";
 import { errorDetails, log } from "@stock-market/common/logger";
@@ -35,7 +37,7 @@ function errorResponse(c: any, message: string, status: 400 | 401 | 404 | 429 | 
   }, status);
 }
 
-function sourceOptions(c: Context<{ Bindings: ApiBindings }>): SourceOptions {
+function sourceOptions(c: Context<{ Bindings: ApiBindings; Variables: AccessVariables }>): SourceOptions {
   return { baseUrl: c.env?.BASE_URL, cookie: c.env?.COOKIE, requestId: c.res.headers.get("X-Request-ID") ?? undefined };
 }
 
@@ -65,7 +67,7 @@ async function getCachedCompanyData(endpoint: string, source: SourceOptions) {
 }
 
 export function createApp(providerFactory: ProviderFactory = defaultProvider, authorize: AuthorizeRequest = authorizeAccountRequest) {
-  const app = new Hono<{ Bindings: ApiBindings }>();
+  const app = new Hono<{ Bindings: ApiBindings; Variables: AccessVariables }>();
   app.use("*", async (c, next) => {
     const requestId = crypto.randomUUID();
     const startedAt = Date.now();
@@ -93,11 +95,16 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
       return errorResponse(c, "Rate limit exceeded", 429);
     }
 
+    c.set("apiPlan", access.plan ?? "free");
+    const legacyResource = c.req.path.match(/^\/(?:v1|api)\/([^/]+)$/)?.[1];
+    if ((access.plan ?? "free") === "free" && legacyResource && legacyEndpointTiers[legacyResource as keyof typeof legacyEndpointTiers] === "paid") {
+      return c.json({ error: "This endpoint requires a paid plan", code: "PAID_PLAN_REQUIRED", docs: "/v1/coverage" }, 403);
+    }
     await next();
     c.header("Cache-Control", "no-store");
   });
 
-  const api = new Hono<{ Bindings: ApiBindings }>();
+  const api = new Hono<{ Bindings: ApiBindings; Variables: AccessVariables }>();
 
   api.get("/list-of-company", async (c) => {
     const pageParam = c.req.query("page") ?? "1";

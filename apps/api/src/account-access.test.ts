@@ -33,6 +33,7 @@ test("accounts share an atomic quota across keys and API instances; other accoun
         ${i === 3 ? new Date(Date.now() - 1000).toISOString() : null},
         ${i === 4 ? new Date().toISOString() : null})
     `;
+    await sql`UPDATE "user" SET api_plan = 'paid' WHERE id = ${users[1]!}`;
     const [policy] = await sql`SELECT request_limit FROM usage_policy WHERE id = 'default'`;
     assert.equal(policy!.request_limit, 10);
     const authorize: typeof authorizeAccountRequest = (key, bindings) => authorizeAccountRequest(key, bindings, sql);
@@ -47,7 +48,12 @@ test("accounts share an atomic quota across keys and API instances; other accoun
       assert(Number(response.headers.get("Retry-After")) > 0);
       assert.equal(response.headers.get("Cache-Control"), "no-store");
     }
-    assert.equal((await request(keys[2]!)).status, 200);
+    const paidResults = await Promise.all(Array.from({ length: 62 }, (_, i) => request(keys[2]!, i % 2)));
+    assert.equal(paidResults.filter((response) => response.status === 200).length, 60);
+    assert.equal(paidResults.filter((response) => response.status === 429).length, 2);
+    // Changing the stored plan takes effect without issuing a new key.
+    await sql`UPDATE "user" SET api_plan = 'paid' WHERE id = ${users[0]!}`;
+    assert.equal((await request(keys[0]!)).status, 200);
     assert.equal((await request(keys[3]!)).status, 401);
     assert.equal((await request(keys[4]!)).status, 401);
     assert.equal((await request(secret())).status, 401);

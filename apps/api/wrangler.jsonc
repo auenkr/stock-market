@@ -4,7 +4,7 @@
   "compatibility_date": "2026-09-26",
   "compatibility_flags": ["nodejs_compat"],
   "build": {
-    "command": "pnpm nx build @stock-market/api",
+    "command": "pnpm --filter @stock-market/api build",
     "watch_dir": [
       "src",
       "../../packages/common/src",

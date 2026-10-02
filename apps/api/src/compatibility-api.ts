@@ -2,17 +2,21 @@ import { Hono, type Context } from "hono";
 import { endpointCatalog, pagedResources, type EndpointContract } from "./endpoint-catalog.js";
 import { ScreenerProvider, DataError, type DataProvider, type DataQuery } from "./screener-provider.js";
 import { errorDetails, log } from "@stock-market/common/logger";
+import { freeCompanySymbols, freeCompaniesAsOf, requireCompanyAccess, type AccessVariables } from "./endpoint-access.js";
+import { FinEdgeProvider, FallbackProvider } from "./finedge-provider.js";
 
-export type Bindings = { BASE_URL?: string; COOKIE?: string };
+export type Bindings = { BASE_URL?: string; COOKIE?: string; FINEDGE_API_KEY?: string; FINEDGE_BASE_URL?: string };
 export type ProviderFactory = (bindings: Bindings) => DataProvider;
 const providers = new Map<string, DataProvider>();
 export const defaultProvider: ProviderFactory = (bindings) => {
   const baseUrl = bindings.BASE_URL ?? (typeof process === "undefined" ? undefined : process.env.BASE_URL) ?? "https://www.screener.in";
   const cookie = bindings.COOKIE ?? (typeof process === "undefined" ? undefined : process.env.COOKIE);
-  const key = `${baseUrl}\n${cookie ?? ""}`;
+  const apiKey = bindings.FINEDGE_API_KEY ?? (typeof process === "undefined" ? undefined : process.env.FINEDGE_API_KEY);
+  const finedgeBaseUrl = bindings.FINEDGE_BASE_URL ?? (typeof process === "undefined" ? undefined : process.env.FINEDGE_BASE_URL);
+  const key = `${baseUrl}\n${cookie ?? ""}\n${apiKey ?? ""}\n${finedgeBaseUrl ?? ""}`;
   let provider = providers.get(key);
   if (!provider) {
-    provider = new ScreenerProvider({ baseUrl, cookie }); providers.set(key, provider);
+    provider = new FallbackProvider(new ScreenerProvider({ baseUrl, cookie }), apiKey ? new FinEdgeProvider({ apiKey, baseUrl: finedgeBaseUrl }) : undefined); providers.set(key, provider);
     if (providers.size > 4) providers.delete(providers.keys().next().value!);
   }
   return provider;
@@ -59,9 +63,10 @@ export function parseSymbols(value: string | undefined): string[] {
 }
 
 export function createCompatibilityApi(providerFactory: ProviderFactory = defaultProvider) {
-  const app = new Hono<{ Bindings: Bindings }>();
+  const app = new Hono<{ Bindings: Bindings; Variables: AccessVariables }>();
   app.get("/v1/coverage", (c) => c.json({
-    inspectedAt: "2026-10-01", source: "https://www.finedgeapi.com/financial-data-api-documentation", dataSource: "https://www.screener.in/",
+    inspectedAt: "2026-10-02", source: "https://www.finedgeapi.com/financial-data-api-documentation", dataSource: "https://www.screener.in/", fallbackDataSource: "https://data.finedgeapi.com/",
+    accessPolicy: { freeCompanies: freeCompanySymbols, rankedBy: "market-capitalization", asOf: freeCompaniesAsOf, requestsPerMinute: { free: 10, paid: 60 } },
     endpoints: endpointCatalog.map(({ response: _, parameters: __, ...endpoint }) => endpoint),
   }));
   for (const contract of endpointCatalog.filter((x) => x.status !== "excluded")) {
@@ -70,11 +75,16 @@ export function createCompatibilityApi(providerFactory: ProviderFactory = defaul
     for (const path of paths) app.get(path.replace(/\{([^}]+)\}/g, ":$1"), async (c) => {
       try {
         const query = validate(c, contract);
-        if (contract.status === "unavailable") throw new DataError(contract.limitation);
+        const plan = c.get("apiPlan") ?? "free";
+        if (plan === "free" && contract.tier === "paid") throw new DataError("This endpoint requires a paid plan", 403, "PAID_PLAN_REQUIRED");
+
         const isQuote = ["quote", "quotes"].includes(contract.resource);
         const params = new URL(c.req.url).searchParams;
         const rawSymbols = params.has("symbols") ? params.getAll("symbols").join(",") : (isQuote ? params.getAll("symbol").join(",") : query.symbol);
         const symbols = parseSymbols(rawSymbols);
+        requireCompanyAccess(plan, symbols);
+        if (plan === "free" && isQuote && !symbols.length) symbols.push(...freeCompanySymbols);
+        if (contract.status === "unavailable") throw new DataError(contract.limitation);
         // A request must remain bounded on an on-demand scraped source. Higher
         // batch sizes require ingestion and a stored company dataset.
         if (symbols.length > 25) throw new DataError("Batches above 25 symbols require a stored dataset provider");

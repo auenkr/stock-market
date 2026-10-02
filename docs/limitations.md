@@ -4,16 +4,14 @@
 
 These paths return `501 DATASET_UNAVAILABLE`, and their query/response contracts are included in OpenAPI for planning. They are not functional integrations.
 
-- Name and symbol changes: need exchange event records with reliable old/new names and effective dates.
-- Segment revenue: the current account exposes segment names but numeric values are premium-gated. A working permitted source and period/statement mapping are needed before enabling the adapter.
-- Statutory notes: expanded financial schedules supply selected breakdowns, not complete structured filing notes. Independent filing parsing is still required.
-- Ownership declarations and significant beneficial owners: inspected tables supply aggregate percentages and selected holder names, but not declaration flags, control/voting rights, acquisition dates or statutory beneficial-owner records.
-- Current index feed, index master and precomputed index returns: need a current index dataset, identifiers, constituents and valuations. FinEdge's index codes are not inferred from names.
-- Commodity lookup/percentage changes: the reference covers monthly industry/core infrastructure indices, not merely traded commodity quotes. Need the relevant independent statistical dataset and code mapping.
-- Holiday calendar: no exchange holiday dataset was found in Screener's inspected tools/Market Pulse pages. An authoritative exchange calendar is still needed.
+- Commodity lookup/percentage changes: the supplied Basic key returned `401 ER017 - user not premium`. These datasets remain unavailable.
 - Enterprise `refreshed-stocks`: needs a persisted ingestion log with dataset-specific update timestamps. Scrape/cache access times do not indicate when company filings changed.
 
 Nine reference market-history paths are deliberately excluded, including adjusted daily stock prices, daily/annual price-ratio series, historical index prices/valuations and commodity price trends. Financial statement histories, ownership filings, and corporate events remain in scope. Offline CLI valuation jobs are separate from the public API.
+
+### FinEdge Basic integration (2026-10-02)
+
+Configured FinEdge personal endpoints now supply name/symbol changes, segment revenue, filing notes, ownership declarations/beneficial owners, current index feeds/master/precomputed returns and holidays. Basic company access is restricted to ITC, RELIANCE and HDFCBANK; the supplied key denied TCS. Missing credentials or plan-restricted symbols return explicit 501 errors. The adapter also fills supported Screener 501 variants; successful partial Screener responses retain their existing fields. See [provider behavior](api-compatibility.md#finedge-fallback) and [integration tests](testing.md#finedge-integration).
 
 ## Remaining gaps within working adapters
 
@@ -21,7 +19,7 @@ Nine reference market-history paths are deliberately excluded, including adjuste
 - Company dividend amounts are rupees per share; global dividend lists expose percentages of face value, so global amounts stay null. Adjusted historical dividends, complete action archives and exact publication timestamps remain unavailable. Company-specific rights history uses a searched, paginated market list with exact-symbol filtering.
 - Balance-sheet schedules now expose inventories, receivables, cash, payables and long/short-term borrowing fields. Complete filing sublines, current/noncurrent totals and bank/insurance adapters remain incomplete.
 - Upcoming results are a paginated future calendar. Historical result calendars are not supplied. Latest market-wide announcements are connected, but do not expose a stable complete historical cursor or dates for every record.
-- Profitability ratios, cumulative metrics and basic P&L have verified mappings; other ratio/metric/basic-statement variants still return 501. Financial period coverage is documented per operation in Swagger.
+- Profitability ratios, cumulative metrics and basic P&L have Screener mappings; other supported ratio/metric/basic-statement variants use FinEdge when configured and entitled. Financial period coverage is documented per operation in Swagger.
 
 ## Source constraints observed through 2026-10-01
 
@@ -38,7 +36,7 @@ Nine reference market-history paths are deliberately excluded, including adjuste
 1. Acquire sources that allow the intended commercial distribution and cover the missing datasets. Product documentation and public test responses describe a contract; they are not a production data supply. FinEdge's pricing page distinguishes commercial licensing from personal plans: [source](https://www.finedgeapi.com/financial-data-api-pricing).
 2. Persist company/security identity mappings, source provenance, parsed financial records and update timestamps. Add scheduled ingestion, retries with bounded backoff, source circuit breakers, and revision tracking. Serve customers from stored data rather than scrape on every cold request.
 3. Configure the production API's PostgreSQL binding and apply account-usage migrations. Dashboard key hashes, expiry and revocation are now checked by the API; invalid keys fail closed.
-4. Add billing, paid plans, entitlements and detailed usage reporting. Shared per-account minute quotas are now enforced atomically in PostgreSQL across Worker isolates and replicas; arbitrary headers do not establish a valid account identity.
+4. Add billing automation and detailed usage reporting. Database-backed free/paid plans, endpoint entitlements, and the free top-five company allowlist are enforced. Shared per-account minute quotas are now enforced atomically in PostgreSQL across Worker isolates and replicas; arbitrary headers do not establish a valid account identity.
 5. Configure production source secrets separately from source-code variables. Source sessions are read from environment/Worker bindings; browser exploration credentials are not stored in repository docs or generated Swagger.
 6. Measure source freshness and endpoint latency under expected customer load. Add source health/status, request correlation, structured error reporting and operational monitoring. `/health` currently measures process availability, not upstream dataset readiness.
 7. Complete field/period/sector parity against representative independently sourced fixtures. Verify real standalone/consolidated examples, financial-unit conversions, missing values, non-March fiscal years and reporting revisions. Passing route tests proves the implemented subset, not all 53 datasets.

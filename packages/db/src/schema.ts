@@ -14,6 +14,7 @@ export const user = pgTable("user", {
   image: text("image"),
   company: text("company"),
   profileCompleted: boolean("profile_completed").notNull().default(false),
+  apiPlan: text("api_plan", { enum: ["free", "paid"] }).notNull().default("free"),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 });
