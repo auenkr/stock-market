@@ -34,7 +34,8 @@
     "test:integration:finedge": "node --env-file=.env --import tsx --test apps/api/tests/live/finedge.test.ts",
     "test:performance": "pnpm --filter @stock-market/api test:performance",
     "test:web": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/web test",
-    "hooks:install": "git config core.hooksPath .githooks"
+    "hooks:install": "git config core.hooksPath .githooks",
+    "test:pre-push": "node scripts/pre-push.mjs"
   },
   "devDependencies": {
     "@nx/js": "^21.5.2",

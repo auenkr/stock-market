@@ -49,7 +49,7 @@ test("accounts share an atomic quota across keys and API instances; other accoun
       assert.equal(response.headers.get("Cache-Control"), "no-store");
     }
     const paidResults = await Promise.all(Array.from({ length: 62 }, (_, i) => request(keys[2]!, i % 2)));
-    assert.equal(paidResults.filter((response) => response.status === 200).length, 60);
+    assert.equal(paidResults.filter((response) => response.status === 200).length, 60, `Paid statuses: ${paidResults.map((response) => response.status).join(", ")}`);
     assert.equal(paidResults.filter((response) => response.status === 429).length, 2);
     // Changing the stored plan takes effect without issuing a new key.
     await sql`UPDATE "user" SET api_plan = 'paid' WHERE id = ${users[0]!}`;

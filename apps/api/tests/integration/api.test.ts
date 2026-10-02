@@ -265,3 +265,17 @@ test('signed account-service HTTP bridge uses real storage and rejects forged, s
     if (previousSecret === undefined) delete process.env.ACCOUNT_SERVICE_SECRET; else process.env.ACCOUNT_SERVICE_SECRET = previousSecret;
   }
 });
+
+test('web database pool bounds concurrent connections and releases idle sockets', async () => {
+  const results = await Promise.all(Array.from({ length: 8 }, () => db.$client`
+    SELECT pg_backend_pid() AS pid, pg_sleep(0.02)
+  `));
+  const pids = new Set(results.map((rows) => rows[0]!.pid));
+  assert.equal(pids.size, 1, 'Serverless instances must not each open a large database pool');
+  const pid = [...pids][0];
+  await new Promise((resolve) => setTimeout(resolve, 6000));
+  const active = await fixture.sql`SELECT pid FROM pg_stat_activity WHERE pid = ${pid}`;
+  assert.equal(active.length, 0, 'Idle pool connections must be released so other instances can connect');
+  const [reopened] = await db.$client`SELECT 1 AS healthy`;
+  assert.equal(reopened!.healthy, 1, 'The pool must reconnect after idle cleanup');
+});

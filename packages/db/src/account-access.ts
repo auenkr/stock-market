@@ -14,7 +14,7 @@ async function authorizeViaService(secret: string, bindings: AccountAccessBindin
     const signature = await crypto.subtle.sign("HMAC", signingKey, new TextEncoder().encode(`${timestamp}.${body}`));
     const response = await fetch(bindings.ACCOUNT_SERVICE_URL!, {
       method: "POST", body, headers: { "Content-Type": "application/json", "X-Account-Timestamp": timestamp, "X-Account-Signature": [...new Uint8Array(signature)].map((byte) => byte.toString(16).padStart(2, "0")).join("") },
-      signal: AbortSignal.timeout(10_000),
+      signal: AbortSignal.timeout(30_000),
     });
     if (!response.ok) return { status: "unavailable" };
     const decision = await response.json() as AccessDecision;

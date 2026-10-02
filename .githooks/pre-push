@@ -1,4 +1,4 @@
 #!/bin/sh
 set -eu
 cd "$(git rev-parse --show-toplevel)"
-pnpm test:web
+pnpm test:pre-push
