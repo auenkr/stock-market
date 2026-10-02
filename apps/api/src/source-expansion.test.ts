@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { URL as NodeURL } from "node:url";
 import test from "node:test";
-import { createApp } from "./server.js";
+import { createTestApp as createApp } from "./test-app.js";
 import { ScreenerProvider } from "./screener-provider.js";
 
 const fixture = readFileSync(new NodeURL("./fixtures/company.html", import.meta.url), "utf8");

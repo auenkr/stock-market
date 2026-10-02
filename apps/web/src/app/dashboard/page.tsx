@@ -1,5 +1,5 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default function DashboardPage() {
-  return <><section className="hero"><div className="hero-copy"><span className="eyebrow">Overview / live workspace</span><h1>Build on data you can trust.</h1><p className="subtle">Issue credentials, monitor your API contract, and move from raw Indian market data to product decisions.</p></div><div className="hero-note"><strong>API status</strong><br /><span className="pill">● operational</span><br /><br />Company discovery, IPO data, search, and fundamentals are live.</div></section><div className="card-grid"><section className="card"><span className="eyebrow">Quick start</span><h2>Connect in under a minute</h2><p className="subtle">Create an isolated key for your app, then add it to the request header.</p><Link className="button secondary" href="/dashboard/keys">Manage API keys</Link></section><section className="card"><span className="eyebrow">Reference</span><h2>Read the contract</h2><p className="subtle">Browse endpoint examples, response shapes, and authentication details.</p><Link className="button" href="/docs">Open documentation</Link></section></div></>;
+  redirect("/dashboard/keys");
 }

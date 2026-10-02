@@ -22,7 +22,7 @@ export function createAuthOptions(env: AuthEnvironment) {
     ),
     trustedOrigins: [...new Set(trustedOrigins)],
     advanced: { database: { generateId: createId } },
-    emailAndPassword: { enabled: true, disableSignUp: true },
+    emailAndPassword: { enabled: env.ENVIRONMENT === "dev", disableSignUp: true },
     socialProviders: clientId && clientSecret ? {
       google: { clientId, clientSecret },
     } : {},

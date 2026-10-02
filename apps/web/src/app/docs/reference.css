@@ -32,6 +32,14 @@
 .reference-page .operation-body { padding: 24px; }
 .reference-page .request-workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
 .request-inputs, .request-example { min-width: 0; }
+.operation-summary-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.endpoint-send-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
+.endpoint-send-actions .button { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.request-timeout { font-size: 11px; color: var(--muted); }
+.reference-page .request-workspace[data-requested="true"] .live-response { order: 1; grid-column: auto; align-self: start; padding-top: 0; border-top: 0; animation: endpoint-enter .24s ease-out; }
+.reference-page .request-workspace[data-requested="true"] .request-example { order: 2; grid-column: 1 / -1; padding-top: 24px; border-top: 1px solid var(--line); animation: endpoint-enter .24s ease-out; }
+.reference-page .live-response > pre { max-height: 520px; overflow: auto; animation: endpoint-enter .2s ease-out; }
+@media (max-width: 600px) { .operation-summary-row { flex-wrap: wrap; }.endpoint-send-actions { margin-left: auto; } }
 .reference-page .parameter-heading { margin: 0 0 12px; }
 .reference-page .parameter-heading h3, .response-toolbar h3 { font-size: 14px; margin: 0; }
 .reference-page .parameter-row { grid-template-columns: 1fr; gap: 9px; padding: 16px 0; }
@@ -77,6 +85,24 @@
 .reference-page .docs-actions { flex-wrap: wrap; }
 .reference-page .schema-tree { border-color: var(--line); }
 .reference-page .eyebrow { font-size: 11px; }
+.reference-page :is(.search-label kbd, .operation-nav small, .schema-required, .schema-leaf, .reference-caption, .reference-footer, .endpoint-input) { color: var(--muted); }
+.reference-page :is(.parameter-row, .schema-field, .schema-tree > details, .reference-tabs, .schema-tree details > .schema-tree, .schema-array, .schema-variants) { border-color: var(--line); }
+.reference-page .coverage-badge.partial, .response-ok { color: light-dark(#386426, #c1e893); background: light-dark(#e8f5dd, #293d27); border-color: light-dark(#d4e7cb, #4a6340); }
+.reference-page .coverage-badge.unavailable, .response-error { color: light-dark(#984c30, #ffbc9d); background: light-dark(#fff0e7, #432c21); border-color: light-dark(#ead8cd, #604233); }
+.reference-page .coverage-dot { background: var(--muted); }
+.reference-page .coverage-dot.partial { background: light-dark(#4d9b64, #a4d786); }
+.reference-page .reference-topbar { border-color: var(--line); }
+.reference-page .connection-bar, .reference-page .operation-panel { box-shadow: 0 8px 30px light-dark(#25453006, #00000012); border-radius: 12px; }
+.reference-page .reference-links a:hover, .reference-page .reference-contract:hover { text-decoration: underline; text-underline-offset: 4px; }
+.reference-page button { transition: background-color .12s ease, color .12s ease; }
+.reference-page .docs-select { width: 100%; min-width: 0; background: var(--card); color: var(--ink); border-color: var(--line); font-size: 12px; font-weight: 400; letter-spacing: 0; text-transform: none; cursor: pointer; }
+.docs-select-menu { background: var(--card); color: var(--ink); border-color: var(--line); }
+.docs-select-menu [data-slot="select-item"] { cursor: pointer; font-size: 12px; }
+.docs-select-menu [data-highlighted] { background: var(--paper); color: var(--ink); }
+.reference-page .operation-panel { animation: endpoint-enter .24s ease-out; }
+@keyframes endpoint-enter { from { opacity: .25; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .reference-page .operation-panel, .reference-page .live-response, .reference-page .live-response > pre, .reference-page .request-example, .docs-select-menu { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .reference-page button { transition: none; } }
 @media (max-width: 760px) {
   .reference-page { padding: 18px 16px 0; }
   .reference-page .reference-hero { gap: 12px; align-items: flex-start; }

@@ -1,0 +1,62 @@
+import assert from "node:assert/strict";
+import { createHash, randomUUID } from "node:crypto";
+import test from "node:test";
+import postgres from "postgres";
+import { createApp } from "./server.js";
+import { authorizeAccountRequest } from "@stock-market/db/account-access";
+
+const secret = () => `sm_live_${[...crypto.getRandomValues(new Uint8Array(24))].map((byte) => byte.toString(16).padStart(2, "0")).join("")}`;
+
+test("data requests require a valid key and fail closed without account storage", async () => {
+  const app = createApp();
+  assert.equal((await app.request("/v1/coverage")).status, 401);
+  assert.equal((await app.request("/v1/coverage", { headers: { "X-API-Key": "arbitrary" } })).status, 401);
+  assert.equal((await app.request("/v1/coverage", { headers: { "X-API-Key": secret() } })).status, 503);
+  assert.equal((await app.request("/health")).status, 200);
+  assert.equal((await app.request("/openapi.json")).status, 200);
+});
+
+test("accounts share an atomic quota across keys and API instances; other accounts, resets and key invalidation work", {
+  skip: !process.env.DB_CONNECTION_URL,
+}, async () => {
+  const url = process.env.DB_CONNECTION_URL!;
+  const sql = postgres(url, { max: 4, prepare: false });
+  const users = [randomUUID(), randomUUID()];
+  const keys = [secret(), secret(), secret(), secret(), secret()];
+  try {
+    for (const id of users) await sql`INSERT INTO "user" (id, name, email, profile_completed, created_at, updated_at)
+      VALUES (${id}, 'Quota test', ${`${id}@quota-test.invalid`}, true, now(), now())`;
+    for (let i = 0; i < keys.length; i++) await sql`
+      INSERT INTO api_key (id, user_id, name, key_hash, expires_at, revoked_at)
+      VALUES (${randomUUID()}, ${users[i === 2 ? 1 : 0]!}, 'Quota test',
+        ${createHash("sha256").update(keys[i]!).digest("hex")},
+        ${i === 3 ? new Date(Date.now() - 1000).toISOString() : null},
+        ${i === 4 ? new Date().toISOString() : null})
+    `;
+    const [policy] = await sql`SELECT request_limit FROM usage_policy WHERE id = 'default'`;
+    assert.equal(policy!.request_limit, 10);
+    const authorize: typeof authorizeAccountRequest = (key, bindings) => authorizeAccountRequest(key, bindings, sql);
+    const apps = [createApp(undefined, authorize), createApp(undefined, authorize)];
+    const request = (key: string, index = 0) => process.env.ACCOUNT_TEST_API_URL
+      ? fetch(new URL("/v1/coverage", process.env.ACCOUNT_TEST_API_URL), { headers: { "X-API-Key": key } })
+      : apps[index]!.request("/v1/coverage", { headers: { "X-API-Key": key } }, { DB_CONNECTION_URL: url });
+    const results = await Promise.all(Array.from({ length: 12 }, (_, i) => request(keys[i % 2]!, i % 2)));
+    assert.equal(results.filter((response) => response.status === 200).length, 10, `Statuses: ${results.map((response) => response.status).join(", ")}`);
+    assert.equal(results.filter((response) => response.status === 429).length, 2, `Statuses: ${results.map((response) => response.status).join(", ")}`);
+    for (const response of results.filter((response) => response.status === 429)) {
+      assert(Number(response.headers.get("Retry-After")) > 0);
+      assert.equal(response.headers.get("Cache-Control"), "no-store");
+    }
+    assert.equal((await request(keys[2]!)).status, 200);
+    assert.equal((await request(keys[3]!)).status, 401);
+    assert.equal((await request(keys[4]!)).status, 401);
+    assert.equal((await request(secret())).status, 401);
+    await sql`UPDATE account_usage SET window_started_at = now() - interval '61 seconds' WHERE user_id = ${users[0]!}`;
+    assert.equal((await request(keys[0]!)).status, 200);
+    const [usage] = await sql`SELECT request_count FROM account_usage WHERE user_id = ${users[0]!}`;
+    assert.equal(usage!.request_count, 1);
+  } finally {
+    await sql`DELETE FROM "user" WHERE id IN ${sql(users)}`;
+    await sql.end();
+  }
+});

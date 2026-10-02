@@ -8,7 +8,7 @@ The API provides structured Indian equity and IPO data for applications. The ver
 
 `GET /health` returns service status. `GET /swagger.json` and `/openapi.json` return the same OpenAPI 3.0.3 contract. The API's `/docs` page reads that contract; the web `/docs` explorer includes search, coverage filters, request forms, schema browsing, and a request runner.
 
-The development API limits requests to 60/minute per supplied key or Cloudflare client IP, per Worker isolate. Dashboard-managed keys are stored in PostgreSQL and shown only once, but the API does not yet validate those keys or enforce paid plans.
+The API validates dashboard-issued keys against PostgreSQL, including expiration and revocation. The default allowance is **10 requests/minute per user account**, shared across all of that account's keys and API instances using atomic database counters. Health and OpenAPI remain public. Billing and paid-plan entitlements are not implemented.
 
 ### FinEdge-style resource API
 
@@ -151,7 +151,7 @@ GOOGLE_CLIENT_ID=<your-google-oauth-client-id>
 GOOGLE_CLIENT_SECRET=<your-google-oauth-client-secret>
 ```
 
-Generate the auth secret with `openssl rand -base64 32`. Keep it stable between deployments; changing it signs users out. `BETTER_AUTH_URL` must be the actual dashboard origin, including your configured `WEB_PORT` locally; use the HTTPS dashboard domain in production. `WEB_URL` can contain comma-separated additional trusted dashboard origins. Both Google credentials are required to enable the Google button; email sign-in remains available without them.
+Generate the auth secret with `openssl rand -base64 32`. Keep it stable between deployments; changing it signs users out. `BETTER_AUTH_URL` must be the actual dashboard origin, including your configured `WEB_PORT` locally; use the HTTPS dashboard domain in production. `WEB_URL` can contain comma-separated additional trusted dashboard origins. Both Google credentials are required to enable the Google button. Password authentication is enabled only when `ENVIRONMENT=dev`; it is disabled for every other value or when unset.
 
 Generate `API_KEY_ENCRYPTION_SECRET` separately with `openssl rand -base64 32` and keep it stable. If it is omitted, the dashboard derives the encryption key from `BETTER_AUTH_SECRET`. API keys are encrypted at rest so their owners can reveal or copy them from the dashboard after a reload. Losing or changing the configured encryption secret (or the auth secret when using the fallback) prevents existing encrypted keys from being revealed.
 
@@ -160,6 +160,38 @@ Create a **Web application** OAuth client in [Google Cloud Console](https://cons
 Google fills the initial name and email. First-time users are sent to `/onboarding`; returning users go to `/dashboard`. Accounts that leave onboarding unfinished must complete it when they return. A Google account matching an existing unverified email/password account must use its existing email login.
 
 ### Upgrade an existing dashboard database
+
+To remove unused API-key columns, run `pnpm db:migrate:simplify-api-keys`, then `pnpm db:migrate:timestamps` and `pnpm db:migrate:key-expiration`, in that order. The table retains only `id`, `user_id`, `name`, `key_hash`, `encrypted_secret`, `expires_at`, `created_at`, `updated_at`, and `revoked_at`. The prefix is derived when displaying a key; unused usage timestamps and per-key allowances are removed. Expiration is now used by key creation: 1, 7, 30, or 90 days, or `NULL` for no expiration. Existing keys default to no expiration. Policy settings live once in `usage_policy`, not on each key. Application timestamps default to the current time; database triggers refresh `updated_at` on key and policy changes, including manual SQL updates. Authentication tables retain Better Auth's required fields and existing creation/update metadata.
+
+Key creation uses a dialog with a required name and expiration choice. The server calculates the deadline; the dashboard displays expiration, excludes expired keys from the active count, and removes their reveal/copy actions. The data API validates the stored key hash, rejects expired/revoked keys, and charges requests to the key owner's shared account allowance.
+
+### Shared UI components
+
+`packages/ui` contains the shared shadcn/ui components (Dialog, Button, Input, Label, RadioGroup, and Select), their Radix primitives, and Tailwind styles. Import components using `@stock-market/ui/components/<name>` and load `@stock-market/ui/styles.css` once in an application's stylesheet. The dashboard transpiles the package directly; Tailwind's preflight reset is omitted to preserve existing application styles. Theme tokens reuse the dashboard's light/dark CSS variables.
+
+The package also exports `PageMotion` from `@stock-market/ui/motion`. The homepage progressively enhances its server-rendered content with Motion entrances, one-time scroll reveals, spring card hovers, and pointer-following code-panel labels. Motion loads only on pages that opt in, respects changes to `prefers-reduced-motion`, and keeps content visible without JavaScript. `/` and `/docs` are prerendered at build time; the docs use Fuse.js fuzzy endpoint search, shared Select controls, and short CSS endpoint/control transitions without loading Motion. The dashboard animates card entrances, saved key rows, and key reveals. The single theme button defaults to the system preference and reveals a toggled theme outward from the button using View Transitions, with an immediate fallback for reduced motion or unsupported browsers.
+
+Run `pnpm db:migrate:request-limit`, then `pnpm db:migrate:account-usage` to apply the default **10 requests per minute per account** policy and shared counters to existing databases. This updates the column default and the original 60/minute default policy; custom policy values are preserved. Apply the earlier timestamp migration first. The web backend uses `DB_CONNECTION_URL` from the root `.env`. Local Workers send timestamped, HMAC-signed requests to `/api/internal/account-access`; their scoped signing secret is derived from `BETTER_AUTH_SECRET` unless `ACCOUNT_SERVICE_SECRET` is configured. This supports PostgreSQL servers whose TLS configuration is incompatible with Workers' direct sockets. For production, set a dedicated `ACCOUNT_SERVICE_SECRET` on both services, configure the Worker's `ACCOUNT_SERVICE_URL` to the deployed web endpoint, and store its signing secret with `pnpm --filter @stock-market/api exec wrangler secret put ACCOUNT_SERVICE_SECRET`. Authorization fails closed if account storage or the signed service is unavailable. Health and OpenAPI stay public.
+
+```bash
+pnpm dlx shadcn@latest add <component> --cwd packages/ui
+pnpm --filter @stock-market/ui typecheck
+pnpm test:keys
+```
+
+### Development password login
+
+Set these values in your local `.env`:
+
+```dotenv
+ENVIRONMENT=dev
+DEV_USERNAME=dev
+DEV_PASSWORD=ledgerline-dev-password
+```
+
+Run `pnpm db:seed:dev`, restart the dev server, and sign in at `/signin` using the username and password. The seed is repeatable, hashes the password, and creates a profile-complete testing account. Usernames map to `<username>@ledgerline.test` internally, so no extra username column is needed. Public password signup remains disabled. Set `ENVIRONMENT=production` on production deployments.
+
+### Profile migration
 
 Before running `pnpm db:push` against a database created before profile onboarding was added, apply the migration once. This command reads `DB_CONNECTION_URL` from the root `.env`:
 
@@ -172,6 +204,14 @@ The migration adds the profile fields, preserves access for existing users, and 
 Before deploying persistent API-key reveal, run `pnpm db:push` to add the nullable `encrypted_secret` column to existing databases. Previously created keys cannot be recovered because they were stored only as hashes; create replacements for those keys.
 
 ## Development validation
+
+See [integration and k6 performance testing](docs/testing.md) for disposable database setup, flow coverage, workload scenarios and cleanup.
+
+```bash
+pnpm test:integration
+pnpm test:performance
+SCENARIO=quota pnpm test:performance
+```
 
 ```bash
 pnpm test:api

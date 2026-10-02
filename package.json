@@ -21,7 +21,16 @@
     "db:push": "pnpm --filter @stock-market/web db:push",
     "db:migrate:api-keys": "node --env-file=.env packages/db/scripts/migrate-api-key-encryption.mjs",
     "db:migrate:onboarding": "node --env-file=.env packages/db/scripts/migrate-onboarding.mjs",
-    "db:migrate:usage-policy": "node --env-file=.env packages/db/scripts/migrate-usage-policy.mjs"
+    "db:migrate:usage-policy": "node --env-file=.env packages/db/scripts/migrate-usage-policy.mjs",
+    "db:migrate:simplify-api-keys": "node --env-file=.env packages/db/scripts/migrate-simplify-api-keys.mjs",
+    "db:migrate:timestamps": "node --env-file=.env packages/db/scripts/migrate-application-timestamps.mjs",
+    "db:migrate:key-expiration": "node --env-file=.env packages/db/scripts/migrate-api-key-expiration.mjs",
+    "db:migrate:request-limit": "node --env-file=.env packages/db/scripts/migrate-default-request-limit.mjs",
+    "db:migrate:account-usage": "node --env-file=.env packages/db/scripts/migrate-account-usage.mjs",
+    "test:keys": "tsx --test apps/web/src/lib/key-expiration.test.ts",
+    "db:seed:dev": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/auth seed:dev",
+    "test:integration": "pnpm --filter @stock-market/api test:integration",
+    "test:performance": "pnpm --filter @stock-market/api test:performance"
   },
   "devDependencies": {
     "@nx/js": "^21.5.2",

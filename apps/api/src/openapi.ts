@@ -33,7 +33,7 @@ export function openApi(origin: string) {
       summary: endpoint.title, tags: [endpoint.tier], description: coverageDetails[endpoint.resource] ?? endpoint.limitation,
       parameters, "x-coverage": endpoint.status, "x-resource": endpoint.resource, "x-canonical-path": endpoint.path, "x-alias": path !== endpoint.path,
       responses: { ...(endpoint.status === "partial" ? { "200": { description: "Source-backed subset. Missing fields are null; an empty list is not proof of a complete historical dataset.", headers: responseHeaders, content: json(response) } } : {}),
-        "400": { ...error, description: "Invalid, missing or unknown parameter" }, "404": { ...error, description: "Source resource not found" },
+        "400": { ...error, description: "Invalid, missing or unknown parameter" }, "401": { ...error, description: "Missing, invalid, expired or revoked API key" }, "404": { ...error, description: "Source resource not found" },
         "429": { ...error, description: "Request allowance exceeded. Wait for Retry-After before retrying.", headers: quotaHeaders },
         "501": { ...error, description: "Dataset or requested variation is unavailable" }, "502": { ...error, description: "Data could not be retrieved" }, "503": { ...error, description: "Service temporarily unavailable; retry later" } },
     } };
@@ -46,15 +46,23 @@ export function openApi(origin: string) {
       tags: ["legacy"], "x-coverage": "legacy", "x-alias": route !== path, "x-canonical-path": path, "x-timeout-ms": 60000,
       responses: { "200": { description: "Original field names and units are preserved.", headers, content: json(legacyResponses[resource]) }, "400": { ...error, description: "Missing or invalid input" }, "404": { ...error, description: "Resource not found" }, "429": { ...error, description: "Request allowance exceeded. Wait for Retry-After before retrying.", headers: quotaHeaders }, "500": { ...error, description: "Unexpected service error" }, "502": { ...error, description: "Data could not be retrieved; retry later." } } } };
   }
-  paths["/health"] = { get: { operationId: "get_health", tags: ["service"], summary: "Service health", "x-coverage": "service", responses: { "200": { description: "Process availability; does not verify upstream data freshness", content: json({ type: "object", properties: { status: { type: "string" }, service: { type: "string" }, version: { type: "string" } } }) } } } };
+  paths["/health"] = { get: { operationId: "get_health", tags: ["service"], summary: "Service health", security: [], "x-coverage": "service", responses: { "200": { description: "Process availability; does not verify upstream data freshness", content: json({ type: "object", properties: { status: { type: "string" }, service: { type: "string" }, version: { type: "string" } } }) } } } };
   paths["/v1/coverage"] = { get: { operationId: "get_coverage", tags: ["service"], summary: "Endpoint coverage and limitations", "x-coverage": "service", responses: { "200": { description: "Reference inventory, including excluded routes", content: json({ type: "object" }) }, "429": error } } };
+  for (const [path, entry] of Object.entries(paths)) {
+    if (path === "/health") continue;
+    const operation = (entry as { get: { responses: Record<string, unknown> } }).get;
+    operation.responses["401"] = { ...error, description: "Missing, invalid, expired or revoked API key" };
+    operation.responses["429"] = { ...error, description: "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.", headers: quotaHeaders };
+    operation.responses["503"] ??= { ...error, description: "Service temporarily unavailable; retry later" };
+  }
   const bsFields = ["totalEquity", "equityCapital", "reserves", "liabilities", "equityAndLiabilities", "assets", "capitalWorkInProgress", "inventories", "tradeReceivables", "cashAndCashEquivalents", "tradePayables", "longTermBorrowings", "shortTermBorrowings", "currentAssets", "noncurrentAssets", "currentLiabilities", "noncurrentLiabilities"];
   const cfFields = ["cashFlowsFromOperatingActivities", "cashFlowsFromInvestingActivities", "cashFlowsFromFinancingActivities", "netCashFlow"];
   const statementRow = (fields: string[]) => ({ type: "object", required: ["header", "year", ...fields], properties: { header: { type: "string" }, year: { type: "integer", nullable: true }, ...Object.fromEntries(fields.map((f) => [f, { type: "number", nullable: true, description: "INR (rupees); null when not exposed by the source." }])) } });
   const financials = { type: "object", required: ["symbol", "financials"], properties: { symbol: { type: "string" }, financials: { type: "array", items: { oneOf: [{ $ref: "#/components/schemas/ProfitLossRow" }, { $ref: "#/components/schemas/BalanceSheetRow" }, { $ref: "#/components/schemas/CashFlowRow" }] } } } };
   const CorporateActionHistory = { oneOf: ["bonus", "split", "rights"].map((kind) => ({ type: "object", required: ["symbol", kind], properties: { symbol: { type: "string" }, [kind]: { type: "array", items: { type: "object", required: ["date", "action"], properties: { date: { type: "string", format: "date", nullable: true }, action: { type: "string", nullable: true } } } } } })) };
   return {
-    openapi: "3.0.3", info: { title: "Ledgerline Stock Market API", version: "1.2.0", description: "Indian company financials, ownership, corporate actions, and market information for your applications. Coverage varies by dataset; unavailable datasets and query variants return HTTP 501. Historical market prices are not included." },
+    openapi: "3.0.3", info: { title: "Ledgerline Stock Market API", version: "1.2.0", description: "Indian company financials, ownership, corporate actions, and market information for your applications. Coverage varies by dataset; unavailable datasets and query variants return HTTP 501. Historical market prices are not included. Send a valid API key; the default allowance is 10 requests per minute per account, shared across all its keys." },
+    security: [{ apiKey: [] }],
     servers: [{ url: origin, description: "API server (configure your running instance)" }],
     tags: [{ name: "personal", description: "Company and market resources" }, { name: "enterprise", description: "Batches of up to 25 symbols; unsupported streaming and all-market variants are explicit" }, { name: "legacy", description: "Original data envelopes" }, { name: "service", description: "Health and coverage" }],
     externalDocs: { description: "Source and coverage notes", url: "https://www.screener.in/" },

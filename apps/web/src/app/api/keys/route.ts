@@ -6,6 +6,7 @@ import { auth } from "@stock-market/auth";
 import { apiKey, createId, db } from "@stock-market/db";
 import { decryptApiKey, encryptApiKey } from "@/lib/api-key-crypto";
 import { getUsagePolicy } from "@/lib/usage-policy";
+import { parseKeyCreation } from "@/lib/key-expiration";
 
 async function currentUser() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -20,13 +21,10 @@ export async function GET() {
   const keys = await db.select({
     id: apiKey.id,
     name: apiKey.name,
-    prefix: apiKey.prefix,
     encryptedSecret: apiKey.encryptedSecret,
-    lastUsedAt: apiKey.lastUsedAt,
-    expiresAt: apiKey.expiresAt,
     createdAt: apiKey.createdAt,
+    expiresAt: apiKey.expiresAt,
     revokedAt: apiKey.revokedAt,
-    requestLimit: apiKey.requestLimit,
   }).from(apiKey).where(eq(apiKey.userId, current.id));
   const visibleKeys = keys.map(({ encryptedSecret, ...key }) => ({
     ...key,
@@ -40,23 +38,22 @@ export async function POST(request: Request) {
   if (!current) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   if (!current.profileCompleted) return NextResponse.json({ error: "Complete your profile before managing API keys" }, { status: 403 });
 
-  const body = await request.json().catch(() => ({})) as { name?: string };
-  const name = body.name?.trim();
-  if (!name || name.length > 80) {
-    return NextResponse.json({ error: "A name between 1 and 80 characters is required" }, { status: 400 });
+  let input: ReturnType<typeof parseKeyCreation>;
+  try {
+    input = parseKeyCreation(await request.json());
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid key settings." }, { status: 400 });
   }
+  const { name, expiresAt } = input;
 
   const secret = `sm_live_${randomBytes(24).toString("hex")}`;
-  const prefix = secret.slice(0, 16);
-  const policy = await getUsagePolicy();
   await db.insert(apiKey).values({
-    id: createId(), userId: current.id, name, prefix,
+    id: createId(), userId: current.id, name, expiresAt,
     keyHash: createHash("sha256").update(secret).digest("hex"),
     encryptedSecret: encryptApiKey(secret),
-    requestLimit: policy.requestLimit,
     createdAt: new Date(),
   });
-  return NextResponse.json({ key: secret, prefix, name }, { status: 201 });
+  return NextResponse.json({ key: secret, name, expiresAt }, { status: 201, headers: { "Cache-Control": "no-store" } });
 }
 
 export async function DELETE(request: Request) {

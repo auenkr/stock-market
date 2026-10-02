@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { URL as NodeURL } from "node:url";
 import axios, { AxiosError } from "axios";
-import { createApp } from "./server.js";
+import { createTestApp as createApp } from "./test-app.js";
 import { ScreenerProvider } from "./screener-provider.js";
 
 const fixture = readFileSync(new NodeURL("./fixtures/company.html", import.meta.url), "utf8");
@@ -58,7 +58,7 @@ test("legacy routes use Worker bindings for every source request and keep the re
       const companySchema = spec.components.schemas.LegacyCompanyData;
       assert.deepEqual(Object.keys(fullBody.data).sort(), Object.keys(companySchema.properties).sort());
       assert.deepEqual(fullBody.data.metrics, []); assert.equal(companySchema.properties.metrics.maxItems, 0);
-      assert(full.headers.get("X-Request-ID")); assert.equal(full.headers.get("Cache-Control"), "private, max-age=900");
+      assert(full.headers.get("X-Request-ID")); assert.equal(full.headers.get("Cache-Control"), "no-store");
       const extracted = await app.request(`${prefix}/extract?endpoint=/company/ACME/consolidated/&type=ratios`, {}, bindings);
       assert.equal(extracted.status, 200); assert.equal(extracted.headers.get("X-Cache"), "HIT");
       assertEnvelope(`${prefix}/extract`, await extracted.json<any>());
@@ -121,7 +121,7 @@ test("company-data requires companyUrl and documents the original source path", 
     const app = createApp();
     for (const prefix of ["/api", "/v1"]) {
       for (const query of ["", "?companyUrl=", "?companyUrl=%20", "?symbol=RELIANCE", "?endpoint=/company/RELIANCE/", "?companyUrl=https://example.com/company/ACME/", "?companyUrl=//example.com/company/ACME/", "?companyUrl=/company/../ACME/", "?companyUrl=/company/id/not-a-number/", "?companyUrl=/api/company/search/", "?companyUrl=/company/ACME/%3Fx=1"]) {
-        assert.equal((await app.request(`${prefix}/company-data${query}`)).status, 400, query);
+        assert.equal((await app.request(`${prefix}/company-data${query}`, { headers: { "X-API-Key": crypto.randomUUID() } })).status, 400, query);
       }
     }
     assert.equal(calls, 0);
@@ -145,7 +145,7 @@ test("company-data preserves ID, standalone, consolidated and ampersand company 
     for (const prefix of ["/api", "/v1"]) {
       for (const companyUrl of ["/company/id/1286218/", "/company/id/1286218/consolidated/", "/company/ACME/", "/company/ACME/consolidated/", "/company/GVT&D/", "/company/M%26M/consolidated/"]) {
         const query = new URLSearchParams({ companyUrl });
-        const response = await app.request(`${prefix}/company-data?${query}`, {}, { BASE_URL: "https://path-test.example", COOKIE: "" });
+        const response = await app.request(`${prefix}/company-data?${query}`, { headers: { "X-API-Key": crypto.randomUUID() } }, { BASE_URL: "https://path-test.example", COOKIE: "" });
         assert.equal(response.status, 200, companyUrl);
         assert(urls.includes(new URL(companyUrl, "https://path-test.example").href), companyUrl);
       }
@@ -162,6 +162,8 @@ test("company list returns original URLs without symbols and source-based pagina
     return { data: sourceHtml, status: 200, statusText: "OK", headers: {}, config };
   }, async () => {
     const app = createApp();
+    // Pagination and input cases must not consume one shared rate-limit bucket.
+    const request = (path: string) => app.request(path, { headers: { "X-API-Key": crypto.randomUUID() } });
     for (const prefix of ["/v1", "/api"]) {
       for (const [page, links, expectedNext] of [
         [1, '<div class="pagination"><a href="?page=2">Next</a><a href="?page=8">Last</a></div>', 2],
@@ -170,7 +172,7 @@ test("company list returns original URLs without symbols and source-based pagina
       ] as const) {
         const rows = directory.replace('/company/ACME/', '/company/ACME/consolidated/');
         sourceHtml = rows + links;
-        const response = await app.request(`${prefix}/list-of-company?page=${page}`);
+        const response = await request(`${prefix}/list-of-company?page=${page}`);
         assert.equal(response.status, 200);
         const body = await response.json<any>();
         assert.equal(body.data[0].url, "/company/ACME/consolidated/");
@@ -185,17 +187,17 @@ test("company list returns original URLs without symbols and source-based pagina
       }
       // A full final page must not imply that another page exists.
       sourceHtml = directory.repeat(100);
-      const full = await (await app.request(`${prefix}/list-of-company?page=4`)).json<any>();
+      const full = await (await request(`${prefix}/list-of-company?page=4`)).json<any>();
       assert.equal(full.meta.count, 100);
       assert.equal(full.meta.isNextPageAvailable, false);
       assert.equal(full.meta.nextPage, null);
       sourceHtml = directory.replace('/company/ACME/', '/company/id/1286218/');
-      const special = await (await app.request(`${prefix}/list-of-company`)).json<any>();
+      const special = await (await request(`${prefix}/list-of-company`)).json<any>();
       assert.equal(special.data[0].url, "/company/id/1286218/");
       assert(!("symbol" in special.data[0]));
       const callsBefore = calls;
       for (const page of ["0", "-1", "1.5", "abc", "9007199254740992"]) {
-        assert.equal((await app.request(`${prefix}/list-of-company?page=${page}`)).status, 400);
+        assert.equal((await request(`${prefix}/list-of-company?page=${page}`)).status, 400);
       }
       assert.equal(calls, callsBefore);
     }

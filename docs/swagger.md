@@ -24,7 +24,7 @@ Update the source contract and adapter together, then regenerate. Do not manuall
 
 ## Server selection
 
-Generated Swagger defaults to `http://localhost:8787`. Set `PUBLIC_URL` when generating for a different documented server. For the web request runner, `NEXT_PUBLIC_API_URL` overrides the default at build time; the server field can also be edited per session. Requests are made only when **Send request** is clicked. Optional API keys are kept in component memory, omitted from copied cURL examples, and not persisted by the docs UI. They remain development quota identifiers until validation is connected.
+Generated Swagger defaults to `http://localhost:8787`. Set `PUBLIC_URL` when generating for a different documented server. For the web request runner, `NEXT_PUBLIC_API_URL` overrides the default at build time; the server field can also be edited per session. Requests are made only when **Send request** is clicked. API keys are kept in component memory, referenced through environment variables in copied examples, and not persisted by the docs UI. Data requests require a valid dashboard-issued key; all keys belonging to an account share its default 10-request/minute allowance. Health and OpenAPI are public.
 
 Response examples are synthetic schema illustrations, explicitly labeled, not live observations. The request runner displays actual HTTP status and response data from the selected server. Legacy operations declare `x-timeout-ms: 60000`; the runner uses this allowance for slow full-company/schedule requests instead of aborting them after 15 seconds. Each individual upstream request still has its own 15-second source timeout. The development web page and downloadable contract do not prove that a production API has been deployed.
 

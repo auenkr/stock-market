@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { parseEnv } from "node:util";
 import { createRequire } from "node:module";
+import { createHash } from "node:crypto";
 import { root, run } from "./dev.mjs";
 
 const app = process.argv[2];
@@ -12,6 +13,9 @@ if (app === "api") {
   const bindings = {
     BASE_URL: process.env.BASE_URL ?? "https://www.screener.in",
     COOKIE: process.env.COOKIE ?? "",
+    ACCOUNT_SERVICE_URL: process.env.ACCOUNT_SERVICE_URL ?? `http://localhost:${process.env.WEB_PORT ?? "3001"}/api/internal/account-access`,
+    ACCOUNT_SERVICE_SECRET: process.env.ACCOUNT_SERVICE_SECRET ?? (process.env.BETTER_AUTH_SECRET
+      ? createHash("sha256").update(`${process.env.BETTER_AUTH_SECRET}:account-access-v1`).digest("hex") : ""),
     PUBLIC_URL: process.env.PUBLIC_URL ?? `http://localhost:${process.env.API_PORT ?? 8787}`,
   };
   try { Object.assign(bindings, parseEnv(readFileSync(resolve(cwd, ".dev.vars"), "utf8"))); }

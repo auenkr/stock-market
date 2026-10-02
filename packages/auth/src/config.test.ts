@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { betterAuth } from "better-auth";
 import { memoryAdapter } from "better-auth/adapters/memory";
+import { hashPassword } from "better-auth/crypto";
 import { createAuthOptions } from "./config.js";
 
 test("Google is enabled only with both credentials and auth origins follow the web port", () => {
@@ -131,16 +132,33 @@ test("Google OAuth sends new users to onboarding, preserves returnees, and keeps
   assert.equal(database.user.length, 1);
 });
 
-test("email signup also starts incomplete even if the caller sends a forged completion flag", async () => {
-  const options = createAuthOptions({ BETTER_AUTH_SECRET: "test-secret-with-at-least-thirty-two-characters" });
-  const auth = betterAuth({
-    ...options, database: memoryAdapter({ user: [], session: [], account: [], verification: [] }),
-    rateLimit: { enabled: false }, logger: { disabled: true },
-  });
-  const response = await auth.handler(new Request(`${options.baseURL}/api/auth/sign-up/email`, {
-    method: "POST", headers: { "content-type": "application/json", origin: options.baseURL },
-    body: JSON.stringify({ name: "Ada", email: "ada@example.com", password: "test-password-for-signup", profileCompleted: true }),
-  }));
-  assert.equal(response.status, 200);
-  assert.equal((await response.json() as { user: { profileCompleted: boolean } }).user.profileCompleted, false);
+test("password sign-in works only in dev and public password signup stays disabled", async () => {
+  const password = "test-development-password";
+  const passwordHash = await hashPassword(password);
+  for (const environment of ["dev", "production", "staging", undefined]) {
+    const options = createAuthOptions({ ENVIRONMENT: environment, BETTER_AUTH_SECRET: "test-secret-with-at-least-thirty-two-characters" });
+    assert.equal(options.emailAndPassword.enabled, environment === "dev");
+    const now = new Date();
+    const auth = betterAuth({
+      ...options, database: memoryAdapter({
+        user: [{ id: "dev-user", name: "Dev", email: "dev@ledgerline.test", emailVerified: true, profileCompleted: true, createdAt: now, updatedAt: now }],
+        account: [{ id: "dev-account", userId: "dev-user", accountId: "dev-user", providerId: "credential", password: passwordHash, createdAt: now, updatedAt: now }],
+        session: [], verification: [],
+      }),
+      rateLimit: { enabled: false }, logger: { disabled: true },
+    });
+    const response = await auth.handler(new Request(`${options.baseURL}/api/auth/sign-in/email`, {
+      method: "POST", headers: { "content-type": "application/json", origin: options.baseURL },
+      body: JSON.stringify({ email: "dev@ledgerline.test", password }),
+    }));
+    if (environment === "dev") {
+      assert.equal(response.status, 200);
+      assert.equal((await auth.api.getSession({ headers: new Headers({ cookie: cookies(response) }) }))?.user.id, "dev-user");
+    } else assert.equal(response.status, 400);
+    const signup = await auth.handler(new Request(`${options.baseURL}/api/auth/sign-up/email`, {
+      method: "POST", headers: { "content-type": "application/json", origin: options.baseURL },
+      body: JSON.stringify({ name: "Ada", email: "ada@example.com", password }),
+    }));
+    assert.equal(signup.status, 400);
+  }
 });

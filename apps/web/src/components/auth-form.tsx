@@ -4,14 +4,35 @@ import Link from "next/link";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 
-export function AuthForm({ mode, googleEnabled, initialError = "" }: {
+export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError = "" }: {
   mode: "login" | "signup";
   googleEnabled: boolean;
+  devEnabled?: boolean;
   initialError?: string;
 }) {
   const [error, setError] = useState(initialError);
-  const [pending, setPending] = useState<"google" | null>(null);
+  const [pending, setPending] = useState<"google" | "dev" | null>(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const isLogin = mode === "login";
+
+  async function signInDev(event: React.FormEvent) {
+    event.preventDefault();
+    setError("");
+    setPending("dev");
+    try {
+      const result = await authClient.signIn.email({
+        email: `${username.trim().toLowerCase()}@ledgerline.test`, password, callbackURL: "/dashboard",
+      });
+      if (result.error) {
+        setError(result.error.message || "Could not sign in.");
+        setPending(null);
+      } else window.location.assign("/dashboard");
+    } catch {
+      setError("Could not connect. Please try again.");
+      setPending(null);
+    }
+  }
 
   async function continueWithGoogle() {
     setError("");
@@ -34,7 +55,7 @@ export function AuthForm({ mode, googleEnabled, initialError = "" }: {
   }
 
   return <main className="auth-page"><section className="auth-card">
-    <Link className="brand" href="/"><span className="brand-mark">ll</span> ledgerline</Link>
+    <Link className="brand" href="/"><span className="brand-mark">LL</span>Ledgerline</Link>
     <div className="card">
       <span className="eyebrow">Developer console</span>
       <h1>{isLogin ? "Welcome back." : "Start building."}</h1>
@@ -43,6 +64,14 @@ export function AuthForm({ mode, googleEnabled, initialError = "" }: {
         <GoogleMark />{pending === "google" ? "Connecting to Google…" : isLogin ? "Continue with Google" : "Sign up with Google"}
       </button>
       {!googleEnabled && <p className="auth-hint subtle">Google authentication is currently unavailable.</p>}
+      {devEnabled && isLogin && <>
+        <div className="auth-divider"><span>Development login</span></div>
+        <form className="form" onSubmit={signInDev}>
+          <label className="field-label" htmlFor="dev-username">Username<input id="dev-username" className="input" autoComplete="username" required value={username} onChange={(event) => setUsername(event.target.value)} disabled={pending !== null} /></label>
+          <label className="field-label" htmlFor="dev-password">Password<input id="dev-password" className="input" type="password" autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} disabled={pending !== null} /></label>
+          <button className="button secondary" type="submit" disabled={pending !== null}>{pending === "dev" ? "Signing in…" : "Sign in with password"}</button>
+        </form>
+      </>}
       {error && <div className="error" role="alert">{error}</div>}
       <p className="subtle" style={{ marginBottom: 0 }}>{isLogin ? "New here?" : "Already have an account?"} <Link className="text-button" href={isLogin ? "/signup" : "/signin"}>{isLogin ? "Create an account" : "Sign in"}</Link></p>
     </div>

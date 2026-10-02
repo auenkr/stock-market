@@ -3,8 +3,13 @@
   "info": {
     "title": "Ledgerline Stock Market API",
     "version": "1.2.0",
-    "description": "Indian company financials, ownership, corporate actions, and market information for your applications. Coverage varies by dataset; unavailable datasets and query variants return HTTP 501. Historical market prices are not included."
+    "description": "Indian company financials, ownership, corporate actions, and market information for your applications. Coverage varies by dataset; unavailable datasets and query variants return HTTP 501. Historical market prices are not included. Send a valid API key; the default allowance is 10 requests per minute per account, shared across all its keys."
   },
+  "security": [
+    {
+      "apiKey": []
+    }
+  ],
   "servers": [
     {
       "url": "http://localhost:8787",
@@ -4279,6 +4284,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -4299,7 +4323,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4474,6 +4498,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -4494,7 +4537,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4668,6 +4711,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -4688,7 +4750,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4862,6 +4924,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -4882,7 +4963,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5083,6 +5164,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -5103,7 +5203,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5304,6 +5404,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -5324,7 +5443,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5464,6 +5583,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -5484,7 +5622,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5624,6 +5762,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -5644,7 +5801,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5784,6 +5941,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -5804,7 +5980,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5944,6 +6120,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -5964,7 +6159,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6184,6 +6379,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -6204,7 +6418,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6424,6 +6638,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -6444,7 +6677,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6616,6 +6849,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -6636,7 +6888,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6808,6 +7060,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -6828,7 +7099,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6984,6 +7255,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -7004,7 +7294,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7160,6 +7450,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -7180,7 +7489,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7354,6 +7663,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -7374,7 +7702,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7548,6 +7876,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -7568,7 +7915,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7772,6 +8119,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -7792,7 +8158,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7996,6 +8362,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -8016,7 +8401,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8219,6 +8604,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -8239,7 +8643,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8442,6 +8846,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -8462,7 +8885,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8665,6 +9088,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -8685,7 +9127,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8888,6 +9330,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -8908,7 +9369,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9089,6 +9550,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -9109,7 +9589,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9290,6 +9770,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -9310,7 +9809,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9491,6 +9990,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -9511,7 +10029,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9692,6 +10210,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -9712,7 +10249,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9829,6 +10366,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -9849,7 +10405,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9966,6 +10522,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -9986,7 +10561,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10103,6 +10678,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -10123,7 +10717,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10240,6 +10834,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -10260,7 +10873,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10377,6 +10990,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -10397,7 +11029,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10514,6 +11146,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -10534,7 +11185,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10735,6 +11386,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -10755,7 +11425,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10956,6 +11626,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -10976,7 +11665,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11118,6 +11807,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -11138,7 +11846,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11280,6 +11988,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -11300,7 +12027,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11488,6 +12215,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -11508,7 +12254,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11696,6 +12442,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -11716,7 +12481,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11904,6 +12669,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -11924,7 +12708,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12112,6 +12896,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -12132,7 +12935,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12320,6 +13123,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -12340,7 +13162,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12528,6 +13350,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -12548,7 +13389,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12722,6 +13563,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -12742,7 +13602,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12916,6 +13776,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -12936,7 +13815,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13124,6 +14003,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -13144,7 +14042,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13332,6 +14230,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -13352,7 +14269,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13494,6 +14411,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -13514,7 +14450,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13656,6 +14592,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -13676,7 +14631,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13893,6 +14848,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -13913,7 +14887,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14130,6 +15104,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -14150,7 +15143,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14350,6 +15343,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -14370,7 +15382,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14570,6 +15582,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -14590,7 +15621,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14764,6 +15795,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -14784,7 +15834,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14958,6 +16008,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -14978,7 +16047,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15174,6 +16243,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -15194,7 +16282,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15390,6 +16478,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -15410,7 +16517,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15606,6 +16713,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -15626,7 +16752,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -15822,6 +16948,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -15842,7 +16987,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16038,6 +17183,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -16058,7 +17222,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16254,6 +17418,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -16274,7 +17457,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16470,6 +17653,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -16490,7 +17692,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16686,6 +17888,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -16706,7 +17927,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16838,6 +18059,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -16858,7 +18098,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -16990,6 +18230,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -17010,7 +18269,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17138,6 +18397,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -17158,7 +18436,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17286,6 +18564,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -17306,7 +18603,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17423,6 +18720,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -17443,7 +18759,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17560,6 +18876,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -17580,7 +18915,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17777,6 +19112,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -17797,7 +19151,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -17994,6 +19348,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -18014,7 +19387,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18211,6 +19584,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -18231,7 +19623,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18428,6 +19820,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -18448,7 +19859,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18642,6 +20053,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -18662,7 +20092,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -18902,6 +20332,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -18922,7 +20371,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19104,6 +20553,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -19124,7 +20592,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19290,6 +20758,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -19310,7 +20797,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19534,6 +21021,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -19554,7 +21060,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -19777,6 +21283,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -19797,7 +21322,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20020,6 +21545,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -20040,7 +21584,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20231,6 +21775,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -20251,7 +21814,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20403,6 +21966,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -20423,7 +22005,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20631,6 +22213,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -20651,7 +22252,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -20859,6 +22460,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -20879,7 +22499,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21073,6 +22693,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -21093,7 +22732,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21301,6 +22940,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -21321,7 +22979,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21473,6 +23131,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -21493,7 +23170,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21667,6 +23344,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -21687,7 +23383,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -21814,6 +23510,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Source resource not found",
             "headers": {
@@ -21834,7 +23549,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22034,6 +23749,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "headers": {
@@ -22054,7 +23788,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22099,6 +23833,25 @@
           },
           "502": {
             "description": "Data could not be retrieved; retry later.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22235,6 +23988,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "headers": {
@@ -22255,7 +24027,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22300,6 +24072,25 @@
           },
           "502": {
             "description": "Data could not be retrieved; retry later.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22390,6 +24181,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "headers": {
@@ -22410,7 +24220,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22455,6 +24265,25 @@
           },
           "502": {
             "description": "Data could not be retrieved; retry later.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22545,6 +24374,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "headers": {
@@ -22565,7 +24413,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22610,6 +24458,25 @@
           },
           "502": {
             "description": "Data could not be retrieved; retry later.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22713,6 +24580,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "headers": {
@@ -22733,7 +24619,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22778,6 +24664,25 @@
           },
           "502": {
             "description": "Data could not be retrieved; retry later.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22881,6 +24786,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "headers": {
@@ -22901,7 +24825,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -22946,6 +24870,25 @@
           },
           "502": {
             "description": "Data could not be retrieved; retry later.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23056,6 +24999,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "headers": {
@@ -23076,7 +25038,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23121,6 +25083,25 @@
           },
           "502": {
             "description": "Data could not be retrieved; retry later.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23231,6 +25212,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "headers": {
@@ -23251,7 +25251,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23296,6 +25296,25 @@
           },
           "502": {
             "description": "Data could not be retrieved; retry later.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23467,6 +25486,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "headers": {
@@ -23487,7 +25525,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23532,6 +25570,25 @@
           },
           "502": {
             "description": "Data could not be retrieved; retry later.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23703,6 +25760,25 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Resource not found",
             "headers": {
@@ -23723,7 +25799,7 @@
             }
           },
           "429": {
-            "description": "Request allowance exceeded. Wait for Retry-After before retrying.",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -23784,6 +25860,25 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -23795,6 +25890,7 @@
           "service"
         ],
         "summary": "Service health",
+        "security": [],
         "x-coverage": "service",
         "responses": {
           "200": {
@@ -23840,8 +25936,52 @@
               }
             }
           },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "429": {
-            "description": "Request failed",
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "Seconds until retry, when the quota bucket is exhausted."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",

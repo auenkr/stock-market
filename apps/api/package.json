@@ -4,20 +4,24 @@
   "type": "module",
   "scripts": {
     "test": "node --import tsx --test src/*.test.ts",
-    "build": "esbuild src/server.ts --bundle --conditions=source --format=esm --platform=browser --target=es2022 --outfile=../../dist/apps/api/server.js",
+    "build": "esbuild src/server.ts --bundle --conditions=source,workerd --external:node:* --external:cloudflare:* --format=esm --platform=browser --target=es2022 --outfile=../../dist/apps/api/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "dev": "node ../../scripts/dev-app.mjs api",
-    "deploy:api": "wrangler deploy"
+    "deploy:api": "wrangler deploy",
+    "test:integration": "node tests/run.mjs integration",
+    "test:performance": "node tests/run.mjs performance"
   },
   "dependencies": {
     "@stock-market/common": "workspace:*",
     "@stock-market/scraper": "workspace:*",
     "axios": "^1.13.1",
-    "hono": "^4.13.7"
+    "hono": "^4.13.7",
+    "postgres": "^3.4.9"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260926.1",
     "esbuild": "^0.28.1",
-    "wrangler": "^4.141.0"
+    "wrangler": "^4.141.0",
+    "@stock-market/db": "workspace:*"
   }
 }

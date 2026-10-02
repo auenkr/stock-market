@@ -4,7 +4,8 @@ import test from "node:test";
 import { URL as NodeURL } from "node:url";
 import axios from "axios";
 import { GetCompanyData } from "@stock-market/scraper/helper/getCompanyData";
-import { createApp } from "./server.js";
+import { createTestApp as createApp } from "./test-app.js";
+import { createApp as createRuntimeApp } from "./server.js";
 import { endpointCatalog, type Schema } from "./endpoint-catalog.js";
 import { responseSchemas } from "./reference-schemas.js";
 import { ScreenerProvider } from "./screener-provider.js";
@@ -104,13 +105,15 @@ test("ratio percentages become fractions and cumulative metrics use three annual
 
 test("invalid input and unsupported variations are explicit and never fetch a source unnecessarily", async () => {
   const { app, requests } = setup();
+  // Keep validation cases independent of the separately tested minute quota.
+  const request = (path: string) => app.request(path, { headers: { "X-API-Key": crypto.randomUUID() } });
   for (const path of ["/v1/financials/ACME", "/v1/financials/ACME?statement_type=x&statement_code=pl&period=annual", "/v1/corp-announcements?from_date=2024-02-30", "/v1/corp-announcements?from_date=2024-05-02&to_date=2024-05-01", "/v1/stock-symbols?page=-1", "/v1/company-data?symbol=foo%2F%2F", "/v1/quote?symbol=..", "/v1/company-profile/ACME?period=annual"]) {
-    assert.equal((await app.request(path)).status, 400, path);
+    assert.equal((await request(path)).status, 400, path);
   }
   assert.equal(requests.length, 0);
-  for (const path of ["/v1/quote", "/v1/financials/ACME?statement_type=c&statement_code=bs&period=quarterly", "/v1/ratios/ACME?statement_type=s&ratio_type=li", "/enterprise/api/quotes?symbol=ACME&stream=true"]) assert.equal((await app.request(path)).status, 501, path);
-  assert.equal((await app.request("/v1/stock-search?group=sector&value=Widgets")).status, 200);
-  assert.equal((await app.request("/v1/extract?endpoint=/company/ACME/&type=price-history")).status, 400);
+  for (const path of ["/v1/quote", "/v1/financials/ACME?statement_type=c&statement_code=bs&period=quarterly", "/v1/ratios/ACME?statement_type=s&ratio_type=li", "/enterprise/api/quotes?symbol=ACME&stream=true"]) assert.equal((await request(path)).status, 501, path);
+  assert.equal((await request("/v1/stock-search?group=sector&value=Widgets")).status, 200);
+  assert.equal((await request("/v1/extract?endpoint=/company/ACME/&type=price-history")).status, 400);
   assert(validCompanyPath("/company/id/123/consolidated/")); assert(!validCompanyPath("/company/ACME/../../admin/"));
 });
 
@@ -152,7 +155,7 @@ test("legacy public company requests disable market-history source downloads", a
 
 test("OpenAPI contains responses and resolves schemas for every active reference path; history is absent", async () => {
   const { app } = setup(); const schema = await (await app.request("/openapi.json")).json<any>();
-  assert.equal(schema.openapi, "3.0.3"); assert.equal(schema.security, undefined);
+  assert.equal(schema.openapi, "3.0.3"); assert.deepEqual(schema.security, [{ apiKey: [] }]); assert.deepEqual(schema.paths["/health"].get.security, []);
   for (const contract of endpointCatalog) {
     if (contract.status === "excluded") assert.equal(schema.paths[contract.path], undefined, contract.path);
     else { assert(schema.paths[contract.path]?.get?.responses?.["501"], contract.path); assert(schema.components.schemas[contract.response.$ref!.split("/").at(-1)!]); }
@@ -160,10 +163,9 @@ test("OpenAPI contains responses and resolves schemas for every active reference
   const coverage = await (await app.request("/v1/coverage")).json<any>(); assert.equal(coverage.endpoints.length, 62);
 });
 
-test("rate limiting applies to compatibility routes and leaves health available", async () => {
-  const { app } = setup();
-  for (let i = 0; i < 60; i++) assert.equal((await app.request("/v1/coverage", { headers: { "X-API-Key": "quota-test" } })).status, 200);
-  const blocked = await app.request("/api/v1/company-profile/ACME", { headers: { "X-API-Key": "quota-test" } });
-  assert.equal(blocked.status, 429); assert(blocked.headers.get("retry-after"));
+test("account quota failures include retry timing and leave health available", async () => {
+  const app = createRuntimeApp(undefined, async () => ({ status: "limited", retryAfter: 42 }));
+  const blocked = await app.request("/api/v1/company-profile/ACME");
+  assert.equal(blocked.status, 429); assert.equal(blocked.headers.get("retry-after"), "42");
   assert.equal((await app.request("/health")).status, 200);
 });

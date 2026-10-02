@@ -57,20 +57,28 @@ export const verification = pgTable("verification", {
 export const usagePolicy = pgTable("usage_policy", {
   id: text("id").primaryKey(),
   title: text("title").notNull().default("Usage policy"),
-  description: text("description").notNull().default("Your API keys include the request allowance shown below."),
-  requestLimit: integer("request_limit").notNull().default(60),
+  description: text("description").notNull().default("Your account's API keys share the request allowance shown below."),
+  requestLimit: integer("request_limit").notNull().default(10),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const apiKey = pgTable("api_key", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
-  prefix: text("prefix").notNull(),
   keyHash: text("key_hash").notNull().unique(),
   encryptedSecret: text("encrypted_secret"),
-  lastUsedAt: timestamp("last_used_at"),
   expiresAt: timestamp("expires_at"),
-  createdAt: timestamp("created_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
   revokedAt: timestamp("revoked_at"),
-  requestLimit: integer("request_limit").notNull().default(60),
+});
+
+export const accountUsage = pgTable("account_usage", {
+  userId: text("user_id").primaryKey().references(() => user.id, { onDelete: "cascade" }),
+  windowStartedAt: timestamp("window_started_at").notNull().defaultNow(),
+  requestCount: integer("request_count").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

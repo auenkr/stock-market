@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": { "config": "", "css": "src/styles.css", "baseColor": "neutral", "cssVariables": true },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@stock-market/ui/components",
+    "ui": "@stock-market/ui/components",
+    "utils": "@stock-market/ui/lib/utils",
+    "lib": "@stock-market/ui/lib",
+    "hooks": "@stock-market/ui/hooks"
+  }
+}

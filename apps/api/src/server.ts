@@ -10,8 +10,9 @@ import { createCompatibilityApi, defaultProvider, validCompanyPath, type Provide
 import { openApi } from "./openapi.js";
 import { apiDocsHtml } from "./api-docs.js";
 import { DataError } from "./screener-provider.js";
+import { authorizeAccountRequest, type AuthorizeRequest, type AccountAccessBindings } from "@stock-market/db/account-access";
 
-type ApiBindings = Bindings;
+type ApiBindings = Bindings & AccountAccessBindings;
 
 type CachedCompanyData = {
   value: Awaited<ReturnType<typeof GetCompanyData>>;
@@ -23,11 +24,11 @@ const cacheTtlMs = 15 * 60 * 1000;
 const extractTypes = ["quarterly", "profit-loss", "balance-sheet", "cash-flow", "ratios", "shareholding", "peers"] as const;
 type ExtractType = (typeof extractTypes)[number];
 
-function requestKey(c: { req: { header: (name: string) => string | undefined } }): string {
-  return c.req.header("x-api-key") || c.req.header("authorization")?.replace(/^Bearer\s+/i, "") || c.req.header("cf-connecting-ip") || "anonymous";
+function requestKey(c: { req: { header: (name: string) => string | undefined } }): string | undefined {
+  return c.req.header("x-api-key")?.trim() || c.req.header("authorization")?.match(/^Bearer\s+(\S+)$/i)?.[1];
 }
 
-function errorResponse(c: any, message: string, status: 400 | 401 | 404 | 429 | 500) {
+function errorResponse(c: any, message: string, status: 400 | 401 | 404 | 429 | 500 | 503) {
   return c.json({
     error: message,
     code: message.toUpperCase().replace(/\s+/g, "_"),
@@ -63,9 +64,8 @@ async function getCachedCompanyData(endpoint: string, source: SourceOptions) {
   return { value, hit: false };
 }
 
-export function createApp(providerFactory: ProviderFactory = defaultProvider) {
+export function createApp(providerFactory: ProviderFactory = defaultProvider, authorize: AuthorizeRequest = authorizeAccountRequest) {
   const app = new Hono<{ Bindings: ApiBindings }>();
-  const rateLimit = new Map<string, { count: number; resetAt: number }>();
   app.use("*", async (c, next) => {
     const requestId = crypto.randomUUID();
     const startedAt = Date.now();
@@ -84,27 +84,17 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider) {
   app.use("*", cors({ origin: "*", allowHeaders: ["Content-Type", "Authorization", "X-API-Key"], exposeHeaders: ["X-Request-ID", "X-Page", "X-Next-Page", "X-Data-Coverage", "X-Data-Source", "Retry-After"] }));
   app.use("*", async (c, next) => {
     if (!["/v1/", "/v2/", "/api/", "/enterprise/"].some((prefix) => c.req.path.startsWith(prefix))) return next();
-    const key = requestKey(c);
-    const limit = 60;
-    const now = Date.now();
-    const current = rateLimit.get(key);
-    if (!current && rateLimit.size >= 5000) {
-      for (const [id, entry] of rateLimit) if (entry.resetAt <= now) rateLimit.delete(id);
-      if (rateLimit.size >= 5000) return errorResponse(c, "Rate limit exceeded", 429);
-    }
-    const bucket = !current || current.resetAt <= now
-      ? { count: 0, resetAt: now + 60_000 }
-      : current;
-
-    bucket.count += 1;
-    rateLimit.set(key, bucket);
-    if (rateLimit.size > 5000) for (const [id, entry] of rateLimit) if (entry.resetAt <= now) rateLimit.delete(id);
-    if (Number.isFinite(limit) && limit > 0 && bucket.count > limit) {
-      c.header("Retry-After", String(Math.ceil((bucket.resetAt - now) / 1000)));
+    const access = await authorize(requestKey(c), c.env ?? {});
+    c.header("Cache-Control", "no-store");
+    if (access.status === "unauthorized") return errorResponse(c, "Invalid or expired API key", 401);
+    if (access.status === "unavailable") return errorResponse(c, "Account usage service unavailable", 503);
+    if (access.status === "limited") {
+      c.header("Retry-After", String(access.retryAfter));
       return errorResponse(c, "Rate limit exceeded", 429);
     }
 
     await next();
+    c.header("Cache-Control", "no-store");
   });
 
   const api = new Hono<{ Bindings: ApiBindings }>();

@@ -7,6 +7,7 @@ const options = createAuthOptions(process.env);
 
 export const authBaseURL = options.baseURL;
 export const isGoogleAuthEnabled = Boolean(options.socialProviders.google);
+export const isDevAuthEnabled = options.emailAndPassword.enabled;
 
 export const auth = betterAuth({
   ...options,
