@@ -3384,7 +3384,7 @@
             "example": "reliance"
           }
         ],
-        "operationId": "get__v1_company_search",
+        "operationId": "get_v1_company_search",
         "tags": [
           "Search"
         ],
@@ -3641,7 +3641,7 @@
             "example": "reliance"
           }
         ],
-        "operationId": "get__api_company_search",
+        "operationId": "get_api_company_search",
         "tags": [
           "Search"
         ],
@@ -3899,7 +3899,7 @@
             "example": 1
           }
         ],
-        "operationId": "get__v1_list_of_company",
+        "operationId": "get_v1_list_of_company",
         "tags": [
           "Search"
         ],
@@ -4161,7 +4161,7 @@
             "example": 1
           }
         ],
-        "operationId": "get__api_list_of_company",
+        "operationId": "get_api_list_of_company",
         "tags": [
           "Search"
         ],
@@ -12945,7 +12945,7 @@
         "summary": "List upcoming IPOs",
         "description": "data and ipos contain the same upcoming IPO rows. Supplementary GMP failures leave gmp_percentage null while the primary source remains available.",
         "parameters": [],
-        "operationId": "get__v1_list_of_ipo",
+        "operationId": "get_v1_list_of_ipo",
         "tags": [
           "Internal"
         ],
@@ -13161,7 +13161,7 @@
         "summary": "List upcoming IPOs",
         "description": "data and ipos contain the same upcoming IPO rows. Supplementary GMP failures leave gmp_percentage null while the primary source remains available.",
         "parameters": [],
-        "operationId": "get__api_list_of_ipo",
+        "operationId": "get_api_list_of_ipo",
         "tags": [
           "Internal"
         ],
@@ -13388,7 +13388,7 @@
             "example": "/company/id/1286218/"
           }
         ],
-        "operationId": "get__v1_company_data",
+        "operationId": "get_v1_company_data",
         "tags": [
           "Internal"
         ],
@@ -13624,7 +13624,7 @@
             "example": "/company/id/1286218/"
           }
         ],
-        "operationId": "get__api_company_data",
+        "operationId": "get_api_company_data",
         "tags": [
           "Internal"
         ],
@@ -13879,7 +13879,7 @@
             "example": "profit-loss"
           }
         ],
-        "operationId": "get__v1_extract",
+        "operationId": "get_v1_extract",
         "tags": [
           "Internal"
         ],
@@ -14176,7 +14176,7 @@
             "example": "profit-loss"
           }
         ],
-        "operationId": "get__api_extract",
+        "operationId": "get_api_extract",
         "tags": [
           "Internal"
         ],
