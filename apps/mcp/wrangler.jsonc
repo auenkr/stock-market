@@ -7,6 +7,10 @@
     "command": "pnpm build:worker",
     "watch_dir": ["src"]
   },
+  "keep_vars": true,
+  "observability": {
+    "enabled": false
+  },
   "vars": {
     "STOCK_MARKET_API_URL": "https://stock-market-api.auenkr.com"
   },

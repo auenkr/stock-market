@@ -11,6 +11,10 @@
       "../../packages/scraper/src"
     ]
   },
+  "keep_vars": true,
+  "observability": {
+    "enabled": true
+  },
   "vars": {
     "BASE_URL": "https://www.screener.in",
     "PUBLIC_URL": "https://stock-market-api.auenkr.com",
