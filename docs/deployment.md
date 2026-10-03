@@ -21,6 +21,12 @@ Add these repository secrets under **Settings → Secrets and variables → Acti
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account hosting the API and MCP Workers. |
 | `NPM_TOKEN` | npm granular access token with write access to both `@auenkr/legerline-cli` and `@auenkr/legerline-mcp`, and permission to publish non-interactively (bypass 2FA). |
 
+The API and MCP Wrangler configs set `keep_vars: true`, so dashboard-managed
+non-secret variables that are not declared in those configs survive a deploy.
+Variables declared in each Wrangler `vars` block remain repository-managed;
+update the config if those values should change. Worker secrets are preserved
+by Wrangler deployments independently of this setting.
+
 ## Web: Vercel
 
 Configure the Vercel project's **Root Directory** as `apps/web`, its framework as
