@@ -1,10 +1,15 @@
 # Production deployment
 
-`.github/workflows/deploy-prod.yml` runs on every push to `prod`. It can also be
-started from the Actions tab with **Run workflow**, selecting the `prod` branch.
+`.github/workflows/deploy-prod.yml` runs on every push to `main`. It can also be
+started from the Actions tab with **Run workflow**, selecting the `main` branch.
 Independent jobs deploy the API, hosted MCP server, and both public npm packages
 (CLI and MCP). Vercel deploys the web app through its existing GitHub integration.
 Production runs are serialized so deployments do not overlap.
+
+Protect `main` in the GitHub repository settings: require pull requests before
+merging and disallow direct pushes (including administrator bypass if direct
+pushes must be impossible). The deployment workflow only deploys commits on
+`main`; it does not enforce branch protection.
 
 ## GitHub Actions secrets
 
@@ -19,7 +24,7 @@ Add these repository secrets under **Settings → Secrets and variables → Acti
 ## Web: Vercel
 
 Configure the Vercel project's **Root Directory** as `apps/web`, its framework as
-Next.js, and its production branch as `prod`. Keep access to files outside the
+Next.js, and its production branch as `main`. Keep access to files outside the
 root directory enabled for the workspace packages. The build command is defined
 in `apps/web/vercel.json`.
 
@@ -87,7 +92,7 @@ The public CLI is `@auenkr/legerline-cli` in `apps/legerline-cli` (the separate
 `apps/cli` package is an internal scraping tool). The MCP npm package is
 `@auenkr/legerline-mcp` in `apps/mcp`, published independently of its hosted Worker.
 Bump the `version` in `apps/legerline-cli/package.json` or `apps/mcp/package.json`
-before pushing a release of that package to `prod`. Update the lockfile with
+before merging a release of that package to `main`. Update the lockfile with
 `pnpm install` if needed.
 
 The workflow builds and publishes versions that are absent from npm. Already
