@@ -1,5 +1,7 @@
 import type { Database } from "@stock-market/db";
-import type { ApiPlan } from "@stock-market/db/plans";
+import type { ApiPlan, PaidApiPlan } from "@stock-market/db/plans";
+
+type BillingProducts = Record<PaidApiPlan, string>;
 
 export type BillingEnvironment = Record<string, string | undefined>;
 export type CustomerState = {
@@ -14,27 +16,29 @@ export type CustomerState = {
 export function billingConfig(env: BillingEnvironment) {
   const token = env.POLAR_ACCESS_TOKEN?.trim();
   const secret = env.POLAR_WEBHOOK_SECRET?.trim();
+  const basic = env.POLAR_BASIC_PRODUCT_ID?.trim();
   const personal = env.POLAR_PERSONAL_PRODUCT_ID?.trim();
   const professional = env.POLAR_PROFESSIONAL_PRODUCT_ID?.trim();
   const environment = env.POLAR_ENVIRONMENT?.trim() || "sandbox";
   if (!["sandbox", "production"].includes(environment)) throw new Error("POLAR_ENVIRONMENT must be sandbox or production");
-  if (![token, secret, personal, professional].some(Boolean)) return null;
-  if (!token || !secret || !personal || !professional) throw new Error("Set all four Polar credentials/product IDs to enable billing");
-  if (personal === professional) throw new Error("Polar plan product IDs must be different");
-  return { token, secret, personal, professional, environment: environment as "sandbox" | "production" };
+  if (![token, secret, basic, personal, professional].some(Boolean)) return null;
+  if (!token || !secret || !basic || !personal || !professional) throw new Error("Set both Polar credentials and all three product IDs to enable billing");
+  if (new Set([basic, personal, professional]).size !== 3) throw new Error("Polar plan product IDs must be different");
+  return { token, secret, basic, personal, professional, environment: environment as "sandbox" | "production" };
 }
 
-export function resolveEntitlement(state: CustomerState, products: { personal: string; professional: string }, now = new Date()) {
+export function resolveEntitlement(state: CustomerState, products: BillingProducts, now = new Date()) {
   let plan: ApiPlan = "free";
   let expiresAt: Date | null = null;
   for (const subscription of state.active_subscriptions) {
-    const tier = subscription.product_id === products.professional ? "professional" : subscription.product_id === products.personal ? "personal" : null;
+    const tier = (["basic", "personal", "professional"] as const).find((plan) => products[plan] === subscription.product_id);
     if (!tier || subscription.recurring_interval !== "month") continue;
     if (subscription.status !== "active" && !(subscription.status === "canceled" && subscription.cancel_at_period_end)) continue;
     const end = new Date(subscription.current_period_end);
     const expires = subscription.ends_at ? new Date(Math.min(end.getTime(), new Date(subscription.ends_at).getTime())) : end;
     if (!Number.isFinite(expires.getTime()) || expires <= now) continue;
-    if (plan === "free" || (tier === "professional" && plan === "personal") || (tier === plan && expires > expiresAt!)) {
+    const rank = { free: 0, basic: 1, personal: 2, professional: 3 };
+    if (rank[tier] > rank[plan] || (tier === plan && expires > expiresAt!)) {
       plan = tier; expiresAt = expires;
     }
   }
@@ -42,7 +46,7 @@ export function resolveEntitlement(state: CustomerState, products: { personal: s
 }
 
 /** A timestamp guard makes duplicate and out-of-order webhook delivery harmless. */
-export async function saveCustomerState(sql: Database["$client"], state: CustomerState, timestamp: string, products: { personal: string; professional: string }) {
+export async function saveCustomerState(sql: Database["$client"], state: CustomerState, timestamp: string, products: BillingProducts) {
   if (!state || typeof state.id !== "string" || !Array.isArray(state.active_subscriptions)) throw new Error("Invalid customer state");
   if (!state.external_id) return;
   const updatedAt = new Date(timestamp);

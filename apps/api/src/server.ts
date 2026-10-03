@@ -1,4 +1,5 @@
 import { legacyEndpointTiers } from "./endpoint-catalog.js";
+import { hasDetailedData } from "@stock-market/db/plans";
 import type { AccessVariables } from "./endpoint-access.js";
 import { Hono, type Context } from "hono";
 import { cors } from "hono/cors";
@@ -98,8 +99,8 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
 
     c.set("apiPlan", access.plan ?? "free");
     const legacyResource = c.req.path.match(/^\/(?:v1|api)\/([^/]+)$/)?.[1];
-    if ((access.plan ?? "free") === "free" && legacyResource && legacyEndpointTiers[legacyResource as keyof typeof legacyEndpointTiers] === "paid") {
-      return c.json({ error: "This endpoint requires a paid plan", code: "PAID_PLAN_REQUIRED", docs: "/v1/coverage" }, 403);
+    if (!hasDetailedData(access.plan ?? "free") && legacyResource && legacyEndpointTiers[legacyResource as keyof typeof legacyEndpointTiers] === "paid") {
+      return c.json({ error: "This endpoint requires Personal or Professional", code: "PAID_PLAN_REQUIRED", docs: "/v1/coverage" }, 403);
     }
     await next();
     c.header("Cache-Control", "no-store");
@@ -205,7 +206,7 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
   app.get("/swagger.json", (c) => c.json(documentedSpec(c)));
   app.get("/plugin/openapi.json", (c) => {
     const spec = documentedSpec(c) as unknown as Parameters<typeof agentOpenApi>[0];
-    return c.json(agentOpenApi(spec, { title: "Ledgerline Stock Market API for AI agents", version: "1.2.0", description: "Indian company financials for ChatGPT and AI agents. Discovery-first: search or list companies, then pass the returned symbol to company endpoints. No internal or market-history endpoints are exposed." }));
+    return c.json(agentOpenApi(spec, { title: "Ledgerline Stock Market API for AI agents", version: "1.2.0", description: `${spec.info?.description ?? "Indian company financials for AI agents."} Discovery-first: search or list companies, then pass the returned symbol to company endpoints. No internal or market-history endpoints are exposed.` }));
   });
   app.get("/.well-known/ai-plugin.json", (c) => {
     const origin = new URL(c.req.url).origin;

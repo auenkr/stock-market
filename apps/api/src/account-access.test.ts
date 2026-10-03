@@ -24,6 +24,10 @@ test("accounts share an atomic quota across keys and API instances; other accoun
   const users = [randomUUID(), randomUUID()];
   const keys = [secret(), secret(), secret(), secret(), secret()];
   try {
+    // Fresh CI databases have the schema but no usage-policy rows yet.
+    if (process.env.INTEGRATION_DATABASE_URL === url) {
+      await sql`INSERT INTO usage_policy (id, request_limit) VALUES ('default', 10) ON CONFLICT (id) DO NOTHING`;
+    }
     for (const id of users) await sql`INSERT INTO "user" (id, name, email, profile_completed, created_at, updated_at)
       VALUES (${id}, 'Quota test', ${`${id}@quota-test.invalid`}, true, now(), now())`;
     for (let i = 0; i < keys.length; i++) await sql`

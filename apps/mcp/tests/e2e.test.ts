@@ -1,11 +1,13 @@
 import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { startServer } from "../src/index.js";
+import { setup } from "../../api/tests/harness.js";
 
 const webUrl = process.env.WEB_URL ?? "http://localhost:3000";
-const apiUrl = process.env.STOCK_MARKET_API_URL ?? "http://localhost:3002";
+let apiUrl = process.env.STOCK_MARKET_API_URL ?? "http://localhost:3002";
 const email = process.env.DEV_EMAIL ?? "dev@auenkr.com";
 const password = process.env.DEV_PASSWORD ?? "test-development-password";
 
@@ -20,9 +22,18 @@ async function devStackReady() {
 
 let mcpPort = 0;
 let mcp: Awaited<ReturnType<typeof startServer>>;
+let fixture: Awaited<ReturnType<typeof setup>> | undefined;
+
+before(async () => {
+  if (process.env.INTEGRATION_DATABASE_URL) {
+    fixture = await setup({ seedUsagePolicy: false });
+    apiUrl = fixture.urls[0]!;
+  }
+});
 
 after(async () => {
   mcp?.close();
+  await fixture?.cleanup();
 });
 
 test("e2e: dev stack through MCP tools", { timeout: 120000 }, async (t) => {
@@ -50,16 +61,18 @@ test("e2e: dev stack through MCP tools", { timeout: 120000 }, async (t) => {
     await client.connect(new StreamableHTTPClientTransport(new URL(`http://127.0.0.1:${mcpPort}/mcp`), { requestInit: { headers: { Authorization: `Bearer ${key}` } } }));
     const { tools } = await client.listTools();
     assert.equal(tools.length, 13);
-    const search = await client.callTool({ name: "search_companies", arguments: { q: "reliance" } });
+    const search = await client.callTool({ name: "search_companies", arguments: { q: fixture ? "acme" : "reliance" } });
     assert.equal(search.isError, undefined);
-    assert.match((search.content as { text: string }[])[0]!.text, /RELIANCE|reliance/);
-    const profile = await client.callTool({ name: "company_profile", arguments: { symbol: "/company/RELIANCE/consolidated/" } });
+    assert.match((search.content as { text: string }[])[0]!.text, fixture ? /ACME|Acme/ : /RELIANCE|reliance/);
+    // Use a Hobby-allowed symbol; the local source still returns synthetic Acme data.
+    const symbol = "/company/RELIANCE/consolidated/";
+    const profile = await client.callTool({ name: "company_profile", arguments: { symbol } });
     assert.equal(profile.isError, undefined);
-    assert.match((profile.content as { text: string }[])[0]!.text, /Reliance/);
-    const denied = await client.callTool({ name: "profit_loss", arguments: { symbol: "/company/RELIANCE/consolidated/" } });
+    assert.match((profile.content as { text: string }[])[0]!.text, fixture ? /Acme/ : /Reliance/);
+    const denied = await client.callTool({ name: "profit_loss", arguments: { symbol } });
     if (denied.isError) assert.match((denied.content as { text: string }[])[0]!.text, /403|required|plan/i);
     await client.close();
   } finally {
-    // The dev key is a disposable test credential; deleting is optional and not exposed publicly.
+    if (fixture) await fixture.sql`DELETE FROM api_key WHERE key_hash = ${createHash("sha256").update(key).digest("hex")}`;
   }
 });

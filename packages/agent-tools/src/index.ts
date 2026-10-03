@@ -38,6 +38,7 @@ type Operation = {
 };
 
 type Spec = {
+  "x-access-policy"?: unknown;
   paths: Record<string, { get?: Operation } | undefined> | undefined;
   tags?: { name: string; description?: string }[];
   components?: { securitySchemes?: unknown };
@@ -84,6 +85,7 @@ export function agentOpenApi(spec: Spec, info: { title: string; version: string;
     openapi: "3.0.3",
     info: { ...info, contact: { name: "Stock Market API", url: "https://stock-market-api.auenkr.com" } },
     servers: spec.servers,
+    "x-access-policy": spec["x-access-policy"],
     security: [{ apiKey: [] }],
     tags: (spec.tags ?? []).filter((tag) => categories.has(tag.name)),
     paths,
@@ -97,10 +99,12 @@ export function agentPluginManifest(origin: string, tools: AgentTool[]) {
     schema_version: "v1",
     name_for_human: "Ledgerline Stock Market API",
     name_for_model: "stock_market_api",
-    description_for_human: "Search Indian companies and retrieve profiles, peer comparison, financial statements, ratios, and shareholding from public filings.",
+    description_for_human: "Indian company research for AI tools. Hobby is free, no card. Basic ₹199/month; Personal ₹399/month; Professional ₹2,499/month. Data availability varies.",
     description_for_model:
       "Use these tools to research Indian listed companies. Always call get_v1_company_search (or get_v1_list_of_company) first and pass the returned symbol unchanged to company endpoints. " +
-      "symbol values are URL paths like /company/RELIANCE/consolidated/. Amounts are INR rupees; statement values may be null when unavailable. Free tier supports only RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN. " +
+      "symbol values are URL paths like /company/RELIANCE/consolidated/. Amounts are INR rupees; statement values may be null when unavailable. Hobby is free without a credit card (10 requests/minute) and supports free endpoints for RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN. " +
+      "Basic costs INR 199/month (60/minute) and supports all companies on free endpoints. Detailed statements, documents, ratios and shareholding require Personal at INR 399/month (300/minute) or Professional at INR 2499/month (500/minute). Only Professional permits commercial use. " +
+      "The same account, key and shared rate allowance cover REST, ChatGPT and MCP. On PAID_PLAN_REQUIRED recommend Personal or Professional, not Basic. On FREE_COMPANY_RESTRICTED recommend Basic or higher. " +
       "Never invent symbols; report null fields as unavailable rather than guessing.",
     auth: { type: "api_key", in: "header", name: "X-API-Key" },
     api: { type: "openapi", url: `${origin}/plugin/openapi.json` },

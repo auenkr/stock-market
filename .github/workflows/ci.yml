@@ -1,0 +1,146 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, edited, labeled]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  NX_DAEMON: "false"
+  NX_SKIP_NX_CACHE: "true"
+  NEXT_TELEMETRY_DISABLED: "1"
+  ENVIRONMENT: dev
+  BETTER_AUTH_SECRET: ci-auth-secret-for-isolated-tests-only
+  API_KEY_ENCRYPTION_SECRET: ci-key-secret-for-isolated-tests-only
+
+jobs:
+  approval:
+    name: Approve CI
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      # Only a new approval-label event or an explicit manual run authorizes CI.
+      # A label left on the PR does not authorize a later commit or base change.
+      - name: Require explicit approval for this run
+        run: |
+          node --input-type=module <<'JS'
+          import { readFileSync } from 'node:fs';
+          const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
+          const approved = process.env.GITHUB_EVENT_NAME === 'workflow_dispatch'
+            || (event.action === 'labeled' && event.label?.name === 'ci-approved');
+          if (!approved) {
+            console.error('CI requires approval. Apply the ci-approved label (remove and reapply it for a new commit), or use Run workflow for the selected branch.');
+            process.exit(1);
+          }
+          JS
+      - name: Verify approver has repository write access
+        run: |
+          permission=$(gh api "repos/$GITHUB_REPOSITORY/collaborators/$GITHUB_ACTOR/permission" --jq '.permission')
+          case "$permission" in
+            admin|maintain|write) echo "CI approved; starting tests and builds." ;;
+            *) echo "CI approval requires repository write access." >&2; exit 1 ;;
+          esac
+
+  tests:
+    name: Tests
+    needs: approval
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: stock_test
+          POSTGRES_PASSWORD: stock_test
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U stock_test -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://stock_test:stock_test@127.0.0.1:5432/postgres
+    steps:
+      # Default checkout tests GitHub's PR merge commit, including the base branch.
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Create fixture environment and install tmux
+        run: |
+          cp sample.env .env
+          sudo apt-get update
+          sudo apt-get install --yes tmux
+      - name: Install Chromium and browser dependencies
+        run: pnpm --filter @stock-market/web exec playwright install --with-deps chromium
+      - name: Docs, types, API, auth, keys, integration and browser E2E
+        run: pnpm test:ci
+      - name: MCP protocol tests
+        run: pnpm --filter @auenkr/legerline-mcp exec node --import tsx --test tests/mcp.test.ts
+      - name: Integration and performance test types
+        run: pnpm exec tsc -p apps/api/tests/tsconfig.json --noEmit
+      - name: Production documentation and theme browser tests
+        env:
+          ENVIRONMENT: production
+        run: pnpm --filter @stock-market/web exec playwright test tests/browser/theme.spec.ts tests/browser/api-explorer.spec.ts --output=test-results/production
+      - uses: grafana/setup-k6-action@v1
+        with:
+          k6-version: "2.0.0"
+      - name: Performance smoke
+        run: pnpm test:performance
+      - name: Shared account quota performance
+        env:
+          SCENARIO: quota
+        run: pnpm test:performance
+      - name: Upload browser traces and performance summaries
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            apps/web/test-results/
+            apps/web/playwright-report/
+            apps/api/tests/performance/results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  build:
+    name: Build
+    needs: approval
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      ENVIRONMENT: production
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Create build fixture environment
+        run: cp sample.env .env
+      - name: Build every workspace project
+        run: pnpm build
+      - name: Build MCP Cloudflare Worker
+        run: pnpm --filter @auenkr/legerline-mcp build:worker

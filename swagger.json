@@ -3,7 +3,7 @@
   "info": {
     "title": "Ledgerline Stock Market API",
     "version": "1.2.0",
-    "description": "Indian company financials, ownership, corporate actions, and market information for your applications. Coverage varies by dataset; unavailable datasets and query variants return HTTP 501. Historical market prices are not included. Basic users can access free endpoints; company-specific requests are limited to RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN (top five by market capitalization at 2026-10-01 close). Discovery, calendars, and service endpoints remain accessible. Personal and Professional subscribers can access all documented endpoints and companies, subject to source coverage. Only Professional permits commercial use. Send a valid API key. Allowances are 10 requests per minute for Basic, 300 for Personal, and 500 for Professional, shared across all account keys. Paid subscriptions are billed monthly."
+    "description": "Indian company financials, ownership, corporate actions, and market information for your applications. Coverage varies by dataset; unavailable datasets and query variants return HTTP 501. Historical market prices are not included. Hobby is free without a credit card: free endpoints for RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN (top five by market capitalization at 2026-10-01 close). Basic (₹199/month) unlocks all supported companies on free endpoints. Personal (₹399/month) and Professional (₹2,499/month) unlock detailed endpoints, subject to source coverage. Only Professional permits commercial use. Send a valid API key. Allowances are 10 requests per minute for Hobby, 60 for Basic, 300 for Personal, and 500 for Professional, shared across all account keys and REST/agent integrations. Paid subscriptions are billed monthly. Paid endpoint labels require Personal or Professional."
   },
   "x-access-policy": {
     "freeCompanies": [
@@ -17,9 +17,40 @@
     "asOf": "2026-10-01",
     "requestsPerMinute": {
       "free": 10,
+      "basic": 60,
       "personal": 300,
       "professional": 500
     },
+    "plans": {
+      "free": {
+        "name": "Hobby",
+        "monthlyPrice": 0,
+        "requestsPerMinute": 10,
+        "commercial": false
+      },
+      "basic": {
+        "name": "Basic",
+        "monthlyPrice": 199,
+        "requestsPerMinute": 60,
+        "commercial": false
+      },
+      "personal": {
+        "name": "Personal",
+        "monthlyPrice": 399,
+        "requestsPerMinute": 300,
+        "commercial": false
+      },
+      "professional": {
+        "name": "Professional",
+        "monthlyPrice": 2499,
+        "requestsPerMinute": 500,
+        "commercial": true
+      }
+    },
+    "detailedDataPlans": [
+      "personal",
+      "professional"
+    ],
     "commercialUse": [
       "professional"
     ],
@@ -3501,7 +3532,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -3758,7 +3789,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4020,7 +4051,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4282,7 +4313,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4512,7 +4543,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4742,7 +4773,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -4972,7 +5003,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5202,7 +5233,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5432,7 +5463,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5662,7 +5693,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -5892,7 +5923,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6122,7 +6153,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6352,7 +6383,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6582,7 +6613,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -6812,7 +6843,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7042,7 +7073,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7272,7 +7303,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7502,7 +7533,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7732,7 +7763,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -7962,7 +7993,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8192,7 +8223,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8422,7 +8453,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8652,7 +8683,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -8882,7 +8913,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9112,7 +9143,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9342,7 +9373,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9586,7 +9617,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -9830,7 +9861,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10060,7 +10091,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10290,7 +10321,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10534,7 +10565,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -10778,7 +10809,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11035,7 +11066,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11292,7 +11323,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11522,7 +11553,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -11752,7 +11783,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12031,7 +12062,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12310,7 +12341,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12563,7 +12594,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -12816,7 +12847,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13032,7 +13063,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13248,7 +13279,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13484,7 +13515,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -13720,7 +13751,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14017,7 +14048,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14314,7 +14345,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",
@@ -14517,7 +14548,7 @@
             }
           },
           "403": {
-            "description": "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)",
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
             "headers": {
               "X-Request-ID": {
                 "description": "Request identifier for correlating the response with API logs.",

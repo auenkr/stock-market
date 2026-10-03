@@ -1,5 +1,14 @@
 # Implementation progress
 
+## Four-tier launch pricing — 2026-10-03
+
+- Hobby is free without a credit card, Basic ₹199/month, Personal ₹399/month, and Professional ₹2,499/month. Existing `free` account IDs now display as Hobby; no existing account or verified subscription is replaced by the new migration.
+- Basic adds 60 requests/minute and all supported companies on free endpoints. Hobby stays at 10/minute for five companies; Personal and Professional retain 300/500 per-minute shared quotas and detailed-data access. Only Professional permits commercial use. Basic cannot bypass detailed-data gates through legacy aliases.
+- Updated public pricing, dashboard billing/key labels, terms, documentation, generated Swagger, and ChatGPT manifest/OpenAPI. Agent OpenAPI carries the same `x-access-policy` as the public contract; REST/ChatGPT/MCP share entitlements and usage.
+- Polar CLI sandbox: created Basic product and replaced catalog prices on the existing Personal/Professional product IDs. Verified actual sandbox checkout creation at all three expected INR base amounts, no trial. Applied `0011_four_tier_plans.sql` locally and started the updated dev stack in `tmux stock-market:pricing-dev`.
+- Verification: all 13 project typechecks; 38 API tests passed with 1 optional test skipped; 8 auth tests; 32 integration tests including migration preservation/repeatability and plugin metadata; 16 browser tests including all three paid lifecycles; generated-doc and diff checks. Mobile pricing has no horizontal overflow. Running local Worker plugin manifest/OpenAPI advertises the four plans.
+- The real sandbox purchase suite stopped before purchase because the supplied dev account already had an active subscription. It was preserved. New-price live purchase/webhook completion remains pending an unsubscribed testing account; isolated successful-payment/webhook lifecycles passed for all three plans.
+
 ## Identifier cleanup and dev-only Internal docs — 2026-10-03
 
 - Unified company identifiers across every API: company search/listing and upcoming IPOs return URL-valued `symbol`; older company-data/extraction, ownership, dividends and corporate actions accept it directly. Company-data returns `website` separately; extraction metadata uses `symbol`.

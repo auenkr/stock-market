@@ -27,7 +27,7 @@ async function access(request: APIRequestContext, key: string) {
   } });
   expect(response.status()).toBe(200); return response.json();
 }
-for (const plan of ["Personal", "Professional"] as const) {
+for (const plan of ["Basic", "Personal", "Professional"] as const) {
   test(`${plan} payment: decline, retry, verified activation, renewal failure/recovery, and revocation`, async ({ page, request }) => {
     test.setTimeout(60_000);
     const origin = "http://127.0.0.1:3105";
@@ -41,7 +41,7 @@ for (const plan of ["Personal", "Professional"] as const) {
     await expect(page).toHaveURL(/127\.0\.0\.1:\d+\/checkout\//);
     const gateway = new URL(page.url()).origin;
     await expect(page.getByRole("heading", { name: `Ledgerline ${plan.toLowerCase()}` })).toBeVisible();
-    await expect(page.getByText(plan === "Personal" ? "₹2,000 / month" : "₹5,000 / month", { exact: true })).toBeVisible();
+    await expect(page.getByText(`₹${{ Basic: "199", Personal: "399", Professional: "2,499" }[plan]} / month`, { exact: true })).toBeVisible();
     await page.getByLabel("Card number").fill("4000 0000 0000 0002");
     await page.getByLabel("Expiry").fill("12/30"); await page.getByLabel("CVC").fill("123");
     await page.getByRole("button", { name: "Subscribe now" }).click();
@@ -54,7 +54,7 @@ for (const plan of ["Personal", "Professional"] as const) {
     await expect(page.getByText(`Your current plan is ${plan}.`, { exact: false })).toBeVisible();
     expect((await access(request, key)).plan).toBe(plan.toLowerCase());
     await page.getByRole("link", { name: "API keys", exact: true }).click();
-    await expect(page.getByText(`${plan === "Personal" ? 300 : 500} requests / minute per account`, { exact: true })).toBeVisible();
+    await expect(page.getByText(`${{ Basic: 60, Personal: 300, Professional: 500 }[plan]} requests / minute per account`, { exact: true })).toBeVisible();
     const [before] = await db.$client`SELECT plan_expires_at FROM "user" WHERE id=${userId}`;
     const control = (path: string, data: unknown) => request.post(`${gateway}/__test/${path}`, { headers: { authorization: "Bearer test-polar-token" }, data });
     expect((await control("renew", { externalId: userId, paid: true })).status()).toBe(200);
@@ -68,6 +68,6 @@ for (const plan of ["Personal", "Professional"] as const) {
     expect((await control("revoke", { externalId: userId })).status()).toBe(200);
     expect((await access(request, key)).plan).toBe("free");
     await page.goto("/dashboard/billing");
-    await expect(page.getByText("Your current plan is Basic.", { exact: false })).toBeVisible();
+    await expect(page.getByText("Your current plan is Hobby.", { exact: false })).toBeVisible();
   });
 }

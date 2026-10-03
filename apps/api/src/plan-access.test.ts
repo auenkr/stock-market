@@ -3,7 +3,7 @@ import test from "node:test";
 import { createApp } from "./server.js";
 import { freeCompanySymbols } from "./endpoint-access.js";
 
-function setup(plan: "free" | "personal" | "professional") {
+function setup(plan: "free" | "basic" | "personal" | "professional") {
   const calls: { resource: string; symbol?: string }[] = [];
   const app = createApp(() => ({ execute: async (resource, query) => {
     calls.push({ resource, symbol: query.symbol }); return { body: { symbol: query.symbol } };
@@ -39,5 +39,24 @@ test("internal free resources stay available and paid users can access all compa
     const paid = setup(plan);
     for (const path of ["/v1/company-profile?symbol=/company/TCS/", "/v1/profit-loss?symbol=/company/ITC/consolidated/", "/v1/company-profile?symbol=/company/id/123/"]) assert.equal((await paid.app.request(path)).status, 200, path);
     assert(paid.calls.some((call) => call.symbol === "/company/TCS/"));
+  }
+});
+
+test("Basic unlocks companies but cannot bypass detailed-data gates through aliases", async () => {
+  const { app, calls } = setup("basic");
+  for (const prefix of ["/v1", "/api/v1"]) {
+    for (const resource of ["company-profile", "basic-financials", "peer-comparison"]) {
+      assert.equal((await app.request(`${prefix}/${resource}?symbol=/company/TCS/`)).status, 200);
+    }
+    for (const resource of ["profit-loss", "balance-sheet", "cash-flow", "ratios", "company-documents", "shareholding-pattern"]) {
+      const before = calls.length;
+      const response = await app.request(`${prefix}/${resource}?symbol=/company/TCS/`);
+      assert.equal(response.status, 403, resource);
+      assert.equal((await response.json<any>()).code, "PAID_PLAN_REQUIRED");
+      assert.equal(calls.length, before);
+    }
+  }
+  for (const path of ["/v1/company-data?symbol=/company/TCS/", "/api/company-data?symbol=/company/TCS/", "/api/extract?symbol=/company/TCS/&type=ratios"]) {
+    assert.equal((await app.request(path)).status, 403, path);
   }
 });

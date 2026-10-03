@@ -1,4 +1,5 @@
 import { Hono, type Context } from "hono";
+import { hasDetailedData, plans } from "@stock-market/db/plans";
 import { endpointCatalog, pagedResources, type EndpointContract } from "./endpoint-catalog.js";
 import { ScreenerProvider, DataError, type DataProvider, type DataQuery } from "./screener-provider.js";
 import { errorDetails, log } from "@stock-market/common/logger";
@@ -51,7 +52,7 @@ export function createCompatibilityApi(providerFactory: ProviderFactory = defaul
   const app = new Hono<{ Bindings: Bindings; Variables: AccessVariables }>();
   app.get("/v1/coverage", (c) => c.json({
     inspectedAt: "2026-10-03",
-    accessPolicy: { freeCompanies: freeCompanySymbols, rankedBy: "market-capitalization", asOf: freeCompaniesAsOf, requestsPerMinute: { free: 10, paid: 60 } },
+    accessPolicy: { freeCompanies: freeCompanySymbols, rankedBy: "market-capitalization", asOf: freeCompaniesAsOf, requestsPerMinute: Object.fromEntries(Object.entries(plans).map(([id, plan]) => [id, plan.requestsPerMinute])), plans },
     userJourney,
     endpoints: endpointCatalog.map(({ response: _, parameters: __, ...endpoint }) => ({ ...endpoint, useCase: endpointUseCase(endpoint.path).id, order: endpointOrder(endpoint.path) })),
   }));
@@ -62,7 +63,7 @@ export function createCompatibilityApi(providerFactory: ProviderFactory = defaul
       try {
         const query = validate(c, contract);
         const plan = c.get("apiPlan") ?? "free";
-        if (plan === "free" && contract.tier === "paid") throw new DataError("This endpoint requires a paid plan", 403, "PAID_PLAN_REQUIRED");
+        if (!hasDetailedData(plan) && contract.tier === "paid") throw new DataError("This endpoint requires Personal or Professional", 403, "PAID_PLAN_REQUIRED");
 
         if (query.symbol !== undefined && (!validCompanyPath(query.symbol) || c.req.queries("symbol")?.length !== 1)) throw new DataError("symbol must be a single company URL path", 400, "INVALID_QUERY");
         const symbols = query.symbol ? [query.symbol] : [];

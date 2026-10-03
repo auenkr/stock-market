@@ -1,13 +1,14 @@
 import { createHmac, randomUUID } from "node:crypto";
 
-export const productIds = { personal: "11111111-1111-4111-8111-111111111111", professional: "22222222-2222-4222-8222-222222222222" };
+export const productIds = { basic: "66666666-6666-4666-8666-666666666666", personal: "11111111-1111-4111-8111-111111111111", professional: "22222222-2222-4222-8222-222222222222" };
 export const webhookSecret = "billing-test-webhook-secret";
 export const billingTestEnvironment = {
   POLAR_ACCESS_TOKEN: "test-polar-token", POLAR_WEBHOOK_SECRET: webhookSecret,
+  POLAR_BASIC_PRODUCT_ID: productIds.basic,
   POLAR_PERSONAL_PRODUCT_ID: productIds.personal, POLAR_PROFESSIONAL_PRODUCT_ID: productIds.professional, POLAR_ENVIRONMENT: "sandbox",
 };
 
-export function customerState(userId: string, plan: "free" | "personal" | "professional", options: { status?: string; expires?: string; cancelAtPeriodEnd?: boolean; interval?: string } = {}) {
+export function customerState(userId: string, plan: "free" | "basic" | "personal" | "professional", options: { status?: string; expires?: string; cancelAtPeriodEnd?: boolean; interval?: string } = {}) {
   const now = new Date().toISOString();
   return {
     id: "33333333-3333-4333-8333-333333333333", external_id: userId, created_at: now, modified_at: now,
@@ -16,7 +17,7 @@ export function customerState(userId: string, plan: "free" | "personal" | "profe
     organization_id: "44444444-4444-4444-8444-444444444444", granted_benefits: [], active_meters: [],
     active_subscriptions: plan === "free" ? [] : [{
       id: "55555555-5555-4555-8555-555555555555", created_at: now, modified_at: now, metadata: {},
-      status: options.status || "active", amount: plan === "personal" ? 200000 : 500000, currency: "inr",
+      status: options.status || "active", amount: { basic: 19900, personal: 39900, professional: 249900 }[plan], currency: "inr",
       recurring_interval: options.interval || "month", current_period_start: now,
       current_period_end: options.expires || new Date(Date.now() + 86400_000 * 30).toISOString(),
       trial_start: null, trial_end: null, cancel_at_period_end: options.cancelAtPeriodEnd || false,

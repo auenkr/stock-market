@@ -1,5 +1,7 @@
 # API integration and performance tests
 
+GitHub Actions runs the isolated test suites, browser regressions, MCP checks, k6 smoke/quota, and production builds on PRs. See [CI setup](ci.md) for the testing environment, required merge checks, and optional external-service secrets.
+
 The tests exercise the existing API without changing routes, query parameters, authentication or response envelopes.
 
 ## Requirements and isolation
@@ -35,10 +37,10 @@ To use an existing **test PostgreSQL server**, set `TEST_DATABASE_URL` to an adm
 | Concurrency | Simultaneous source misses coalesce; two keys across two HTTP API instances atomically share 10/minute; another account remains independent; expired windows reset |
 | Signed account service | Actual dashboard route over HTTP, HMAC signature checks, stale timestamps, oversized/malformed bodies, real key lookup, bridge rejection and quota propagation |
 | Polar billing | Real Better Auth plugin checkout/portal, authenticated owner binding, supported monthly slugs, no client-controlled product/redirect/trial, and existing-subscription rejection |
-| Subscription lifecycle | Verified webhook signatures, malformed/unsigned/stale deliveries, duplicate/out-of-order events, upgrades, cancellation, past-due/revocation, automatic expiry, and 10/300/500 shared quotas |
-| Payment integration | Loopback Polar/Stripe substitute with real auth, checkout, signature verification, and quota storage: declined cards grant nothing, `4242 4242 4242 4242` retry activates only after verified payment webhooks, renewal extends expiry, failed renewal falls back to Basic, recovery reactivates, refunds alone cannot revoke, revocation returns to Basic, and duplicate deliveries are safe |
-| Payment browser (E2E) | Real browser against the loopback checkout form for both plans: declined card, `4242 4242 4242 4242` retry, activation, renewal failure/recovery, and revocation |
-| Live sandbox payments | Opt-in `pnpm test:payments:live` against the running dev app and Polar sandbox: real checkout for both plans with `4242 4242 4242 4242` (manual entry or saved-card reuse), paid-order receipt, webhook-driven activation, updated key allowance, then CLI revocation and Basic fallback. See [Polar setup](polar-setup.md). |
+| Subscription lifecycle | Verified webhook signatures, malformed/unsigned/stale deliveries, duplicate/out-of-order events, upgrades, cancellation, past-due/revocation, automatic expiry, and 10/60/300/500 shared quotas |
+| Payment integration | Loopback Polar/Stripe substitute with real auth, checkout, signature verification, and quota storage for all three paid plans: declined cards grant nothing, `4242 4242 4242 4242` retry activates only after verified payment webhooks, renewal extends expiry, failed renewal falls back to Hobby, recovery reactivates, refunds alone cannot revoke, revocation returns to Hobby, and duplicate deliveries are safe |
+| Payment browser (E2E) | Real browser against the loopback checkout form for Basic, Personal and Professional: correct new INR prices, declined card, `4242 4242 4242 4242` retry, activation, renewal failure/recovery, and revocation |
+| Live sandbox payments | Opt-in `pnpm test:payments:live` against the running dev app and Polar sandbox: real checkout for all three paid plans with `4242 4242 4242 4242` (manual entry or saved-card reuse), paid-order receipt, webhook-driven activation, updated key allowance, then CLI revocation and Hobby fallback. Requires the dev account to have no pre-existing subscription; setup preserves existing subscriptions. See [Polar setup](polar-setup.md). |
 | Signup consent | Required explicit acceptance, signed short-lived cookies, origin checks, server-recorded versions, and OAuth creation denied without consent |
 
 The suite sends requests over real loopback HTTP through Hono's production app, its normal middleware, real source provider/parsers, and PostgreSQL authorization. Source data comes from deterministic local HTML/JSON fixtures. The optional hard-coded Moneycontrol news request is replaced at the Axios network boundary to keep runs offline. IPO and market-wide feed fixtures include empty valid datasets; the existing source/parser tests provide richer fixture coverage (`pnpm test:api`).
@@ -75,7 +77,7 @@ The script defaults to `/company/ACME/` and `/company/DEMO/` fixture paths; set 
 
 Scenario configuration and lifecycle follow the [Grafana k6 scenario documentation](https://grafana.com/docs/k6/latest/using-k6/scenarios/) and [test lifecycle documentation](https://grafana.com/docs/k6/latest/using-k6/test-lifecycle/).
 
-## Web browser regressions and pre-push checks
+## Web browser regressions and CI checks
 
 Run `pnpm --filter @stock-market/web exec playwright install chromium` once, then `pnpm test:web`. Tests cover theme switching on `/`, `/documentation`, and `/docs`, persisted preferences, system dark mode, reduced motion, and unavailable View Transitions/storage. They also check smooth documentation anchor scrolling and that development and production builds use separate output directories, preventing missing client bundles and unresponsive controls.
 
@@ -85,6 +87,6 @@ Run **`pnpm test:e2e`** for the complete billing/signup browser suite. It create
 
 The test runner starts its own loopback server on port 3105 in a temporary window of the `stock-market` tmux session. It uses `.next-theme-tests`, then closes its window and restores Next's generated TypeScript inputs. The normal dev server uses `.next-dev`; production uses `.next`. Browser artifacts are ignored by Git.
 
-Run `pnpm hooks:install` once per checkout to enable the checked-in `.githooks/pre-push` hook. It runs `pnpm test:pre-push`: generated-doc checks, typechecks, API/auth/key tests, database integration tests, and the disposable-database E2E browser suite. It blocks pushes when any check fails. The hook is installed in the current checkout; cloned checkouts must install it too. Browser billing tests change only isolated test accounts and do not make external payments or send email.
+Run `pnpm test:ci` for generated-doc checks, typechecks, API/auth/key tests, database integration tests, and the disposable-database E2E browser suite. GitHub Actions runs this command plus MCP protocol tests, production browser checks, and k6 smoke/quota workloads. Git pushes do not run a hook. Browser billing tests change only isolated test accounts and do not make external payments or send email.
 
 Production uses one database connection per web instance, closes idle connections after five seconds, and rotates connections after a minute. Signed account-service checks use request-scoped connections that close in `finally`, since suspended Vercel instances can delay idle timers. Initial key reads retry temporary connection exhaustion before spending quota; writes are never retried. Account-service requests allow 30 seconds for queued quota checks. The live quota regression can be run with `ACCOUNT_TEST_API_URL=https://stock-market-api.auenkr.com node --env-file=.env --import tsx --test apps/api/src/account-access.test.ts`; its temporary test accounts and keys are deleted afterwards.

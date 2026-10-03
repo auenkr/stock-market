@@ -1,4 +1,5 @@
 import { freeCompanySymbols, freeCompaniesAsOf } from "./endpoint-access.js";
+import { plans } from "@stock-market/db/plans";
 import { endpointCatalog, pagedResources, legacyEndpointTiers } from "./endpoint-catalog.js";
 import { responseSchemas } from "./reference-schemas.js";
 import { coverageDetails } from "./coverage-details.js";
@@ -34,7 +35,7 @@ export function openApi(origin: string, environment?: string) {
       summary: endpoint.title, tags: [endpointUseCase(endpoint.path).title], description: coverageDetails[endpoint.resource] ?? endpoint.limitation,
       parameters, "x-tier": endpoint.tier, "x-api-style": endpoint.apiStyle, "x-coverage": endpoint.status, "x-resource": endpoint.resource, "x-canonical-path": endpoint.path, "x-alias": path !== endpoint.path,
       responses: { ...(endpoint.status === "partial" ? { "200": { description: "Source-backed subset. Missing fields are null; an empty list is not proof of a complete historical dataset.", headers: responseHeaders, content: json(response) } } : {}),
-        "403": { ...error, description: "Paid plan required or company outside the free top-five allowlist" }, "400": { ...error, description: "Invalid, missing or unknown parameter" }, "401": { ...error, description: "Missing, invalid, expired or revoked API key" }, "404": { ...error, description: "Source resource not found" },
+        "403": { ...error, description: "Personal or Professional required for detailed data, or company outside the Hobby top-five allowlist" }, "400": { ...error, description: "Invalid, missing or unknown parameter" }, "401": { ...error, description: "Missing, invalid, expired or revoked API key" }, "404": { ...error, description: "Source resource not found" },
         "429": { ...error, description: "Request allowance exceeded. Wait for Retry-After before retrying.", headers: quotaHeaders },
         "501": { ...error, description: "Dataset or requested variation is unavailable" }, "502": { ...error, description: "Data could not be retrieved" }, "503": { ...error, description: "Service temporarily unavailable; retry later" } },
     } };
@@ -56,14 +57,14 @@ export function openApi(origin: string, environment?: string) {
     operation["x-use-case"] = endpointUseCase(canonicalPath).id;
     operation["x-order"] = endpointOrder(canonicalPath);
     if (path === "/health") continue;
-    operation.responses["403"] = { ...error, description: "Paid plan required (PAID_PLAN_REQUIRED), or company outside the free allowlist (FREE_COMPANY_RESTRICTED)" };
+    operation.responses["403"] = { ...error, description: "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)" };
     operation.responses["401"] = { ...error, description: "Missing, invalid, expired or revoked API key" };
     operation.responses["429"] = { ...error, description: "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.", headers: quotaHeaders };
     operation.responses["503"] ??= { ...error, description: "Service temporarily unavailable; retry later" };
   }
   return visibleApiReference({
-    openapi: "3.0.3", info: { title: "Ledgerline Stock Market API", version: "1.2.0", description: "Indian company financials, ownership, corporate actions, and market information for your applications. Coverage varies by dataset; unavailable datasets and query variants return HTTP 501. Historical market prices are not included. Basic users can access free endpoints; company-specific requests are limited to RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN (top five by market capitalization at 2026-10-01 close). Discovery, calendars, and service endpoints remain accessible. Personal and Professional subscribers can access all documented endpoints and companies, subject to source coverage. Only Professional permits commercial use. Send a valid API key. Allowances are 10 requests per minute for Basic, 300 for Personal, and 500 for Professional, shared across all account keys. Paid subscriptions are billed monthly." },
-    "x-access-policy": { freeCompanies: freeCompanySymbols, rankedBy: "market-capitalization", asOf: freeCompaniesAsOf, requestsPerMinute: { free: 10, personal: 300, professional: 500 }, commercialUse: ["professional"], companyScopedResources: ["company-profile", "basic-financials", "peer-comparison"] },
+    openapi: "3.0.3", info: { title: "Ledgerline Stock Market API", version: "1.2.0", description: "Indian company financials, ownership, corporate actions, and market information for your applications. Coverage varies by dataset; unavailable datasets and query variants return HTTP 501. Historical market prices are not included. Hobby is free without a credit card: free endpoints for RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN (top five by market capitalization at 2026-10-01 close). Basic (₹199/month) unlocks all supported companies on free endpoints. Personal (₹399/month) and Professional (₹2,499/month) unlock detailed endpoints, subject to source coverage. Only Professional permits commercial use. Send a valid API key. Allowances are 10 requests per minute for Hobby, 60 for Basic, 300 for Personal, and 500 for Professional, shared across all account keys and REST/agent integrations. Paid subscriptions are billed monthly. Paid endpoint labels require Personal or Professional." },
+    "x-access-policy": { freeCompanies: freeCompanySymbols, rankedBy: "market-capitalization", asOf: freeCompaniesAsOf, requestsPerMinute: { free: plans.free.requestsPerMinute, basic: plans.basic.requestsPerMinute, personal: plans.personal.requestsPerMinute, professional: plans.professional.requestsPerMinute }, plans, detailedDataPlans: ["personal", "professional"], commercialUse: ["professional"], companyScopedResources: ["company-profile", "basic-financials", "peer-comparison"] },
     security: [{ apiKey: [] }],
     servers: [{ url: origin, description: "API server (configure your running instance)" }],
     tags: userJourney.map((group) => ({ name: group.title, description: group.description })),

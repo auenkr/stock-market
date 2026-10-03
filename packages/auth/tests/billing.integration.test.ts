@@ -76,7 +76,7 @@ test("authenticated checkout maps only monthly plan slugs, binds the owner, and 
   for (const body of [{ slug: "unknown" }, { products: [productIds.professional] }, { slug: "personal", success_url: "https://evil.invalid" }, { slug: "personal", reference_id: "another-user" }, { slug: "personal", allow_trial: true }]) {
     assert.equal((await post("/checkout", body)).status, 400);
   }
-  for (const plan of ["personal", "professional"] as const) {
+  for (const plan of ["basic", "personal", "professional"] as const) {
     const response = await post("/checkout", { slug: plan, redirect: false });
     assert.equal(response.status, 200, await response.clone().text());
     assert.equal((await response.json() as { url: string }).url, "https://sandbox.polar.sh/checkout/test");
@@ -150,10 +150,10 @@ test("verified webhook lifecycle upgrades, renews, cancels at period end, revoke
   assert.deepEqual(await authorize(), { status: "allowed", plan: "free" });
 });
 
-test("10/300/500 account quotas apply across two keys; expiry downgrades without another webhook", async () => {
+test("10/60/300/500 account quotas apply across two keys; expiry downgrades without another webhook", async () => {
   const secondKey = `sm_live_${randomBytes(24).toString("hex")}`;
   await db.$client`INSERT INTO api_key (id, user_id, name, key_hash) VALUES (${randomUUID()}, ${userId}, 'Second key', ${createHash("sha256").update(secondKey).digest("hex")})`;
-  for (const [plan, limit] of [["free", 10], ["personal", 300], ["professional", 500]] as const) {
+  for (const [plan, limit] of [["free", 10], ["basic", 60], ["personal", 300], ["professional", 500]] as const) {
     await db.$client`DELETE FROM account_usage WHERE user_id = ${userId}`;
     await db.$client`UPDATE "user" SET api_plan = ${plan}, plan_expires_at = now() + interval '1 month' WHERE id = ${userId}`;
     const decisions = await Promise.all(Array.from({ length: limit + 2 }, (_, i) => authorizeAccountRequest(i % 2 ? apiKey : secondKey, { DB_CONNECTION_URL: process.env.INTEGRATION_DATABASE_URL }, db.$client)));
@@ -207,5 +207,26 @@ test("billing migration upgrades legacy plans, preserves Basic limits, and is re
       const policies = await tx`SELECT id, request_limit FROM usage_policy ORDER BY request_limit`;
       assert.deepEqual(policies.map((row) => [row.id, row.request_limit]), [["default", 10], ["personal", 300], ["professional", 500]]);
     } finally { await tx`DROP SCHEMA billing_migration_test CASCADE`; }
+  });
+});
+
+test("four-tier migration preserves subscriptions, adds Basic, and is repeatable", async () => {
+  const migration = await readFile(new URL("../../db/migrations/0011_four_tier_plans.sql", import.meta.url), "utf8");
+  await db.$client.begin(async (tx) => {
+    await tx`CREATE SCHEMA four_tier_migration_test`;
+    try {
+      await tx`SET LOCAL search_path TO four_tier_migration_test`;
+      await tx`CREATE TABLE "user" (id text PRIMARY KEY, api_plan text NOT NULL DEFAULT 'free', plan_expires_at timestamptz, CONSTRAINT user_api_plan_check CHECK (api_plan IN ('free', 'personal', 'professional')))`;
+      await tx`CREATE TABLE usage_policy (id text PRIMARY KEY, request_limit integer NOT NULL)`;
+      await tx`INSERT INTO "user" VALUES ('hobby', 'free', NULL), ('subscriber', 'personal', now() + interval '1 month')`;
+      await tx`INSERT INTO usage_policy VALUES ('default', 10), ('personal', 300), ('professional', 500)`;
+      await tx.unsafe(migration);
+      await tx`INSERT INTO "user" VALUES ('basic-subscriber', 'basic', now() + interval '1 month')`;
+      await tx.unsafe(migration);
+      const users = await tx`SELECT id, api_plan, plan_expires_at > now() AS active FROM "user" ORDER BY id`;
+      assert.deepEqual(users.map((row) => [row.id, row.api_plan, row.active]), [["basic-subscriber", "basic", true], ["hobby", "free", null], ["subscriber", "personal", true]]);
+      const policies = await tx`SELECT id, request_limit FROM usage_policy ORDER BY request_limit`;
+      assert.deepEqual(policies.map((row) => [row.id, row.request_limit]), [["default", 10], ["basic", 60], ["personal", 300], ["professional", 500]]);
+    } finally { await tx`DROP SCHEMA four_tier_migration_test CASCADE`; }
   });
 });

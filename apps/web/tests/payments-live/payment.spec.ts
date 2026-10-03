@@ -35,10 +35,10 @@ test.beforeAll(async () => {
   userId = account!.id as string;
 });
 test.beforeEach(async () => {
+  keyName = `Live payment test ${randomUUID()}`;
   const current = await state();
   existingSubscriptions = new Set(current.active_subscriptions.map((subscription) => subscription.id));
-  expect(existingSubscriptions.size, "The dev customer must start on Basic; existing subscriptions are never removed by setup").toBe(0);
-  keyName = `Live payment test ${randomUUID()}`;
+  expect(existingSubscriptions.size, "The dev customer must start on Hobby; existing subscriptions are never removed by setup").toBe(0);
 });
 test.afterEach(async ({ request }) => {
   if (!userId) return;
@@ -46,7 +46,7 @@ test.afterEach(async ({ request }) => {
     const current = await state();
     for (const subscription of current.active_subscriptions) {
       if (existingSubscriptions.has(subscription.id)) continue;
-      expect([process.env.POLAR_PERSONAL_PRODUCT_ID, process.env.POLAR_PROFESSIONAL_PRODUCT_ID]).toContain(subscription.product_id);
+      expect([process.env.POLAR_BASIC_PRODUCT_ID, process.env.POLAR_PERSONAL_PRODUCT_ID, process.env.POLAR_PROFESSIONAL_PRODUCT_ID]).toContain(subscription.product_id);
       expect(sandboxOrganization()).toContain(current.organization_id);
       const revoked = spawnSync("polar", ["subscriptions", "revoke", subscription.id, "--confirm"], { env: cliEnvironment, encoding: "utf8", timeout: 30_000 });
       expect(revoked.status, `Sandbox subscription cleanup failed: ${revoked.stderr}`).toBe(0);
@@ -71,7 +71,7 @@ async function access(request: APIRequestContext, key: string) {
   expect(response.status()).toBe(200); return response.json();
 }
 
-for (const plan of ["Personal", "Professional"] as const) {
+for (const plan of ["Basic", "Personal", "Professional"] as const) {
   test(`real sandbox ${plan} payment: checkout, paid order, webhook activation, and cleanup`, async ({ page, request }) => {
     const origin = process.env.BETTER_AUTH_URL!;
     const login = await page.request.post("/api/auth/sign-in/email", { headers: { origin }, data: { email, password } });
@@ -120,11 +120,12 @@ for (const plan of ["Personal", "Professional"] as const) {
     expect(current.active_subscriptions).toHaveLength(1);
     expect(current.active_subscriptions[0]!.currency).toBe("inr");
     expect(current.active_subscriptions[0]!.recurring_interval).toBe("month");
+    expect(current.active_subscriptions[0]!.amount).toBe({ Basic: 19900, Personal: 39900, Professional: 249900 }[plan]);
     const orders = await page.request.get("/api/auth/customer/orders/list");
     expect(orders.status()).toBe(200);
     const receipt = await orders.json();
     expect(receipt.items.some((order: { status: string; paid?: boolean }) => order.status === "paid" || order.paid === true)).toBe(true);
     await page.getByRole("link", { name: "API keys", exact: true }).click();
-    await expect(page.getByText(`${plan === "Personal" ? 300 : 500} requests / minute per account`, { exact: true })).toBeVisible();
+    await expect(page.getByText(`${{ Basic: 60, Personal: 300, Professional: 500 }[plan]} requests / minute per account`, { exact: true })).toBeVisible();
   });
 }

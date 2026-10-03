@@ -3,10 +3,11 @@
   "private": true,
   "packageManager": "pnpm@10.15.0",
   "scripts": {
+    "db:migrate:four-tier-plans": "node --env-file=.env packages/db/scripts/migrate-four-tier-plans.mjs",
     "db:migrate:billing": "node --env-file=.env packages/db/scripts/migrate-billing.mjs",
     "docs:generate": "tsx apps/api/scripts/generate-swagger.ts",
     "docs:check": "tsx apps/api/scripts/generate-swagger.ts --check",
-    "test:api": "pnpm --filter @stock-market/common build && pnpm --filter @stock-market/scraper build && pnpm --filter @stock-market/api test",
+    "test:api": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/agent-tools build && pnpm --filter @stock-market/common build && pnpm --filter @stock-market/scraper build && pnpm --filter @stock-market/api test",
     "test:auth": "pnpm --filter @stock-market/db build && tsx --test packages/db/src/id.test.ts packages/auth/src/config.test.ts apps/web/src/lib/profile.test.ts",
     "build": "nx run-many -t build",
     "dev": "node scripts/dev.mjs",
@@ -35,8 +36,7 @@
     "test:payments:live": "node --env-file=.env apps/web/node_modules/@playwright/test/cli.js test --config apps/web/playwright.payments.config.ts",
     "test:performance": "pnpm --filter @stock-market/api test:performance",
     "test:web": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/web test",
-    "hooks:install": "git config core.hooksPath .githooks",
-    "test:pre-push": "node scripts/pre-push.mjs"
+    "test:ci": "node scripts/test-ci.mjs"
   },
   "devDependencies": {
     "@nx/js": "^21.5.2",

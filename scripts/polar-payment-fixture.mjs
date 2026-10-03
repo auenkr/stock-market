@@ -6,7 +6,7 @@ import { createHmac, randomUUID } from "node:crypto";
 export async function createPaymentGateway({ webhookUrl }) {
   if (!["127.0.0.1", "localhost"].includes(new URL(webhookUrl).hostname)) throw new Error("Payment fixtures require a loopback webhook");
   const token = "test-polar-token";
-  const products = { personal: "11111111-1111-4111-8111-111111111111", professional: "22222222-2222-4222-8222-222222222222" };
+  const products = { basic: "66666666-6666-4666-8666-666666666666", personal: "11111111-1111-4111-8111-111111111111", professional: "22222222-2222-4222-8222-222222222222" };
   const customers = new Map();
   const checkouts = new Map();
   const orders = [];
@@ -123,7 +123,7 @@ export async function createPaymentGateway({ webhookUrl }) {
       if (target.pathname === "/v1/checkouts/" && request.method === "POST") {
         const body = json(); const plan = Object.keys(products).find((key) => products[key] === body.products?.[0]);
         if (!plan || body.products.length !== 1 || !customers.has(body.external_customer_id)) return send(422, { error: "Invalid checkout" });
-        const id = randomUUID(); const checkout = { ...body, id, plan, amount: plan === "personal" ? 200000 : 500000, currency: "inr", status: "open", url: `${url}/checkout/${id}` };
+        const id = randomUUID(); const checkout = { ...body, id, plan, amount: { basic: 19900, personal: 39900, professional: 249900 }[plan], currency: "inr", status: "open", url: `${url}/checkout/${id}` };
         checkouts.set(id, checkout); return send(201, checkout);
       }
       if (target.pathname === "/v1/customer-sessions/" && request.method === "POST") return send(201, { customer_portal_url: `${url}/portal` });
