@@ -66,8 +66,8 @@ try {
       BETTER_AUTH_URL: 'http://127.0.0.1:3105', BETTER_AUTH_SECRET: 'e2e-auth-secret-at-least-thirty-two-characters',
       API_KEY_ENCRYPTION_SECRET: 'e2e-api-encryption-secret-at-least-thirty-two-characters',
       GOOGLE_CLIENT_ID: 'e2e-google-client', GOOGLE_CLIENT_SECRET: 'e2e-google-secret',
-      POLAR_ACCESS_TOKEN: 'test-polar-token', POLAR_WEBHOOK_SECRET: 'billing-test-webhook-secret', POLAR_ENVIRONMENT: 'sandbox',
-      POLAR_BASIC_PRODUCT_ID: '66666666-6666-4666-8666-666666666666', POLAR_PERSONAL_PRODUCT_ID: '11111111-1111-4111-8111-111111111111', POLAR_PROFESSIONAL_PRODUCT_ID: '22222222-2222-4222-8222-222222222222' };
+      POLAR_ACCESS_TOKEN: 'test-polar-token', POLAR_WEBHOOK_SECRET: 'billing-test-webhook-secret', ENVIRONMENT: 'dev',
+      POLAR_SANDBOX_BASIC_PRODUCT_ID: '66666666-6666-4666-8666-666666666666', POLAR_SANDBOX_PERSONAL_PRODUCT_ID: '11111111-1111-4111-8111-111111111111', POLAR_SANDBOX_PROFESSIONAL_PRODUCT_ID: '22222222-2222-4222-8222-222222222222' };
     await run('pnpm', ['--filter', '@stock-market/auth', 'build'], testEnv);
     await run('pnpm', ['--filter', '@stock-market/auth', 'seed:dev'], testEnv);
     await run('pnpm', ['--filter', '@stock-market/web', 'test'], testEnv);

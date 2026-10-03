@@ -34,22 +34,28 @@ export function billingConfig(env: BillingEnvironment) {
   const environment: "production" | "sandbox" = appEnvironment === "production" ? "production" : "sandbox";
   const prefix = environment === "production" ? "POLAR_PRODUCTION" : "POLAR_SANDBOX";
   const defaults = defaultProducts[environment];
-  const basic = env[`${prefix}_BASIC_PRODUCT_ID`]?.trim() || defaults.basic;
-  const personal = env[`${prefix}_PERSONAL_PRODUCT_ID`]?.trim() || defaults.personal;
-  const professional = env[`${prefix}_PROFESSIONAL_PRODUCT_ID`]?.trim() || defaults.professional;
-  if (![token, secret, basic, personal, professional].some(Boolean)) return null;
-  if (!token || !secret || !basic || !personal || !professional) {
+  const configuredProducts = [
+    env[`${prefix}_BASIC_PRODUCT_ID`]?.trim(),
+    env[`${prefix}_PERSONAL_PRODUCT_ID`]?.trim(),
+    env[`${prefix}_PROFESSIONAL_PRODUCT_ID`]?.trim(),
+  ];
+  if (![token, secret, ...configuredProducts].some(Boolean)) return null;
+  if (env.VERCEL_ENV === "preview" && (!token || !secret || configuredProducts.some((product) => !product))) {
+    console.warn("Polar billing is disabled in this Vercel Preview: matching credentials and all three product IDs are required.");
+    return null;
+  }
+  if (!token || !secret) {
     // Preview deployments may inherit only part of the production settings.
-    // Keep checkout unavailable instead of crashing unrelated pages at build time.
+    // Keep checkout unavailable during build-time collection; runtime config must be complete.
     // Next.js imports route modules while collecting page data. A developer's
     // partial local .env must not prevent that build; the same config is checked
     // again when the server starts and incomplete billing still fails there.
-    if (env.VERCEL_ENV === "preview" || env.NEXT_PHASE === "phase-production-build") {
-      if (env.VERCEL_ENV === "preview") console.warn("Polar billing is disabled in this Vercel Preview: both credentials and all three product IDs are required.");
-      return null;
-    }
+    if (env.NEXT_PHASE === "phase-production-build") return null;
     throw new Error("Set both Polar credentials and all three product IDs to enable billing");
   }
+  const basic = configuredProducts[0] || defaults.basic;
+  const personal = configuredProducts[1] || defaults.personal;
+  const professional = configuredProducts[2] || defaults.professional;
   if (new Set([basic, personal, professional]).size !== 3) throw new Error("Polar plan product IDs must be different");
   return { token, secret, basic, personal, professional, environment };
 }

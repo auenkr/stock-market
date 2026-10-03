@@ -4,8 +4,9 @@ export const productIds = { basic: "66666666-6666-4666-8666-666666666666", perso
 export const webhookSecret = "billing-test-webhook-secret";
 export const billingTestEnvironment = {
   POLAR_ACCESS_TOKEN: "test-polar-token", POLAR_WEBHOOK_SECRET: webhookSecret,
-  POLAR_BASIC_PRODUCT_ID: productIds.basic,
-  POLAR_PERSONAL_PRODUCT_ID: productIds.personal, POLAR_PROFESSIONAL_PRODUCT_ID: productIds.professional, POLAR_ENVIRONMENT: "sandbox",
+  POLAR_SANDBOX_BASIC_PRODUCT_ID: productIds.basic,
+  POLAR_SANDBOX_PERSONAL_PRODUCT_ID: productIds.personal, POLAR_SANDBOX_PROFESSIONAL_PRODUCT_ID: productIds.professional,
+  ENVIRONMENT: "dev",
 };
 
 export function customerState(userId: string, plan: "free" | "basic" | "personal" | "professional", options: { status?: string; expires?: string; cancelAtPeriodEnd?: boolean; interval?: string } = {}) {

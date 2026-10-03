@@ -12,7 +12,7 @@ let userId: string;
 let keyName: string;
 let existingSubscriptions = new Set<string>();
 const cliEnvironment = { ...process.env };
-delete cliEnvironment.POLAR_ACCESS_TOKEN; delete cliEnvironment.POLAR_ENVIRONMENT;
+delete cliEnvironment.POLAR_ACCESS_TOKEN;
 const client = createPolarCore({ accessToken: process.env.POLAR_ACCESS_TOKEN || "", environment: "sandbox" });
 const state = () => getStateExternalCustomers(client)(userId);
 function sandboxOrganization() {
@@ -24,7 +24,6 @@ function sandboxOrganization() {
 }
 
 test.beforeAll(async () => {
-  expect(process.env.POLAR_ENVIRONMENT, "Live payment tests are sandbox-only").toBe("sandbox");
   expect(process.env.ENVIRONMENT, "Development password login must be enabled").toBe("dev");
   expect(process.env.POLAR_ACCESS_TOKEN).toBeTruthy();
   expect(process.env.DEV_BILLING_EMAIL).toBeTruthy();
@@ -46,7 +45,7 @@ test.afterEach(async ({ request }) => {
     const current = await state();
     for (const subscription of current.active_subscriptions) {
       if (existingSubscriptions.has(subscription.id)) continue;
-      expect([process.env.POLAR_BASIC_PRODUCT_ID, process.env.POLAR_PERSONAL_PRODUCT_ID, process.env.POLAR_PROFESSIONAL_PRODUCT_ID]).toContain(subscription.product_id);
+      expect([process.env.POLAR_SANDBOX_BASIC_PRODUCT_ID, process.env.POLAR_SANDBOX_PERSONAL_PRODUCT_ID, process.env.POLAR_SANDBOX_PROFESSIONAL_PRODUCT_ID]).toContain(subscription.product_id);
       expect(sandboxOrganization()).toContain(current.organization_id);
       const revoked = spawnSync("polar", ["subscriptions", "revoke", subscription.id, "--confirm"], { env: cliEnvironment, encoding: "utf8", timeout: 30_000 });
       expect(revoked.status, `Sandbox subscription cleanup failed: ${revoked.stderr}`).toBe(0);
