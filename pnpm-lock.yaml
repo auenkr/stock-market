@@ -72,7 +72,7 @@ importers:
         version: 0.28.1
 
   apps/legerline-cli:
-    dependencies:
+    devDependencies:
       '@stock-market/agent-tools':
         specifier: workspace:*
         version: link:../../packages/agent-tools
@@ -82,7 +82,6 @@ importers:
       '@stock-market/common':
         specifier: workspace:*
         version: link:../../packages/common
-    devDependencies:
       '@stock-market/db':
         specifier: workspace:*
         version: link:../../packages/db

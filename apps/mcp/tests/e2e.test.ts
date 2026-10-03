@@ -27,8 +27,7 @@ after(async () => {
 
 test("e2e: dev stack through MCP tools", { timeout: 120000 }, async (t) => {
   if (!(await devStackReady())) {
-    t.skip("dev web/api not running");
-    return;
+    assert.fail(`dev web (${webUrl}) and api (${apiUrl}) must be running for e2e tests`);
   }
   const login = await fetch(`${webUrl}/api/auth/sign-in/email`, {
     method: "POST",

@@ -1,10 +1,29 @@
 {
-  "name": "@stock-market/mcp",
-  "private": true,
+  "name": "stock-market-mcp",
+  "version": "1.0.0",
+  "description": "Stateless HTTP MCP server for the Ledgerline Stock Market API",
   "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/auenkr/stock-market.git",
+    "directory": "apps/mcp"
+  },
+  "bin": {
+    "stock-market-mcp": "dist/cli.js"
+  },
+  "main": "dist/cli.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --format=esm --platform=node --target=es2022 --outfile=../../dist/apps/mcp/index.js",
-    "build:worker": "esbuild src/worker.ts --bundle --format=esm --platform=browser --target=es2022 --conditions=workerd --external:node:* --external:cloudflare:* --outfile=../../dist/apps/mcp/worker.js",
+    "build": "esbuild src/index.ts --bundle --format=esm --platform=node --target=es2022 --outfile=dist/cli.js --banner:js=\"#!/usr/bin/env node\"",
+    "build:worker": "esbuild src/worker.ts --bundle --format=esm --platform=browser --target=es2022 --conditions=workerd --external:node:* --external:cloudflare:* --outfile=dist/worker.js",
+    "prepublishOnly": "pnpm build",
     "deploy": "wrangler deploy",
     "dev:worker": "wrangler dev",
     "typecheck": "tsc -p tsconfig.json --noEmit",
