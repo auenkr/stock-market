@@ -1,0 +1,28 @@
+{
+  "name": "@auenkr/legerline-cli",
+  "version": "0.1.1",
+  "description": "CLI for the Legerline stock market API (Indian company financials) for AI agents",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "legerline": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --format=esm --platform=node --target=es2022 --outfile=dist/index.js --external:node:* --banner:js=\"#!/usr/bin/env node\nimport { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "legerline": "tsx src/index.ts",
+    "prepublishOnly": "pnpm build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@stock-market/agent-tools": "workspace:*",
+    "@stock-market/api": "workspace:*",
+    "@stock-market/common": "workspace:*",
+    "@stock-market/db": "workspace:*",
+    "esbuild": "^0.28.1",
+    "tsx": "^4.20.6"
+  }
+}
