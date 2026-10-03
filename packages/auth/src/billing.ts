@@ -22,7 +22,15 @@ export function billingConfig(env: BillingEnvironment) {
   const environment = env.POLAR_ENVIRONMENT?.trim() || "sandbox";
   if (!["sandbox", "production"].includes(environment)) throw new Error("POLAR_ENVIRONMENT must be sandbox or production");
   if (![token, secret, basic, personal, professional].some(Boolean)) return null;
-  if (!token || !secret || !basic || !personal || !professional) throw new Error("Set both Polar credentials and all three product IDs to enable billing");
+  if (!token || !secret || !basic || !personal || !professional) {
+    // Preview deployments may inherit only part of the production settings.
+    // Keep checkout unavailable instead of crashing unrelated pages at build time.
+    if (env.VERCEL_ENV === "preview") {
+      console.warn("Polar billing is disabled in this Vercel Preview: both credentials and all three product IDs are required.");
+      return null;
+    }
+    throw new Error("Set both Polar credentials and all three product IDs to enable billing");
+  }
   if (new Set([basic, personal, professional]).size !== 3) throw new Error("Polar plan product IDs must be different");
   return { token, secret, basic, personal, professional, environment: environment as "sandbox" | "production" };
 }

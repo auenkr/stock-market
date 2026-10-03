@@ -1,0 +1,21 @@
+{
+  "name": "stock-market-mcp",
+  "main": "dist/worker.js",
+  "compatibility_date": "2026-09-26",
+  "compatibility_flags": ["nodejs_compat"],
+  "build": {
+    "command": "pnpm build:worker",
+    "watch_dir": ["src"]
+  },
+  "vars": {
+    "STOCK_MARKET_API_URL": "https://stock-market-api.auenkr.com"
+  },
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "stock-market-mcp.auenkr.com",
+      "custom_domain": true
+    }
+  ]
+}

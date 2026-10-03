@@ -1,0 +1,116 @@
+name: Deploy production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  CI: true
+  NX_DAEMON: false
+
+jobs:
+  api:
+    name: Deploy API to Cloudflare
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build API workspace dependencies
+        run: pnpm --filter '@stock-market/api^...' build
+      - name: Deploy API
+        run: pnpm --filter @stock-market/api deploy:api
+
+  mcp:
+    name: Deploy MCP to Cloudflare
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Deploy MCP
+        run: pnpm --filter @auenkr/legerline-mcp run deploy
+
+  npm:
+    name: Publish ${{ matrix.label }} to npm
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: CLI
+            directory: apps/legerline-cli
+            package: '@auenkr/legerline-cli'
+          - label: MCP
+            directory: apps/mcp
+            package: '@auenkr/legerline-mcp'
+    env:
+      PACKAGE_DIRECTORY: ${{ matrix.directory }}
+      PACKAGE_NAME: ${{ matrix.package }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - name: Check whether package version is already published
+        id: version
+        shell: bash
+        run: |
+          version=$(node -p "require('./' + process.env.PACKAGE_DIRECTORY + '/package.json').version")
+          registry_name=$(node -p "encodeURIComponent(process.env.PACKAGE_NAME)")
+          status=$(curl --silent --show-error --retry 3 --output /dev/null --write-out '%{http_code}' \
+            "https://registry.npmjs.org/$registry_name/$version")
+          case "$status" in
+            200)
+              echo "$PACKAGE_NAME $version is already published; skipping."
+              echo "publish=false" >> "$GITHUB_OUTPUT"
+              ;;
+            404)
+              echo "publish=true" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "::error::npm registry returned HTTP $status"
+              exit 1
+              ;;
+          esac
+      - name: Build npm package
+        if: steps.version.outputs.publish == 'true'
+        run: pnpm --filter "$PACKAGE_NAME..." build
+      - name: Publish npm package
+        if: steps.version.outputs.publish == 'true'
+        working-directory: ${{ matrix.directory }}
+        run: pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
