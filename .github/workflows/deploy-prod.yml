@@ -2,7 +2,7 @@ name: Deploy production
 
 on:
   push:
-    branches: [prod]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -19,7 +19,7 @@ env:
 jobs:
   api:
     name: Deploy API to Cloudflare
-    if: github.ref == 'refs/heads/prod'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -40,7 +40,7 @@ jobs:
 
   mcp:
     name: Deploy MCP to Cloudflare
-    if: github.ref == 'refs/heads/prod'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -59,7 +59,7 @@ jobs:
 
   npm:
     name: Publish ${{ matrix.label }} to npm
-    if: github.ref == 'refs/heads/prod'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
