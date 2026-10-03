@@ -12,7 +12,7 @@ Add these repository secrets under **Settings → Secrets and variables → Acti
 
 | Secret | Purpose |
 | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | Custom token with Account → Workers Scripts → Edit for the production account and Zone → Zone → Read for `auenkr.com`. |
+| `CLOUDFLARE_API_TOKEN` | Custom token with Account → Workers Scripts → Edit for the production account, plus Zone → Zone → Read and Zone → Workers Routes → Edit for `auenkr.com`. |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account hosting the API and MCP Workers. |
 | `NPM_TOKEN` | npm granular access token with write access to both `@auenkr/legerline-cli` and `@auenkr/legerline-mcp`, and permission to publish non-interactively (bypass 2FA). |
 
@@ -36,10 +36,13 @@ Create a custom API token with these permissions:
 
 - **Account → Workers Scripts → Edit**, scoped to the production account only.
 - **Zone → Zone → Read**, scoped to `auenkr.com` only, for Wrangler's zone lookup.
+- **Zone → Workers Routes → Edit**, scoped to `auenkr.com` only, for Wrangler's
+  route inspection and synchronization during deployment.
 
 Both Workers use `custom_domain: true`. Custom Domain attachment is authorized by
-Workers Scripts Edit; these configurations do not require Workers Routes Edit or
-DNS Edit. No KV, R2, D1, Pages, or account administration permissions are needed.
+Workers Scripts Edit, but Wrangler also inspects zone routes during deployment,
+so Workers Routes Edit is required by this deployment path. DNS Edit is not
+required. No KV, R2, D1, Pages, or account administration permissions are needed.
 The Workers Scripts permission is account-scoped, not restricted to just the two
 Worker names.
 

@@ -55,7 +55,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Deploy MCP
-        run: pnpm --filter @auenkr/legerline-mcp deploy
+        run: pnpm --filter @auenkr/legerline-mcp run deploy
 
   npm:
     name: Publish ${{ matrix.label }} to npm
