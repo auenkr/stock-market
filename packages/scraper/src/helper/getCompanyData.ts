@@ -70,6 +70,7 @@ type CompanySummaryDataType = {
 };
 
 export type CompanyPeerCompaniesDataType = {
+  symbol: string;
   sector: string;
   name: string;
   currentPrice: NumberDataType;
@@ -668,6 +669,7 @@ async function getPeerCompanies(
 
     // Extract data from each cell and parse it using the provided helper function
     const companyData: CompanyPeerCompaniesDataType = {
+      symbol: $$(columns[1]).find("a[href^='/company/']").attr("href") || "",
       sector: sectorValue, // Sector is not available in the provided HTML
       name: $$(columns[1]).find("a").text().trim(),
       currentPrice: parseNumberData($$(columns[2]).text(), "one"),

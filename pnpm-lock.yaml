@@ -95,6 +95,9 @@ importers:
       '@stock-market/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@stock-market/common':
+        specifier: workspace:*
+        version: link:../../packages/common
       '@stock-market/db':
         specifier: workspace:*
         version: link:../../packages/db

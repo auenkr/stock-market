@@ -7,12 +7,13 @@ const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined
 fetch('/swagger.json').then(r=>{if(!r.ok)throw Error('Swagger HTTP '+r.status);return r.json();}).then(spec=>{
  document.querySelector('#intro').textContent=spec.info.description;
  const entries=Object.entries(spec.paths).filter(([,p])=>p.get&&!p.get['x-alias']).map(([path,item])=>[path,item,Object.entries(spec.paths).filter(([,alias])=>alias.get?.['x-alias']&&alias.get['x-canonical-path']===path).map(([alias])=>alias)]);
- function render(){container.replaceChildren();for(const[path,item,aliases]of entries){const op=item.get;if(!(path+' '+aliases.join(' ')+' '+JSON.stringify(op)).toLowerCase().includes(search.value.toLowerCase()))continue;
- const card=el('details');const summary=el('summary');const badge=el('span','GET · '+(op['x-coverage']||'service'));badge.className='badge';summary.append(badge,document.createTextNode(path+' — '+op.summary));card.append(summary,el('p',op.description||''));
+ entries.sort((a,b)=>a[1].get['x-order']-b[1].get['x-order']);
+ function render(){container.replaceChildren();for(const group of spec['x-user-journey']){const section=el('section');let count=0;for(const[path,item,aliases]of entries){const op=item.get;if(op['x-use-case']!==group.id||!(path+' '+aliases.join(' ')+' '+JSON.stringify(op)).toLowerCase().includes(search.value.toLowerCase()))continue;
+  const card=el('details');const summary=el('summary');const badge=el('span','GET · '+op['x-tier']+' · '+(op['x-coverage']||'service'));badge.className='badge';summary.append(badge,document.createTextNode(path+' — '+op.summary));card.append(summary,el('p',op.description||''));
  if(aliases.length)card.append(el('p','Also available at '+aliases.join(', ')));
  if(op.parameters?.length){card.append(el('h2','Parameters'));for(const p of op.parameters){const row=el('div',p.name+' · '+p.in+' · '+(p.required?'required':'optional')+' — '+(p.description||''));row.className='parameter';card.append(row);}}
  for(const[status,response]of Object.entries(op.responses)){card.append(el('h2',status+' — '+response.description));const schema=response.content?.['application/json']?.schema;if(schema)card.append(el('pre',JSON.stringify(schema,null,2)));if(response.headers)for(const[name,header]of Object.entries(response.headers))card.append(el('p',name+' — '+(header.description||'')));}
- container.append(card);
- }}render();search.addEventListener('input',render);const schemas=el('details');schemas.append(el('summary','All response models'),el('pre',JSON.stringify(spec.components.schemas,null,2)));container.after(schemas);
+  section.append(card);count++;
+  }if(count){section.prepend(el('h2',group.order+'. '+group.title),el('p',group.description));container.append(section);}}if(!container.children.length)container.append(el('p','No matching endpoints.'));}render();search.addEventListener('input',render);const schemas=el('details');schemas.append(el('summary','All response models'),el('pre',JSON.stringify(spec.components.schemas,null,2)));container.after(schemas);
 }).catch(error=>{document.querySelector('#intro').textContent='Could not load Swagger: '+error.message;});
 </script></body></html>`;

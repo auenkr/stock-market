@@ -19,7 +19,7 @@ export async function sourceGet<T = any>(path: string, source: SourceOptions = {
     headers: { ...(cookie ? { Cookie: cookie } : {}), ...config.headers },
   }), 3, { requestId: source.requestId, upstream: url.origin + url.pathname });
   if (typeof response.data === "string" && (/<title>[^<]*(?:login|register|sign in)/i.test(response.data) || /form[^>]+action=["'][^"']*login/i.test(response.data))) {
-    throw new SourceError("The source requires a valid Screener session. Configure COOKIE in the root .env or Worker secrets.", "SOURCE_AUTH_REQUIRED");
+    throw new SourceError("The data source requires authentication.", "SOURCE_AUTH_REQUIRED");
   }
   return response;
 }

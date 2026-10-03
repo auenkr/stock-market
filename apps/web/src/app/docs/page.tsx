@@ -1,8 +1,8 @@
-import swagger from "../../../../../swagger.json";
+import { apiReference } from "../../lib/api-reference";
 import { ApiExplorer, type ApiSpec } from "./api-explorer";
 import type { Metadata } from "next";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "API Documentation & Playground | Ledgerline",
@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default function DocsPage() {
+  const swagger = apiReference();
   const initialServer = process.env.NEXT_PUBLIC_API_URL || (process.env.ENVIRONMENT === "dev"
     ? `http://localhost:${process.env.API_PORT || "8787"}` : swagger.servers[0]!.url);
   return <ApiExplorer spec={swagger as unknown as ApiSpec} initialServer={initialServer} />;

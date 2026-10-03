@@ -9,6 +9,7 @@ export default defineConfig({
   reporter: "list",
   webServer: {
     command: "node ../../scripts/web-test-server.mjs",
+    env: { ENVIRONMENT: process.env.ENVIRONMENT ?? "dev" },
     url: "http://127.0.0.1:3105/documentation",
     reuseExistingServer: false,
     gracefulShutdown: { signal: "SIGTERM", timeout: 5000 },

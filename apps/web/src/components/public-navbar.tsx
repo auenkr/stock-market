@@ -7,7 +7,7 @@ import { ThemePicker } from "./theme-picker";
 import { Button } from "@stock-market/ui/components/button";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@stock-market/ui/components/sheet";
 
-const links = [{ href: "/pricing", label: "Pricing" }, { href: "/documentation", label: "Documentation" }, { href: "/support", label: "Support" }, { href: "/#faq", label: "FAQ" }];
+const links = [{ href: "/", label: "Home" }, { href: "/pricing", label: "Pricing" }, { href: "/support", label: "Support" }, { href: "/#faq", label: "FAQ" }];
 
 export function PublicNavbar() {
   const [open, setOpen] = useState(false);

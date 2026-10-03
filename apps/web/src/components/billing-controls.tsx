@@ -7,7 +7,7 @@ import { authClient } from "@/lib/auth-client";
 import { PlanCards } from "./plan-cards";
 import type { ApiPlan } from "@stock-market/db/plans";
 
-export function BillingControls({ current, enabled, hasCustomer, consentRecorded }: { current: ApiPlan; enabled: boolean; hasCustomer: boolean; consentRecorded: boolean }) {
+export function BillingControls({ current, enabled, hasCustomer, consentRecorded, paidAccessThrough }: { current: ApiPlan; enabled: boolean; hasCustomer: boolean; consentRecorded: boolean; paidAccessThrough?: string }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [accepted, setAccepted] = useState(false);
@@ -37,18 +37,12 @@ export function BillingControls({ current, enabled, hasCustomer, consentRecorded
       if (result.error) throw new Error(result.error.message || "Could not open the billing portal.");
     } catch (e) { setError(e instanceof Error ? e.message : "Could not connect to billing."); setPending(false); }
   }
-  async function refresh() {
-    setPending(true); setError("");
-    try {
-      const result = await fetch("/api/billing/sync", { method: "POST" });
-      if (!result.ok) throw new Error("Could not refresh your subscription. Please try again.");
-      router.refresh();
-    } catch (e) { setError(e instanceof Error ? e.message : "Could not refresh billing."); }
-    finally { setPending(false); }
-  }
-  return <>{!enabled && <p className="subtle" role="status">Paid subscriptions are not available yet. Basic access is ready to use.</p>}
+  return <>{(paidAccessThrough || hasCustomer) && <section className="billing-summary">
+      {paidAccessThrough && <p className="subtle">Current paid access through <strong>{paidAccessThrough}</strong>. Manage renewals, plan changes, payment details, and cancellations in <strong>Polar</strong>.</p>}
+      {hasCustomer && <div className="billing-actions"><button className="button outline" disabled={!enabled || pending} onClick={() => void portal()}>Manage subscription & invoices</button></div>}
+    </section>}
+    {!enabled && <p className="subtle" role="status">Paid subscriptions are not available yet. Basic access is ready to use.</p>}
     {!consentRecorded && <section className="card"><p>Before subscribing, please accept our current policies.</p><label className="legal-consent"><input type="checkbox" checked={accepted} disabled={!ready || pending} onChange={(event) => setAccepted(event.target.checked)} /><span>I agree to the <Link href="/terms-of-service" target="_blank" rel="noopener noreferrer">Terms of Service</Link> and <Link href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link>.</span></label><button className="button secondary" disabled={!accepted || pending} onClick={() => void acceptTerms()}>Accept policies</button></section>}
     {error && <p className="error" role="alert">{error}</p>}
-    <PlanCards current={current} action={(plan) => <button className="button secondary" type="button" disabled={!enabled || pending || !consentRecorded} onClick={() => void (current === "free" ? checkout(plan) : portal())}>{pending ? "Please wait…" : current === "free" ? `Subscribe to ${plan === "personal" ? "Personal" : "Professional"}` : "Change plan in Polar"}</button>} />
-    <div className="billing-actions">{hasCustomer && <button className="button outline" disabled={!enabled || pending} onClick={() => void portal()}>Manage subscription & invoices</button>}{enabled && <button className="button outline" disabled={pending} onClick={() => void refresh()}>Refresh subscription status</button>}</div></>;
+    <div className="billing-plans"><PlanCards current={current} action={(plan) => <button className="button secondary" type="button" disabled={!enabled || pending || !consentRecorded} onClick={() => void (current === "free" ? checkout(plan) : portal())}>{pending ? "Please wait…" : current === "free" ? `Subscribe to ${plan === "personal" ? "Personal" : "Professional"}` : "Change plan in Polar"}</button>} /></div></>;
 }

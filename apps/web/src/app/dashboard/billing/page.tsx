@@ -14,9 +14,8 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   if (!account) return null;
   const current = effectivePlan(account.apiPlan, account.planExpiresAt);
   const { checkout } = await searchParams;
-  return <><section className="hero"><div className="hero-copy"><span className="eyebrow">Subscription & billing</span><h1>A plan for your next step.</h1><p className="subtle">Your current plan is {plans[current].name}. All paid plans renew monthly.</p></div></section>
-    {checkout === "success" && <p className="subtle" role="status">Checkout completed. Your plan activates after Polar confirms payment. Refresh subscription status if it is still processing.</p>}
-    {current !== "free" && account.planExpiresAt && <p className="subtle">Current paid access through {account.planExpiresAt.toLocaleDateString("en-IN", { timeZone: "UTC" })}. Manage renewals, plan changes, payment details, and cancellations in Polar.</p>}
-    <BillingControls current={current} enabled={isBillingEnabled} hasCustomer={Boolean(account.polarCustomerId)} consentRecorded={Boolean(account.termsAcceptedAt)} />
-    <p className="subtle billing-help">Secure payments through Polar. Taxes are shown at checkout. <Link href="/support">Need help?</Link> · <Link href="/terms-of-service">Terms</Link> · <Link href="/privacy-policy">Privacy</Link></p></>;
+  return <><section className="hero"><div className="hero-copy"><span className="eyebrow">Subscription & billing</span><h1>A plan for your next step.</h1><p className="subtle">Your current plan is <strong>{plans[current].name}</strong>. All paid plans <strong>renew monthly</strong>.</p></div></section>
+    {checkout === "success" && <p className="subtle" role="status">Checkout completed. Your plan activates after Polar confirms payment.</p>}
+    <BillingControls current={current} enabled={isBillingEnabled} hasCustomer={Boolean(account.polarCustomerId)} consentRecorded={Boolean(account.termsAcceptedAt)} paidAccessThrough={current !== "free" && account.planExpiresAt ? account.planExpiresAt.toLocaleDateString("en-IN", { timeZone: "UTC" }) : undefined} />
+    <p className="subtle billing-help"><strong>Secure payments through Polar.</strong> Taxes are shown at checkout. <Link href="/support">Need help?</Link> · <Link href="/terms-of-service">Terms</Link> · <Link href="/privacy-policy">Privacy</Link></p></>;
 }

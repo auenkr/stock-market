@@ -3,7 +3,7 @@ const PUBLIC_URL =
   (typeof process === "undefined" ? undefined : process.env.PUBLIC_URL) ||
   "http://localhost:8787";
 
-export const HomePageData = `
+export const HomePageData = (environment?: string) => `
     <!doctype html>
     <html lang="en">
       <head>
@@ -25,23 +25,23 @@ export const HomePageData = `
       </head>
       <body><main>
         <p>MARKET DATA / API v1</p><h1>Build on better market data.</h1>
-        <p>Independent Indian company fundamentals, ownership, corporate actions and IPO data. Explore <a href="/docs">the API reference</a>, download <a href="/swagger.json">swagger.json</a>, or check <a href="/v1/coverage">current coverage</a>. Source-backed adapters have partial coverage; market history is excluded.</p>
+        <p>Independent Indian company fundamentals and ownership data. Explore <a href="/docs">the API reference</a> or download <a href="/swagger.json">swagger.json</a>. Source-backed adapters have partial coverage; market history is excluded.</p>
         <h2>Company fundamentals</h2>
-        <pre><code>curl "${PUBLIC_URL}/v1/financials/ITC?statement_type=c&amp;statement_code=pl&amp;period=annual"</code></pre>
-        <h2>Dividends and ownership</h2>
-        <p><code>GET /v1/dividend/ITC</code> · <code>GET /v1/shareholdings/ownership-current/ITC</code></p>
-        <h2>List companies</h2>
-        <p><code>GET /api/list-of-company?page=1</code></p>
-        <pre><code>curl "${PUBLIC_URL}/v1/list-of-company?page=1"</code></pre>
+        <pre><code>curl --get "${PUBLIC_URL}/v1/profit-loss" --data-urlencode "symbol=/company/RELIANCE/consolidated/"</code></pre>
+        ${environment === "dev" ? `<h2>Internal: dividends and ownership</h2>
+        <p><code>GET /v1/dividend?symbol=/company/RELIANCE/</code> · <code>GET /v1/shareholdings/ownership-current?symbol=/company/RELIANCE/</code></p>
         <h2>List upcoming IPOs</h2>
         <p><code>GET /api/list-of-ipo</code></p>
         <pre><code>curl "${PUBLIC_URL}/v1/list-of-ipo"</code></pre>
         <h2>Get company data</h2>
-        <p><code>GET /api/company-data?companyUrl=&lt;company-path&gt;</code></p>
-        <pre><code>curl "${PUBLIC_URL}/v1/company-data?companyUrl=%2Fcompany%2Fid%2F1286218%2F"</code></pre>
+        <p><code>GET /api/company-data?symbol=&lt;company-path&gt;</code></p>
+        <pre><code>curl "${PUBLIC_URL}/v1/company-data?symbol=%2Fcompany%2Fid%2F1286218%2F"</code></pre>` : ""}
         <h2>Search companies</h2>
         <p><code>GET /api/company-search?q=&lt;company-name&gt;</code></p>
         <pre><code>curl "${PUBLIC_URL}/v1/company-search?q=reli"</code></pre>
+        <h2>List companies</h2>
+        <p><code>GET /api/list-of-company?page=1</code></p>
+        <pre><code>curl "${PUBLIC_URL}/v1/list-of-company?page=1"</code></pre>
       </main></body>
     </html>
 `;

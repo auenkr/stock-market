@@ -1,8 +1,41 @@
 # Implementation progress
 
+## Identifier cleanup and dev-only Internal docs — 2026-10-03
+
+- Unified company identifiers across every API: company search/listing and upcoming IPOs return URL-valued `symbol`; older company-data/extraction, ownership, dividends and corporate actions accept it directly. Company-data returns `website` separately; extraction metadata uses `symbol`.
+- Moved shareholding distribution into Finance with only `symbol`, defaulting to quarterly.
+- Removed the requested name/symbol changes, segment revenue, notes, financial metrics, declaration/beneficial-owner, index master/current price/returns, commodity lookup/percentage-change, IPO-calendar and holiday-calendar routes and related schemas/source branches.
+- Replaced action path parameters with optional `action=split|bonus|rights|dividend`. Default company actions include all available types, including paginated rights. Rights match standalone, consolidated and numeric-ID company paths; later pages avoid repeating modal records.
+- Shared environment-aware documentation filtering hides Internal operations and unused schemas unless `ENVIRONMENT=dev`. API contracts, web overview/playground and downloadable Swagger use the same rule. The static web contract was replaced with a filtered route.
+- Confirmed results calendar uses the configured source's upcoming-results page; upcoming IPOs use its IPO listing and optional InvestorGain GMP enrichment. Removed IPO calendar used the IPO listing; holiday calendar had no connected source.
+- Validation: 37 API tests passed, 1 optional live test skipped; 20 HTTP/database integration tests passed; 3 playground browser tests passed in each of dev and production; k6 smoke thresholds passed; API/common/scraper/web and integration-test typechecks, API build, generated-doc checks and diff checks passed.
+
+## API restructuring — 2026-10-03
+
+- Organized the API into Search, Company overview, Finance, and Internal. Supplementary routes remain under Internal with their existing parameters and access tiers.
+- Search returns the original company URL path as `symbol`, replacing `url`; company endpoints pass it through without extracting a ticker. Company overview and Finance accept only one required `symbol` query parameter.
+- Removed stock-symbol/classification-search routes, taxonomy tooling/data, separate quote routes, generic financial statements, and separate document routes, including obsolete schemas and source branches.
+- Basic finance now combines summary, about, key points, current price data, and pros/cons. Historical metrics are in dedicated quarterly/annual P&L endpoints. Documents are grouped into one response.
+- Finance has dedicated peer comparison, quarterly/annual P&L, balance sheet, cash flow, ratios, and quarterly shareholding endpoints. OpenAPI, both references, request examples, and regression fixtures follow this contract.
+- Removed provider attribution from coverage metadata, response headers, OpenAPI external links, and authentication/rate-limit error messages.
+- Validation: 34 API tests passed, 1 optional live test skipped; 20 HTTP/database integration tests passed; 10 browser tests passed; k6 smoke thresholds passed; API/scraper/web and integration-test typechecks, API build, generated-doc checks, and diff checks passed.
+
+## Use-case endpoint ordering — 2026-10-03
+
+- Inspected Screener's company-name search and Reliance company page. Matched the overview → peers → statements → ratios → investors → documents section order.
+- Added a shared endpoint journey registry covering personal, legacy, and service routes. Both API references, Swagger, coverage metadata, and generated guides use this classification and order.
+- The reference opens on company-name search and supports use-case and Free/Paid filters. Financial statements document quarterly P&L → annual P&L → balance sheet → cash flow query selections.
+
+## Personal API cleanup — 2026-10-03
+
+- Removed all 19 enterprise paths and their batch/feed schemas and source mappings.
+- Removed the secondary data provider, fallback routing, provider-specific tests, and local/sample environment bindings. Screener is the sole runtime data source.
+- The current catalog has **43 personal paths: 25 partial, 12 unavailable, and 6 excluded**. Generated Swagger and coverage documentation reflect this inventory.
+- Entries below record historical implementation and validation; their endpoint counts describe those earlier versions.
+
 ## 2026-09-30
 
-Goal: build an independent financial-data API SaaS with almost all documented FinEdge endpoint contracts, excluding market history, and maintain explicit progress and limitations in this directory.
+Goal: build an independent financial-data API SaaS with documented financial endpoint contracts, excluding market history, and maintain explicit progress and limitations in this directory.
 
 Completed:
 
@@ -27,7 +60,7 @@ Validation is recorded below after execution. A registered route returning 501 i
 | `node --env-file=.env --import tsx apps/api/scripts/smoke.ts` | 20 live source-backed requests returned 200. Checked ITC standalone/consolidated financials, P&L/BS/CF, profitability/cumulative/basic financials, quote, reports, peers, classification search, ownership pattern, announcements, ratings, presentations, IPOs, directory, and two-company enterprise profile/quote batches. |
 | Live transcript availability | ITC returned 501 because transcript links were unavailable in the source session. This is a documented conditional gap, not a failed successful-response assertion. |
 | Website docs compilation | `/docs` compiled and returned HTTP 200 on a temporary local validation server. Rendered HTML contains all 53 non-history endpoint cards, including partial-data and missing-source labels. |
-| Browser inspection | FinEdge product, pricing, and both documentation tiers were explored successfully. After temporary preview timeouts, the shared browser reconnected. Inspected the local documentation at desktop and phone widths; corrected the missing code-block styling class and verified no page-level horizontal overflow at 390 pixels. |
+| Browser inspection | Reference product, pricing, and both documentation tiers were explored successfully. After temporary preview timeouts, the shared browser reconnected. Inspected the local documentation at desktop and phone widths; corrected the missing code-block styling class and verified no page-level horizontal overflow at 390 pixels. |
 
 Live checks used the existing local source session without printing credentials or retaining raw source responses in the repository. Validation does not establish access from Cloudflare, a production SLA, complete field parity, billing/key enforcement, or deployment. No deployment was performed.
 

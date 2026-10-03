@@ -1,97 +1,81 @@
 # API compatibility
 
-The reference is [FinEdge's documentation](https://www.finedgeapi.com/financial-data-api-documentation). Endpoint names, arguments, resource envelopes, and field names are compatibility targets. Runtime data comes from Screener and configured FinEdge personal endpoints, verified with Basic access on 2026-10-02.
+Endpoint paths, arguments, schemas, tiers, and categories are defined by the API catalog. [Endpoint coverage](endpoint-coverage.md) and [endpoint journey](endpoint-journey.md) are generated from the same contract as Swagger.
+
+## Categories and company identifiers
+
+Public documentation has **Search**, **Company overview**, and **Finance**. **Internal** is shown only when `ENVIRONMENT=dev`, in both API/web viewers and downloadable OpenAPI. Its routes keep their normal access rules. The repository's generated contract includes Internal for development; served contracts filter it out in other environments.
+
+Company-name search (`/v1/company-search?q=reliance`, also `/api/company-search`) returns `{data, results}` containing the same results. Each result has `name` and `symbol`. `symbol` contains the original company URL path, replacing the former `url` field. No exchange ticker is extracted:
+
+```json
+{"name":"Reliance Industries", "symbol":"/company/RELIANCE/consolidated/"}
+```
+
+All Company overview and Finance endpoints accept **one required query parameter: `symbol`**. Pass the search value unchanged using `URLSearchParams` or `curl --data-urlencode`. Relative company paths, including numeric IDs, are accepted; absolute URLs, traversal, non-company paths, arrays, and repeated symbols are rejected. The URL itself selects standalone or consolidated data. No `statement_type`, `statement_code`, `period`, `ratio_type`, `group`, or `page` filters are accepted in these categories.
+
+```bash
+curl --get 'http://localhost:8787/v1/company-profile' --data-urlencode 'symbol=/company/RELIANCE/consolidated/'
+curl --get 'http://localhost:8787/v1/profit-loss' --data-urlencode 'symbol=/company/RELIANCE/consolidated/'
+curl --get 'http://localhost:8787/v1/company-documents' --data-urlencode 'symbol=/company/RELIANCE/consolidated/'
+```
+
+Personal endpoints support `/api/v1/...` and `/v1/...` aliases with the same schemas and access rules.
+
+Company listing is also in **Search** (`/v1/list-of-company`, also `/api/list-of-company`). It returns `{meta, data}` with original company URL paths in `symbol`, not `url`; `skip` is omitted. Pagination is in `meta`: `currentPage`, `limit`, `count`, `isNextPageAvailable`, `nextPage`, and `previousPage`.
+
+## Company overview
+
+| Endpoint | Response |
+| --- | --- |
+| `company-profile` | Company name, description, website, exchange identifiers, classification, and market capitalization. |
+| `basic-financials` (Basic finance) | `{symbol, summary, about, keyPoints, basicFinance, analysis}`. `basicFinance` contains current price, change, market cap, and 52-week range; unavailable share counts, trade time, and volume are null. `analysis` contains `pros` and `cons`. Historical annual metrics are in Finance. |
+| `company-documents` | `{symbol, documents}` grouped into `annualReports`, `announcements`, `creditRatings`, `callTranscripts`, `presentations`, and `other`. Each document has `title`, `url`, `date`, and `year`. Missing groups are empty arrays; unknown exact dates are null. |
+
+## Finance
+
+| Endpoint | Response |
+| --- | --- |
+| `peer-comparison` | `{symbol, peers}` with URL-valued company identifiers, names, current price, P/E, market capitalization, dividend yield, quarterly sales/profit and growth, and ROCE. |
+| `quarterly-profit-loss` | `{symbol, financials}` with quarterly results, including EBIT/EBITDA, operating profit/revenue, tax fraction, and EPS where available. |
+| `profit-loss` | `{symbol, financials}` with annual results and available TTM rows, including the historical metrics previously exposed separately by Basic financials. |
+| `balance-sheet` | `{symbol, financials}` with balance sheets and available expanded schedules for inventories, receivables, cash equivalents, payables, and borrowings. |
+| `cash-flow` | `{symbol, financials}` with operating, investing, financing, net, and available free cash flow. |
+| `ratios` | `{symbol, ratios, metrics}` with derived profitability ratios and the reported ratio table as period/value pairs. |
+| `shareholding-pattern` | Quarterly category/holder percentages using `columns` and `rows`. Missing holder-period values are null; explicit zero remains zero. `catagory` retains its original spelling. This is not a complete shareholder register. |
+| `shareholdings/distribution` | Quarterly ownership-category percentages grouped by reporting period. Accepts only `symbol`. Statutory counts, voting rights and share totals may be null. |
+
+Financial statement monetary amounts are **INR rupees** (`1 crore = 10,000,000`); EPS is rupees per share. Overview and peer comparison market caps retain **INR crores**. Peer quarterly sales/profit are crores; price is rupees per share. Derived profitability ratios are fractions (`20% = 0.2`); peer comparison, summary, and shareholding percentages are percentage points (`20% = 20`). Reported ratio-table values retain their labels and source units. Missing values remain distinct from zero. Summaries and prices may be rounded or delayed.
+
+## Internal
+
+Upcoming IPOs, results calendar, corporate actions/dividends, extra ownership datasets, full-company/extract, health, and coverage are grouped under Internal. Company-scoped operations use the same URL-valued `symbol`; reporting period, action, pagination and date filters remain available where documented. IPO calendar, holiday calendar and the removed placeholder datasets have no routes, schemas or docs operations.
+
+Full company data (`/v1/company-data`, also `/api/company-data`) requires `symbol`, taken unchanged from search/listing. Extraction (`/v1/extract`, also `/api/extract`) requires `symbol` and `type`. The obsolete `companyUrl` and `endpoint` query names are rejected. Full data returns `{data, companyData}` containing `symbol` and the company's `website`; extraction returns `{data, meta: {symbol, type, cached}}`. Peer rows also expose their company paths as `symbol`. They share a 15-minute cache and return `X-Cache: HIT` on reuse. Legacy numbers retain `{amount, baseValue}` and spellings such as `reservers` and `fiexedAssets`; blank/unparseable cells may become zero. Their public `metrics` array remains empty; market history is excluded. Optional news/GMP failures preserve the main response.
+
+Company corporate actions use `/v1/corporate-actions?symbol=/company/RELIANCE/`. Optional `action=split|bonus|rights|dividend` selects a type; omitting it returns all actions in a stable `{symbol, actions}` envelope. Company modal records appear on page 1; rights come from a company-filtered paginated list. Later pages return only rights. A specific non-rights filter rejects `page>1`. Market corporate actions (`corporate-actions/all`) use the same optional filter and optional URL-valued symbol. Current/history ownership retains `period` where applicable. Results/action lists expose `X-Page` and `X-Next-Page`; date filters use `YYYY-MM-DD` and apply to the requested source page.
+
+Market-history routes remain excluded. Source responses are cached for 15 minutes with bounded storage and concurrent-request coalescing. Individual upstream requests have a 15-second timeout.
+
+### Calendar and IPO data sources
+
+- **Results calendar:** Screener's `/upcoming-results/`, using the configured source session. These are expected upcoming result dates, not a reconstructed historical calendar.
+- **Upcoming IPOs (`list-of-ipo`):** Screener's `/ipo` listing and linked listing pages through the legacy parser. Optional GMP enrichment uses InvestorGain's `https://webnodejs.investorgain.com/cloud/v2/index/gmp-data`; enrichment failure leaves GMP null. This parser returns complete records only, not every partially populated listing.
+- **IPO calendar:** removed; it previously used the same IPO page with per-page/date-filtered mapping.
+- **Holiday calendar:** removed; it never had a connected holiday source and returned 501.
 
 ## Endpoint tiers
 
-Every documented operation is classified as **free** or **paid**. The catalog defines these tiers independently of the personal, enterprise, legacy, and service API formats; paths and response shapes retain their existing contracts. Aliases always share their canonical endpoint's tier.
+Free endpoints include company search/listing, profiles, basic finance, peer comparison, and Internal upcoming-IPO/results/service operations. Documents, detailed statements, ratios, shareholding, and other paid Internal datasets require Personal or Professional.
 
-| Tier | Endpoints |
-| --- | --- |
-| Free | Stock symbols, company profiles, sector/industry search, basic financials, daily quotes (v1/v2), peers, index master, holiday/results/IPO calendars, legacy company list/search/IPO list, health, and coverage. |
-| Paid | Detailed financial statements, segment revenue, notes, reports, ratios, financial metrics, ownership/shareholdings, corporate actions, dividends, announcements, credit ratings, transcripts, presentations, commodities, full legacy company data/extraction, and every enterprise batch/feed endpoint. |
-
-This is Ledgerline's endpoint classification, inspired by [FinEdge's documentation](https://www.finedgeapi.com/financial-data-api-documentation). [FinEdge's pricing](https://www.finedgeapi.com/financial-data-api-pricing) offers free samples for ITC, RELIANCE, and HDFCBANK rather than this endpoint split. Coverage is separate from tier: unavailable resources still return 501, and excluded market history is not exposed. Account plans are enforced by the API: Basic cannot call paid endpoints. Both Personal and Professional subscriptions unlock paid endpoints; verified Polar subscription updates control access. Only Professional permits commercial use. See [billing setup](polar-setup.md).
-
-Free accounts can call company profiles, basic financials, quotes (v1/v2), and peers only for **RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN**. These are the top five by **market capitalization** at the 2026-10-01 close, verified against [the ranking](https://www.equitymaster.com/stock-screener/high-marketcap-companies). This is a versioned access list, not a live ranking: update `apps/api/src/endpoint-access.ts` and these docs together when revising it. Market share across different industries is not used as a ranking metric.
-
-Free stock-symbol/company discovery and searches, calendars, index master, health, and coverage remain available. Discovery can list other companies, but company data for them requires paid access. Peer results can include other symbols as discovery references. Free quotes with no `symbol` default to the five allowed companies. Explicit comma-separated, JSON-array, and repeated `symbol` inputs must contain only allowed companies; a mixed request is rejected in full before source access.
-
-Basic has **10 requests/minute**, Personal **300**, and Professional **500**, shared across all keys and API instances. Both paid subscriptions can access both endpoint tiers and all companies, subject to existing dataset/source availability. The API returns `403 PAID_PLAN_REQUIRED` for paid endpoints, `403 FREE_COMPANY_RESTRICTED` for other companies on free company endpoints, and `429` with `Retry-After` after exhausting the allowance. Rejected authenticated requests consume the allowance; invalid keys do not. Health and OpenAPI are public and unmetered.
-
-Apply `pnpm db:migrate:billing` after the older API-plan and account-usage migrations. Verified subscription snapshots set `user.api_plan` to `personal` or `professional` and `plan_expires_at` to the paid-period end. Expired access automatically falls back to Basic. Client headers and profile updates cannot set the plan. Policies use `default`, `personal`, and `professional` IDs; the billing migration preserves Basic's policy and installs 300/500 for the paid plans.
-
-OpenAPI exposes `x-tier` and `x-api-style` on each operation. `/v1/coverage` includes `tier` and `apiStyle` for reference endpoints. The docs explorer filters by Free/Paid.
-
-## Routes and shapes
-
-Personal endpoints support both `/api/v1/...` and `/v1/...`. The newer quote endpoint supports `/api/v2/quote` and `/v2/quote`. Enterprise endpoints use `/enterprise/api/...`.
-
-Compatibility responses retain their resource shapes: stock symbols are an array, profiles are objects, quotes are keyed by symbol, financial statements use `{ "symbol": "...", "financials": [...] }`, reports use `reports`, and shareholding patterns use `columns` and `rows`. The reference spelling `catagory` and metric label `Cummulative` are preserved.
-
-The original five discovery/extraction endpoints are available under `/v1` and `/api`. Company lists return only `{meta, data}` with original `url` fields, no `symbol` or `skip`, and pagination only in `meta` (`currentPage`, `limit`, `count`, `isNextPageAvailable`, `nextPage`, `previousPage`). `/extract?type=price-history` is no longer supported. `/company-data?companyUrl=/company/id/1286218/` fetches the supplied relative company path unchanged (the `companyUrl` parameter replaces `symbol` and `endpoint`) and does not request price charts; its legacy `metrics` array is empty. Offline CLI valuation jobs retain their existing optional price-history behavior.
-
-Legacy company-data responds with `{data, companyData}` containing the same object; extraction retains `{data, meta: {endpoint, type, cached}}`. These two routes share a 15-minute cache and return `X-Cache: HIT` on reuse. Their financial values retain `{amount, baseValue}` and original field spellings such as `reservers` and `fiexedAssets`. Legacy blank/unparseable numeric cells may become zero and source rows may be absent; the null and rupee conventions below apply to compatibility resources. Every API response includes `X-Request-ID` for log correlation.
-
-On compatibility resources, unknown query parameters, malformed symbols, invalid enum values, invalid dates, reversed date ranges, and invalid page numbers return 400. Dates use `YYYY-MM-DD`. `symbol`/`symbols` lists support comma-separated values or JSON arrays; quotes also accept repeated `symbol` parameters. Path parameters accept one symbol. The source workload is limited to 25 unique symbols per request; larger batches return 501 until a stored dataset supports them. Single-symbol enterprise requests retain the documented object; multiple-symbol enterprise requests return an array of per-symbol resources. Enterprise quotes return a flat array. The reference enterprise examples only show one symbol, so the multi-symbol envelope is an explicit local convention. Legacy company-data requires a relative `companyUrl` from list/search results, supports symbol-based and numeric-ID paths with optional `/consolidated/`, and rejects absolute URLs and non-company paths. URL-encode the query value to preserve ampersands; unlike compatibility resources, legacy routes do not reject every unknown query key.
-
-```bash
-curl 'http://localhost:8787/api/v1/company-profile/ITC'
-curl 'http://localhost:8787/v1/financials/ITC?statement_type=c&statement_code=pl&period=annual'
-curl 'http://localhost:8787/v1/shareholdings/pattern/ITC?period=quarterly'
-curl 'http://localhost:8787/enterprise/api/company-profile?symbols=ITC,RELIANCE'
-curl 'http://localhost:8787/v1/coverage'
-```
-
-## Source and field coverage
-
-Every successful compatibility response has `X-Data-Coverage: partial` and `X-Data-Source: screener` or `finedge`. Missing values are `null` or omitted upstream fields; an unavailable dataset or query variation returns 501. Source responses are cached for 15 minutes, with bounded storage, concurrent-request coalescing, and an eight-request concurrency limit per provider. Source request timeout is 15 seconds. There is no guaranteed real-time refresh schedule.
-
-### FinEdge fallback
-
-Set `FINEDGE_API_KEY` in the local git-ignored `.env` or as a Worker secret. `FINEDGE_BASE_URL` defaults to `https://data.finedgeapi.com`; local HTTP fixture tests override it. The dev launcher passes both bindings to Wrangler. Credentials are server-only and are never included in public schemas or error messages.
-
-FinEdge supplies name/symbol changes, segment revenue, filing notes, ownership declarations/beneficial owners, index master/current feed/precomputed returns, and holidays. The endpoint inventory now has **50 partial, 3 unavailable, and 9 excluded** reference paths. FinEdge-only endpoints return `501 DATASET_UNAVAILABLE` if the key is missing.
-
-Existing Screener subsets below remain the primary mappings. If a supported mapping returns 501, FinEdge supplies the requested statement, ratio, metric, basic-financial, transcript, presentation, announcement or results-calendar variant. It does not merge individual null fields into an otherwise successful Screener response. Source failures (502/503) remain explicit failures. Enterprise batches use per-symbol personal requests, preserving our response conventions; an Enterprise upstream subscription is not required for those batches.
-
-Basic company access is limited to **ITC, RELIANCE and HDFCBANK**, subject to the key's actual entitlements. The supplied key returned `ER0012` for TCS and `ER017` for commodities. Denials become `501 SOURCE_PLAN_RESTRICTED`; invalid source credentials become `502 SOURCE_AUTH_REQUIRED`. Commodity endpoints and enterprise refreshed-stocks remain unavailable. A local per-provider 300-call/minute budget supplements upstream rate-limit handling; this is not a distributed subscription-wide limiter.
-
-FinEdge amounts are already rupees and are retained without crore conversion. Dynamic financial rows retain sector- and variant-specific fields. Basic BS/CF upstream `ratios` are normalized to `basic_financials`; upstream `declaration` is normalized to `declarations`. Notes use `{symbol, notes: [...]}` with `FinancialResults`, `Segments`, and numeric `period_end` in YYYYMMDD format when present; text may contain HTML. Holiday dates retain `DD-Mon-YYYY`. A successful empty filing array is retained, not replaced with invented records.
-
-The table below describes the primary Screener subsets; its 501 combinations can now use the configured FinEdge fallback.
-
-| Resource | Supported behavior and differences |
-| --- | --- |
-| Stock symbols | Pages of up to 100 source companies, not an unpaginated market-wide master. BSE codes for NSE-path companies are null in the directory; full profiles provide exchange codes when linked by the source. Numeric company paths are treated as BSE identifiers. |
-| Profile | Company description, website, exchange links, market cap, and four classification levels from the company page. |
-| Stock search | Exact case-insensitive names at all four levels: `macro_sector`, `industry`, `sector`, `sub_industry`. A refreshed snapshot contains 280 classification names/paths. Run `pnpm source:taxonomy` to refresh it; names can change. |
-| Statements | `statement_type=s` selects standalone; `c` selects a consolidated company page. `pl` supports annual, quarterly, and source-provided TTM. `bs` and `cf` support annual periods aligned with the P&L table. Half-yearly, YTD, and quarterly BS/CF return 501. Missing consolidated pages return 404 rather than silently using standalone data. |
-| Profit & loss | Source sales/revenue, other income, total income, total expenses (operating expenses + interest + depreciation), finance costs, depreciation, PBT, net profit, and EPS. Filing-level sublines, adjusted capital, diluted shares, current/deferred tax, and attribution fields are null. Aggregate mappings are not a filing-level parity claim; banks and insurers need sector-specific adapters. |
-| Balance sheet | Equity capital, reserves, total equity, aggregate liabilities (borrowings + other liabilities), total equity and liabilities, total assets, CWIP; expanded schedules add inventories, trade receivables, cash equivalents, trade payables and long/short-term borrowings. Current/noncurrent totals remain null; expanded source sublines do not establish full filing parity. |
-| Cash flow | Operating, investing, financing activity totals, and net cash flow. Detailed cash-flow sublines are absent. |
-| Ratios | `ratio_type=pr`: available/derived profitability fields. Margins use revenue, except pretax margin uses total income. ROA/ROE use average assets/equity from matching prior-year and current-year balance sheets. ROCE and tax/dividend percentages become fractions. Gross margin and tangible-asset returns are null. `ef`, `le`, `li` return 501 because their reference field mappings are not verified. |
-| Financial metrics | `ratio_type=cu`: operating, investing, financing and free cash flow totals over the latest three consecutive annual periods. `gr` and `av` return 501. Missing free cash flow stays null. |
-| Basic financials | `statement_code=pl`: EBIT, EBITDA, operating profit/revenue, and tax fraction. COGS, gross income, adjusted capital, historical face value, diluted/share counts, sales per share and operating-expense classifications are null. BS/CF variations return 501. |
-| Quote | Delayed summary price, percentage change, market cap, 52-week range. Trade timestamp, volume and shares are null; enterprise OHLC fields are null. Omitting symbols for a market-wide quote feed returns 501. Streaming is unavailable. |
-| Peers | Source classification group, page by page; the requested symbol is removed. |
-| Shareholding pattern | Aggregate promoters/FIIs/DIIs/government/public rows plus source-disclosed named holders from expanded tables. Percentages retain source units. Missing holder-period values are null; an explicit zero stays zero. `catagory` remains null. Annual uses the source yearly table, quarterly its quarterly table. This is not a complete shareholder register. |
-| Ownership current/history | Disclosed holder names, source group and percentage by available reporting period. Current uses the latest quarterly header; histories use annual/quarterly tables. Other statutory fields, share totals, pledges, voting rights and identity data remain null. |
-| Ownership summary/distribution | Summary supplies reporting header, total shareholder count and promoter percentage where present. Distribution supplies group percentages. Other statutory fields remain null. |
-| Corporate actions | Bonus/split company records retain ratio or old/new face-value text. Rights use the market rights list searched by company name and filtered to the exact symbol; follow pagination. The all-actions route without symbol fetches one page per action type; with symbol it uses the company modal (rights require their dedicated route). Dates use `YYYY-MM-DD`; adjustment factors and exact timestamps are unavailable. |
-| Dividends | Company modal supplies dates, rupees per share, type and subject; adjusted amounts remain null. Global dividend lists expose face-value percentages, so their `amount` stays null rather than treating percentages as rupees. |
-| Results calendar | Upcoming expected result dates from Market Pulse. Required date-window filters apply to each requested source page. Historical result calendars are not reconstructed. |
-| Reports | Annual report URLs grouped by year and exchange. Actual year-end date is null because the source's year label does not prove a closing date. |
-| Announcements/ratings/transcripts/presentations | Symbol-filtered document links remain available. Omitting the symbol on announcements now serves the latest market-wide All feed using a source session, including summaries/timestamps where exposed; it has no stable historical cursor. Records without full dates cannot support exact day filters (501). Ratings, transcripts and presentations still require a symbol; gated transcript buttons are not public document URLs. Subcategory/history links remain null. |
-| Document dates | Full dates are retained. Day/month labels without a year are interpreted as the nearest past date. Month-only concall dates are null; requests for exact date filtering on them return 501. Unavailable transcript links return 501. |
-| IPO calendar | Source IPO listings, subscription totals, price bands and exchange links. Exchange symbol is null when not linked. Status/security type are null; no inference from issue dates. Source labels omit years, so the existing parser uses the current year. Date filters select the subscription start date. |
-
-Directory, search, peer, IPO, upcoming-results, global corporate-action and company-rights responses expose `X-Page` and `X-Next-Page`. Continue until it is empty, even when a date-filtered page has no matching rows. Each global all-actions page merges one source page per requested action; its next cursor continues while any list has more pages. Company split/bonus action modals have no cursor and reject `page>1`. These pagination differences bound source work.
-
-Financial monetary statement amounts are converted from source crores to **rupees** (`1 crore = 10,000,000`). EPS remains rupees per share. Profile/quote market caps retain **crores**, matching the reference examples. Profitability ratios use fractions (`20% = 0.2`); shareholding patterns use percentages (`20% = 20`). Missing values remain distinct from zero. The [field guide](https://www.finedgeapi.com/FinEdge_API_field_reference_guide.pdf) and UI samples disagree on some field spellings (for example `eps` versus `EPS`); the UI sample spelling is used for the P&L compatibility payload.
+Basic company access is limited to **RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN**, the versioned top-five market-cap allowlist at the 2026-10-01 close. Other company URLs require paid access. Numeric-ID company URLs currently require paid access because they cannot be matched to the allowlist before loading data. Aliases inherit their canonical tier.
 
 ## Errors and authentication
 
-Errors use `{ "error": "...", "code": "..." }` with optional `endpoint` and `docs`. Compatibility failures return 400 for invalid input, 404 for a missing source resource, 429 for quota exhaustion, 501 for an unsupported dataset/variation, 502 for upstream/authentication/parse failures, and 503 for source capacity or source rate limiting (`SOURCE_RATE_LIMITED`). Error responses are not cached.
+Send a dashboard-issued key through `X-API-Key` or Bearer authorization. Expired, revoked, and invalid keys return 401. Basic cannot call paid endpoints (`403 PAID_PLAN_REQUIRED`) or other companies on free company endpoints (`403 FREE_COMPANY_RESTRICTED`). Personal and Professional unlock both endpoint tiers and all supported companies; only Professional permits commercial use. Verified monthly subscription updates control paid access.
 
-The API validates dashboard-issued keys, including expiration and revocation. The limit is 10 requests/minute for Basic, 300 for Personal, and 500 for Professional, shared by all account keys. Atomic PostgreSQL counters keep the allowance consistent across Worker isolates and API instances. Exhausted accounts receive HTTP 429 with Retry-After; invalid keys receive HTTP 401. Health/OpenAPI remain public. See [SaaS limitations](limitations.md) for remaining data-supply work.
+Allowances are **10 requests/minute for Basic, 300 for Personal, and 500 for Professional**, shared across all keys and API instances. Rejected authenticated requests consume the allowance. Exhausted accounts receive 429 with `Retry-After`. Health and OpenAPI are public and unmetered. Apply `pnpm db:migrate:billing` after the API-plan/account-usage migrations; see [billing setup](polar-setup.md).
+
+Errors use `{error, code}` with optional `endpoint` and `docs`. Invalid/missing/unknown parameters return 400; missing resources 404; unavailable datasets 501; upstream/authentication/parse failures 502; source capacity/rate limits 503. Error responses are not cached. Every response includes `X-Request-ID`; successful resource responses include `X-Data-Coverage: partial`. Provider attribution fields and `X-Data-Source` are not returned. Required company identifiers and real company/document links remain usable.
+
+OpenAPI tags, `x-use-case`, and `x-order` describe the four categories; `x-tier` remains independent of category. `/v1/coverage` publishes the same classifications without provider attribution.

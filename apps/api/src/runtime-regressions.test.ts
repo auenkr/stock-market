@@ -49,17 +49,19 @@ test("legacy routes use Worker bindings for every source request and keep the re
       const search = await app.request(`${prefix}/company-search?q=acme`, {}, bindings);
       const searchBody = await search.json<any>();
       assert.equal(search.status, 200); assert.equal(searchBody.results.length, 1); assertEnvelope(`${prefix}/company-search`, searchBody);
+      assert.deepEqual(searchBody.results[0], { name: "Acme", symbol: "/company/ACME/" }); assert.deepEqual(searchBody.data, searchBody.results);
       const ipo = await app.request(`${prefix}/list-of-ipo`, {}, bindings);
       const ipoBody = await ipo.json<any>();
       assert.equal(ipo.status, 200); assert.deepEqual(ipoBody.ipos, []); assertEnvelope(`${prefix}/list-of-ipo`, ipoBody);
-      const full = await app.request(`${prefix}/company-data?companyUrl=/company/ACME/consolidated/`, {}, bindings);
+      const full = await app.request(`${prefix}/company-data?symbol=/company/ACME/consolidated/`, {}, bindings);
       const fullBody = await full.json<any>();
       assert.equal(full.status, 200); assert.equal(fullBody.companyData.name, "Acme Ltd"); assert.deepEqual(fullBody.data, fullBody.companyData); assertEnvelope(`${prefix}/company-data`, fullBody);
       const companySchema = spec.components.schemas.LegacyCompanyData;
       assert.deepEqual(Object.keys(fullBody.data).sort(), Object.keys(companySchema.properties).sort());
       assert.deepEqual(fullBody.data.metrics, []); assert.equal(companySchema.properties.metrics.maxItems, 0);
       assert(full.headers.get("X-Request-ID")); assert.equal(full.headers.get("Cache-Control"), "no-store");
-      const extracted = await app.request(`${prefix}/extract?endpoint=/company/ACME/consolidated/&type=ratios`, {}, bindings);
+      assert.equal(fullBody.data.symbol, "/company/ACME/consolidated/"); assert.equal(fullBody.data.url, undefined);
+      const extracted = await app.request(`${prefix}/extract?symbol=/company/ACME/consolidated/&type=ratios`, {}, bindings);
       assert.equal(extracted.status, 200); assert.equal(extracted.headers.get("X-Cache"), "HIT");
       assertEnvelope(`${prefix}/extract`, await extracted.json<any>());
     }
@@ -100,7 +102,7 @@ test("default provider calls native fetch with its global receiver", async () =>
   };
   try {
     const provider = new ScreenerProvider();
-    assert.equal((await provider.snapshot("ACME")).name, "Acme Ltd");
+    assert.equal((await provider.snapshot("/company/ACME/")).name, "Acme Ltd");
   } finally { globalThis.fetch = previous; }
 });
 
@@ -109,26 +111,27 @@ test("optional news failures preserve the main company response", async () => {
     if (config.url?.includes("moneycontrol")) throw new AxiosError("Forbidden", "ERR_BAD_REQUEST", config, undefined, { status: 403, statusText: "Forbidden", headers: {}, config, data: "" });
     return { data: config.url?.includes("/api/") ? "<table></table>" : company, status: 200, statusText: "OK", headers: {}, config };
   }, async () => {
-    const response = await createApp().request("/api/company-data?companyUrl=/company/ACME/consolidated/", {}, { BASE_URL: "https://optional-news.example", COOKIE: "" });
+    const response = await createApp().request("/api/company-data?symbol=/company/ACME/consolidated/", {}, { BASE_URL: "https://optional-news.example", COOKIE: "" });
     assert.equal(response.status, 200); assert.deepEqual((await response.json<any>()).data.news, []);
   });
 });
 
 
-test("company-data requires companyUrl and documents the original source path", async () => {
+test("legacy company endpoints require URL-valued symbol and reject obsolete identifiers", async () => {
   let calls = 0;
   await withAdapter(async () => { calls += 1; throw new Error("Invalid paths must not fetch upstream"); }, async () => {
     const app = createApp();
     for (const prefix of ["/api", "/v1"]) {
-      for (const query of ["", "?companyUrl=", "?companyUrl=%20", "?symbol=RELIANCE", "?endpoint=/company/RELIANCE/", "?companyUrl=https://example.com/company/ACME/", "?companyUrl=//example.com/company/ACME/", "?companyUrl=/company/../ACME/", "?companyUrl=/company/id/not-a-number/", "?companyUrl=/api/company/search/", "?companyUrl=/company/ACME/%3Fx=1"]) {
+      for (const query of ["", "?symbol=", "?symbol=%20", "?symbol=RELIANCE", "?endpoint=/company/RELIANCE/", "?companyUrl=/company/RELIANCE/", "?symbol=https://example.com/company/ACME/", "?symbol=//example.com/company/ACME/", "?symbol=/company/../ACME/", "?symbol=/company/id/not-a-number/", "?symbol=/api/company/search/", "?symbol=/company/ACME/%3Fx=1", "?symbol=/company/ACME/&symbol=/company/DEMO/", "?symbol=/company/ACME/&companyUrl=/company/DEMO/"]) {
         assert.equal((await app.request(`${prefix}/company-data${query}`, { headers: { "X-API-Key": crypto.randomUUID() } })).status, 400, query);
+        assert.equal((await app.request(`${prefix}/extract${query}${query ? "&" : "?"}type=ratios`, { headers: { "X-API-Key": crypto.randomUUID() } })).status, 400, query);
       }
     }
     assert.equal(calls, 0);
     const spec = await (await app.request("/openapi.json")).json<any>();
     for (const path of ["/api/company-data", "/v1/company-data"]) {
       const parameters = spec.paths[path].get.parameters;
-      assert.deepEqual(parameters.map((p: { name: string }) => p.name), ["companyUrl"]);
+      assert.deepEqual(parameters.map((p: { name: string }) => p.name), ["symbol"]);
       assert.equal(parameters[0].required, true);
       assert.equal(parameters[0].example, "/company/id/1286218/");
     }
@@ -143,18 +146,19 @@ test("company-data preserves ID, standalone, consolidated and ampersand company 
   }, async () => {
     const app = createApp();
     for (const prefix of ["/api", "/v1"]) {
-      for (const companyUrl of ["/company/id/1286218/", "/company/id/1286218/consolidated/", "/company/ACME/", "/company/ACME/consolidated/", "/company/GVT&D/", "/company/M%26M/consolidated/"]) {
-        const query = new URLSearchParams({ companyUrl });
+      for (const symbol of ["/company/id/1286218/", "/company/id/1286218/consolidated/", "/company/ACME/", "/company/ACME/consolidated/", "/company/GVT&D/", "/company/M%26M/consolidated/"]) {
+        const query = new URLSearchParams({ symbol });
         const response = await app.request(`${prefix}/company-data?${query}`, { headers: { "X-API-Key": crypto.randomUUID() } }, { BASE_URL: "https://path-test.example", COOKIE: "" });
-        assert.equal(response.status, 200, companyUrl);
-        assert(urls.includes(new URL(companyUrl, "https://path-test.example").href), companyUrl);
+        assert.equal(response.status, 200, symbol);
+        assert.equal((await response.json<any>()).data.symbol, symbol);
+        assert(urls.includes(new URL(symbol, "https://path-test.example").href), symbol);
       }
     }
   });
 });
 
 
-test("company list returns original URLs without symbols and source-based pagination", async () => {
+test("company list returns original URLs as symbols and source-based pagination", async () => {
   let sourceHtml = directory;
   let calls = 0;
   await withAdapter(async (config) => {
@@ -175,8 +179,8 @@ test("company list returns original URLs without symbols and source-based pagina
         const response = await request(`${prefix}/list-of-company?page=${page}`);
         assert.equal(response.status, 200);
         const body = await response.json<any>();
-        assert.equal(body.data[0].url, "/company/ACME/consolidated/");
-        assert(!("symbol" in body.data[0]));
+        assert.equal(body.data[0].symbol, "/company/ACME/consolidated/");
+        assert(!("url" in body.data[0]));
         assert(!("skip" in body.data[0]));
         assert.equal(Object.keys(body)[0], "meta");
         assert.deepEqual(Object.keys(body), ["meta", "data"]);
@@ -193,8 +197,8 @@ test("company list returns original URLs without symbols and source-based pagina
       assert.equal(full.meta.nextPage, null);
       sourceHtml = directory.replace('/company/ACME/', '/company/id/1286218/');
       const special = await (await request(`${prefix}/list-of-company`)).json<any>();
-      assert.equal(special.data[0].url, "/company/id/1286218/");
-      assert(!("symbol" in special.data[0]));
+      assert.equal(special.data[0].symbol, "/company/id/1286218/");
+      assert(!("url" in special.data[0]));
       const callsBefore = calls;
       for (const page of ["0", "-1", "1.5", "abc", "9007199254740992"]) {
         assert.equal((await request(`${prefix}/list-of-company?page=${page}`)).status, 400);
@@ -202,8 +206,30 @@ test("company list returns original URLs without symbols and source-based pagina
       assert.equal(calls, callsBefore);
     }
     const spec = await (await app.request("/swagger.json")).json<any>();
-    assert("url" in spec.components.schemas.LegacyDirectoryCompany.properties);
-    assert(!("symbol" in spec.components.schemas.LegacyDirectoryCompany.properties));
+    assert("symbol" in spec.components.schemas.LegacyDirectoryCompany.properties);
+    assert(!("url" in spec.components.schemas.LegacyDirectoryCompany.properties));
     assert(!("skip" in spec.components.schemas.LegacyDirectoryCompany.properties));
   });
+});
+
+test("upcoming IPO aliases return the company URL as symbol and retain optional GMP enrichment", async () => {
+  const rows = ["institutional", "non-institutional", "retail"].map((category) => `<tr><td class="text">${category}</td><td>100</td><td>200</td></tr>`).join("");
+  const html = `<table class="data-table"><tbody><tr><td><a href="/company/id/123/">Example IPO</a><a href="https://www.nseindia.com/?symbol=EXAMPLE">NSE</a></td><td>1 Oct - 3 Oct</td><td>100-120</td><td>10 Oct</td><td>1234</td><td><button>2 times</button><div class="dropdown-content"><table class="data-table"><tbody>${rows}</tbody><tfoot><tr><td>Total</td><td>300</td><td>600</td></tr></tfoot></table></div></td><td>20</td><td>15</td></tr></tbody></table>`;
+  const requests: string[] = [];
+  await withAdapter(async (config) => {
+    requests.push(config.url!);
+    const data = config.url?.includes("investorgain.com") ? { gmpList: [{ company_short_name: "Example IPO", gmp_perc: "10" }] } : html;
+    return { data, status: 200, statusText: "OK", headers: {}, config };
+  }, async () => {
+    for (const prefix of ["/v1", "/api"]) {
+      const response = await createApp().request(`${prefix}/list-of-ipo`, {}, { BASE_URL: "https://ipo-fixture.example" });
+      assert.equal(response.status, 200);
+      const body = await response.json<any>();
+      assert.deepEqual(body.data, body.ipos); assert.equal(body.data.length, 1);
+      assert.equal(body.data[0].symbol, "/company/id/123/"); assert.equal(body.data[0].url, undefined);
+      assert.equal(body.data[0].gmp_percentage, 10); assert.equal(body.data[0].exchanges[0].url, "https://www.nseindia.com/?symbol=EXAMPLE");
+    }
+  });
+  assert(requests.includes("https://ipo-fixture.example/ipo"));
+  assert(requests.some((url) => url.includes("investorgain.com")));
 });

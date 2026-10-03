@@ -1,36 +1,16 @@
 import assert from "node:assert/strict";
 import { createApp } from "../src/server.js";
 
-// Read source credentials from the environment; do not print them or source HTML.
+// Read credentials from the environment; never emit credentials or source HTML.
 const app = createApp();
-const bindings = { BASE_URL: process.env.BASE_URL ?? "https://www.screener.in", COOKIE: process.env.COOKIE };
-const paths = [
-  "/v1/stock-symbols", "/v1/company-profile/ITC",
-  "/v1/financials/ITC?statement_type=s&statement_code=pl&period=annual",
-  "/v1/financials/ITC?statement_type=c&statement_code=pl&period=quarterly",
-  "/v1/financials/ITC?statement_type=s&statement_code=bs&period=annual",
-  "/v1/financials/ITC?statement_type=s&statement_code=cf&period=annual",
-  "/v1/ratios/ITC?statement_type=s&ratio_type=pr",
-  "/v1/financial-metrics/ITC?statement_type=s&ratio_type=cu",
-  "/v1/basic-financials/ITC?statement_type=s&statement_code=pl",
-  "/v2/quote?symbol=ITC", "/v1/company-reports/ITC", "/v1/peers/ITC",
-  "/v1/stock-search?group=sub_industry&value=Diversified%20FMCG",
-  "/v1/shareholdings/pattern/ITC?period=quarterly",
-  "/v1/corp-announcements?symbol=ITC", "/v1/credit-ratings?symbol=ITC",
-  "/v1/investor-presentations?symbol=ITC", "/v1/ipo-calendar",
-  "/enterprise/api/company-profile?symbols=ITC,RELIANCE",
-  "/enterprise/api/quotes?symbol=ITC,RELIANCE",
-];
+const bindings = { BASE_URL: process.env.BASE_URL, COOKIE: process.env.COOKIE };
+const paths = ["/v1/company-search?q=reliance", ...["company-profile", "basic-financials", "company-documents", "peer-comparison", "quarterly-profit-loss", "profit-loss", "balance-sheet", "cash-flow", "ratios", "shareholding-pattern", "shareholdings/distribution"].map((resource) => `/v1/${resource}?` + new URLSearchParams({ symbol: "/company/RELIANCE/consolidated/" })), "/v1/list-of-ipo"];
 for (const path of paths) {
-  const response = await app.request(`http://localhost${path}`, {}, bindings);
+  const response = await app.request(`http://localhost${path}`, { headers: { "X-API-Key": process.env.API_KEY ?? "" } }, bindings);
   const body = await response.json<any>();
   assert.equal(response.status, 200, `${path}: ${body.code ?? response.status}`);
-  const count = Array.isArray(body) ? body.length : Array.isArray(body.financials) ? body.financials.length
-    : Array.isArray(body.data) ? body.data.length : Array.isArray(body.reports) ? body.reports.length
-    : Array.isArray(body.rows) ? body.rows.length : Array.isArray(body.peers) ? body.peers.length : Array.isArray(body.symbols) ? body.symbols.length : undefined;
-  if (count !== undefined) assert(count > 0, `${path}: source returned no records`);
+  assert.equal(response.headers.get("x-data-source"), null);
+  const count = [body.financials, body.data, body.rows, body.peers, body.ratios].find(Array.isArray)?.length;
+  if (count !== undefined) assert(count > 0, `${path}: no records`);
   console.log(JSON.stringify({ path, status: response.status, records: count, coverage: response.headers.get("x-data-coverage") }));
 }
-const transcript = await app.request("http://localhost/v1/investor-call-transcripts?symbol=ITC", {}, bindings);
-assert([200, 501].includes(transcript.status));
-console.log(JSON.stringify({ path: "/v1/investor-call-transcripts?symbol=ITC", status: transcript.status, sessionDependent: true }));

@@ -11,6 +11,8 @@ export type CompanySnapshot = {
   nseCode: string | null;
   website: string | null;
   description: string;
+  keyPoints: string;
+  analysis: { pros: string[]; cons: string[] };
   consolidated: boolean;
   classifications: Record<string, { name: string; path: string }>;
   summary: Record<string, number | null>;
@@ -26,23 +28,16 @@ export function numericValue(text: string): number | null {
   return Number.isFinite(result) ? result : null;
 }
 
-export function symbolFromPath(path: string): string | null {
-  const match = path.match(/^\/company\/([^/]+)\/(?:consolidated\/)?$/);
-  return match && match[1] !== "id" ? match[1]!.toUpperCase() : null;
-}
-
-export function parseCompanyLinks(html: string) {
+export function parsePeerComparison(html: string) {
   const $ = cheerio.load(html);
-  return $("table.data-table a[href^='/company/']").map((_, el) => ({
-    name: $(el).text().trim(), path: $(el).attr("href")!,
-  })).get().filter((x) => Boolean(x.name && symbolFromPath(x.path)));
-}
-
-export function parseMarketLinks(html: string) {
-  const $ = cheerio.load(html);
-  return $("a[href^='/market/']").map((_, el) => ({
-    name: $(el).text().trim(), path: $(el).attr("href")!,
-  })).get();
+  if (!$("table.data-table").length) throw new Error("Source did not return a peer comparison table");
+  const fields = ["currentPrice", "stockPE", "marketCap", "dividendYield", "netProfitLatestQuarter", "YOYQuarterlyProfitGrowth", "salesLatestQuarter", "YOYQuarterlySalesGrowth", "ROCE"];
+  return $("table.data-table tbody tr").map((_, tr) => {
+    const cells = $(tr).children("td");
+    const link = cells.find("a[href^='/company/']").first();
+    if (!link.length) return null;
+    return { symbol: link.attr("href")!, name: link.text().trim(), ...Object.fromEntries(fields.map((field, i) => [field, numericValue(cells.eq(i + 2).text())])) };
+  }).get().filter((row) => row !== null);
 }
 
 export function nextPage(html: string, currentPage: number): number | null {
@@ -62,11 +57,6 @@ export function sourceDate(text: string): string | null {
   return Number.isFinite(iso) ? new Date(iso).toISOString().slice(0, 10) : null;
 }
 
-export function classificationName(html: string) {
-  const $ = cheerio.load(html);
-  return $("h1").first().text().replace(/\s+Companies$/, "").trim();
-}
-
 export function parseAdminRows(html: string) {
   const $ = cheerio.load(html);
   if (!$("#result_list").length) throw new Error("Source did not return a data table");
@@ -77,7 +67,7 @@ export function parseAdminRows(html: string) {
       const key = $(td).attr("class")?.match(/\bfield-([\w_]+)/)?.[1];
       if (key) fields[key] = $(td).text().trim();
     });
-    return { symbol: symbolFromPath(company.attr("href") ?? ""), name: company.text().trim(), fields };
+    return { symbol: company.attr("href") ?? null, name: company.text().trim(), fields };
   }).get();
 }
 
@@ -89,20 +79,6 @@ export function parseCorporateActions(html: string) {
     return { kind: $(tr).closest("[id^='corporate-actions-']").attr("id")!.replace("corporate-actions-", ""),
       date: sourceDate((cells.first().children().length ? cells.first().children().map((_, el) => $(el).text().trim()).get().join(" ") : cells.first().text()).replace(/\s+/g, " ").trim()),
       title: cells.eq(1).find(".font-weight-500").text().trim(), description: cells.eq(1).find(".sub").text().trim() };
-  }).get();
-}
-
-export function parseAnnouncementFeed(html: string) {
-  const $ = cheerio.load(html);
-  if (!$("h1").text().includes("Announcements")) throw new Error("Source did not return announcements");
-  return $(".announcement-item").map((_, el) => {
-    const company = $(el).find("a[href^='/company/']").first();
-    const pdf = $(el).find("a[href^='http']").first();
-    const date = $(el).find("time[datetime]").attr("datetime") ?? null;
-    const title = pdf.clone().children().remove().end().text().replace(/\s+/g, " ").trim();
-    return { symbol: symbolFromPath(company.attr("href") ?? ""), title, description: pdf.find("div.sub").text().trim() || title,
-      url: pdf.attr("href") ?? null, date: date?.slice(0, 10) ?? null,
-      timestamp: date && Number.isFinite(Date.parse(date)) ? Date.parse(date) / 1000 : null };
   }).get();
 }
 
@@ -178,6 +154,8 @@ export function parseCompanySnapshot(html: string, symbol: string, consolidated:
   const change = $("#top .font-size-12").map((_, el) => $(el).text().trim()).get().find((t) => /^-?\d+(?:\.\d+)?%$/.test(t)) ?? null;
   return { symbol, refId, warehouseId: $("#company-info").attr("data-warehouse-id") ?? refId,
     name, bseCode: bse?.text.match(/\d+/)?.[0] ?? null, nseCode: nse?.text.split(":")[1]?.trim() ?? null,
-    website: website?.href ?? null, description: $(".about p").text().trim(), consolidated,
+    website: website?.href ?? null, description: $(".about p").text().trim(),
+    keyPoints: $("div.title:contains('Key Points')").next(".sub.commentary").text().trim(),
+    analysis: { pros: $(".pros ul li").map((_, el) => $(el).text().trim()).get(), cons: $(".cons ul li").map((_, el) => $(el).text().trim()).get() }, consolidated,
     classifications, summary, change, tables, documents };
 }

@@ -5,8 +5,8 @@ import { Rate } from 'k6/metrics';
 
 const base = (__ENV.BASE_URL || 'http://127.0.0.1:8787').replace(/\/$/, '');
 const mode = __ENV.SCENARIO || 'smoke';
-const symbol = __ENV.SYMBOL || 'ACME';
-const symbol2 = __ENV.SYMBOL_2 || 'DEMO';
+const symbol = __ENV.SYMBOL || '/company/ACME/';
+const symbol2 = __ENV.SYMBOL_2 || '/company/DEMO/';
 const encoded = encodeURIComponent(symbol);
 const encoded2 = encodeURIComponent(symbol2);
 const outcomes = new Rate('expected_outcomes');
@@ -55,21 +55,21 @@ export function setup() {
     if (!__ENV.QUOTA_KEY || !__ENV.QUOTA_KEY_2) fail('quota requires two unused keys belonging to one account with a 10/min limit');
   } else {
     // Prewarm only the explicitly warm scenario. Cold requests use fresh symbols.
-    const response = http.get(`${base}/v1/company-profile/${encoded}`, params('setup_warm_profile'));
+    const response = http.get(`${base}/v1/company-profile?symbol=${encoded}`, params('setup_warm_profile'));
     if (response.status !== 200) fail('Authenticated source readiness failed');
   }
   return { started: Date.now() };
 }
 export function journey() {
   const routes = [
-    [`/v1/company-profile/${encoded}`, 'warm_profile', 200, b => typeof b === 'object' && !b.error],
-    [`/v1/financials/${encoded}?statement_type=s&statement_code=pl&period=annual`, 'financials', 200, b => Array.isArray(b.financials) && b.financials.length > 0],
-    [`/api/v2/quote?symbol=${encoded}&symbol=${encoded2}`, 'batch_quotes', 200, b => Boolean(b[symbol] && b[symbol2])],
-    [`/enterprise/api/company-profile?symbols=${encoded},${encoded2}`, 'enterprise_profiles', 200, b => Array.isArray(b) && b.length === 2],
+    [`/v1/company-profile?symbol=${encoded}`, 'warm_profile', 200, b => typeof b === 'object' && !b.error],
+    [`/v1/profit-loss?symbol=${encoded}`, 'financials', 200, b => Array.isArray(b.financials) && b.financials.length > 0],
+    [`/v1/basic-financials?symbol=${encoded}`, 'basic_finance', 200, b => Boolean(b.basicFinance && b.analysis)],
+    [`/v1/company-profile?symbol=${encoded2}`, 'second_profile', 200, b => typeof b === 'object' && !b.error],
     ['/v1/list-of-company?page=1', 'legacy_pagination', 200, b => Array.isArray(b.data) && b.meta.limit === 100],
-    [`/v1/company-search?q=${encoded}`, 'legacy_search', 200, b => Array.isArray(b.data) && Array.isArray(b.results) && b.data.length === b.results.length && b.data.every((row, i) => row.name === b.results[i].name && row.url === b.results[i].url)],
-    [`/v1/financials/${encoded}`, 'validation', 400, b => typeof b.error === 'string'],
-    ['/v1/quote', 'unavailable', 501, b => b.code === 'DATASET_UNAVAILABLE'],
+    ['/v1/company-search?q=acme', 'company_search', 200, b => Array.isArray(b.data) && Array.isArray(b.results) && b.data.length === b.results.length && b.data.every((row, i) => row.name === b.results[i].name && row.symbol === b.results[i].symbol && !('url' in row))],
+    ['/v1/profit-loss', 'validation', 400, b => typeof b.error === 'string'],
+    ['/v1/holidays-calendar', 'removed_endpoint', 404, b => b.code === 'NOT_FOUND'],
   ];
   const [path, name, status, contract] = routes[exec.scenario.iterationInTest % routes.length];
   verify(http.get(base + path, params(name, status)), status, contract);
@@ -78,7 +78,7 @@ export function journey() {
   if (__ENV.COLD_SOURCE === '1') {
     // Only fixture servers can answer these synthetic symbols. Each misses the source cache.
     const symbol = `COLD${exec.vu.idInTest}_${exec.scenario.iterationInTest}`;
-    verify(http.get(`${base}/v1/company-profile/${symbol}`, params('cold_profile')), 200, b => typeof b === 'object' && !b.error);
+    verify(http.get(`${base}/v1/company-profile?symbol=${encodeURIComponent(`/company/${symbol}/`)}`, params('cold_profile')), 200, b => typeof b === 'object' && !b.error);
   }
   sleep(Number(__ENV.THINK_TIME || 0.1));
 }

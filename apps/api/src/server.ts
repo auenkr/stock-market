@@ -83,9 +83,9 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
     log("error", "api.unhandled", { requestId: c.res.headers.get("X-Request-ID"), path: c.req.path, error: errorDetails(error) });
     return errorResponse(c, "Internal Server Error", 500);
   });
-  app.use("*", cors({ origin: "*", allowHeaders: ["Content-Type", "Authorization", "X-API-Key"], exposeHeaders: ["X-Request-ID", "X-Page", "X-Next-Page", "X-Data-Coverage", "X-Data-Source", "Retry-After"] }));
+  app.use("*", cors({ origin: "*", allowHeaders: ["Content-Type", "Authorization", "X-API-Key"], exposeHeaders: ["X-Request-ID", "X-Page", "X-Next-Page", "X-Data-Coverage", "Retry-After"] }));
   app.use("*", async (c, next) => {
-    if (!["/v1/", "/v2/", "/api/", "/enterprise/"].some((prefix) => c.req.path.startsWith(prefix))) return next();
+    if (!["/v1/", "/v2/", "/api/"].some((prefix) => c.req.path.startsWith(prefix))) return next();
     const access = await authorize(requestKey(c), c.env ?? {});
     c.header("Cache-Control", "no-store");
     if (access.status === "unauthorized") return errorResponse(c, "Invalid or expired API key", 401);
@@ -115,7 +115,7 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
 
     try {
       const result = await getCompanyListPage(COMPANY_PAGE_SIZE, page, sourceOptions(c));
-      const companies = result.companies.map(({ skip, ...company }) => company);
+      const companies = result.companies.map(({ skip, url, ...company }) => ({ ...company, symbol: url }));
       const pagination = {
         currentPage: page,
         limit: COMPANY_PAGE_SIZE,
@@ -135,7 +135,7 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
 
   api.get("/list-of-ipo", async (c) => {
     try {
-      const ipos = await ListUpcommingIpo(sourceOptions(c));
+      const ipos = (await ListUpcommingIpo(sourceOptions(c))).map(({ url, ...ipo }) => ({ ...ipo, symbol: url }));
       return c.json({ data: ipos, ipos });
     } catch (error) {
       return upstreamFailure(c, error);
@@ -148,38 +148,41 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
 
     try {
       const response = await sourceGet("/api/company/search/", sourceOptions(c), { params: { q: query } });
-      return c.json({ data: response.data, results: response.data });
+      const results = response.data.map(({ url, ...company }: { url: string; [key: string]: unknown }) => ({ ...company, symbol: url }));
+      return c.json({ data: results, results });
     } catch (error) {
       return upstreamFailure(c, error);
     }
   });
 
   api.get("/company-data", async (c) => {
-    const endpoint = c.req.query("companyUrl")?.trim();
-    if (!endpoint) return errorResponse(c, "companyUrl parameter is required", 400);
-    if (!validCompanyPath(endpoint)) {
-      return errorResponse(c, "companyUrl must be a company path", 400);
+    const symbol = c.req.query("symbol")?.trim();
+    if (!symbol) return errorResponse(c, "symbol parameter is required", 400);
+    if (!validCompanyPath(symbol) || c.req.queries("symbol")?.length !== 1 || Object.keys(c.req.query()).some((name) => name !== "symbol")) {
+      return errorResponse(c, "symbol must be a single company path", 400);
     }
 
     try {
-      const result = await getCachedCompanyData(endpoint, sourceOptions(c));
+      const result = await getCachedCompanyData(symbol, sourceOptions(c));
       if (result.hit) c.header("X-Cache", "HIT");
       c.header("Cache-Control", "private, max-age=900");
-      return c.json({ data: result.value, companyData: result.value });
+      const { url, ...company } = result.value;
+      const data = { ...company, symbol, website: url };
+      return c.json({ data, companyData: data });
     } catch (error) {
       return upstreamFailure(c, error);
     }
   });
 
   api.get("/extract", async (c) => {
-    const endpoint = c.req.query("endpoint")?.trim();
+    const symbol = c.req.query("symbol")?.trim();
     const type = c.req.query("type");
-    if (!endpoint) return errorResponse(c, "endpoint parameter is required", 400);
-    if (!validCompanyPath(endpoint)) return errorResponse(c, "endpoint must be a company path", 400);
+    if (!symbol) return errorResponse(c, "symbol parameter is required", 400);
+    if (!validCompanyPath(symbol) || c.req.queries("symbol")?.length !== 1 || Object.keys(c.req.query()).some((name) => !["symbol", "type"].includes(name))) return errorResponse(c, "symbol must be a single company path", 400);
     if (!isExtractType(type)) return errorResponse(c, `type must be one of: ${extractTypes.join(", ")}`, 400);
 
     try {
-      const result = await getCachedCompanyData(endpoint, sourceOptions(c));
+      const result = await getCachedCompanyData(symbol, sourceOptions(c));
       if (result.hit) c.header("X-Cache", "HIT");
       const data = type === "quarterly" ? result.value.quarterlyResultStatements
         : type === "profit-loss" ? result.value.profitAndLossStatements
@@ -188,16 +191,17 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
         : type === "ratios" ? result.value.ratioStatements
         : type === "shareholding" ? result.value.shareholdingPatternStatements
         : result.value.peerCompanies;
-      return c.json({ data, meta: { endpoint, type, cached: result.hit } });
+      return c.json({ data, meta: { symbol, type, cached: result.hit } });
     } catch (error) {
       return upstreamFailure(c, error);
     }
   });
 
-  app.get("/", (c) => c.html(HomePageData));
+  app.get("/", (c) => c.html(HomePageData(c.env?.ENVIRONMENT ?? (typeof process === "undefined" ? undefined : process.env.ENVIRONMENT))));
   app.get("/health", (c) => c.json({ status: "ok", service: "stock-market-api", version: "1.2.0" }));
-  app.get("/openapi.json", (c) => c.json(openApi(new URL(c.req.url).origin)));
-  app.get("/swagger.json", (c) => c.json(openApi(new URL(c.req.url).origin)));
+  const documentedSpec = (c: Context<{ Bindings: ApiBindings; Variables: AccessVariables }>) => openApi(new URL(c.req.url).origin, c.env?.ENVIRONMENT ?? (typeof process === "undefined" ? undefined : process.env.ENVIRONMENT));
+  app.get("/openapi.json", (c) => c.json(documentedSpec(c)));
+  app.get("/swagger.json", (c) => c.json(documentedSpec(c)));
   app.get("/docs", (c) => c.html(apiDocsHtml));
   app.route("/", createCompatibilityApi(providerFactory));
   app.route("/v1", api);

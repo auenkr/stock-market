@@ -380,10 +380,6 @@ export function parseUpcomingIPOs($: cheerio.CheerioAPI): CompanyIPOData[] {
   return results;
 }
 
-export function parseUpcomingIpoHtml(html: string): CompanyIPOData[] {
-  return parseUpcomingIPOs(cheerio.load(html));
-}
-
 export async function ListUpcommingIpo(source: SourceOptions = {}) {
   try {
     const url = `/ipo`;

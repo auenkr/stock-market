@@ -50,11 +50,11 @@ export async function setup() {
       if (url.pathname.includes('/FAIL/')) { res.writeHead(503); res.end('Unavailable'); return; }
       if (url.pathname.includes('/LOGIN/')) { res.end('<title>Login</title><form action="/login/">'); return; }
       if (url.pathname === '/api/company/search/') { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify([{ name: 'Acme Ltd', url: '/company/ACME/' }])); return; }
+      if (url.pathname.endsWith('/peers')) { res.end(`<table class="data-table"><tbody><tr><td>1</td><td><a href="/company/DEMO/">Demo Ltd</a></td>${'<td>10</td>'.repeat(9)}</tr></tbody></table>`); return; }
       if (url.pathname.startsWith('/api/')) { res.setHeader('Content-Type', 'application/json'); res.end('{}'); return; }
       if (url.pathname.startsWith('/screens/') || url.pathname.startsWith('/market/IN')) {
         res.end(`<table class="data-table"><tbody><tr><td>1</td><td><a href="/company/ACME/">Acme Ltd</a></td>${'<td>10</td>'.repeat(9)}</tr></tbody></table>${url.searchParams.get('page') === '2' ? '' : '<div class="pagination"><a href="?page=2">Next</a></div>'}`); return;
       }
-      if (url.pathname === '/market/') { res.end('<a href="/market/IN01/IN0101/IN010101/">Widgets</a><a href="/market/IN01/IN0101/IN010101/IN010101001/">Widgets</a>'); return; }
       if (url.pathname.startsWith('/ipo')) { res.end('<table class="data-table"><tbody></tbody></table>'); return; }
       if (url.pathname.startsWith('/actions/') || url.pathname.startsWith('/upcoming-results/')) { res.end('<table id="result_list"><tbody></tbody></table>'); return; }
       if (url.pathname.startsWith('/company/actions/')) { res.end('<section id="corporate-actions-bonus"><table><tbody></tbody></table></section>'); return; }
@@ -63,7 +63,7 @@ export async function setup() {
     });
     servers.push(source.server);
     await sql`INSERT INTO usage_policy (id, request_limit) VALUES ('default', 10000), ('personal', 10000), ('professional', 10000) ON CONFLICT (id) DO UPDATE SET request_limit = 10000`;
-    const bindings = { DB_CONNECTION_URL: databaseUrl, BASE_URL: source.url, COOKIE: 'fixture-session', FINEDGE_API_KEY: '' };
+    const bindings = { DB_CONNECTION_URL: databaseUrl, BASE_URL: source.url, COOKIE: 'fixture-session', ENVIRONMENT: 'dev' };
     async function startApi(env: Bindings & AccountAccessBindings = bindings) {
       const app = createApp(); // Real authorization and real provider, no injected decisions.
       const api = await listen(async (req, res) => {

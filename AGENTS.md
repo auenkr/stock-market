@@ -8,6 +8,8 @@ username: <dev@auenkr.com>
 password: test-development-password
 
 test credit card for sandbox payment provider: 4242 4242 4242 4242
+cvv: random
+expire: any future date
 
 # Tech stack
 

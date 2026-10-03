@@ -1,0 +1,4 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/auth build && pnpm build"
+}

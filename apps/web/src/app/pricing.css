@@ -17,6 +17,8 @@
 .plan-featured { border-color: var(--accent); background: linear-gradient(145deg, light-dark(#eff7e8, #22301c), var(--card) 65%); }
 .plan-card .button { text-align: center; }
 .plan-card .pill { align-self: flex-start; }
+.plan-card-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.plan-card-header .pill { margin-left: auto; }
 .pricing-notes { max-width: 760px; margin: 48px auto 0; padding-top: 28px; border-top: 1px solid var(--line); line-height: 1.8; font-size: 14px; color: var(--muted); }
 .pricing-notes h2 { color: var(--ink); }
 .pricing-notes ul { padding-left: 20px; }
@@ -30,6 +32,17 @@
 .legal-consent { display: flex; align-items: flex-start; gap: 12px; margin: 24px 0; line-height: 1.7; font-size: 14px; }
 .legal-consent input { margin-top: 5px; width: 17px; height: 17px; flex: 0 0 auto; accent-color: var(--accent, #7563e8); }
 .billing-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.billing-summary { margin-bottom: 24px; }
+.billing-summary .billing-actions { margin-top: 12px; }
+.billing-summary strong, .billing-help strong { color: var(--ink); }
+.billing-plans .plan-grid { gap: 16px; }
+.billing-plans .plan-card { padding: 22px; }
+.billing-plans .plan-card h2 { margin-top: 12px; font-size: 22px; }
+.billing-plans .plan-price { font-size: 32px; margin: 16px 0 8px; }
+.billing-plans .plan-price span { font-weight: 600; }
+.billing-plans .plan-card > .subtle { font-weight: 600; }
+.billing-plans .plan-card ul { margin: 16px 0 20px; }
+.billing-plans .plan-card li { margin-bottom: 8px; }
 .support-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .support-grid h2, .support-contact h2 { margin-top: 18px; font-size: 24px; }
 .support-contact { margin-top: 24px; }

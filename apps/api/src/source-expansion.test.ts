@@ -4,6 +4,7 @@ import { URL as NodeURL } from "node:url";
 import test from "node:test";
 import { createTestApp as createApp } from "./test-app.js";
 import { ScreenerProvider } from "./screener-provider.js";
+import { endpointCatalog } from "./endpoint-catalog.js";
 
 const fixture = readFileSync(new NodeURL("./fixtures/company.html", import.meta.url), "utf8");
 const actions = `<div id="corporate-actions-dividend"><table><tbody><tr><td><div class="font-weight-500">2024</div><div class="sub">May 27</div></td><td><div class="font-weight-500">₹ 6.50</div><div class="sub">Final - FY24</div></td></tr></tbody></table></div><div id="corporate-actions-bonus"><table><tbody><tr><td>2020 Jul 01</td><td><div class="font-weight-500">1:2</div></td></tr></tbody></table></div><div id="corporate-actions-split"><table><tbody><tr><td>2005 Sep 21</td><td><div class="font-weight-500">New face value: 1.00</div><div class="sub">Old face value: 10.00</div></td></tr></tbody></table></div>`;
@@ -25,37 +26,47 @@ function setup() {
 
 test("expanded schedules and named ownership preserve units, zero and missing periods", async () => {
   const { app, requests } = setup();
-  const bs = await (await app.request("/v1/financials/ACME?statement_type=c&statement_code=bs&period=annual")).json<any>();
+  const bs = await (await app.request("/v1/balance-sheet?symbol=/company/ACME/consolidated/")).json<any>();
   assert.equal(bs.financials[2].inventories, 500_000_000); assert.equal(bs.financials[2].tradeReceivables, 120_000_000); assert.equal(bs.financials[0].inventories, null);
   assert(requests.some((r) => r.includes("schedules/") && r.includes("consolidated=true")));
-  const pattern = await (await app.request("/v1/shareholdings/pattern/ACME?period=quarterly")).json<any>();
+  const pattern = await (await app.request("/v1/shareholding-pattern?symbol=/company/ACME/")).json<any>();
   assert.deepEqual(pattern.rows[0].shareholders[1].data, { "Mar 2024": 0, "Jun 2024": null });
-  const current = await (await app.request("/v1/shareholdings/ownership-current/ACME")).json<any>();
+  const current = await (await app.request("/v1/shareholdings/ownership-current?symbol=/company/ACME/")).json<any>();
   assert.equal(current.quarter, "Jun 2024"); assert.equal(current.ownerships.length, 1); assert.equal(current.ownerships[0].shareholder_name, "Acme Founder"); assert.equal(current.ownerships[0].shareholdingPct, 51); assert.equal(current.ownerships[0].totalShares, null);
-  const history = await (await app.request("/v1/shareholdings/ownership-history/ACME?period=quarterly")).json<any>();
+  const history = await (await app.request("/v1/shareholdings/ownership-history?symbol=/company/ACME/&period=quarterly")).json<any>();
   assert.equal(history.ownership_histories[0].data[1].shareholdingPct, 0); assert.equal(history.ownership_histories[1].data.length, 1);
-  const summary = await (await app.request("/v1/shareholdings/summary/ACME?period=quarterly")).json<any>();
+  const summary = await (await app.request("/v1/shareholdings/summary?symbol=/company/ACME/&period=quarterly")).json<any>();
   assert.equal(summary.summary[1].totalShareholders, 1100); assert.equal(summary.summary[1].totalShares, null);
+  const distribution = await (await app.request("/v1/shareholdings/distribution?symbol=/company/ACME/")).json<any>();
+  assert.equal(distribution.period, "quarterly"); assert.equal(distribution.distributions[1].distributions[0].data.shareholdingPct, 51);
+  assert.equal((await app.request("/v1/shareholdings/distribution?symbol=/company/ACME/&period=annual")).status, 400);
 });
 
-test("corporate actions, calendars and market announcements use observed dates and pagination", async () => {
+test("corporate-action query filters, all-action defaults and rights pagination preserve company identity", async () => {
   const { app, ajax } = setup();
-  const div = await (await app.request("/v1/dividend/ACME")).json<any>();
+  const div = await (await app.request("/v1/dividend?symbol=/company/ACME/")).json<any>();
   assert.deepEqual(div.dividend[0], { date: "2024-05-27", amount: 6.5, adj_amount: null, dividend_type: "Final", subject: "Final - FY24" }); assert(ajax.some((p) => p.startsWith("/company/actions/")));
-  const split = await (await app.request("/v1/corporate-actions/split/ACME")).json<any>(); assert.equal(split.split[0].action, "New face value: 1.00; Old face value: 10.00");
-  const rights = await app.request("/v1/corporate-actions/rights/ACME"); assert.equal(rights.headers.get("x-next-page"), "2"); assert.equal((await rights.json<any>()).rights[0].action, "1:2");
+  const split = await (await app.request("/v1/corporate-actions?symbol=/company/ACME/&action=split")).json<any>(); assert.equal(split.actions[0].subject, "New face value: 1.00; Old face value: 10.00"); assert.equal(split.actions[0].action, "split");
+  const rights = await app.request("/v1/corporate-actions?symbol=/company/ACME/consolidated/&action=rights"); assert.equal(rights.headers.get("x-next-page"), "2"); assert.equal((await rights.json<any>()).actions[0].subject, "1:2");
+  const all = await (await app.request("/v1/corporate-actions?symbol=/company/id/42/")).json<any>();
+  assert.deepEqual(all.actions.map((action: any) => action.action), ["dividend", "bonus", "split", "rights"]);
+  assert(all.actions.every((action: any) => action.symbol === "/company/id/42/"));
+  const next = await (await app.request("/v1/corporate-actions?symbol=/company/ACME/&page=2")).json<any>();
+  assert.deepEqual(next.actions.map((action: any) => action.action), ["rights"]);
   const feed = await (await app.request("/v1/corporate-actions/all?action=dividend")).json<any>(); assert.equal(feed[0].amount, null); assert.equal(feed[0].subject, "Final: 25% of face value");
   const results = await app.request("/v1/results-calendar?from_date=2024-05-01&to_date=2024-05-31"); assert.equal(results.headers.get("x-next-page"), "2"); assert.equal((await results.json<any>())[0].expected_result_date, "2024-05-14");
-  const announcements = await (await app.request("/v1/corp-announcements")).json<any>(); assert.equal(announcements[0].description, "Detailed notice"); assert.equal(announcements[0].timestamp_unix, Date.parse("2024-05-14T12:30:00+05:30") / 1000);
-  assert.equal((await app.request("/v1/corporate-actions/bonus/ACME?page=2")).status, 501);
-  assert.equal((await app.request("/v1/corporate-actions/all?symbol=ACME&action=unknown")).status, 400);
+  assert.equal((await app.request("/v1/corporate-actions?symbol=/company/ACME/&action=bonus&page=2")).status, 501);
+  for (const symbol of ["ACME", "..", "https://example.com/company/ACME/"]) assert.equal((await app.request("/v1/corporate-actions/all?" + new URLSearchParams({ symbol }))).status, 400);
+  assert.equal((await app.request("/v1/corporate-actions/all?symbol=/company/ACME/&action=unknown")).status, 400);
+  const filtered = await (await app.request("/v1/corporate-actions/all?symbol=/company/ACME/&action=rights&from_date=2024-05-15")).json<any>();
+  assert.deepEqual(filtered, []);
 });
 
 test("source rate limits and changed detail formats remain explicit failures", async () => {
   const limited = new ScreenerProvider({ fetcher: async () => new Response("Limited", { status: 429 }) });
-  const res = await createApp(() => limited).request("/v1/company-profile/ACME"); assert.equal(res.status, 503); assert.equal((await res.json<any>()).code, "SOURCE_RATE_LIMITED");
+   const res = await createApp(() => limited).request("/v1/company-profile?symbol=/company/ACME/"); assert.equal(res.status, 503); assert.equal((await res.json<any>()).code, "SOURCE_RATE_LIMITED");
   const changed = new ScreenerProvider({ fetcher: async (url) => new Response(String(url).includes("investors") ? '<p>Unknown response</p>' : fixture) });
-  const malformed = await createApp(() => changed).request("/v1/shareholdings/pattern/ACME?period=quarterly"); assert.equal(malformed.status, 502); assert.equal((await malformed.json<any>()).code, "UPSTREAM_SCHEMA_CHANGED");
+   const malformed = await createApp(() => changed).request("/v1/shareholding-pattern?symbol=/company/ACME/"); assert.equal(malformed.status, 502); assert.equal((await malformed.json<any>()).code, "UPSTREAM_SCHEMA_CHANGED");
 });
 
 test("Swagger aliases match, schema refs resolve and operation IDs are unique", async () => {
@@ -63,5 +74,7 @@ test("Swagger aliases match, schema refs resolve and operation IDs are unique", 
   assert.deepEqual(await (await app.request("/openapi.json")).json<any>(), spec); assert.equal((await app.request("/docs")).status, 200);
   const ids = Object.values(spec.paths).map((p: any) => p.get.operationId); assert.equal(new Set(ids).size, ids.length);
   function verifyRefs(value: any) { if (!value || typeof value !== "object") return; if (value.$ref) assert(spec.components.schemas[value.$ref.split("/").at(-1)!], value.$ref); for (const child of Object.values(value)) verifyRefs(child); }
-  verifyRefs(spec); assert.equal(spec["x-coverage-summary"].partial, 50); assert.equal(spec["x-coverage-summary"].unavailable, 3);
+   verifyRefs(spec);
+   for (const status of ["partial", "unavailable", "excluded"]) assert.equal(spec["x-coverage-summary"][status], endpointCatalog.filter((endpoint) => endpoint.status === status).length);
+   assert.equal(spec["x-coverage-summary"].total, endpointCatalog.length);
 });

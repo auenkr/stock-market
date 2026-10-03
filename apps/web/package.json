@@ -13,6 +13,7 @@
     "@polar-sh/better-auth": "^2.0.0",
     "@polar-sh/sdk": "^1.0.2",
     "@stock-market/auth": "workspace:*",
+    "@stock-market/common": "workspace:*",
     "@stock-market/db": "workspace:*",
     "@stock-market/ui": "workspace:*",
     "better-auth": "^1.7.7",

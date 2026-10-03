@@ -8,7 +8,7 @@
 | Personal (`personal`) | ₹2,000 | 300 | Basic + all endpoints and supported companies | Personal/non-commercial |
 | Professional (`professional`) | ₹5,000 | 500 | Personal + commercial use | Commercial integration permitted |
 
-The paid amounts match [FinEdge's published prices](https://www.finedgeapi.com/financial-data-api-pricing), checked October 2, 2026. Ledgerline bills **monthly**, even though that reference currently bills Individual quarterly and Professional annually. Basic is free ongoing service access, with no payment checkout or card required. “All endpoints” removes plan restrictions; documented source gaps, null fields, exclusions, and 501 responses still apply.
+Ledgerline bills paid plans **monthly**. Basic is free ongoing service access, with no payment checkout or card required. “All endpoints” removes plan restrictions; documented source gaps, null fields, exclusions, and 501 responses still apply.
 
 ## 1. Create the Polar organization
 
@@ -90,7 +90,7 @@ Keep the existing Google OAuth and API key encryption configuration. Register th
 
 With all four Polar credentials/product IDs empty, pricing and Basic work and paid subscription actions are disabled. Partial configuration fails explicitly. Switch `POLAR_ENVIRONMENT=production` and replace **every** sandbox credential/product ID with its production equivalent when going live.
 
-The Terms of Service and Privacy Policy are at `/terms-of-service` and `/privacy-policy`. Their text is adapted for Ledgerline, its actual data collection, monthly plans, and Polar billing rather than copying FinEdge's identity or contact details. Set the operator and contact variables before the production build so the published static pages contain your details. Changes to the policy text should update `legalVersion` in `packages/auth/src/consent.ts` as well.
+The Terms of Service and Privacy Policy are at `/terms-of-service` and `/privacy-policy`. Their text describes Ledgerline, its actual data collection, monthly plans, and Polar billing. Set the operator and contact variables before the production build so the published static pages contain your details. Changes to the policy text should update `legalVersion` in `packages/auth/src/consent.ts` as well.
 
 ## 6. Apply the schema and deploy
 
@@ -155,4 +155,4 @@ pnpm docs:check
 
 Integration and E2E runners create/drop disposable PostgreSQL databases. Integration tests use the real Better Auth/Polar plugin, signed webhook handler, local HTTP billing fixtures, and real quota storage. Browser tests use the real Next.js console, Google authorization-start flow, policy acceptance, API key creation, signed webhooks, billing display, and signed account-service endpoint. Google’s remote page is isolated at the browser network boundary; no external OAuth token exchange or real Polar card charge is performed. The E2E server runs in the designated `stock-market` tmux session on port 3105.
 
-References: [Better Auth integration](https://polar.sh/docs/integrate/sdk/adapters/better-auth), [Products and INR pricing](https://polar.sh/docs/features/products), [Organization access tokens](https://polar.sh/docs/integrate/oat), [FinEdge terms](https://www.finedgeapi.com/terms-of-service), [FinEdge privacy](https://www.finedgeapi.com/privacy-policy).
+References: [Better Auth integration](https://polar.sh/docs/integrate/sdk/adapters/better-auth), [Products and INR pricing](https://polar.sh/docs/features/products), [Organization access tokens](https://polar.sh/docs/integrate/oat).

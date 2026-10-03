@@ -12,22 +12,24 @@ The API validates dashboard-issued keys against PostgreSQL, including expiration
 
 ### Endpoint tiers
 
-The endpoint catalog and docs explorer divide operations into **Free** and **Paid** tiers. Free covers discovery, profiles, quotes, basic financials, peers, calendars, and service endpoints. Paid covers detailed financials, ownership, corporate disclosures, commodities, full company datasets, and enterprise batches. Aliases inherit their canonical tier. See [the tier matrix](docs/api-compatibility.md#endpoint-tiers). OpenAPI includes `x-tier` and `x-api-style`; free accounts can access company endpoints only for RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN (top five by market capitalization at 2026-10-01 close). Other free discovery/calendar/service endpoints remain accessible. Paid accounts can use all tiers and companies, subject to source coverage.
+The endpoint catalog and docs explorer divide operations into **Free** and **Paid** tiers. Free covers search, profiles, basic finance, peer comparison, and selected Internal discovery/calendar/service endpoints. Paid covers documents, detailed financials, ratios, shareholding, and other paid Internal datasets. Aliases inherit their canonical tier. See [the tier matrix](docs/api-compatibility.md#endpoint-tiers). Basic company access is limited to RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN (top five by market capitalization at 2026-10-01 close). Paid accounts can use all tiers and supported companies.
 
-### FinEdge-style resource API
+### Personal resource API
 
-The API exposes the non-history personal and enterprise contracts inventoried from the [FinEdge documentation](https://www.finedgeapi.com/financial-data-api-documentation). Compatibility routes preserve resource-specific response shapes rather than adding the legacy `data` envelope.
+Endpoints follow the [company research journey](docs/endpoint-journey.md): **Search → Company overview → Finance → Internal**. The API reference groups endpoints by category with independent Free/Paid filters. OpenAPI tags, `x-use-case`, and `x-order` preserve the same grouping/order for clients and `/v1/coverage`.
 
-There are 53 non-history reference paths: 36 have partial source-backed adapters and 17 return explicit `501 DATASET_UNAVAILABLE`. Nine market-history paths are excluded. Newly connected Screener data includes named ownership, shareholder summaries/distributions, corporate actions, dividends, and upcoming results. This is not complete dataset or field parity. See [docs/](docs/README.md) for the full endpoint matrix, progress, limitations, and remaining SaaS work.
+The API exposes non-history personal contracts backed by Screener. Compatibility routes preserve resource-specific response shapes rather than adding the legacy `data` envelope.
+
+Company overview contains profile, basic finance (including current price and pros/cons), and grouped documents. Finance has dedicated peer comparison, quarterly P&L, annual P&L, balance sheet, cash flow, ratios, shareholding pattern and distribution endpoints. Supplementary endpoints are under Internal, visible in served documentation only with `ENVIRONMENT=dev`. See [the generated matrix](docs/endpoint-coverage.md) for current coverage; market-history routes remain excluded.
 
 ```bash
-curl 'https://stock-market-api.auenkr.com/v1/company-profile/ITC'
-curl 'https://stock-market-api.auenkr.com/v1/financials/ITC?statement_type=c&statement_code=pl&period=annual'
-curl 'https://stock-market-api.auenkr.com/enterprise/api/company-profile?symbols=ITC,RELIANCE'
+curl 'https://stock-market-api.auenkr.com/v1/company-search?q=reliance'
+curl --get 'https://stock-market-api.auenkr.com/v1/basic-financials' --data-urlencode 'symbol=/company/RELIANCE/consolidated/'
+curl --get 'https://stock-market-api.auenkr.com/v1/profit-loss' --data-urlencode 'symbol=/company/RELIANCE/consolidated/'
 curl 'https://stock-market-api.auenkr.com/v1/coverage'
 ```
 
-Personal `/v1` endpoints also support `/api/v1`; the new quote endpoint supports `/v2/quote` and `/api/v2/quote`. Enterprise routes use `/enterprise/api`. Missing fields are null; quotes are delayed snapshots. Market-wide corporate-action lists and the latest announcement feed are connected; unrestricted historical feeds are not. Statement amounts are rupees, profile/quote market caps are crores, profitability ratios are fractions, and ownership percentages remain percentages. The current source-backed batch limit is 25 symbols.
+Personal `/v1` endpoints also support `/api/v1`. Search returns `symbol` containing the original company URL path, replacing `url`. Pass it unchanged as the sole query parameter to Company overview and Finance endpoints; no ticker extraction or additional filters are needed. Internal endpoints retain their parameters. Missing values are null; current prices may be delayed. Statement amounts are rupees, overview/peer market caps are crores, profitability ratios are fractions, and ownership percentages remain percentage points. API responses omit provider attribution.
 
 These docs describe local code; this change has not been deployed. Check the target server's `/openapi.json` and `/v1/coverage` before relying on its deployed coverage.
 
@@ -36,7 +38,6 @@ These docs describe local code; this change has not been deployed. Check the tar
 ```bash
 pnpm docs:generate  # root swagger.json, web download, endpoint coverage table
 pnpm docs:check     # fail if generated artifacts differ from the contract
-pnpm source:taxonomy  # refresh Screener classification names using local .env
 ```
 
 The web explorer imports [swagger.json](swagger.json), generated from the API contract. Source credentials remain in local environment/Worker secrets. The docs default to `http://localhost:8787`; set `NEXT_PUBLIC_API_URL` for the web request runner, or edit its API server field. See [docs/swagger.md](docs/swagger.md) for contract maintenance.
@@ -51,7 +52,7 @@ The optional `page` parameter is a positive integer. Each page contains up to 10
 curl "https://stock-market-api.auenkr.com/v1/list-of-company?page=1"
 ```
 
-Company rows expose the source `url`, without `symbol` or the internal `skip` flag. The response contains only `{meta, data}`. Pagination is in `meta`: `currentPage`, `limit`, `count`, `isNextPageAvailable`, `nextPage`, and `previousPage`. Page size is fixed at 100; unavailable next/previous pages are `null`.
+Company rows expose the original company URL path as `symbol`, without `url` or the internal `skip` flag. The response contains only `{meta, data}`. Pagination is in `meta`: `currentPage`, `limit`, `count`, `isNextPageAvailable`, `nextPage`, and `previousPage`. Page size is fixed at 100; unavailable next/previous pages are `null`.
 
 ### List upcoming IPOs
 
@@ -67,7 +68,7 @@ curl "https://stock-market-api.auenkr.com/v1/list-of-ipo"
 
 `GET /v1/company-search?q=<company-name>`
 
-The `q` parameter is required and can contain part of a company name.
+The `q` parameter is required and can contain part of a company name. Results contain `name` and a URL-valued `symbol`, not `url`.
 
 ```bash
 curl "https://stock-market-api.auenkr.com/v1/company-search?q=reli"
@@ -75,32 +76,32 @@ curl "https://stock-market-api.auenkr.com/v1/company-search?q=reli"
 
 ### Get company data
 
-`GET /api/company-data?companyUrl=<company-path>` (also `/v1/company-data`)
+`GET /api/company-data?symbol=<company-path>` (also `/v1/company-data`)
 
-The required `companyUrl` parameter accepts the original relative `url` from company listing or search results. Paths such as `/company/id/1286218/`, `/company/RELIANCE/`, and `/company/RELIANCE/consolidated/` are fetched as supplied; the API does not construct a path from a symbol. Absolute URLs and non-company paths are rejected. Use query encoding for paths containing `&`, such as `/company/GVT&D/`.
+This Internal endpoint requires the same URL-valued `symbol` returned by search, company listing or upcoming IPOs. Paths such as `/company/id/1286218/`, `/company/RELIANCE/`, and `/company/RELIANCE/consolidated/` are fetched as supplied. Absolute URLs and non-company paths are rejected. Use query encoding for paths containing `&`, such as `/company/GVT&D/`.
 
 ```bash
 curl --get "https://stock-market-api.auenkr.com/v1/company-data" \
-  --data-urlencode "companyUrl=/company/id/1286218/"
+  --data-urlencode "symbol=/company/id/1286218/"
 ```
 
 ```js
-const query = new URLSearchParams({ companyUrl: company.url });
+const query = new URLSearchParams({ symbol: company.symbol });
 const response = await fetch(`/v1/company-data?${query}`);
 ```
 
-This request can take around 20 seconds on a cache miss. It returns `{data, companyData}` with the same object in both fields and caches it for 15 minutes. The former `symbol` and `endpoint` inputs no longer satisfy this route.
+This request can take around 20 seconds on a cache miss. It returns `{data, companyData}` with the same object in both fields, including `symbol` and `website`, and caches it for 15 minutes. Obsolete `companyUrl` and `endpoint` inputs are rejected.
 
 Invalid query parameters return a JSON response with an `error` field and an appropriate HTTP status code.
 
 ### Extract focused financial data
 
-`GET /v1/extract?endpoint=/company/<company-endpoint>&type=<type>`
+`GET /v1/extract?symbol=<company-path>&type=<type>`
 
 The extraction endpoint exposes focused datasets from the full company response. Supported types are `quarterly`, `profit-loss`, `balance-sheet`, `cash-flow`, `ratios`, `shareholding`, and `peers`. Market history is excluded; public company requests do not download price charts.
 
 ```bash
-curl "https://stock-market-api.auenkr.com/v1/extract?endpoint=/company/RELIANCE/consolidated/&type=balance-sheet" \
+curl "https://stock-market-api.auenkr.com/v1/extract?symbol=/company/RELIANCE/consolidated/&type=balance-sheet" \
   -H "X-API-Key: sm_live_your_key"
 ```
 
