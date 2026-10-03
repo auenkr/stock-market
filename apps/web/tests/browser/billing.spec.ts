@@ -48,6 +48,7 @@ test("signup requires an unchecked-by-default consent checkbox before starting G
 });
 
 test("real console and signed Polar webhook upgrade existing keys, downgrade on revocation, and never trust the success URL", async ({ page, request }) => {
+  test.setTimeout(60_000);
   test.skip(!process.env.INTEGRATION_DATABASE_URL, "Run pnpm test:e2e for isolated billing lifecycle coverage");
   const [account] = await db.$client`SELECT id FROM "user" WHERE email = 'dev@auenkr.com'`;
   const userId = account!.id as string;

@@ -1,30 +1,25 @@
 # GitHub Actions CI
 
-The [CI workflow](../.github/workflows/ci.yml) checks approval when a PR is opened, updated, reopened, marked ready, edited (including changing its base), or labeled. Tests and builds run only after explicit approval. Manual dispatch is also supported. Superseded runs are cancelled. PR checkout uses GitHub's proposed merge commit so checks include the target branch's code.
+The [CI workflow](../.github/workflows/ci.yml) automatically runs tests and builds for every PR when it is opened, updated, reopened, marked ready, or edited (including changing its base). There are no branch filters or manual approval jobs. Manual dispatch is also supported. Superseded runs are cancelled. PR checkout uses GitHub's proposed merge commit so checks include the target branch's code.
 
-## Approval before running
+## Automatic runs
 
-Both `Tests` and `Build` depend on `Approve CI`. Until approval, only this small metadata check runs; no repository code is checked out, and no dependencies, service containers, tests, or builds start.
+`Tests` and `Build` start independently on each PR event, including draft PRs. No label or approval is required. Changing labels does not rerun CI; pushing a new commit starts a fresh run and cancels the superseded one.
 
-To approve a PR, apply the **`ci-approved`** label. The gate verifies that the person applying it has repository write, maintain, or admin access. New commits or base changes cancel the previous run and fail the gate again, even if the label remains present: **remove and reapply the label to approve the new run**. Unrelated labels do not authorize CI. Before approval, `Approve CI` is intentionally failed and the expensive jobs are skipped.
-
-For a manual branch build, open **Actions → CI → Run workflow**, select the branch, and run it. This explicit action counts as approval and is also checked for write access. Manual branch runs test the selected branch; use the PR label to validate GitHub's proposed merge commit.
-
-Required environment reviewers were attempted, but GitHub rejected that configuration because the repository's current plan does not support them for private repositories. Label/manual approval works with the current plan and needs no additional secrets. See [GitHub plan restrictions for environment approvals](https://docs.github.com/en/rest/deployments/environments#about-deployment-environments). No protected-environment gate is used.
+For a manual branch build, open **Actions → CI → Run workflow**, select the branch, and run it. Manual branch runs test the selected branch; automatic PR runs validate GitHub's proposed merge commit.
 
 ## Checks and testing environment
 
 | Required check | Coverage |
 | --- | --- |
-| `Approve CI` | Explicit approval for the current run by someone with repository write access |
-| `Tests` | Generated Swagger drift, all workspace typechecks, API/auth/key tests, disposable PostgreSQL integration tests (including the database-backed atomic quota regression), CLI integration, billing/payment integration, development browser E2E, MCP protocol and authenticated E2E, production documentation/theme browser tests, integration/performance TypeScript checks, k6 smoke and quota scenarios |
+| `Tests` | Generated Swagger drift, all workspace typechecks, API/auth/key tests, disposable PostgreSQL integration tests (including the database-backed atomic quota regression), CLI integration, billing authorization/webhooks, development browser E2E, MCP protocol and authenticated E2E, production documentation/theme browser tests, integration/performance TypeScript checks, k6 smoke and quota scenarios; purchase/payment suites are excluded |
 | `Build` | Production `pnpm build` for every Nx build target, plus the MCP Cloudflare Worker build |
 
 The runner installs Node 24, the pnpm version pinned in `package.json`, Chromium with its OS dependencies, tmux, and k6 2.0.0. Tests start their Next.js server in the `stock-market` tmux session. PostgreSQL 17 is an ephemeral GitHub Actions service; `TEST_DATABASE_URL` points at that service. Every integration/E2E/performance invocation creates, migrates, and drops a separate `stock_test_*` database. The development account is seeded as `dev@auenkr.com` with the test password from `AGENTS.md`.
 
 Support and legal contact pages default to `support@auenkr.com`. `SUPPORT_EMAIL` and `LEGAL_CONTACT_EMAIL` can override those public addresses; they are not secrets.
 
-**No GitHub Actions secrets are required for these PR checks.** The workflow copies `sample.env` to `.env` because the development seed command requires that file, supplies test-only auth/encryption secrets, and lets the E2E runner provide fake Google/Polar credentials and product IDs. Real auth, database, webhooks and payment lifecycle logic run against loopback fixtures. The MCP E2E uses the seeded login and a newly created dashboard API key against the isolated API/source fixture. No production database, source cookies, OAuth secret, payment token, or deployment credentials are used. Fork PRs can use this same environment.
+**No GitHub Actions secrets are required for these PR checks.** The workflow copies `sample.env` to `.env` because the development seed command requires that file, supplies test-only auth/encryption secrets, and lets the E2E runner provide fake Google/Polar credentials and product IDs. Auth, database, billing authorization and webhook logic run against loopback fixtures. The MCP E2E uses the seeded login and a newly created dashboard API key against the isolated API/source fixture. No production database, source cookies, OAuth secret, payment token, or deployment credentials are used. Fork PRs can use this same environment.
 
 Failure traces and k6 JSON summaries are uploaded as the `test-results` artifact for seven days. The build validates compilable output; it does not deploy.
 
@@ -33,13 +28,32 @@ Failure traces and k6 JSON summaries are uploaded as the `test-results` artifact
 After the first workflow run, create a ruleset or branch protection rule for `main` in repository **Settings → Rules → Rulesets** (or **Settings → Branches**):
 
 1. Require a pull request before merging.
-2. Require **all three** status checks from GitHub Actions: `Approve CI`, `Tests`, and `Build`. The approval check must be required because skipped downstream jobs alone do not establish approval.
-3. Enable **Require branches to be up to date before merging**. This approval workflow does not support merge queues; approval is applied to individual PR runs.
+2. Require GitHub Actions `Tests` and `Build`, plus `Vercel` and `Vercel Preview Comments` from the Vercel integration. The active repository ruleset enforces these four checks without an administrator bypass. There is no CI approval check.
+3. Enable **Require branches to be up to date before merging**. This workflow does not currently configure merge-queue events.
 4. Apply the rule to the people who should be blocked, including administrators if desired.
 
 GitHub already blocks merging conflicting PRs. A `pull_request` workflow [does not run while a PR has merge conflicts](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request); resolve them and push again to start CI. This workflow does not resolve conflicts automatically. Requiring current-base checks prevents an earlier green run from authorizing a merge after the base has changed. See [GitHub branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches).
 
 ## Optional external tests and future deployment secrets
+
+### Decision: payment checks are opt-in (2026-10-03)
+
+The founder requested that payment checks be removed from automatic CI because purchasing requires manual verification. Every PR now runs without purchase/payment suites. A passing PR does **not** establish that purchasing works.
+
+- `packages/auth/tests/payment.integration.test.ts` is excluded from normal integration runs.
+- `apps/web/tests/browser/payment.spec.ts` is excluded from normal browser E2E runs.
+- Real Polar sandbox purchasing (`pnpm test:payments:live`) remains a separately invoked check requiring the testing account, sandbox configuration and webhook tunnel.
+- The simulated integration/browser purchase suites are automated fixtures, but are also excluded to keep the entire purchase flow opt-in as requested. Pricing, consent, billing authorization, signed subscription-state webhooks and account limits remain covered by CI.
+- `pnpm test:ci` forces `RUN_PAYMENT_TESTS=0`, even if the caller's shell enables payment checks.
+
+To explicitly include simulated payment suites locally:
+
+```sh
+RUN_PAYMENT_TESTS=1 pnpm test:integration
+RUN_PAYMENT_TESTS=1 pnpm test:e2e
+```
+
+Manually verify actual sandbox checkout, receipt amounts, paid-plan activation, plan changes and cancellation before releasing billing changes. Record that evidence separately from the required PR checks.
 
 `pnpm test:payments:live` is an opt-in external sandbox suite, separate from PR CI. It requires a running development app, a seeded test account with no existing subscription, and a reachable webhook endpoint. For that environment, store these sensitive values in a dedicated GitHub testing environment if you later automate it:
 

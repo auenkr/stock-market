@@ -2,7 +2,7 @@ name: CI
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, edited, labeled]
+    types: [opened, synchronize, reopened, ready_for_review, edited]
   workflow_dispatch:
 
 permissions:
@@ -17,43 +17,14 @@ env:
   NX_DAEMON: "false"
   NX_SKIP_NX_CACHE: "true"
   NEXT_TELEMETRY_DISABLED: "1"
+  RUN_PAYMENT_TESTS: "0"
   ENVIRONMENT: dev
   BETTER_AUTH_SECRET: ci-auth-secret-for-isolated-tests-only
   API_KEY_ENCRYPTION_SECRET: ci-key-secret-for-isolated-tests-only
 
 jobs:
-  approval:
-    name: Approve CI
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    env:
-      GH_TOKEN: ${{ github.token }}
-    steps:
-      # Only a new approval-label event or an explicit manual run authorizes CI.
-      # A label left on the PR does not authorize a later commit or base change.
-      - name: Require explicit approval for this run
-        run: |
-          node --input-type=module <<'JS'
-          import { readFileSync } from 'node:fs';
-          const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
-          const approved = process.env.GITHUB_EVENT_NAME === 'workflow_dispatch'
-            || (event.action === 'labeled' && event.label?.name === 'ci-approved');
-          if (!approved) {
-            console.error('CI requires approval. Apply the ci-approved label (remove and reapply it for a new commit), or use Run workflow for the selected branch.');
-            process.exit(1);
-          }
-          JS
-      - name: Verify approver has repository write access
-        run: |
-          permission=$(gh api "repos/$GITHUB_REPOSITORY/collaborators/$GITHUB_ACTOR/permission" --jq '.permission')
-          case "$permission" in
-            admin|maintain|write) echo "CI approved; starting tests and builds." ;;
-            *) echo "CI approval requires repository write access." >&2; exit 1 ;;
-          esac
-
   tests:
     name: Tests
-    needs: approval
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     services:
@@ -123,7 +94,6 @@ jobs:
 
   build:
     name: Build
-    needs: approval
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:

@@ -71,7 +71,7 @@ try {
     await run('pnpm', ['--filter', '@stock-market/auth', 'build'], testEnv);
     await run('pnpm', ['--filter', '@stock-market/auth', 'seed:dev'], testEnv);
     await run('pnpm', ['--filter', '@stock-market/web', 'test'], testEnv);
-  } else await run('node', ['--import', 'tsx', ...(mode === 'integration' ? ['--test', '--test-concurrency=1', '--test-timeout=60000', 'apps/api/src/account-access.test.ts', 'apps/api/tests/integration/api.test.ts', 'apps/api/tests/integration/plugin.test.ts', 'apps/legerline-cli/tests/e2e.test.ts', 'packages/auth/tests/billing.integration.test.ts', 'packages/auth/tests/payment.integration.test.ts'] : ['apps/api/tests/performance/run.ts'])], env);
+  } else await run('node', ['--import', 'tsx', ...(mode === 'integration' ? ['--test', '--test-concurrency=1', '--test-timeout=60000', 'apps/api/src/account-access.test.ts', 'apps/api/tests/integration/api.test.ts', 'apps/api/tests/integration/plugin.test.ts', 'apps/legerline-cli/tests/e2e.test.ts', 'packages/auth/tests/billing.integration.test.ts', ...(process.env.RUN_PAYMENT_TESTS === '1' ? ['packages/auth/tests/payment.integration.test.ts'] : [])] : ['apps/api/tests/performance/run.ts'])], env);
 } catch (error) {
   if (directory && !clusterStarted) console.error(await readFile(join(directory, 'postgres.log'), 'utf8').catch(() => 'PostgreSQL startup log unavailable'));
   console.error(error.message); process.exitCode = 1;

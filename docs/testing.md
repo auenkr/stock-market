@@ -2,6 +2,8 @@
 
 GitHub Actions runs the isolated test suites, browser regressions, MCP checks, k6 smoke/quota, and production builds on PRs. See [CI setup](ci.md) for the testing environment, required merge checks, and optional external-service secrets.
 
+**Payment-check decision (2026-10-03):** purchase/payment tests are excluded from automatic PR checks and normal integration/browser runs, per the founder's request to verify purchasing manually. Use `RUN_PAYMENT_TESTS=1 pnpm test:integration` and `RUN_PAYMENT_TESTS=1 pnpm test:e2e` to include the simulated purchase suites explicitly. Real sandbox purchasing uses `pnpm test:payments:live`. A green CI run does not verify checkout/payment completion; record manual sandbox verification separately. See [the decision and rationale](ci.md#decision-payment-checks-are-opt-in-2026-10-03).
+
 The tests exercise the existing API without changing routes, query parameters, authentication or response envelopes.
 
 ## Requirements and isolation
@@ -38,8 +40,8 @@ To use an existing **test PostgreSQL server**, set `TEST_DATABASE_URL` to an adm
 | Signed account service | Actual dashboard route over HTTP, HMAC signature checks, stale timestamps, oversized/malformed bodies, real key lookup, bridge rejection and quota propagation |
 | Polar billing | Real Better Auth plugin checkout/portal, authenticated owner binding, supported monthly slugs, no client-controlled product/redirect/trial, and existing-subscription rejection |
 | Subscription lifecycle | Verified webhook signatures, malformed/unsigned/stale deliveries, duplicate/out-of-order events, upgrades, cancellation, past-due/revocation, automatic expiry, and 10/60/300/500 shared quotas |
-| Payment integration | Loopback Polar/Stripe substitute with real auth, checkout, signature verification, and quota storage for all three paid plans: declined cards grant nothing, `4242 4242 4242 4242` retry activates only after verified payment webhooks, renewal extends expiry, failed renewal falls back to Hobby, recovery reactivates, refunds alone cannot revoke, revocation returns to Hobby, and duplicate deliveries are safe |
-| Payment browser (E2E) | Real browser against the loopback checkout form for Basic, Personal and Professional: correct new INR prices, declined card, `4242 4242 4242 4242` retry, activation, renewal failure/recovery, and revocation |
+| Payment integration (opt-in) | With `RUN_PAYMENT_TESTS=1`: loopback Polar/Stripe substitute with real auth, checkout, signature verification, and quota storage for all three paid plans: declined cards grant nothing, `4242 4242 4242 4242` retry activates only after verified payment webhooks, renewal extends expiry, failed renewal falls back to Hobby, recovery reactivates, refunds alone cannot revoke, revocation returns to Hobby, and duplicate deliveries are safe |
+| Payment browser (E2E, opt-in) | With `RUN_PAYMENT_TESTS=1`: real browser against the loopback checkout form for Basic, Personal and Professional: correct new INR prices, declined card, `4242 4242 4242 4242` retry, activation, renewal failure/recovery, and revocation |
 | Live sandbox payments | Opt-in `pnpm test:payments:live` against the running dev app and Polar sandbox: real checkout for all three paid plans with `4242 4242 4242 4242` (manual entry or saved-card reuse), paid-order receipt, webhook-driven activation, updated key allowance, then CLI revocation and Hobby fallback. Requires the dev account to have no pre-existing subscription; setup preserves existing subscriptions. See [Polar setup](polar-setup.md). |
 | Signup consent | Required explicit acceptance, signed short-lived cookies, origin checks, server-recorded versions, and OAuth creation denied without consent |
 

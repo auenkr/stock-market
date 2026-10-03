@@ -2,6 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests/browser",
+  testIgnore: process.env.RUN_PAYMENT_TESTS === "1" ? [] : ["**/payment.spec.ts"],
   fullyParallel: false,
   workers: 1,
   timeout: 20_000,
