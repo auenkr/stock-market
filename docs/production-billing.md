@@ -46,10 +46,9 @@ Set `DB_CONNECTION_URL` to the exact supplied private production connection URL,
 The verified custom production domain is `stock-market.auenkr.com`. Add the following variables to **Production**, then deploy the four-tier application code:
 
 ```dotenv
-POLAR_ENVIRONMENT=production
-POLAR_BASIC_PRODUCT_ID=9e5e9c9a-3b60-42b2-b7ab-f6e769ad5ed8
-POLAR_PERSONAL_PRODUCT_ID=6a7edd2a-7a21-4464-a4f0-96a9f566f23b
-POLAR_PROFESSIONAL_PRODUCT_ID=f803d30f-8c17-4b14-ab0c-4067f24e04cd
+POLAR_PRODUCTION_BASIC_PRODUCT_ID=9e5e9c9a-3b60-42b2-b7ab-f6e769ad5ed8
+POLAR_PRODUCTION_PERSONAL_PRODUCT_ID=6a7edd2a-7a21-4464-a4f0-96a9f566f23b
+POLAR_PRODUCTION_PROFESSIONAL_PRODUCT_ID=f803d30f-8c17-4b14-ab0c-4067f24e04cd
 POLAR_ACCESS_TOKEN=<production-organization-access-token>
 POLAR_WEBHOOK_SECRET=<signing-secret-for-endpoint-a5f72b5b-7d68-4cab-8b3f-db9a5be9631a>
 DB_CONNECTION_URL=<supplied-private-Aiven-prod_db-URL>

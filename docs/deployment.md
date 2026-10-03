@@ -36,10 +36,12 @@ deployment enabled. GitHub Actions does not need Vercel secrets.
 Vercel Preview deployments (`VERCEL_ENV=preview`) can render pricing and other
 pages without complete Polar billing settings. If only some credentials/product
 IDs are configured, checkout is disabled and a configuration warning is logged.
-To exercise checkout in a preview, configure the full sandbox set from
-[Polar setup](polar-setup.md), including all three product IDs and
-`POLAR_ENVIRONMENT=sandbox`. In production and local development, partially
-configured billing remains an error; complete billing settings are required.
+To exercise checkout in a preview, configure the sandbox credentials and
+`POLAR_SANDBOX_*_PRODUCT_ID` values from [Polar setup](polar-setup.md).
+`ENVIRONMENT=dev` selects Polar sandbox; `ENVIRONMENT=production` selects the
+production account and `POLAR_PRODUCTION_*_PRODUCT_ID` values. In production and
+local development, partially configured billing remains an error; complete
+billing settings are required.
 
 ## Minimum deployment token permissions
 

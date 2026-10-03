@@ -77,12 +77,14 @@ Customer-state events save a local entitlement snapshot. Subscription events fet
 Add these to the root `.env` locally and to the **web server's private environment** in deployment:
 
 ```dotenv
-POLAR_ENVIRONMENT=sandbox
 POLAR_ACCESS_TOKEN=<organization-access-token>
 POLAR_WEBHOOK_SECRET=<webhook-signing-secret>
-POLAR_BASIC_PRODUCT_ID=<basic-monthly-product-id>
-POLAR_PERSONAL_PRODUCT_ID=<personal-monthly-product-id>
-POLAR_PROFESSIONAL_PRODUCT_ID=<professional-monthly-product-id>
+POLAR_SANDBOX_BASIC_PRODUCT_ID=<sandbox-basic-monthly-product-id>
+POLAR_SANDBOX_PERSONAL_PRODUCT_ID=<sandbox-personal-monthly-product-id>
+POLAR_SANDBOX_PROFESSIONAL_PRODUCT_ID=<sandbox-professional-monthly-product-id>
+POLAR_PRODUCTION_BASIC_PRODUCT_ID=<production-basic-monthly-product-id>
+POLAR_PRODUCTION_PERSONAL_PRODUCT_ID=<production-personal-monthly-product-id>
+POLAR_PRODUCTION_PROFESSIONAL_PRODUCT_ID=<production-professional-monthly-product-id>
 
 BETTER_AUTH_URL=https://<your-dashboard-domain>
 BETTER_AUTH_SECRET=<stable-random-secret-at-least-32-characters>
@@ -93,7 +95,7 @@ LEGAL_ADDRESS=<operator-business-address>
 
 Keep the existing Google OAuth and API key encryption configuration. Register the actual web origin's `/api/auth/callback/google` with Google. In production set `ENVIRONMENT=production` to disable development password login. No Polar token or webhook secret belongs in `NEXT_PUBLIC_*`, frontend code, or the data API's bindings.
 
-With both Polar credentials and all three product IDs empty, pricing and Hobby work and paid subscription actions are disabled. Partial configuration fails explicitly. Switch `POLAR_ENVIRONMENT=production` and replace **every** sandbox credential/product ID with its production equivalent when going live.
+`ENVIRONMENT=dev` selects Polar's sandbox API and the `POLAR_SANDBOX_*_PRODUCT_ID` catalog. `ENVIRONMENT=production` selects Polar's production API and `POLAR_PRODUCTION_*_PRODUCT_ID` catalog. The six product IDs have code defaults from the confirmed Polar catalogs; set the corresponding variables only to override them. `POLAR_ACCESS_TOKEN` and `POLAR_WEBHOOK_SECRET` must still match the selected account in each deployment environment. With both credentials unset, pricing and Hobby work and paid subscription actions are disabled; partial credential configuration fails explicitly.
 
 The Terms of Service and Privacy Policy are at `/terms-of-service` and `/privacy-policy`. Their text describes Ledgerline, its actual data collection, monthly plans, and Polar billing. Set the operator and contact variables before the production build so the published static pages contain your details. Changes to the policy text should update `legalVersion` in `packages/auth/src/consent.ts` as well.
 

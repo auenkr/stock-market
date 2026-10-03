@@ -67,7 +67,7 @@ Manually verify actual sandbox checkout, receipt amounts, paid-plan activation, 
 | `POLAR_WEBHOOK_SECRET` | Sandbox webhook signature verification |
 | `GOOGLE_CLIENT_SECRET` | Only needed if testing actual Google OAuth completion |
 
-Use environment variables (not secrets) for `ENVIRONMENT=dev`, `POLAR_ENVIRONMENT=sandbox`, `DEV_USERNAME=dev`, `DEV_BILLING_EMAIL`, `BETTER_AUTH_URL`, `WEB_URL`, `GOOGLE_CLIENT_ID`, and `POLAR_BASIC_PRODUCT_ID` / `POLAR_PERSONAL_PRODUCT_ID` / `POLAR_PROFESSIONAL_PRODUCT_ID`. See [Polar setup](polar-setup.md) for webhook/product provisioning. Merely adding secrets does not start the external app or webhook tunnel. Live source smoke tests additionally need the Screener `COOKIE` secret.
+Use environment variables (not secrets) for `ENVIRONMENT=dev`, `DEV_USERNAME=dev`, `DEV_BILLING_EMAIL`, `BETTER_AUTH_URL`, `WEB_URL`, `GOOGLE_CLIENT_ID`, and the `POLAR_SANDBOX_*_PRODUCT_ID` values. `ENVIRONMENT=dev` selects the Polar sandbox API; production deployment uses the production catalog and credentials. See [Polar setup](polar-setup.md) for webhook/product provisioning. Merely adding secrets does not start the external app or webhook tunnel. Live source smoke tests additionally need the Screener `COOKIE` secret.
 
 Load/stress/spike/soak workloads are opt-in capacity experiments; PR CI runs bounded smoke and quota workloads. They can be run locally using [the performance testing guide](testing.md). These and real external service tests are not implied by a green PR check.
 
