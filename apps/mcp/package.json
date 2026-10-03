@@ -1,5 +1,5 @@
 {
-  "name": "stock-market-mcp",
+  "name": "@auenkr/legerline-mcp",
   "version": "1.0.0",
   "description": "Stateless HTTP MCP server for the Ledgerline Stock Market API",
   "type": "module",
@@ -10,7 +10,7 @@
     "directory": "apps/mcp"
   },
   "bin": {
-    "stock-market-mcp": "dist/cli.js"
+    "legerline-mcp": "dist/cli.js"
   },
   "main": "dist/cli.js",
   "files": [

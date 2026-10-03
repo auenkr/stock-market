@@ -1,11 +1,11 @@
-# stock-market-mcp
+# legerline-mcp
 
 Stateless HTTP MCP server for the Ledgerline Stock Market API.
 
 ## Run
 
 ```bash
-npx stock-market-mcp --port 8788 --api-url https://stock-market-api.auenkr.com
+npx legerline-mcp --port 8788 --api-url https://stock-market-api.auenkr.com
 ```
 
 Options: `--port`, `--host`, `--api-url`, `--help` (env: `MCP_PORT`, `MCP_HOST`, `STOCK_MARKET_API_URL`).

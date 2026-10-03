@@ -34,10 +34,10 @@ export function parseArgs(argv: string[]): { port: number; host: string; apiUrl:
 }
 
 function help(): string {
-  return `stock-market-mcp — MCP server for the Stock Market API (stateless HTTP)
+  return `legerline-mcp — MCP server for the Stock Market API (stateless HTTP)
 
 Usage:
-  stock-market-mcp [--port <n>] [--host <h>] [--api-url <url>]
+  legerline-mcp [--port <n>] [--host <h>] [--api-url <url>]
 
 Options:
   --port <n>      Port to listen on (default: 8788, env: MCP_PORT)
@@ -109,7 +109,7 @@ async function main() {
     const server = await startServer(options.port, options.host, options.apiUrl);
     const address = server.address();
     const port = typeof address === "object" && address ? address.port : options.port;
-    console.log(`stock-market-mcp listening on http://${options.host}:${port}/mcp (API: ${options.apiUrl})`);
+    console.log(`legerline-mcp listening on http://${options.host}:${port}/mcp (API: ${options.apiUrl})`);
   } catch (error) {
     console.error(error instanceof Error ? error.message : "Startup failed");
     process.exitCode = 1;
