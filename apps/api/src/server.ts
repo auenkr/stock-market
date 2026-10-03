@@ -10,6 +10,7 @@ import { sourceGet, SourceError, type SourceOptions } from "@stock-market/scrape
 import { COMPANY_PAGE_SIZE, HomePageData } from "./config.js";
 import { createCompatibilityApi, defaultProvider, validCompanyPath, type ProviderFactory, type Bindings } from "./compatibility-api.js";
 import { openApi } from "./openapi.js";
+import { agentOpenApi, agentPluginManifest, agentTools } from "@stock-market/agent-tools";
 import { apiDocsHtml } from "./api-docs.js";
 import { DataError } from "./screener-provider.js";
 import { authorizeAccountRequest, type AuthorizeRequest, type AccountAccessBindings } from "@stock-market/db/account-access";
@@ -202,6 +203,15 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
   const documentedSpec = (c: Context<{ Bindings: ApiBindings; Variables: AccessVariables }>) => openApi(new URL(c.req.url).origin, c.env?.ENVIRONMENT ?? (typeof process === "undefined" ? undefined : process.env.ENVIRONMENT));
   app.get("/openapi.json", (c) => c.json(documentedSpec(c)));
   app.get("/swagger.json", (c) => c.json(documentedSpec(c)));
+  app.get("/plugin/openapi.json", (c) => {
+    const spec = documentedSpec(c) as unknown as Parameters<typeof agentOpenApi>[0];
+    return c.json(agentOpenApi(spec, { title: "Ledgerline Stock Market API for AI agents", version: "1.2.0", description: "Indian company financials for ChatGPT and AI agents. Discovery-first: search or list companies, then pass the returned symbol to company endpoints. No internal or market-history endpoints are exposed." }));
+  });
+  app.get("/.well-known/ai-plugin.json", (c) => {
+    const origin = new URL(c.req.url).origin;
+    const spec = documentedSpec(c) as unknown as Parameters<typeof agentOpenApi>[0];
+    return c.json(agentPluginManifest(origin, agentTools(spec)));
+  });
   app.get("/docs", (c) => c.html(apiDocsHtml));
   app.route("/", createCompatibilityApi(providerFactory));
   app.route("/v1", api);
