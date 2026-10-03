@@ -26,7 +26,7 @@ export async function bufferedFetch(url: string, init?: RequestInit) {
   return new Response(bytes, { status: response.status, statusText: response.statusText, headers: response.headers });
 }
 
-export async function setup() {
+export async function setup({ seedUsagePolicy = true }: { seedUsagePolicy?: boolean } = {}) {
   const databaseUrl = process.env.INTEGRATION_DATABASE_URL;
   if (!databaseUrl || !/\/stock_test_\d+_\d+/.test(new URL(databaseUrl).pathname)) throw new Error('Use the disposable test runner');
   const sql = postgres(databaseUrl, { max: 4 });
@@ -62,7 +62,7 @@ export async function setup() {
       res.end((url.pathname.includes('/LEGACY/') || url.pathname.startsWith('/company/id/') || url.pathname.includes('/GVT&D/')) ? fixture.replace(/<section id="(?:profit-loss|quarters|balance-sheet|cash-flow|ratios|quarterly-shp)">[\s\S]*?<\/section>/g, '') : fixture);
     });
     servers.push(source.server);
-    await sql`INSERT INTO usage_policy (id, request_limit) VALUES ('default', 10000), ('personal', 10000), ('professional', 10000) ON CONFLICT (id) DO UPDATE SET request_limit = 10000`;
+    if (seedUsagePolicy) await sql`INSERT INTO usage_policy (id, request_limit) VALUES ('default', 10000), ('personal', 10000), ('professional', 10000) ON CONFLICT (id) DO UPDATE SET request_limit = 10000`;
     const bindings = { DB_CONNECTION_URL: databaseUrl, BASE_URL: source.url, COOKIE: 'fixture-session', ENVIRONMENT: 'dev' };
     async function startApi(env: Bindings & AccountAccessBindings = bindings) {
       const app = createApp(); // Real authorization and real provider, no injected decisions.

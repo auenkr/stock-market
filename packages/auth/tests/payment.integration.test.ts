@@ -55,7 +55,7 @@ async function checkout(slug: string) {
   return new URL((await response.json() as { url: string }).url).pathname.split("/").at(-1)!;
 }
 
-for (const plan of ["personal", "professional"] as const) {
+for (const plan of ["basic", "personal", "professional"] as const) {
   test(`${plan}: declined payment grants no access; successful retry activates the existing key only after verified payment events`, async () => {
     const id = await checkout(plan);
     assert.deepEqual(await decision(), { status: "allowed", plan: "free" });
@@ -68,7 +68,7 @@ for (const plan of ["personal", "professional"] as const) {
     assert.deepEqual(await decision(), { status: "allowed", plan: "free" });
     const paid = await gateway.pay(id, "4242424242424242");
     assert.equal(paid.paid, true); assert.equal(paid.order.currency, "inr");
-    assert.equal(paid.order.amount, plan === "personal" ? 200000 : 500000);
+    assert.equal(paid.order.amount, { basic: 19900, personal: 39900, professional: 249900 }[plan]);
     assert.deepEqual(await decision(), { status: "allowed", plan });
     const [account] = await db.$client`SELECT plan_expires_at FROM "user" WHERE id=${userId}`;
     assert.equal(new Date(account!.plan_expires_at).toISOString(), gateway.getState(userId).active_subscriptions[0].current_period_end);

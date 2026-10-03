@@ -1,7 +1,22 @@
 import type { Database } from "@stock-market/db";
-import type { ApiPlan } from "@stock-market/db/plans";
+import type { ApiPlan, PaidApiPlan } from "@stock-market/db/plans";
+
+type BillingProducts = Record<PaidApiPlan, string>;
 
 export type BillingEnvironment = Record<string, string | undefined>;
+const defaultProducts = {
+  sandbox: {
+    basic: "64c26c52-74bb-4f3f-8025-66e9d2c62637",
+    personal: "99588bd8-83cc-436c-b5b3-1afb0ac6ddfd",
+    professional: "5e946fcd-51e1-41e1-a32e-a2444d06ed6d",
+  },
+  production: {
+    basic: "9e5e9c9a-3b60-42b2-b7ab-f6e769ad5ed8",
+    personal: "6a7edd2a-7a21-4464-a4f0-96a9f566f23b",
+    professional: "f803d30f-8c17-4b14-ab0c-4067f24e04cd",
+  },
+} as const;
+
 export type CustomerState = {
   id: string;
   external_id?: string | null;
@@ -14,27 +29,49 @@ export type CustomerState = {
 export function billingConfig(env: BillingEnvironment) {
   const token = env.POLAR_ACCESS_TOKEN?.trim();
   const secret = env.POLAR_WEBHOOK_SECRET?.trim();
-  const personal = env.POLAR_PERSONAL_PRODUCT_ID?.trim();
-  const professional = env.POLAR_PROFESSIONAL_PRODUCT_ID?.trim();
-  const environment = env.POLAR_ENVIRONMENT?.trim() || "sandbox";
-  if (!["sandbox", "production"].includes(environment)) throw new Error("POLAR_ENVIRONMENT must be sandbox or production");
-  if (![token, secret, personal, professional].some(Boolean)) return null;
-  if (!token || !secret || !personal || !professional) throw new Error("Set all four Polar credentials/product IDs to enable billing");
-  if (personal === professional) throw new Error("Polar plan product IDs must be different");
-  return { token, secret, personal, professional, environment: environment as "sandbox" | "production" };
+  const appEnvironment = env.ENVIRONMENT?.trim() || "dev";
+  if (appEnvironment !== "dev" && appEnvironment !== "production") throw new Error("ENVIRONMENT must be dev or production for Polar billing");
+  const environment: "production" | "sandbox" = appEnvironment === "production" ? "production" : "sandbox";
+  const prefix = environment === "production" ? "POLAR_PRODUCTION" : "POLAR_SANDBOX";
+  const defaults = defaultProducts[environment];
+  const configuredProducts = [
+    env[`${prefix}_BASIC_PRODUCT_ID`]?.trim(),
+    env[`${prefix}_PERSONAL_PRODUCT_ID`]?.trim(),
+    env[`${prefix}_PROFESSIONAL_PRODUCT_ID`]?.trim(),
+  ];
+  if (![token, secret, ...configuredProducts].some(Boolean)) return null;
+  if (env.VERCEL_ENV === "preview" && (!token || !secret || configuredProducts.some((product) => !product))) {
+    console.warn("Polar billing is disabled in this Vercel Preview: matching credentials and all three product IDs are required.");
+    return null;
+  }
+  if (!token || !secret) {
+    // Preview deployments may inherit only part of the production settings.
+    // Keep checkout unavailable during build-time collection; runtime config must be complete.
+    // Next.js imports route modules while collecting page data. A developer's
+    // partial local .env must not prevent that build; the same config is checked
+    // again when the server starts and incomplete billing still fails there.
+    if (env.NEXT_PHASE === "phase-production-build") return null;
+    throw new Error("Set both Polar credentials and all three product IDs to enable billing");
+  }
+  const basic = configuredProducts[0] || defaults.basic;
+  const personal = configuredProducts[1] || defaults.personal;
+  const professional = configuredProducts[2] || defaults.professional;
+  if (new Set([basic, personal, professional]).size !== 3) throw new Error("Polar plan product IDs must be different");
+  return { token, secret, basic, personal, professional, environment };
 }
 
-export function resolveEntitlement(state: CustomerState, products: { personal: string; professional: string }, now = new Date()) {
+export function resolveEntitlement(state: CustomerState, products: BillingProducts, now = new Date()) {
   let plan: ApiPlan = "free";
   let expiresAt: Date | null = null;
   for (const subscription of state.active_subscriptions) {
-    const tier = subscription.product_id === products.professional ? "professional" : subscription.product_id === products.personal ? "personal" : null;
+    const tier = (["basic", "personal", "professional"] as const).find((plan) => products[plan] === subscription.product_id);
     if (!tier || subscription.recurring_interval !== "month") continue;
     if (subscription.status !== "active" && !(subscription.status === "canceled" && subscription.cancel_at_period_end)) continue;
     const end = new Date(subscription.current_period_end);
     const expires = subscription.ends_at ? new Date(Math.min(end.getTime(), new Date(subscription.ends_at).getTime())) : end;
     if (!Number.isFinite(expires.getTime()) || expires <= now) continue;
-    if (plan === "free" || (tier === "professional" && plan === "personal") || (tier === plan && expires > expiresAt!)) {
+    const rank = { free: 0, basic: 1, personal: 2, professional: 3 };
+    if (rank[tier] > rank[plan] || (tier === plan && expires > expiresAt!)) {
       plan = tier; expiresAt = expires;
     }
   }
@@ -42,7 +79,7 @@ export function resolveEntitlement(state: CustomerState, products: { personal: s
 }
 
 /** A timestamp guard makes duplicate and out-of-order webhook delivery harmless. */
-export async function saveCustomerState(sql: Database["$client"], state: CustomerState, timestamp: string, products: { personal: string; professional: string }) {
+export async function saveCustomerState(sql: Database["$client"], state: CustomerState, timestamp: string, products: BillingProducts) {
   if (!state || typeof state.id !== "string" || !Array.isArray(state.active_subscriptions)) throw new Error("Invalid customer state");
   if (!state.external_id) return;
   const updatedAt = new Date(timestamp);

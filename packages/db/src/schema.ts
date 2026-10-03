@@ -14,7 +14,7 @@ export const user = pgTable("user", {
   image: text("image"),
   company: text("company"),
   profileCompleted: boolean("profile_completed").notNull().default(false),
-  apiPlan: text("api_plan", { enum: ["free", "personal", "professional"] }).notNull().default("free"),
+  apiPlan: text("api_plan", { enum: ["free", "basic", "personal", "professional"] }).notNull().default("free"),
   planExpiresAt: timestamp("plan_expires_at", { withTimezone: true }),
   billingUpdatedAt: timestamp("billing_updated_at", { withTimezone: true }),
   polarCustomerId: text("polar_customer_id"),

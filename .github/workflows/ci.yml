@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  NX_DAEMON: "false"
+  NX_SKIP_NX_CACHE: "true"
+  NEXT_TELEMETRY_DISABLED: "1"
+  RUN_PAYMENT_TESTS: "0"
+  ENVIRONMENT: dev
+  BETTER_AUTH_SECRET: ci-auth-secret-for-isolated-tests-only
+  API_KEY_ENCRYPTION_SECRET: ci-key-secret-for-isolated-tests-only
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: stock_test
+          POSTGRES_PASSWORD: stock_test
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U stock_test -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://stock_test:stock_test@127.0.0.1:5432/postgres
+    steps:
+      # Default checkout tests GitHub's PR merge commit, including the base branch.
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Create fixture environment and install tmux
+        run: |
+          cp sample.env .env
+          sudo apt-get update
+          sudo apt-get install --yes tmux
+      - name: Install Chromium and browser dependencies
+        run: pnpm --filter @stock-market/web exec playwright install --with-deps chromium
+      - name: Docs, types, API, auth, keys, integration and browser E2E
+        run: pnpm test:ci
+      - name: MCP protocol tests
+        run: pnpm --filter @auenkr/legerline-mcp exec node --import tsx --test tests/mcp.test.ts
+      - name: Integration and performance test types
+        run: pnpm exec tsc -p apps/api/tests/tsconfig.json --noEmit
+      - name: Production documentation and theme browser tests
+        env:
+          ENVIRONMENT: production
+        run: pnpm --filter @stock-market/web exec playwright test tests/browser/theme.spec.ts tests/browser/api-explorer.spec.ts --output=test-results/production
+      - uses: grafana/setup-k6-action@v1
+        with:
+          k6-version: "2.0.0"
+      - name: Performance smoke
+        run: pnpm test:performance
+      - name: Shared account quota performance
+        env:
+          SCENARIO: quota
+        run: pnpm test:performance
+      - name: Upload browser traces and performance summaries
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            apps/web/test-results/
+            apps/web/playwright-report/
+            apps/api/tests/performance/results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      ENVIRONMENT: production
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Create build fixture environment
+        run: cp sample.env .env
+      - name: Build every workspace project
+        run: pnpm build
+      - name: Build MCP Cloudflare Worker
+        run: pnpm --filter @auenkr/legerline-mcp build:worker

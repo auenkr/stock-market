@@ -4,7 +4,7 @@ import { PublicPage } from "@/components/public-page";
 
 export const metadata: Metadata = { title: "Support | Ledgerline", description: "Get help with Ledgerline API integration, your account, subscriptions, and privacy requests." };
 export default function SupportPage() {
-  const email = process.env.SUPPORT_EMAIL || process.env.LEGAL_CONTACT_EMAIL;
+  const email = process.env.SUPPORT_EMAIL || process.env.LEGAL_CONTACT_EMAIL || "support@auenkr.com";
   return <PublicPage><div className="support-page">
     <section className="pricing-hero"><span className="eyebrow">LEDGERLINE / SUPPORT</span><h1>A little help.<br /><em>Back to building.</em></h1><p className="subtle">Find an answer, troubleshoot a request, or get help with your account.</p></section>
     <div className="support-grid"><section className="card"><span className="eyebrow">01 / DEVELOPERS</span><h2>API & integration</h2><p className="subtle">Explore endpoints, request examples, and data coverage.</p><Link className="inline-link" href="/docs">Open the API reference →</Link></section><section className="card"><span className="eyebrow">02 / YOUR ACCOUNT</span><h2>Plans & payments</h2><p className="subtle">Manage your subscription, payment details, and invoices.</p><Link className="inline-link" href="/dashboard/billing">Go to billing →</Link></section></div>

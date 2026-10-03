@@ -24,6 +24,10 @@ test('plugin manifest is served, valid, and keys against the same API key auth',
   assert.equal(manifest.auth?.in, 'header');
   assert.equal(manifest.auth?.name, 'X-API-Key');
   assert(manifest.description_for_model.includes('symbol'));
+  for (const plan of ['Hobby', 'Basic', 'Personal', 'Professional']) assert(manifest.description_for_model.includes(plan));
+  assert(manifest.description_for_model.includes('199/month'));
+  assert(manifest.description_for_model.includes('399/month'));
+  assert(manifest.description_for_model.includes('2499/month'));
   assert(manifest.api?.url?.endsWith('/plugin/openapi.json'));
   assert(Array.isArray(manifest.tools) && manifest.tools.length >= 13);
   for (const tool of manifest.tools) {
@@ -61,6 +65,9 @@ test('plugin OpenAPI exposes only agents tools and never Internal endpoints', as
 test('plugin tool contract matches the shared agent-tools manifest', async () => {
   const spec = await getJson('/plugin/openapi.json');
   const full = await getJson('/openapi.json');
+  assert.deepEqual(spec['x-access-policy'], full['x-access-policy']);
+  assert.equal(spec['x-access-policy'].plans.basic.monthlyPrice, 199);
+  assert.equal(spec['x-access-policy'].plans.free.name, 'Hobby');
   const tools = agentTools(full);
   const specNames = Object.values(spec.paths).map((entry: any) => entry.get.operationId).sort();
   assert.deepEqual(tools.map((t) => t.name).sort(), specNames);

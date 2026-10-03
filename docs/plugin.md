@@ -18,6 +18,19 @@ Personal resource operations are exposed at their canonical `/api/v1/...` paths 
 
 ## Competitor research and pricing decision
 
+The competitor table below is earlier research, not newly verified market quotes. See the [2026-10-03 go-to-market research](go-to-market.md) for primary-source comparisons, including Finmagine's separate API plans and ChatGPT connection.
+
+### Approved launch plans (2026-10-03)
+
+| Plan | Monthly base price | Requests/minute/account | Agent access |
+| --- | ---: | ---: | --- |
+| Hobby (`free`) | ₹0, no credit card | 10 | Discovery and free company tools for the five-company allowlist |
+| Basic (`basic`) | ₹199 | 60 | Discovery and free company tools for all supported companies |
+| Personal (`personal`) | ₹399 | 300 | All public agent tools and supported companies; non-commercial |
+| Professional (`professional`) | ₹2,499 | 500 | Personal plus commercial use |
+
+REST, ChatGPT agent tools, MCP, and CLI share the same key, account, billing, and quota. No separate plugin charge. The manifest describes the plans and upgrade paths; `/plugin/openapi.json` includes `x-access-policy` and the same plan descriptions as the public contract. `PAID_PLAN_REQUIRED` means Personal or Professional is required, even when the user pays for Basic. `FREE_COMPANY_RESTRICTED` means upgrade Hobby to Basic or higher. Missing source data remains unavailable on every plan.
+
 Competing finance data providers (research, October 2026):
 
 | Provider | Entry | Mid | Notes |
@@ -35,7 +48,7 @@ Competing finance data providers (research, October 2026):
 
 BharatStock and Stoxim target the same niche but publish limits-not-plans (free incl. all endpoints, history depth gates); TrueData's API requires separate approval on top of ₹1,440/mo plans.
 
-Decision: keep the existing tiers and make the ChatGPT plugin a zero-surcharge distribution channel for the same account and API key — Basic (₹0, 10 req/min, five free companies), Personal (₹2,000/mo, 300 req/min), Professional (₹5,000/mo, 500 req/min, commercial use). Rationale: it sits ≈ FMP's paid entry when converted, below TrueData/BSE for data-only needs, and clearly above free broker APIs on fundamentals coverage (statements, ratios, shareholding, documents, peers). Billing/plan handling stays with Polar; the plugin adds no separate Stripe/SKU line. Revisit pricing after ~1,000 agent-driven accounts or when MCP/CLI attach.
+The earlier three-tier pricing decision is superseded by the approved four-tier launch plans above. Billing remains with Polar. Review pricing using paid activation, repeat usage, renewals, and observed delivery costs.
 
 ## Tests
 

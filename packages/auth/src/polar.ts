@@ -43,7 +43,7 @@ export function createCheckoutHook(sync: (account: { id: string; name: string; e
     const session = await getSessionFromCtx(ctx);
     if (!session) throw new APIError("UNAUTHORIZED", { message: "Sign in before subscribing." });
     if (!session.user.profileCompleted || !session.user.termsAcceptedAt) throw new APIError("FORBIDDEN", { message: "Complete signup before subscribing." });
-    if (!["personal", "professional"].includes(ctx.body?.slug) || Object.keys(ctx.body ?? {}).some((key) => !["slug", "redirect"].includes(key))) {
+    if (!["basic", "personal", "professional"].includes(ctx.body?.slug) || Object.keys(ctx.body ?? {}).some((key) => !["slug", "redirect"].includes(key))) {
       throw new APIError("BAD_REQUEST", { message: "Choose a supported monthly plan." });
     }
     const state = await sync(session.user);
@@ -65,7 +65,7 @@ export function createBillingPlugin(env: BillingEnvironment, sql: Database["$cli
   return polar({
     client, createCustomerOnSignUp: true,
     use: [
-      checkout({ products: [{ productId: config.personal, slug: "personal" }, { productId: config.professional, slug: "professional" }],
+      checkout({ products: [{ productId: config.basic, slug: "basic" }, { productId: config.personal, slug: "personal" }, { productId: config.professional, slug: "professional" }],
         authenticatedUsersOnly: true, successUrl: new URL("/dashboard/billing?checkout=success", baseURL).href, returnUrl: new URL("/dashboard/billing", baseURL).href }),
       portal({ returnUrl: new URL("/dashboard/billing", baseURL).href }),
       webhooks({ secret: config.secret,
