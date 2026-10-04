@@ -1,6 +1,7 @@
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { authorizeAccountRequest } from "@stock-market/db/account-access";
+import { sql } from "@stock-market/db";
 
 export async function POST(request: Request) {
   const secret = process.env.ACCOUNT_SERVICE_SECRET ?? (process.env.BETTER_AUTH_SECRET
@@ -17,6 +18,10 @@ export async function POST(request: Request) {
   if (!timingSafeEqual(expected, Buffer.from(signature, "hex"))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   let key: unknown;
   try { key = (JSON.parse(body) as { key?: unknown }).key; } catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
-  const result = await authorizeAccountRequest(typeof key === "string" ? key : undefined, { DB_CONNECTION_URL: process.env.DB_CONNECTION_URL });
+  // This route runs in Node: reuse the existing bounded web pool instead of
+  // opening and closing a PostgreSQL connection for every API request.
+  const startedAt = performance.now();
+  const result = await authorizeAccountRequest(typeof key === "string" ? key : undefined, { DB_CONNECTION_URL: process.env.DB_CONNECTION_URL }, sql);
+  console.info(JSON.stringify({ event: "api.account_access.completed", status: result.status, durationMs: Math.round(performance.now() - startedAt) }));
   return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
 }
