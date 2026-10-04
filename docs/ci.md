@@ -82,7 +82,7 @@ CICD exclusion is driven by a single mode, `TEST_MODE=CICD` (GitHub Actions sets
 - Per-test skips use `{ skip: process.env.TEST_MODE === "CICD" }` (see `packages/auth/tests/billing.integration.test.ts`) or `test.skip(process.env.TEST_MODE === "CICD", ...)` (see `apps/web/tests/browser/billing.spec.ts`).
 - No Redis/Valkey service starts in CICD (`INTEGRATION_VALKEY_URL` is empty, `CACHE_ENABLED=false`), so Valkey-backed cache and service checks are skipped; pure cache logic unit tests still run.
 
-Rule of thumb: only flows that need a real external system (payments, webhooks, Valkey services, paid network calls) are disabled in CICD. Browser and API flows that run against the disposable database still run in CICD; if such a flow is found to be genuinely untestable in CI, disable it with one of the above mechanisms and note why here.
+Rule of thumb: only flows that need a real external system (payments, webhooks, Valkey services, paid network calls) are disabled in CICD. Browser and API flows that run against the disposable database still run in CICD; if such a flow is found to be genuinely untestable in CI, disable it with one of the above mechanisms and note why here. The full suite-by-suite classification lives in [test-classification.md](test-classification.md).
 
 ### Browser E2E timing in CICD
 
