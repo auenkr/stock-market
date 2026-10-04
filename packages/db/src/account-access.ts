@@ -3,7 +3,13 @@ import type { ApiPlan } from "./plans.js";
 export type { ApiPlan } from "./plans.js";
 
 export type AccessDecision = { status: "allowed"; plan: ApiPlan } | { status: "unauthorized" } | { status: "unavailable" } | { status: "limited"; retryAfter: number };
-export type AccountAccessBindings = { DB_CONNECTION_URL?: string; ACCOUNT_SERVICE_URL?: string; ACCOUNT_SERVICE_SECRET?: string };
+export type AccountAccessBindings = {
+  DB_CONNECTION_URL?: string;
+  ACCOUNT_SERVICE_URL?: string;
+  ACCOUNT_SERVICE_SECRET?: string;
+  /** Dedicated Hyperdrive configuration with query caching disabled for auth. */
+  ACCOUNT_HYPERDRIVE?: { connectionString: string };
+};
 export type AuthorizeRequest = (secret: string | undefined, bindings: AccountAccessBindings, sharedSql?: postgres.Sql) => Promise<AccessDecision>;
 
 async function authorizeViaService(secret: string, bindings: AccountAccessBindings): Promise<AccessDecision> {
@@ -31,13 +37,23 @@ async function authorizeViaService(secret: string, bindings: AccountAccessBindin
 /** Validate the key and atomically spend its owner's shared, database-backed allowance. */
 export const authorizeAccountRequest: AuthorizeRequest = async (secret, bindings, sharedSql) => {
   if (!secret || !/^sm_live_[a-f0-9]{48}$/.test(secret)) return { status: "unauthorized" };
-  if (bindings.ACCOUNT_SERVICE_URL) return authorizeViaService(secret, bindings);
-  const databaseUrl = bindings.DB_CONNECTION_URL;
+  // An explicitly bound Hyperdrive opts into direct Worker authorization,
+  // avoiding the web-service hop. Never fall back after a quota-write failure:
+  // the write may have committed even if its response was lost.
+  const hyperdrive = bindings.ACCOUNT_HYPERDRIVE;
+  if (!hyperdrive && bindings.ACCOUNT_SERVICE_URL) return authorizeViaService(secret, bindings);
+  const databaseUrl = hyperdrive ? hyperdrive.connectionString : bindings.DB_CONNECTION_URL;
   if (!databaseUrl) return { status: "unavailable" };
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(secret));
   const hash = [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
   // Workers sockets belong to their request; do not share a client across requests.
-  const sql = sharedSql ?? postgres(databaseUrl, { max: 1, prepare: false, connect_timeout: 5 });
+  const sql = sharedSql ?? postgres(databaseUrl, {
+    max: 1, connect_timeout: 5,
+    // Hyperdrive supports prepared statements; prepare:false can hang with its
+    // transaction pool. Auth uses scalar types, so skip type-discovery I/O too.
+    prepare: Boolean(hyperdrive),
+    ...(hyperdrive ? { fetch_types: false } : {}),
+  });
   try {
     const lookupKey = () => sql<{ user_id: string; request_limit: number; api_plan: ApiPlan }[]>`
       SELECT k.user_id, entitlement.plan AS api_plan,
