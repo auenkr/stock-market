@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "test": "node --import tsx --test src/*.test.ts",
-    "build": "esbuild src/server.ts --bundle --conditions=source,workerd --external:node:* --external:cloudflare:* --format=esm --platform=browser --target=es2022 --outfile=../../dist/apps/api/server.js",
+    "build": "node scripts/build.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "dev": "node ../../scripts/dev-app.mjs api",
     "deploy:api": "wrangler deploy",

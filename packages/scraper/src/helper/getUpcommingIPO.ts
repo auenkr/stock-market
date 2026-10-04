@@ -226,7 +226,7 @@ function findGMPPercentage(name: string, records: GMPRecord[]): number | null {
 }
 
 async function getGMPRecords(source: SourceOptions): Promise<GMPRecord[]> {
-  const response = await sourceGet("https://webnodejs.investorgain.com/cloud/v2/index/gmp-data", { requestId: source.requestId, cookie: "" });
+  const response = await sourceGet("https://webnodejs.investorgain.com/cloud/v2/index/gmp-data", { requestId: source.requestId, cache: source.cache, cacheEnabled: source.cacheEnabled, cookie: "" });
   const records = (response.data?.gmpList ?? []) as GMPRecord[];
   return records.filter((record) => record.company_short_name && Number.isFinite(Number(record.gmp_perc)));
 }

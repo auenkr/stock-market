@@ -62,7 +62,7 @@ test("legacy routes use Worker bindings for every source request and keep the re
       assert(full.headers.get("X-Request-ID")); assert.equal(full.headers.get("Cache-Control"), "no-store");
       assert.equal(fullBody.data.symbol, "/company/ACME/consolidated/"); assert.equal(fullBody.data.url, undefined);
       const extracted = await app.request(`${prefix}/extract?symbol=/company/ACME/consolidated/&type=ratios`, {}, bindings);
-      assert.equal(extracted.status, 200); assert.equal(extracted.headers.get("X-Cache"), "HIT");
+      assert.equal(extracted.status, 200); assert.equal(extracted.headers.get("X-Cache"), null, "Without Valkey there is no in-memory cache fallback");
       assertEnvelope(`${prefix}/extract`, await extracted.json<any>());
     }
     assert(requests.includes("https://source.example/company/ACME/consolidated/"));
