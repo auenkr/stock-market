@@ -147,6 +147,9 @@ curl "https://stock-market-api.auenkr.com/v1/extract?symbol=/company/RELIANCE/co
 
 ## Local development
 
+For the hosted dev web/API/MCP services and the protected `dev` → `main`
+deployment flow, see [Development environment](docs/development-environment.md).
+
 Copy `sample.env` to `.env` and configure a valid Screener `COOKIE`. Run all four long-lived applications with:
 
 ```bash

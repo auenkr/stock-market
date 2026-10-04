@@ -25,6 +25,7 @@
     "build:worker": "esbuild src/worker.ts --bundle --format=esm --platform=browser --target=es2022 --conditions=workerd --external:node:* --external:cloudflare:* --outfile=dist/worker.js",
     "prepublishOnly": "pnpm build",
     "deploy": "wrangler deploy",
+    "deploy:dev": "wrangler deploy --env dev",
     "dev:worker": "wrangler dev",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "start": "tsx src/index.ts",
