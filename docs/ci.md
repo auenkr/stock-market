@@ -72,3 +72,18 @@ Use environment variables (not secrets) for `ENVIRONMENT=dev`, `DEV_USERNAME=dev
 Load/stress/spike/soak workloads are opt-in capacity experiments; PR CI runs bounded smoke and quota workloads. They can be run locally using [the performance testing guide](testing.md). These and real external service tests are not implied by a green PR check.
 
 If automatic deployment is added later, use separate deployment credentials: `CLOUDFLARE_API_TOKEN` with Worker deployment access, `CLOUDFLARE_ACCOUNT_ID`, and `VERCEL_TOKEN` / `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID`. Deployments and their runtime secrets are not configured by this PR workflow.
+
+### Which flows are excluded from CICD and how
+
+CICD exclusion is driven by a single mode, `TEST_MODE=CICD` (GitHub Actions sets it for every step; `pnpm test:ci` forces it):
+
+- `apps/api/tests/run.mjs` omits `packages/auth/tests/payment.integration.test.ts`.
+- `apps/web/playwright.config.ts` excludes `apps/web/tests/browser/payment.spec.ts` via `testIgnore`.
+- Per-test skips use `{ skip: process.env.TEST_MODE === "CICD" }` (see `packages/auth/tests/billing.integration.test.ts`) or `test.skip(process.env.TEST_MODE === "CICD", ...)` (see `apps/web/tests/browser/billing.spec.ts`).
+- No Redis/Valkey service starts in CICD (`INTEGRATION_VALKEY_URL` is empty, `CACHE_ENABLED=false`), so Valkey-backed cache and service checks are skipped; pure cache logic unit tests still run.
+
+Rule of thumb: only flows that need a real external system (payments, webhooks, Valkey services, paid network calls) are disabled in CICD. Browser and API flows that run against the disposable database still run in CICD; if such a flow is found to be genuinely untestable in CI, disable it with one of the above mechanisms and note why here.
+
+### Browser E2E timing in CICD
+
+Browser E2E runs through a dev server (`scripts/dev-app.mjs web`), and on a cold CI runner the first navigation to an uncompiled route can wait on on-demand chunk compilation. Nav-dependent assertions therefore use longer budgets (for example `{ timeout: 30_000 }` in `apps/web/tests/browser/mcp-oauth.spec.ts` and `apps/web/tests/browser/billing.spec.ts`) instead of the 5s default. Do not lower these; a slow first compile used to fail otherwise healthy CI runs.

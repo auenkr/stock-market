@@ -7,7 +7,7 @@ import { customerState, signedEvent } from "../../../../packages/auth/tests/bill
 test("pricing and legal documents are linked, monthly, and usable on mobile", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Pricing" }).click();
-  await expect(page).toHaveURL(/\/pricing$/);
+  await expect(page).toHaveURL(/\/pricing$/, { timeout: 30_000 });
   await expect(page.getByRole("heading", { name: "Hobby", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Basic", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Personal", exact: true })).toBeVisible();
@@ -18,10 +18,10 @@ test("pricing and legal documents are linked, monthly, and usable on mobile", as
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole("link", { name: "Terms of Service", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Terms of Service", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Terms of Service", exact: true })).toBeVisible({ timeout: 30_000 });
   await expect(page.getByRole("heading", { name: "Payments & cancellation" })).toBeVisible();
   await page.locator("footer").getByRole("link", { name: "Privacy Policy" }).click();
-  await expect(page.getByRole("heading", { name: "Privacy Policy", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Privacy Policy", exact: true })).toBeVisible({ timeout: 30_000 });
   await expect(page.getByRole("heading", { name: "Your rights", exact: true })).toBeVisible();
 });
 
