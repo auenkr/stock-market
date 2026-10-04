@@ -73,6 +73,15 @@ test("lists public tools only", async () => {
   assert.ok(names.includes("company_profile"));
   assert.ok(names.includes("search_companies"));
   assert.equal(names.some((n) => /internal|dividend|corporate|ownership|results|ipo|extract/.test(n)), false);
+  assert.equal(tools.length, 13);
+  for (const tool of tools) {
+    assert.deepEqual(tool.annotations, {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    }, `${tool.name} must advertise its read-only public-data behavior`);
+  }
   await client.close();
 });
 

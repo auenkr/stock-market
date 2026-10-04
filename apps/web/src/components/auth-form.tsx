@@ -4,12 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 
-export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError = "", destination = "/dashboard" }: {
+export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError = "", destination = "/dashboard", oauth = false }: {
   mode: "login" | "signup";
   googleEnabled: boolean;
   devEnabled?: boolean;
   initialError?: string;
   destination?: string;
+  oauth?: boolean;
 }) {
   const [error, setError] = useState(initialError);
   const [pending, setPending] = useState<"google" | "dev" | null>(null);
@@ -32,7 +33,7 @@ export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError
       if (result.error) {
         setError(result.error.message || "Could not sign in.");
         setPending(null);
-      } else window.location.assign(destination);
+      } else window.location.assign(oauth ? (result.data as { url?: string } | null)?.url || window.location.href : destination);
     } catch {
       setError("Could not connect. Please try again.");
       setPending(null);
@@ -50,8 +51,8 @@ export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError
       }
       const result = await authClient.signIn.social({
         provider: "google",
-        callbackURL: isLogin ? destination : onboarding,
-        newUserCallbackURL: onboarding,
+        callbackURL: oauth ? window.location.href : isLogin ? destination : onboarding,
+        newUserCallbackURL: oauth ? window.location.href : onboarding,
         errorCallbackURL: isLogin ? "/signin" : "/signup",
       });
       if (result.error) {
@@ -68,14 +69,14 @@ export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError
     <Link className="brand" href="/"><span className="brand-mark">LL</span>Ledgerline</Link>
     <div className="card">
       <span className="eyebrow">Developer console</span>
-      <h1>{isLogin ? "Welcome back." : "Start building."}</h1>
-      <p className="subtle">{isLogin ? "Sign in to manage your market data access." : "Create your workspace and issue your first API key."}</p>
+      <h1>{oauth ? "Connect Ledgerline." : isLogin ? "Welcome back." : "Start building."}</h1>
+      <p className="subtle">{oauth ? "Sign in to connect your Ledgerline account to ChatGPT. You will review the requested access before connecting." : isLogin ? "Sign in to manage your market data access." : "Create your workspace and issue your first API key."}</p>
       {!isLogin && <label className="legal-consent"><input type="checkbox" checked={accepted} onChange={(event) => setAccepted(event.target.checked)} disabled={!ready || pending !== null} /><span>I agree to the <Link href="/terms-of-service" target="_blank" rel="noopener noreferrer">Terms of Service</Link> and <Link href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link>.</span></label>}
       <button className="button google-button" type="button" disabled={!googleEnabled || pending !== null || (!isLogin && !accepted)} onClick={() => void continueWithGoogle()}>
-        <GoogleMark />{pending === "google" ? "Connecting to Google…" : isLogin ? "Continue with Google" : "Sign up with Google"}
+        <GoogleMark />{pending === "google" ? "Connecting to Google…" : isLogin || oauth ? "Continue with Google" : "Sign up with Google"}
       </button>
       {!googleEnabled && <p className="auth-hint subtle">Google authentication is currently unavailable.</p>}
-      {devEnabled && isLogin && <>
+      {devEnabled && (isLogin || oauth) && <>
         <div className="auth-divider"><span>Development login</span></div>
         <form className="form" onSubmit={signInDev}>
           <label className="field-label" htmlFor="dev-username">Username<input id="dev-username" className="input" autoComplete="username" required value={username} onChange={(event) => setUsername(event.target.value)} disabled={pending !== null} /></label>
@@ -84,7 +85,7 @@ export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError
         </form>
       </>}
       {error && <div className="error" role="alert">{error}</div>}
-      <p className="subtle" style={{ marginBottom: 0 }}>{isLogin ? "New here?" : "Already have an account?"} <Link className="text-button" href={`${isLogin ? "/signup" : "/signin"}${destination === "/dashboard/billing" ? "?next=/dashboard/billing" : ""}`}>{isLogin ? "Create an account" : "Sign in"}</Link></p>
+      {!oauth && <p className="subtle" style={{ marginBottom: 0 }}>{isLogin ? "New here?" : "Already have an account?"} <Link className="text-button" href={`${isLogin ? "/signup" : "/signin"}${destination === "/dashboard/billing" ? "?next=/dashboard/billing" : ""}`}>{isLogin ? "Create an account" : "Sign in"}</Link></p>}
     </div>
   </section></main>;
 }

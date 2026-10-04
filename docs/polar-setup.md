@@ -104,8 +104,7 @@ The Terms of Service and Privacy Policy are at `/terms-of-service` and `/privacy
 For an existing database already using account plans and usage counters:
 
 ```sh
-pnpm db:migrate:billing
-pnpm db:migrate:four-tier-plans
+pnpm db:migrate
 ```
 
 The migrations read `DB_CONNECTION_URL` from `.env`. Billing adds subscription expiration, reconciliation timestamp, Polar customer ID, and consent audit fields. The four-tier migration adds Basic's 60/minute policy and expands the database constraint, preserving existing accounts and subscriptions. Personal remains 300/minute, Professional 500/minute, and Hobby retains the default policy. Legacy manually assigned `paid` rows become Hobby: an old manual flag is not a verified payment subscription. Existing API keys remain valid. Existing users can accept the current policies in Plans & billing before subscribing.

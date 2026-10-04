@@ -3,18 +3,27 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/index.ts src/consent.ts --bundle --format=esm --platform=node --target=es2022 --packages=external --outdir=dist",
+    "build": "esbuild src/index.ts src/consent.ts src/api-key-crypto.ts --bundle --format=esm --platform=node --target=es2022 --packages=external --outdir=dist",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "seed:dev": "node --env-file=../../.env scripts/seed-dev-account.mjs"
+    "seed:dev": "node --env-file-if-exists=../../.env scripts/seed-dev-account.mjs"
   },
   "exports": {
-    "./consent": { "types": "./src/consent.ts", "import": "./dist/consent.js" },
+    "./consent": {
+      "types": "./src/consent.ts",
+      "import": "./dist/consent.js"
+    },
     ".": {
       "types": "./src/index.ts",
       "import": "./dist/index.js"
+    },
+    "./api-key-crypto": {
+      "types": "./src/api-key-crypto.ts",
+      "import": "./dist/api-key-crypto.js"
     }
   },
   "dependencies": {
+    "@better-auth/oauth-provider": "1.7.7",
+    "@better-auth/utils": "0.4.2",
     "@polar-sh/better-auth": "^2.0.0",
     "@polar-sh/sdk": "^1.0.2",
     "@stock-market/db": "workspace:*",

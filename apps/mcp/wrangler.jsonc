@@ -12,7 +12,9 @@
     "enabled": false
   },
   "vars": {
-    "STOCK_MARKET_API_URL": "https://stock-market-api.auenkr.com"
+    "STOCK_MARKET_API_URL": "https://stock-market-api.auenkr.com",
+    "MCP_RESOURCE_URL": "https://stock-market-mcp.auenkr.com/mcp",
+    "MCP_AUTHORIZATION_SERVER": "https://stock-market.auenkr.com/api/auth"
   },
   "workers_dev": false,
   "preview_urls": false,
