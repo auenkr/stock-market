@@ -4,8 +4,6 @@
   "packageManager": "pnpm@10.15.0",
   "scripts": {
     "plugin:package": "node scripts/package-chatgpt-plugin.mjs",
-    "db:migrate:four-tier-plans": "node --env-file=.env packages/db/scripts/migrate-four-tier-plans.mjs",
-    "db:migrate:billing": "node --env-file=.env packages/db/scripts/migrate-billing.mjs",
     "docs:generate": "tsx apps/api/scripts/generate-swagger.ts",
     "docs:check": "tsx apps/api/scripts/generate-swagger.ts --check",
     "test:api": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/agent-tools build && pnpm --filter @stock-market/common build && pnpm --filter @stock-market/scraper build && pnpm --filter @stock-market/api test",
@@ -21,15 +19,6 @@
     "metrics": "nx metrics @stock-market/cli",
     "deploy:api": "nx deploy:api @stock-market/api",
     "db:push": "pnpm --filter @stock-market/web db:push",
-    "db:migrate:api-keys": "node --env-file=.env packages/db/scripts/migrate-api-key-encryption.mjs",
-    "db:migrate:onboarding": "node --env-file=.env packages/db/scripts/migrate-onboarding.mjs",
-    "db:migrate:usage-policy": "node --env-file=.env packages/db/scripts/migrate-usage-policy.mjs",
-    "db:migrate:simplify-api-keys": "node --env-file=.env packages/db/scripts/migrate-simplify-api-keys.mjs",
-    "db:migrate:timestamps": "node --env-file=.env packages/db/scripts/migrate-application-timestamps.mjs",
-    "db:migrate:key-expiration": "node --env-file=.env packages/db/scripts/migrate-api-key-expiration.mjs",
-    "db:migrate:request-limit": "node --env-file=.env packages/db/scripts/migrate-default-request-limit.mjs",
-    "db:migrate:api-plans": "node --env-file=.env packages/db/scripts/migrate-api-plans.mjs",
-    "db:migrate:account-usage": "node --env-file=.env packages/db/scripts/migrate-account-usage.mjs",
     "test:keys": "tsx --test apps/web/src/lib/key-expiration.test.ts",
     "db:seed:dev": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/auth seed:dev",
     "test:integration": "pnpm --filter @stock-market/api test:integration",
@@ -38,7 +27,7 @@
     "test:performance": "pnpm --filter @stock-market/api test:performance",
     "test:web": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/web test",
     "test:ci": "node scripts/test-ci.mjs",
-    "db:migrate:mcp-oauth": "node --env-file=.env packages/db/scripts/migrate-mcp-oauth.mjs"
+    "db:migrate": "pnpm --filter @stock-market/web exec drizzle-kit push --force && node --env-file=.env packages/db/scripts/migrate-all.mjs"
   },
   "devDependencies": {
     "@nx/js": "^21.5.2",

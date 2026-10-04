@@ -30,7 +30,7 @@ OAuth support is implemented in the Worker and web account service. It must be m
 
 ## OAuth deployment
 
-1. Apply `pnpm db:migrate:mcp-oauth` to the account database before deploying the web app. The repeatable migration adds Better Auth JWT/OAuth tables and the `MCP_RESOURCE_URL` policy.
+1. Apply `pnpm db:migrate` to the account database before deploying the web app. The repeatable migration adds Better Auth JWT/OAuth tables and the `MCP_RESOURCE_URL` policy.
 2. Set the same separate, random `MCP_ACCOUNT_SERVICE_SECRET` (at least 32 characters) on Next.js and the MCP Worker. Store the Worker value with `wrangler secret put MCP_ACCOUNT_SERVICE_SECRET`; do not put it in a manifest or Wrangler vars. Keep this secret stable to preserve connection key identities.
 3. Set `MCP_RESOURCE_URL` to the exact HTTPS `/mcp` URL on both services and `MCP_AUTHORIZATION_SERVER` to the web app’s Better Auth issuer, normally `https://stock-market.auenkr.com/api/auth`. The issuer must match `BETTER_AUTH_URL` plus `/api/auth`. Configure Google OAuth as for ordinary Ledgerline sign-in.
 4. Deploy Next.js and the Worker, then check issuer discovery at `/api/auth/.well-known/oauth-authorization-server` and `/.well-known/oauth-authorization-server/api/auth`. An unauthenticated MCP POST should return 401 with the protected-resource metadata challenge.
