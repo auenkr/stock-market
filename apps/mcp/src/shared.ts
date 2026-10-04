@@ -145,12 +145,24 @@ export async function callApi(apiUrl: string, apiKey: string, path: string, para
   return body;
 }
 
-export function createMcpServer(apiUrl: string, apiKey: string): McpServer {
-  const server = new McpServer({ name: "stock-market", version: "1.0.0" });
+export function createMcpServer(apiUrl: string, apiKey: string, oauth = false): McpServer {
+  const server = new McpServer({ name: "stock-market", version: "1.0.0" }, {
+    instructions: "Ledgerline provides Indian company fundamentals and reported financial data. Search or list companies first, then pass the returned symbol unchanged to company tools. Access depends on the connected account's plan and shared request allowance. Report unavailable data and access errors accurately; do not infer missing figures. These tools do not execute trades or payments.",
+  });
   for (const tool of tools) {
     server.registerTool(
       tool.name,
-      { description: tool.description, inputSchema: tool.schema },
+      {
+        description: tool.description,
+        inputSchema: tool.schema,
+        ...(oauth ? { securitySchemes: [{ type: "oauth2", scopes: ["market:read"] }], _meta: { securitySchemes: [{ type: "oauth2", scopes: ["market:read"] }] } } : {}),
+        annotations: {
+          readOnlyHint: true,
+          destructiveHint: false,
+          idempotentHint: true,
+          openWorldHint: true,
+        },
+      },
       async (args) => {
         try {
           const data = await callApi(apiUrl, apiKey, tool.path, tool.params(args as Record<string, unknown>));

@@ -1,5 +1,8 @@
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth } from "better-auth";
+import { jwt } from "better-auth/plugins";
+import { createMcpOAuthPlugin } from "./mcp-config.js";
+import { mcpAccountAccess } from "./mcp-access.js";
 import { db } from "@stock-market/db";
 import { createAuthOptions } from "./config.js";
 import { createBillingPlugin, createCheckoutHook, syncBillingAccount } from "./polar.js";
@@ -16,7 +19,8 @@ export const syncAccountBilling = (account: { id: string; name: string; email: s
 export const auth = betterAuth({
   ...options,
   database: drizzleAdapter(db, { provider: "pg" }),
-  plugins: billing ? [billing] : [],
+  disabledPaths: ["/token"],
+  plugins: [jwt(), createMcpOAuthPlugin(), mcpAccountAccess(), ...(billing ? [billing] : [])],
   hooks: { before: createCheckoutHook(syncAccountBilling) },
 });
 
