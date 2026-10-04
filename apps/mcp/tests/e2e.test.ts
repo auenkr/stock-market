@@ -36,7 +36,7 @@ after(async () => {
   await fixture?.cleanup();
 });
 
-test("e2e: dev stack through MCP tools", { timeout: 120000 }, async (t) => {
+test("e2e: dev stack through MCP tools", { timeout: 120000, skip: process.env.TEST_MODE === "CICD" && !process.env.INTEGRATION_DATABASE_URL }, async (t) => {
   if (!(await devStackReady())) {
     assert.fail(`dev web (${webUrl}) and api (${apiUrl}) must be running for e2e tests`);
   }

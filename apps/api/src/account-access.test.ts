@@ -17,7 +17,7 @@ test("data requests require a valid key and fail closed without account storage"
 });
 
 test("accounts share an atomic quota across keys and API instances; other accounts, resets and key invalidation work", {
-  skip: !process.env.DB_CONNECTION_URL,
+  skip: !process.env.DB_CONNECTION_URL || (process.env.TEST_MODE === "CICD" && Boolean(process.env.ACCOUNT_TEST_API_URL)),
 }, async () => {
   const url = process.env.DB_CONNECTION_URL!;
   const sql = postgres(url, { max: 4, prepare: false });
