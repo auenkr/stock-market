@@ -15,10 +15,15 @@ import { agentOpenApi, agentPluginManifest, agentTools } from "@stock-market/age
 import { apiDocsHtml } from "./api-docs.js";
 import { DataError } from "./screener-provider.js";
 import { authorizeAccountRequest, type AuthorizeRequest, type AccountAccessBindings } from "@stock-market/db/account-access";
-import { CacheBusyError, COMPANY_CACHE_TTL, createRedisCache, sourceCacheKey, type SourceCache } from "@stock-market/scraper/utils/cache";
+import { CacheBusyError, COMPANY_CACHE_TTL, createRedisCache, sourceCacheKey, type CacheStats, type SourceCache } from "@stock-market/scraper/utils/cache";
 import { BASE_URL, COOKIE } from "@stock-market/common/env";
 
 type ApiBindings = Bindings & AccountAccessBindings;
+
+/** Per-request cost breakdown, published on the completion log and as response headers. */
+type RequestTimings = { startedAt: number; authMs?: number; authStatus?: string; cache?: CacheStats; handlerMs?: number };
+const requestTimings = new WeakMap<object, RequestTimings>();
+const since = (startedAt: number) => Math.round((performance.now() - startedAt) * 10) / 10;
 
 const extractTypes = ["quarterly", "profit-loss", "balance-sheet", "cash-flow", "ratios", "shareholding", "peers"] as const;
 type ExtractType = (typeof extractTypes)[number];
@@ -69,23 +74,37 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
   const app = new Hono<{ Bindings: ApiBindings; Variables: AccessVariables }>();
   app.use("*", async (c, next) => {
     const requestId = crypto.randomUUID();
-    const startedAt = Date.now();
+    const startedAt = performance.now();
+    const timings: RequestTimings = { startedAt };
+    requestTimings.set(c, timings);
     c.header("X-Request-ID", requestId);
     log("info", "api.request.started", { requestId, method: c.req.method, path: c.req.path });
     await next();
+    // authMs + handlerMs + cache time is the whole in-Worker budget; anything the
+    // client sees beyond this is network and cold-start.
+    const durationMs = since(startedAt);
     log(c.res.status >= 500 ? "error" : c.res.status >= 400 ? "warn" : "info", "api.request.completed", {
-      requestId, method: c.req.method, path: c.req.path, status: c.res.status, durationMs: Date.now() - startedAt,
+      requestId, method: c.req.method, path: c.req.path, status: c.res.status, durationMs,
+      authMs: timings.authMs, authStatus: timings.authStatus, handlerMs: timings.handlerMs,
       cache: c.res.headers.get("X-Cache"),
+      cacheStats: timings.cache && { hits: timings.cache.hits, misses: timings.cache.misses, busy: timings.cache.busy, failures: timings.cache.failures, operations: timings.cache.operations, durationMs: timings.cache.durationMs, connectMs: timings.cache.connectMs },
     });
   });
   app.onError((error, c) => {
     log("error", "api.unhandled", { requestId: c.res.headers.get("X-Request-ID"), path: c.req.path, error: errorDetails(error) });
     return errorResponse(c, "Internal Server Error", 500);
   });
-  app.use("*", cors({ origin: "*", allowHeaders: ["Content-Type", "Authorization", "X-API-Key"], exposeHeaders: ["X-Request-ID", "X-Page", "X-Next-Page", "X-Data-Coverage", "Retry-After"] }));
+  app.use("*", cors({ origin: "*", allowHeaders: ["Content-Type", "Authorization", "X-API-Key"], exposeHeaders: ["X-Request-ID", "X-Page", "X-Next-Page", "X-Data-Coverage", "Retry-After", "X-Auth-Time", "X-Cache-Time", "X-Cache-Connect-Time", "X-Source-Time", "X-Total-Time"] }));
   app.use("*", async (c, next) => {
     if (!["/v1/", "/v2/", "/api/"].some((prefix) => c.req.path.startsWith(prefix))) return next();
+    const timings = requestTimings.get(c);
+    const authStartedAt = performance.now();
     const access = await authorize(requestKey(c), c.env ?? {});
+    if (timings) { timings.authMs = since(authStartedAt); timings.authStatus = access.status; }
+    log(timings?.authMs && timings.authMs > 1_000 ? "warn" : "info", "api.auth.completed", {
+      requestId: c.res.headers.get("X-Request-ID"), path: c.req.path, status: access.status,
+      plan: access.status === "allowed" ? access.plan : undefined, durationMs: timings?.authMs,
+    });
     c.header("Cache-Control", "no-store");
     if (access.status === "unauthorized") return errorResponse(c, "Invalid or expired API key", 401);
     if (access.status === "unavailable") return errorResponse(c, "Account usage service unavailable", 503);
@@ -103,9 +122,22 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
       ? cacheFactory(c.env.VALKEY_URL.trim(), c.env.VALKEY_CACHE_PREFIX?.trim() || `stock-market:${c.env.ENVIRONMENT ?? "production"}`)
       : undefined;
     c.set("sourceCache", cache);
+    const handlerStartedAt = performance.now();
     try { await next(); }
     finally {
-      if (cache) await cache.close();
+      if (timings) timings.handlerMs = since(handlerStartedAt);
+      if (cache) {
+        const stats = cache.stats();
+        if (timings) timings.cache = stats;
+        log(stats.connectMs > 500 ? "warn" : "info", "api.cache.completed", {
+          requestId: c.res.headers.get("X-Request-ID"), path: c.req.path, ...stats,
+        });
+        c.header("X-Cache-Time", String(stats.durationMs));
+        if (stats.connectMs) c.header("X-Cache-Connect-Time", String(stats.connectMs));
+        await cache.close();
+      }
+      c.header("X-Auth-Time", String(timings?.authMs ?? 0));
+      c.header("X-Total-Time", String(Math.round(performance.now() - (timings?.startedAt ?? performance.now()))));
       c.header("Cache-Control", "no-store");
     }
   });

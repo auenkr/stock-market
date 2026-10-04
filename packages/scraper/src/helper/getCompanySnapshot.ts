@@ -192,7 +192,7 @@ export async function getCompanySnapshot(symbol: string, source: SourceOptions =
   };
   const result = source.cache && source.cacheEnabled !== false
     ? await source.cache.remember(await sourceCacheKey("company", new URL(path, source.baseUrl ?? BASE_URL), source.cookie ?? COOKIE), COMPANY_CACHE_TTL, load)
-    : { value: await load(), hit: false, expiresAt: Date.now() + COMPANY_CACHE_TTL * 1000 };
+    : { value: await load(), hit: false, expiresAt: Date.now() + COMPANY_CACHE_TTL * 1000, durationMs: 0 };
   // Enrichments mutate financial rows; never let them modify the cached base.
   return { ...result, value: { ...structuredClone(result.value), symbol } };
 }

@@ -274,6 +274,9 @@ importers:
 
   packages/db:
     dependencies:
+      '@stock-market/common':
+        specifier: workspace:*
+        version: link:../common
       drizzle-orm:
         specifier: ^0.45.2
         version: 0.45.3(@cloudflare/workers-types@5.20260928.1)(kysely@0.29.6)(postgres@3.4.9)

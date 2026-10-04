@@ -40,7 +40,7 @@ export async function cachedSourceText(url: URL, source: SourceOptions, load: ()
     return response;
   };
   const ttl = sourceCacheTtl(url.pathname);
-  if (!source.cache || source.cacheEnabled === false) return { value: await loader(), hit: false, expiresAt: Date.now() + ttl * 1000 };
+  if (!source.cache || source.cacheEnabled === false) return { value: await loader(), hit: false, expiresAt: Date.now() + ttl * 1000, durationMs: 0 };
   return source.cache.remember(await sourceCacheKey("source", url, source.cookie ?? COOKIE), ttl, loader);
 }
 

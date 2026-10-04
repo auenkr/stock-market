@@ -65,10 +65,14 @@ export function createCompatibilityApi(providerFactory: ProviderFactory = defaul
         requireCompanyAccess(plan, symbols);
         if (contract.status === "unavailable") throw new DataError(contract.limitation);
         const provider = providerFactory(c.env ?? {}, c.get("sourceCache"));
+        const sourceStartedAt = performance.now();
         const result = await provider.execute(contract.resource, query);
+        const sourceMs = Math.round((performance.now() - sourceStartedAt) * 10) / 10;
+        log("info", "api.dataset.completed", { requestId: c.res.headers.get("X-Request-ID"), path: contract.path, resource: contract.resource, sourceMs });
         for (const [name, value] of Object.entries(result.headers ?? {})) if (name.toLowerCase() !== "x-data-source") c.header(name, value);
         c.header("Cache-Control", "private, max-age=900");
         c.header("X-Data-Coverage", "partial");
+        c.header("X-Source-Time", String(sourceMs));
         return c.json(result.body as Record<string, unknown>);
       } catch (error) {
         log(error instanceof DataError && [400, 404, 501].includes(error.status) ? "warn" : "error", "api.dataset.failed", { requestId: c.res.headers.get("X-Request-ID"), path: c.req.path, error: errorDetails(error) });

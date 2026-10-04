@@ -240,3 +240,68 @@ test("discovery aliases reuse source responses and keep different queries/pages 
     assert.equal(calls, 7);
   } finally { axios.defaults.adapter = previous; }
 });
+
+test("cache stats and timing lines separate hits, misses, coalesced loads and failures", async () => {
+  const store = new MemoryStore();
+  const lines: string[] = []; const info = console.info; const warn = console.warn;
+  console.info = (message) => { lines.push(message); };
+  console.warn = (message) => { lines.push(message); };
+  try {
+    const cache = new ReadThroughCache(store, "test", () => 12.5);
+    let calls = 0;
+    const miss = await cache.remember("company", 900, async () => { calls += 1; await new Promise((resolve) => setTimeout(resolve, 10)); return { rows: [calls] }; });
+    const hit = await cache.remember("company", 900, async () => { calls += 1; return { rows: [calls] }; });
+    assert.equal(miss.hit, false); assert.equal(hit.hit, true); assert.equal(calls, 1);
+    assert(Number.isFinite(miss.durationMs) && hit.durationMs >= 0);
+    const coalesced = await Promise.all(Array.from({ length: 3 }, () => cache.remember("coalesced", 900, async () => { calls += 1; await new Promise((resolve) => setTimeout(resolve, 10)); return { rows: [calls] }; })));
+    assert(coalesced.every((result) => result.hit === false));
+    await assert.rejects(cache.remember("broken", 900, async () => { throw new Error("upstream failed"); }));
+
+    const stats = cache.stats();
+    assert.equal(stats.connectMs, 12.5);
+    assert.equal(stats.failures, 1);
+    assert.equal(stats.misses, 2);
+    assert.equal(stats.hits, 1);
+    assert.equal(stats.operations, 6, "one miss, one hit, one miss with two coalesced waiters and one failure");
+    assert(stats.durationMs >= 20, "aggregate time must cover the two loader waits");
+    const events = lines.map((line) => JSON.parse(line).event as string);
+    assert(events.includes("cache.miss") && events.includes("cache.hit") && events.includes("cache.coalesced") && events.includes("cache.failure"));
+    const missLine = JSON.parse(lines.find((line) => JSON.parse(line).event === "cache.miss")!);
+    assert(Number.isFinite(missLine.durationMs) && Number.isFinite(missLine.loaderMs) && missLine.locked === true && missLine.ttlSeconds === 900);
+    // Only SHA-256 derived keys and counts may appear, never caller supplied material.
+    assert(lines.every((line) => !line.includes("test-cookie") && !line.includes("https://")));
+  } finally { console.info = info; console.warn = warn; }
+});
+
+test("every request reports auth, cache and total time on the log line and the response", async () => {
+  const store = new MemoryStore();
+  const lines: string[] = []; const info = console.info;
+  console.info = (message) => { lines.push(message); };
+  try {
+    const app = createApp(undefined, async () => {
+      await new Promise((resolve) => setTimeout(resolve, 25));
+      return { status: "allowed", plan: "professional" };
+    }, (_, prefix) => new ReadThroughCache(store, prefix));
+    const previous = axios.defaults.adapter;
+    axios.defaults.adapter = async (config) => ({ data: [{ name: "Acme", url: "/company/ACME/" }], status: 200, statusText: "OK", headers: {}, config });
+    try {
+      const response = await app.request("/v1/company-search?q=acme", {}, { BASE_URL: "https://timing.example", COOKIE: "", VALKEY_URL: "redis://test-only", VALKEY_CACHE_PREFIX: "test" });
+      assert.equal(response.status, 200);
+      const authTime = Number(response.headers.get("X-Auth-Time"));
+      const cacheTime = Number(response.headers.get("X-Cache-Time"));
+      const totalTime = Number(response.headers.get("X-Total-Time"));
+      assert(authTime >= 25, "auth must include the authorization round trip");
+      assert(cacheTime > 0, "a cold cache still costs a store round trip");
+      assert(totalTime >= authTime + cacheTime, "total must cover both stages");
+
+      const entries = lines.map((line) => JSON.parse(line));
+      const completed = entries.filter((entry) => entry.event === "api.request.completed").at(-1)!;
+      assert.equal(completed.authMs, authTime);
+      assert.equal(completed.cacheStats.durationMs, cacheTime);
+      assert.equal(completed.cacheStats.misses, 1);
+      assert(completed.durationMs >= completed.authMs);
+      const auth = entries.filter((entry) => entry.event === "api.auth.completed").at(-1)!;
+      assert.equal(auth.status, "allowed"); assert.equal(auth.plan, "professional"); assert(auth.durationMs >= 25);
+    } finally { axios.defaults.adapter = previous; }
+  } finally { console.info = info; }
+});

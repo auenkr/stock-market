@@ -1,12 +1,20 @@
 import { createClient } from "redis";
-import { log } from "@stock-market/common/logger";
+import { errorDetails, log } from "@stock-market/common/logger";
 
 export const COMPANY_CACHE_TTL = 15 * 60;
 export const DETAIL_CACHE_TTL = 6 * 60 * 60;
 
-export type CacheResult<T> = { value: T; hit: boolean; expiresAt: number };
+const since = (startedAt: number) => Math.round((performance.now() - startedAt) * 10) / 10;
+
+export type CacheResult<T> = { value: T; hit: boolean; expiresAt: number; durationMs: number };
+export type CacheStats = {
+  operations: number; hits: number; misses: number; busy: number; failures: number;
+  durationMs: number; connectMs: number;
+};
 export interface SourceCache {
   remember<T>(key: string, ttlSeconds: number, load: () => Promise<T>, expiresAt?: () => number): Promise<CacheResult<T>>;
+  /** Per-request counters, logged once when the request finishes. */
+  stats(): CacheStats;
   close(): Promise<void>;
 }
 
@@ -29,7 +37,22 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export class ReadThroughCache implements SourceCache {
   private readonly pending = new Map<string, Promise<CacheResult<unknown>>>();
   private unavailable = false;
-  constructor(private readonly store: CacheStore, private readonly prefix: string) {}
+  private readonly counters: CacheStats = { operations: 0, hits: 0, misses: 0, busy: 0, failures: 0, durationMs: 0, connectMs: 0 };
+  constructor(private readonly store: CacheStore, private readonly prefix: string, private readonly connectMs: () => number = () => 0) {}
+
+  stats(): CacheStats { return { ...this.counters, connectMs: this.connectMs() }; }
+
+  private record(outcome: "hit" | "miss" | "coalesced" | "busy" | "failure", key: string, startedAt: number, fields: Record<string, unknown>) {
+    const durationMs = since(startedAt);
+    this.counters.operations += 1;
+    this.counters.durationMs = Math.round((this.counters.durationMs + durationMs) * 10) / 10;
+    if (outcome === "hit") this.counters.hits += 1;
+    else if (outcome === "miss") this.counters.misses += 1;
+    else if (outcome === "busy") this.counters.busy += 1;
+    else if (outcome === "failure") this.counters.failures += 1;
+    log(outcome === "busy" || outcome === "failure" ? "warn" : "info", `cache.${outcome}`, { key, durationMs, ...fields });
+    return durationMs;
+  }
 
   private failure(error: unknown) {
     if (!this.unavailable) {
@@ -46,15 +69,20 @@ export class ReadThroughCache implements SourceCache {
     try {
       const entry = JSON.parse(raw);
       if (entry?.version === 1 && Number.isFinite(entry.expiresAt) && entry.expiresAt > Date.now() && "value" in entry) {
-        return { value: entry.value, expiresAt: entry.expiresAt, hit: true };
+        return { value: entry.value, expiresAt: entry.expiresAt, hit: true, durationMs: 0 };
       }
     } catch { /* Corrupt/old entries are misses and can be replaced. */ }
   }
 
   async remember<T>(key: string, ttlSeconds: number, load: () => Promise<T>, dependencyExpiry?: () => number): Promise<CacheResult<T>> {
     const fullKey = `${this.prefix}:v1:${key}`;
+    const startedAt = performance.now();
     const pending = this.pending.get(fullKey);
-    if (pending) return structuredClone(await pending) as CacheResult<T>;
+    if (pending) {
+      const result = structuredClone(await pending) as CacheResult<T>;
+      this.record("coalesced", key, startedAt, { coalescedInto: result.hit ? "hit" : "miss" });
+      return result;
+    }
     const request = this.load(fullKey, ttlSeconds, load, dependencyExpiry);
     this.pending.set(fullKey, request);
     try { return structuredClone(await request); }
@@ -62,6 +90,7 @@ export class ReadThroughCache implements SourceCache {
   }
 
   private async load<T>(key: string, ttlSeconds: number, load: () => Promise<T>, dependencyExpiry?: () => number): Promise<CacheResult<T>> {
+    const startedAt = performance.now();
     const token = crypto.randomUUID();
     let acquired = false;
     if (!this.unavailable) {
@@ -69,7 +98,7 @@ export class ReadThroughCache implements SourceCache {
         const deadline = Date.now() + 30_000;
         while (true) {
           const cached = await this.read<T>(key);
-          if (cached) return cached;
+          if (cached) return { ...cached, durationMs: this.record("hit", key, startedAt, { expiresAt: cached.expiresAt }) };
           acquired = await this.store.acquire(key, token, 120_000);
           if (acquired) break;
           if (Date.now() >= deadline) throw new CacheBusyError();
@@ -79,22 +108,33 @@ export class ReadThroughCache implements SourceCache {
         const cached = await this.read<T>(key);
         if (cached) {
           await this.store.release(key, token);
-          return cached;
+          return { ...cached, durationMs: this.record("hit", key, startedAt, { expiresAt: cached.expiresAt, afterLock: true }) };
         }
       } catch (error) {
-        if (error instanceof CacheBusyError) throw error;
+        if (error instanceof CacheBusyError) {
+          this.record("busy", key, startedAt, { error: errorDetails(error), ttlSeconds });
+          throw error;
+        }
         this.failure(error);
       }
     }
     try {
       // Loader failures propagate and are never stored as successful entries.
-      const value = await load();
+      let value: T;
+      const loaderStartedAt = performance.now();
+      try { value = await load(); }
+      catch (error) {
+        this.record("failure", key, startedAt, { error: errorDetails(error), loaderMs: since(loaderStartedAt) });
+        throw error;
+      }
+      const loaderMs = since(loaderStartedAt);
       const expiresAt = Math.min(Date.now() + ttlSeconds * 1000, dependencyExpiry?.() ?? Infinity);
       if (acquired && !this.unavailable && expiresAt > Date.now()) {
         try { await this.store.publish(key, token, JSON.stringify({ version: 1, value, expiresAt }), expiresAt - Date.now()); }
         catch (error) { this.failure(error); }
       }
-      return { value, hit: false, expiresAt };
+      const durationMs = this.record("miss", key, startedAt, { loaderMs, ttlSeconds, locked: acquired });
+      return { value, hit: false, expiresAt, durationMs };
     } finally {
       if (acquired && !this.unavailable) {
         try { await this.store.release(key, token); }
@@ -104,6 +144,12 @@ export class ReadThroughCache implements SourceCache {
   }
 
   async close() { await this.store.close(); }
+}
+
+/** Host and port only; a Redis URL carries the password in its userinfo field. */
+function hostOf(url: string) {
+  try { const parsed = new URL(url); return `${parsed.hostname}:${parsed.port || "6379"}`; }
+  catch { return "unknown"; }
 }
 
 export function createRedisCache(url: string, prefix = "stock-market:production"): SourceCache {
@@ -117,8 +163,17 @@ export function createRedisCache(url: string, prefix = "stock-market:production"
   });
   client.on("error", () => { /* Commands report failures through the cache boundary. */ });
   let connecting: Promise<unknown> | undefined;
+  let connectMs = 0;
   const connection = async () => {
-    connecting ??= client.connect();
+    if (!connecting) {
+      const startedAt = performance.now();
+      log("info", "cache.connect.started", { host: hostOf(url) });
+      connecting = client.connect();
+      connecting = connecting.then(
+        (client) => { connectMs = since(startedAt); log("info", "cache.connect.completed", { host: hostOf(url), durationMs: connectMs }); return client; },
+        (error) => { connectMs = since(startedAt); log("warn", "cache.connect.failed", { host: hostOf(url), durationMs: connectMs, error: errorDetails(error) }); throw error; },
+      );
+    }
     await connecting;
     return client;
   };
@@ -137,7 +192,7 @@ export function createRedisCache(url: string, prefix = "stock-market:production"
     },
     close: async () => { if (client.isOpen) client.destroy(); },
   };
-  return new ReadThroughCache(store, prefix);
+  return new ReadThroughCache(store, prefix, () => connectMs);
 }
 
 export async function sourceCacheKey(kind: string, url: URL, cookie = "") {
