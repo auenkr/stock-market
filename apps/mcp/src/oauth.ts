@@ -25,7 +25,7 @@ export async function resolveOAuthAccess(token: string, env: OAuthEnv) {
   const digest = await crypto.subtle.sign("HMAC", signingKey, new TextEncoder().encode(`${timestamp}.${body}`));
   const signature = Array.from(new Uint8Array(digest), value => value.toString(16).padStart(2, "0")).join("");
   const { issuer } = oauthConfiguration(env);
-  const response = await fetch(`${issuer}/mcp/access`, { method: "POST", body, redirect: "error", signal: AbortSignal.timeout(10000), headers: {
+  const response = await fetch(`${issuer}/mcp/access`, { method: "POST", body, redirect: "manual", signal: AbortSignal.timeout(10000), headers: {
     "Content-Type": "application/json", "X-MCP-Timestamp": timestamp, "X-MCP-Signature": signature,
   } });
   if (response.status === 401 || response.status === 403 || response.status === 400) return null;

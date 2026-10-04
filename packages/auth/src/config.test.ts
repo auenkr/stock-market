@@ -136,12 +136,12 @@ test("Google OAuth sends new users to onboarding, preserves returnees, and keeps
   assert.equal(database.user.length, 1);
 });
 
-test("password sign-in works only in dev and public password signup stays disabled", async () => {
+test("admin-provisioned password sign-in works in production and public password signup stays disabled", async () => {
   const password = "test-development-password";
   const passwordHash = await hashPassword(password);
   for (const environment of ["dev", "production", "staging", undefined]) {
     const options = createAuthOptions({ ENVIRONMENT: environment, BETTER_AUTH_SECRET: "test-secret-with-at-least-thirty-two-characters" });
-    assert.equal(options.emailAndPassword.enabled, environment === "dev");
+    assert.equal(options.emailAndPassword.enabled, true);
     const now = new Date();
     const auth = betterAuth({
       ...options, database: memoryAdapter({
@@ -155,14 +155,27 @@ test("password sign-in works only in dev and public password signup stays disabl
       method: "POST", headers: { "content-type": "application/json", origin: options.baseURL },
       body: JSON.stringify({ email: "dev@auenkr.com", password }),
     }));
-    if (environment === "dev") {
-      assert.equal(response.status, 200);
-      assert.equal((await auth.api.getSession({ headers: new Headers({ cookie: cookies(response) }) }))?.user.id, "dev-user");
-    } else assert.equal(response.status, 400);
+    assert.equal(response.status, 200);
+    assert.equal((await auth.api.getSession({ headers: new Headers({ cookie: cookies(response) }) }))?.user.id, "dev-user");
     const signup = await auth.handler(new Request(`${options.baseURL}/api/auth/sign-up/email`, {
       method: "POST", headers: { "content-type": "application/json", origin: options.baseURL },
       body: JSON.stringify({ name: "Ada", email: "ada@example.com", password }),
     }));
     assert.equal(signup.status, 400);
+    const wrongPassword = await auth.handler(new Request(`${options.baseURL}/api/auth/sign-in/email`, {
+      method: "POST", headers: { "content-type": "application/json", origin: options.baseURL },
+      body: JSON.stringify({ email: "dev@auenkr.com", password: "incorrect-password" }),
+    }));
+    assert.equal(wrongPassword.status, 401);
+    const missingAccount = await auth.handler(new Request(`${options.baseURL}/api/auth/sign-in/email`, {
+      method: "POST", headers: { "content-type": "application/json", origin: options.baseURL },
+      body: JSON.stringify({ email: "not-provisioned@example.com", password }),
+    }));
+    assert.equal(missingAccount.status, 401);
+    const publicProvision = await auth.handler(new Request(`${options.baseURL}/api/auth/set-password`, {
+      method: "POST", headers: { "content-type": "application/json", origin: options.baseURL, cookie: cookies(response) },
+      body: JSON.stringify({ newPassword: password }),
+    }));
+    assert.equal(publicProvision.status, 404, "Password provisioning has no browser endpoint");
   }
 });

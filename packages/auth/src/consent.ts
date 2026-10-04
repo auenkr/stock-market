@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { APIError } from "better-auth/api";
 
-export const legalVersion = "2026-10-03";
+export const legalVersion = "2026-10-04";
 export const consentCookieName = "ledgerline.legal-consent";
 const maxAge = 30 * 60;
 

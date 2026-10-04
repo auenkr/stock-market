@@ -23,7 +23,8 @@ export function createAuthOptions(env: AuthEnvironment) {
     ),
     trustedOrigins: [...new Set(trustedOrigins)],
     advanced: { database: { generateId: createId } },
-    emailAndPassword: { enabled: env.ENVIRONMENT === "dev", disableSignUp: true },
+    // Credential accounts are provisioned by the admin CLI, never public signup.
+    emailAndPassword: { enabled: true, disableSignUp: true, requireEmailVerification: true },
     socialProviders: clientId && clientSecret ? {
       google: { clientId, clientSecret },
     } : {},

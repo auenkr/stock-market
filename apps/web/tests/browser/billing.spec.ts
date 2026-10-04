@@ -66,8 +66,8 @@ test("real console and signed Polar webhook upgrade existing keys, downgrade on 
   await expect(page.getByRole("button", { name: "Subscribe to Personal" })).toBeEnabled();
   const [accepted] = await db.$client`SELECT terms_accepted_at, terms_version, privacy_version FROM "user" WHERE id = ${userId}`;
   expect(accepted!.terms_accepted_at).toBeTruthy();
-  expect(accepted!.terms_version).toBe("2026-10-03");
-  expect(accepted!.privacy_version).toBe("2026-10-03");
+  expect(accepted!.terms_version).toBe("2026-10-04");
+  expect(accepted!.privacy_version).toBe("2026-10-04");
   await page.goto("/dashboard/billing?checkout=success");
   await expect(page.getByText("Your current plan is Hobby.", { exact: false })).toBeVisible();
   const created = await page.request.post("/api/keys", { data: { name: "Billing browser key", expiration: "never" } });

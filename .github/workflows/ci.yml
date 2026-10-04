@@ -64,7 +64,7 @@ jobs:
       - name: Docs, types, API, auth, keys, integration and browser E2E
         run: pnpm test:ci
       - name: MCP protocol tests
-        run: pnpm --filter @auenkr/legerline-mcp exec node --import tsx --test tests/mcp.test.ts
+        run: pnpm --filter @auenkr/legerline-mcp exec node --import tsx --test tests/mcp.test.ts tests/worker.test.ts
       - name: Integration and performance test types
         run: pnpm exec tsc -p apps/api/tests/tsconfig.json --noEmit
       - name: Production documentation and theme browser tests
