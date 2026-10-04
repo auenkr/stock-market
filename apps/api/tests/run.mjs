@@ -89,6 +89,7 @@ try {
   await run('pnpm', ['--filter', '@stock-market/scraper', 'build'], env);
   // Apply the real application schema, including auth and foreign keys.
   await run('pnpm', ['--filter', '@stock-market/web', 'exec', 'drizzle-kit', 'push', '--force'], env);
+  await run('node', ['packages/db/scripts/migrate-mcp-oauth.mjs'], env);
   if (mode === 'e2e') {
     const testEnv = { ...env, ENVIRONMENT: 'dev', DEV_USERNAME: 'dev', DEV_PASSWORD: 'test-development-password', DEV_BILLING_EMAIL: 'billing@example.org',
       BETTER_AUTH_URL: 'http://127.0.0.1:3105', BETTER_AUTH_SECRET: 'e2e-auth-secret-at-least-thirty-two-characters',
