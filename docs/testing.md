@@ -1,5 +1,7 @@
 # API integration and performance tests
 
+Suite-by-suite classification and which tests are excluded from CI/CD: [test-classification.md](test-classification.md).
+
 GitHub Actions runs the isolated test suites, browser regressions, MCP checks, k6 smoke/quota, and production builds on PRs. See [CI setup](ci.md) for the testing environment, required merge checks, and optional external-service secrets.
 
 **Test mode:** `TEST_MODE=CICD` is the single switch used by GitHub Actions and `pnpm test:ci`. It excludes purchase/payment suites, the existing webhook lifecycle checks, and service-backed Redis/Valkey checks. The API/MCP fixtures still run with caching disabled. `TEST_MODE=LOCAL` (also the default when unset) includes the simulated payment and cache checks for manual local runs. Real sandbox purchasing remains a separate `pnpm test:payments:live` command. A green CI run does not verify payment or Valkey behavior. See [the decision and rationale](ci.md#decision-payment-checks-are-opt-in-2026-10-03).
