@@ -17,6 +17,7 @@ import { DataError } from "./screener-provider.js";
 import { authorizeAccountRequest, type AuthorizeRequest, type AccountAccessBindings } from "@stock-market/db/account-access";
 import { CacheBusyError, COMPANY_CACHE_TTL, createRedisCache, sourceCacheKey, type SourceCache } from "@stock-market/scraper/utils/cache";
 import { BASE_URL, COOKIE } from "@stock-market/common/env";
+import { EdgeSourceCache, workerEdgeCache, type EdgeCacheStore } from "./edge-cache.js";
 
 type ApiBindings = Bindings & AccountAccessBindings;
 
@@ -65,7 +66,7 @@ async function getCachedCompanyData(endpoint: string, source: SourceOptions) {
 }
 
 export type CacheFactory = (url: string, prefix: string) => SourceCache;
-export function createApp(providerFactory: ProviderFactory = defaultProvider, authorize: AuthorizeRequest = authorizeAccountRequest, cacheFactory: CacheFactory = createRedisCache) {
+export function createApp(providerFactory: ProviderFactory = defaultProvider, authorize: AuthorizeRequest = authorizeAccountRequest, cacheFactory: CacheFactory = createRedisCache, edgeCacheFactory: () => EdgeCacheStore | undefined = workerEdgeCache) {
   const app = new Hono<{ Bindings: ApiBindings; Variables: AccessVariables }>();
   app.use("*", async (c, next) => {
     const requestId = crypto.randomUUID();
@@ -105,9 +106,19 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
     if (!hasDetailedData(access.plan ?? "free") && legacyResource && legacyEndpointTiers[legacyResource as keyof typeof legacyEndpointTiers] === "paid") {
       return c.json({ error: "This endpoint requires Personal or Professional", code: "PAID_PLAN_REQUIRED", docs: "/v1/coverage" }, 403);
     }
-    const cache = c.env?.CACHE_ENABLED?.trim().toLowerCase() !== "false" && c.env?.VALKEY_URL?.trim()
-      ? cacheFactory(c.env.VALKEY_URL.trim(), c.env.VALKEY_CACHE_PREFIX?.trim() || `stock-market:${c.env.ENVIRONMENT ?? "production"}`)
+    const prefix = c.env?.VALKEY_CACHE_PREFIX?.trim() || `stock-market:${c.env?.ENVIRONMENT ?? "production"}`;
+    let cache = c.env?.CACHE_ENABLED?.trim().toLowerCase() !== "false" && c.env?.VALKEY_URL?.trim()
+      ? cacheFactory(c.env.VALKEY_URL.trim(), prefix)
       : undefined;
+    if (cache && c.env?.EDGE_CACHE_ENABLED?.trim().toLowerCase() !== "false") {
+      const edge = edgeCacheFactory();
+      if (edge) {
+        let waitUntil: ((promise: Promise<void>) => void) | undefined;
+        // Hono's executionCtx getter throws in Node's app.request test runtime.
+        try { const ctx = c.executionCtx; waitUntil = (promise) => ctx.waitUntil(promise); } catch { /* No Worker context. */ }
+        cache = new EdgeSourceCache(cache, edge, new URL(c.req.url).origin, prefix, waitUntil);
+      }
+    }
     c.set("sourceCache", cache);
     try { await next(); }
     finally {
