@@ -11,7 +11,7 @@ const options = createAuthOptions(process.env);
 
 export const authBaseURL = options.baseURL;
 export const isGoogleAuthEnabled = Boolean(options.socialProviders.google);
-export const isDevAuthEnabled = options.emailAndPassword.enabled;
+export const isDevAuthEnabled = process.env.ENVIRONMENT === "dev";
 const billing = createBillingPlugin(process.env, db.$client, options.baseURL);
 export const isBillingEnabled = Boolean(billing);
 export const syncAccountBilling = (account: { id: string; name: string; email: string }) => syncBillingAccount(process.env, db.$client, account);

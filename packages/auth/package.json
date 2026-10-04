@@ -5,7 +5,8 @@
   "scripts": {
     "build": "esbuild src/index.ts src/consent.ts src/api-key-crypto.ts --bundle --format=esm --platform=node --target=es2022 --packages=external --outdir=dist",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "seed:dev": "node --env-file-if-exists=../../.env scripts/seed-dev-account.mjs"
+    "seed:dev": "node --env-file-if-exists=../../.env scripts/seed-dev-account.mjs",
+    "create:password-account": "node --env-file-if-exists=../../.env scripts/create-password-account.mjs"
   },
   "exports": {
     "./consent": {
