@@ -147,19 +147,33 @@ Provision against the **same production database** used by the account service,
 with credentials authorized for the existing key/plan lookups and usage writes:
 
 ```sh
+# Production (prod_db)
 pnpm --filter @stock-market/api exec wrangler hyperdrive create stock-market-account-access \
-  --connection-string="$DB_CONNECTION_URL" --caching-disabled
+  --connection-string="$PROD_DB_CONNECTION_URL" --caching-disabled --origin-connection-limit 5
+# Development (stock_market)
+pnpm --filter @stock-market/api exec wrangler hyperdrive create stock-market-account-access-dev \
+  --connection-string="$DEV_DB_CONNECTION_URL" --caching-disabled --origin-connection-limit 5
 ```
 
 Verify the origin is reachable through a supported Hyperdrive network setup and
 budget its origin connections together with the web application's connections.
-Confirm caching is disabled in the created configuration. Add the returned real
-ID to `apps/api/wrangler.jsonc` (no credentials belong in this file):
+Confirm caching is disabled in each created configuration. Bind the production
+config ID at the top level of `apps/api/wrangler.jsonc` and override it with
+the development config ID under `env.dev.hyperdrive`, so dev (`stock_market`)
+and production (`prod_db`) stay isolated (no credentials belong in this file):
 
 ```jsonc
 "hyperdrive": [
-  { "binding": "ACCOUNT_HYPERDRIVE", "id": "<created-hyperdrive-id>" }
-]
+  { "binding": "ACCOUNT_HYPERDRIVE", "id": "<production-hyperdrive-id>" }
+],
+"env": {
+  "dev": {
+    "hyperdrive": [
+      { "binding": "ACCOUNT_HYPERDRIVE", "id": "<development-hyperdrive-id>" }
+    ],
+    ...
+  }
+}
 ```
 
 Deploy the API, confirm `backend: "hyperdrive"` in authorization logs, and run
