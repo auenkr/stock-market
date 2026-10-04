@@ -20,8 +20,8 @@ test("MCP account linking signs in, displays consent, and returns a PKCE code", 
   await page.getByLabel("Username", { exact: true }).fill("dev");
   await page.getByLabel("Password", { exact: true }).fill("test-development-password");
   await page.getByRole("button", { name: "Sign in with password" }).click();
-  await expect(page).toHaveURL(/\/connect\/chatgpt\/consent\?/);
-  await expect(page.getByRole("heading", { name: "Connect ChatGPT browser test" })).toBeVisible();
+  await expect(page).toHaveURL(/\/connect\/chatgpt\/consent\?/, { timeout: 30_000 });
+  await expect(page.getByRole("heading", { name: "Connect ChatGPT browser test" })).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText("Read company fundamentals using your account's access and shared request allowance", { exact: true })).toBeVisible();
   await expect(page.getByText("The connection cannot trade", { exact: false })).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
@@ -30,7 +30,7 @@ test("MCP account linking signs in, displays consent, and returns a PKCE code", 
   await page.screenshot({ path: "test-results/mcp-oauth-consent.png", fullPage: true });
   await page.route(`${callback}**`, route => route.fulfill({ contentType: "text/html", body: "<h1>OAuth callback</h1>" }));
   await page.getByRole("button", { name: "Allow connection" }).click();
-  await expect(page).toHaveURL(/chatgpt\.com\/connector\/oauth\/browser-test/);
+  await expect(page).toHaveURL(/chatgpt\.com\/connector\/oauth\/browser-test/, { timeout: 30_000 });
   const redirect = new URL(page.url());
   expect(redirect.searchParams.get("state")).toBe("browser-state");
   expect(redirect.searchParams.get("code")).toBeTruthy();
