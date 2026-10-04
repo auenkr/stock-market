@@ -85,7 +85,13 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
   app.use("*", cors({ origin: "*", allowHeaders: ["Content-Type", "Authorization", "X-API-Key"], exposeHeaders: ["X-Request-ID", "X-Page", "X-Next-Page", "X-Data-Coverage", "Retry-After"] }));
   app.use("*", async (c, next) => {
     if (!["/v1/", "/v2/", "/api/"].some((prefix) => c.req.path.startsWith(prefix))) return next();
+    const authorizationStartedAt = performance.now();
     const access = await authorize(requestKey(c), c.env ?? {});
+    log("info", "api.authorization.completed", {
+      requestId: c.res.headers.get("X-Request-ID"), status: access.status,
+      backend: c.env?.ACCOUNT_HYPERDRIVE ? "hyperdrive" : c.env?.ACCOUNT_SERVICE_URL ? "account-service" : "direct-db",
+      durationMs: Math.round(performance.now() - authorizationStartedAt),
+    });
     c.header("Cache-Control", "no-store");
     if (access.status === "unauthorized") return errorResponse(c, "Invalid or expired API key", 401);
     if (access.status === "unavailable") return errorResponse(c, "Account usage service unavailable", 503);

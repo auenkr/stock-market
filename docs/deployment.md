@@ -99,6 +99,12 @@ API's `ACCOUNT_SERVICE_URL` to point to the web app's
 on the API and web app. Existing Worker secrets are retained by deployment; the
 GitHub Cloudflare token is only for deploying Workers.
 
+The API also supports direct PostgreSQL authorization through an optional
+`ACCOUNT_HYPERDRIVE` binding. This takes precedence over the account service and
+must use a Hyperdrive configuration with query caching disabled. See the
+[API latency investigation](api-latency.md#2-hyperdrive-suitability-and-implementation)
+for provisioning, validation, and rollback instructions.
+
 Apply required database migrations before pushing application changes that need
 them; this workflow does not run database migrations.
 

@@ -12,6 +12,9 @@
     ]
   },
   "keep_vars": true,
+  // Optional direct authorization: create a cache-disabled Hyperdrive config
+  // and add { "binding": "ACCOUNT_HYPERDRIVE", "id": "<real-id>" } to a
+  // top-level "hyperdrive" array. See docs/api-latency.md for setup/rollback.
   "observability": {
     "enabled": true
   },
