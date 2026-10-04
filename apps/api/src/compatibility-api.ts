@@ -9,7 +9,7 @@ import { validCompanyPath } from "./company-symbol.js";
 import type { SourceCache } from "@stock-market/scraper/utils/cache";
 export { validCompanyPath } from "./company-symbol.js";
 
-export type Bindings = { BASE_URL?: string; COOKIE?: string; ENVIRONMENT?: string; CACHE_ENABLED?: string; VALKEY_URL?: string; VALKEY_CACHE_PREFIX?: string };
+export type Bindings = { BASE_URL?: string; COOKIE?: string; ENVIRONMENT?: string; CACHE_ENABLED?: string; EDGE_CACHE_ENABLED?: string; VALKEY_URL?: string; VALKEY_CACHE_PREFIX?: string };
 export type ProviderFactory = (bindings: Bindings, cache?: SourceCache) => DataProvider;
 export const defaultProvider: ProviderFactory = (bindings, cache) => {
   const baseUrl = bindings.BASE_URL ?? (typeof process === "undefined" ? undefined : process.env.BASE_URL) ?? "https://www.screener.in";

@@ -95,3 +95,72 @@ test("connection exhaustion retries only the key read and never spends quota twi
   assert.equal(reads, 4);
   assert.equal(writes, 2);
 });
+
+test("a shared web pool survives decisions while keys and quota are checked on every request", async () => {
+  let reads = 0;
+  let writes = 0;
+  let closes = 0;
+  let revoked = false;
+  let databaseUnavailable = false;
+  const client = Object.assign(async (strings: TemplateStringsArray) => {
+    if (databaseUnavailable) throw Object.assign(new Error("Database unavailable"), { code: "08006" });
+    if (strings.join("").includes("FROM api_key")) {
+      reads++;
+      return revoked ? [] : [{ user_id: "pooled-account", api_plan: "free", request_limit: 10 }];
+    }
+    writes++;
+    return [{ user_id: "pooled-account" }];
+  }, { end: async () => { closes++; } });
+  const sql = client as unknown as NonNullable<Parameters<typeof authorizeAccountRequest>[2]>;
+  const key = secret();
+  const authorize = () => authorizeAccountRequest(key, { DB_CONNECTION_URL: "test" }, sql);
+  assert.deepEqual(await authorize(), { status: "allowed", plan: "free" });
+  assert.deepEqual(await authorize(), { status: "allowed", plan: "free" });
+  assert.equal(reads, 2);
+  assert.equal(writes, 2);
+  revoked = true;
+  assert.deepEqual(await authorize(), { status: "unauthorized" });
+  assert.equal(reads, 3);
+  assert.equal(writes, 2);
+  databaseUnavailable = true;
+  assert.deepEqual(await authorize(), { status: "unavailable" });
+  assert.equal(closes, 0);
+});
+
+test("Hyperdrive takes precedence over the account service and never falls back after a write failure", async (t) => {
+  let serviceCalls = 0;
+  t.mock.method(globalThis, "fetch", async () => {
+    serviceCalls++;
+    return Response.json({ status: "allowed", plan: "free" });
+  });
+  let reads = 0;
+  let writes = 0;
+  let failWrite = false;
+  const client = async (strings: TemplateStringsArray) => {
+    if (strings.join("").includes("FROM api_key")) {
+      reads++;
+      return [{ user_id: "hyperdrive-account", api_plan: "personal", request_limit: 300 }];
+    }
+    writes++;
+    if (failWrite) throw Object.assign(new Error("Write response lost"), { code: "08006" });
+    return [{ user_id: "hyperdrive-account" }];
+  };
+  const sql = client as unknown as NonNullable<Parameters<typeof authorizeAccountRequest>[2]>;
+  const bindings = {
+    ACCOUNT_HYPERDRIVE: { connectionString: "postgresql://hyperdrive.invalid/db" },
+    ACCOUNT_SERVICE_URL: "https://account-service.invalid/access",
+    ACCOUNT_SERVICE_SECRET: "test-only",
+  };
+  assert.deepEqual(await authorizeAccountRequest(secret(), bindings, sql), { status: "allowed", plan: "personal" });
+  failWrite = true;
+  assert.deepEqual(await authorizeAccountRequest(secret(), bindings, sql), { status: "unavailable" });
+  assert.equal(reads, 2);
+  assert.equal(writes, 2);
+  assert.equal(serviceCalls, 0);
+  assert.deepEqual(await authorizeAccountRequest(secret(), { ...bindings, ACCOUNT_HYPERDRIVE: { connectionString: "" } }, sql), { status: "unavailable" });
+  assert.equal(serviceCalls, 0);
+  // Removing the binding restores the existing service path for rollback.
+  const { ACCOUNT_HYPERDRIVE, ...serviceBindings } = bindings;
+  assert.deepEqual(await authorizeAccountRequest(secret(), serviceBindings), { status: "allowed", plan: "free" });
+  assert.equal(serviceCalls, 1);
+});

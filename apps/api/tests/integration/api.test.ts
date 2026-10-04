@@ -203,11 +203,18 @@ test('signed account-service HTTP bridge uses real storage and rejects forged, s
       assert.equal((await fetch(service.url, { method: 'POST', headers, body })).status, 401);
     }
     for (const malformed of ['not-json', 'x'.repeat(513)]) assert.equal((await fetch(service.url, { method: 'POST', headers: sign(malformed), body: malformed })).status, 400);
+    // Warm the bounded web pool; the service should reuse this connection,
+    // not close it after each decision or create additional per-request clients.
+    const [pooled] = await db.$client`SELECT pg_backend_pid() AS pid`;
     const [beforeAccess] = await fixture.sql`SELECT count(*)::int AS connections FROM pg_stat_activity WHERE datname = current_database() AND application_name = 'postgres.js'`;
     const valid = await fetch(service.url, { method: 'POST', headers: sign(body), body });
     assert.equal(valid.status, 200); assert.deepEqual(await valid.json(), { status: 'allowed', plan: 'professional' });
     const [afterAccess] = await fixture.sql`SELECT count(*)::int AS connections FROM pg_stat_activity WHERE datname = current_database() AND application_name = 'postgres.js'`;
-    assert.equal(afterAccess!.connections, beforeAccess!.connections, 'Account service must close its connection before responding');
+    assert.equal(afterAccess!.connections, beforeAccess!.connections, 'Account service must reuse the existing bounded pool');
+    const second = await fetch(service.url, { method: 'POST', headers: sign(body), body });
+    assert.equal(second.status, 200); assert.deepEqual(await second.json(), { status: 'allowed', plan: 'professional' });
+    const [reused] = await db.$client`SELECT pg_backend_pid() AS pid`;
+    assert.equal(reused!.pid, pooled!.pid, 'Successive decisions must leave the shared pool connected');
     const bridged = await fixture.startApi({ ...fixture.bindings, ACCOUNT_SERVICE_URL: service.url, ACCOUNT_SERVICE_SECRET: process.env.ACCOUNT_SERVICE_SECRET });
     const request = (url: string, token = fixture.secret) => bufferedFetch(url + '/v1/coverage', { headers: { 'X-API-Key': token } });
     assert.equal((await request(bridged)).status, 200);
