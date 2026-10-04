@@ -74,7 +74,8 @@ Client -> Cloudflare API Worker
        -> Hyperdrive -> PostgreSQL (when ACCOUNT_HYPERDRIVE is bound)
        OR signed account-service POST (when ACCOUNT_SERVICE_URL is configured)
           -> PostgreSQL key/plan lookup -> atomic quota write for valid keys
-       -> Valkey lookup (when CACHE_ENABLED and VALKEY_URL allow it)
+       -> Workers Cache API lookup (up to 60 seconds, local to the data center)
+       -> Valkey lookup on edge miss (when CACHE_ENABLED and VALKEY_URL allow it)
        -> synchronous upstream scrape on miss -> cache publication -> response
 ```
 
@@ -177,7 +178,53 @@ Primary references (checked 2026-10-04):
 - [Postgres.js compatibility and configuration](https://developers.cloudflare.com/hyperdrive/examples/connect-to-postgres/postgres-drivers-and-libraries/postgres-js/)
 - [Query caching and fresh authorization reads](https://developers.cloudflare.com/hyperdrive/concepts/query-caching/)
 
-### 3. Full-company fan-out and intentional pacing (follow-up)
+### 3. Workers Cache API + Valkey (implemented)
+
+`apps/api/src/edge-cache.ts` wraps the existing `SourceCache` interface with a
+Workers Cache API first level. The middleware installs it **after authorization**
+and before handlers access source data. It caches internal source responses,
+parsed company snapshots and legacy company payloads, rather than authenticated
+HTTP responses. Every request still validates its key, charges quota and enforces
+endpoint access; outward API responses remain `Cache-Control: no-store`.
+
+On an edge hit, no Valkey command or connection is needed (the Valkey client
+connects lazily). On a miss, the existing Valkey read-through cache provides the
+shared snapshot and distributed load lock, or fetches the source. Successful
+results populate the edge cache through `executionCtx.waitUntil`; all Valkey
+operations finish before its request-scoped client is closed. This background
+work only publishes an already-loaded payload, not a long-running scrape.
+
+Edge TTL is the minimum of 60 seconds, the requested data TTL and the source
+snapshot's remaining lifetime, rounded down. Entries retain the original source
+expiry for derived-cache freshness and also carry an edge expiry checked on
+read. Expired, malformed and failed cache reads fall through to Valkey. Failed
+source loads are never published. Cache write errors do not fail the request.
+
+Keys include a schema version and a hash of the Valkey namespace and canonical
+source key. Existing canonical keys distinguish source URLs, query parameters,
+financial mode and source-cookie identity. No API key or source credential is
+placed in cache URLs. Synthetic cache URLs have no public data-serving route.
+
+Configuration:
+
+- `CACHE_ENABLED=true`, a configured `VALKEY_URL`, and `EDGE_CACHE_ENABLED=true`
+  enable both levels in Workers. Wrangler enables both flags in this PR.
+- `EDGE_CACHE_ENABLED=false` bypasses only the edge, retaining Valkey.
+- `CACHE_ENABLED=false` bypasses both data caches.
+- Without `VALKEY_URL` or a Workers `caches.default` implementation, no edge
+  wrapper is installed; Node/unit-test runtimes retain the existing behavior.
+- No additional Cloudflare resource/binding is needed for the Cache API.
+- `cache.edge.hit`, `cache.edge.miss`, `cache.edge.read_failed` and
+  `cache.edge.write_failed` log events expose cache behavior without source keys.
+
+Cache API storage is local to each Cloudflare data center and may be evicted.
+Valkey continues to provide cross-location reuse. A manual Valkey deletion does
+not purge an existing edge entry; it can remain until its bounded expiry. For an
+immediate logical purge of both levels, change `VALKEY_CACHE_PREFIX` and deploy,
+or disable edge caching while performing a targeted shared-cache invalidation.
+Actual edge-hit ratios and production latency still require deployed measurement.
+
+### 4. Full-company fan-out and intentional pacing (follow-up)
 
 `packages/scraper/src/helper/getCompanyData.ts` processes sections sequentially:
 four quarterly schedules, four profit/loss schedules, four balance-sheet
@@ -199,7 +246,7 @@ refresh work to a rate-controlled background producer and serve timestamped
 snapshots under an explicit freshness policy. Preserve source pacing rather
 than replacing the serial loops with unbounded `Promise.all` traffic.
 
-### 4. Retry and lock waits amplify tail latency (follow-up)
+### 5. Retry and lock waits amplify tail latency (follow-up)
 
 - `packages/scraper/src/utils/source.ts` sets a 15-second timeout and invokes
   `sendReq(..., 3)`. In `sendReq.ts`, that means **four attempts**, not three.
@@ -240,7 +287,7 @@ Successful source operations and cache wait duration still need finer tracing.
 
 Local checks for this PR:
 
-- `pnpm test:api`: 52 passed, 1 database-dependent test skipped (no database URL).
+- `pnpm test:api`: 57 passed, 1 database-dependent test skipped (no database URL).
 - `pnpm --filter @stock-market/db typecheck`: passed.
 - `pnpm --filter @stock-market/web typecheck`: passed.
 - `pnpm --filter @stock-market/api typecheck`: passed.
@@ -249,6 +296,9 @@ Local checks for this PR:
   quota writes, revocation on the next lookup, database failure, and pool ownership.
 - Added Hyperdrive-routing tests covering backend precedence, failure without
   fallback/double-spending, missing connection configuration, and service rollback.
+- Added edge-cache tests for Valkey bypass, edge-expiry fallback to shared data,
+  source freshness, key isolation, cache errors, background publication, fresh
+  authorization/quota enforcement on hits, and independent bypass controls.
 
 Deploy the **web application** to activate pool reuse and the **API Worker** to
 activate authorization timing and optional Hyperdrive support. Pool reuse needs

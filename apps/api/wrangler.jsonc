@@ -21,6 +21,7 @@
   "vars": {
     "BASE_URL": "https://www.screener.in",
     "CACHE_ENABLED": "true",
+    "EDGE_CACHE_ENABLED": "true",
     "VALKEY_CACHE_PREFIX": "stock-market:production",
     "PUBLIC_URL": "https://stock-market-api.auenkr.com",
   },

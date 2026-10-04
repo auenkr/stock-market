@@ -105,6 +105,13 @@ must use a Hyperdrive configuration with query caching disabled. See the
 [API latency investigation](api-latency.md#2-hyperdrive-suitability-and-implementation)
 for provisioning, validation, and rollback instructions.
 
+Data requests use Workers Cache API (up to 60 seconds per location) in front of
+Valkey when `CACHE_ENABLED=true`, `EDGE_CACHE_ENABLED=true` and `VALKEY_URL` is
+configured. Edge hits avoid connecting to Valkey. Authorization and quotas run
+before every data-cache lookup. Set `EDGE_CACHE_ENABLED=false` to return to
+Valkey-only caching; `CACHE_ENABLED=false` bypasses both. See
+[cache behavior and invalidation](api-latency.md#3-workers-cache-api--valkey-implemented).
+
 Apply required database migrations before pushing application changes that need
 them; this workflow does not run database migrations.
 
