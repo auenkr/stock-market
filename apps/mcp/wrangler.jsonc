@@ -23,5 +23,20 @@
       "pattern": "stock-market-mcp.auenkr.com",
       "custom_domain": true
     }
-  ]
+  ],
+  "env": {
+    "dev": {
+      "name": "stock-market-mcp-dev",
+      "workers_dev": false,
+      "preview_urls": false,
+      "observability": { "enabled": true },
+      "vars": {
+        "ENVIRONMENT": "dev",
+        "STOCK_MARKET_API_URL": "https://stock-market-api-dev.auenkr.com",
+        "MCP_RESOURCE_URL": "https://stock-market-mcp-dev.auenkr.com/mcp",
+        "MCP_AUTHORIZATION_SERVER": "https://stock-market-web-dev.vercel.app/api/auth"
+      },
+      "routes": [{ "pattern": "stock-market-mcp-dev.auenkr.com", "custom_domain": true }]
+    }
+  }
 }

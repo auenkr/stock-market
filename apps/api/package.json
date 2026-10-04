@@ -8,6 +8,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "dev": "node ../../scripts/dev-app.mjs api",
     "deploy:api": "wrangler deploy",
+    "deploy:dev": "wrangler deploy --env dev",
     "test:integration": "node tests/run.mjs integration",
     "test:performance": "node tests/run.mjs performance"
   },

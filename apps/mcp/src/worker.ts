@@ -16,7 +16,7 @@ export default {
     }
     if (["/.well-known/oauth-protected-resource", "/.well-known/oauth-protected-resource/mcp"].includes(url.pathname) && request.method === "GET") {
       const { resource, issuer } = oauthConfiguration(env);
-      return Response.json({ resource, authorization_servers: [issuer], scopes_supported: [MCP_SCOPE, "offline_access"], bearer_methods_supported: ["header"], resource_name: "Ledgerline", resource_documentation: "https://stock-market.auenkr.com/docs" });
+      return Response.json({ resource, authorization_servers: [issuer], scopes_supported: [MCP_SCOPE, "offline_access"], bearer_methods_supported: ["header"], resource_name: "Ledgerline", resource_documentation: `${new URL(issuer).origin}/docs` });
     }
     if (url.pathname !== "/mcp") return Response.json({ error: "Not found" }, { status: 404 });
     const bearer = request.headers.get("Authorization")?.match(/^Bearer\s+(\S+)$/i)?.[1];
