@@ -1,7 +1,11 @@
 import type { CacheResult, SourceCache } from "@stock-market/scraper/utils/cache";
 import { log } from "@stock-market/common/logger";
 
-export type EdgeCacheStore = Pick<Cache, "match" | "put">;
+// Structural boundary also compiles in Node-only consumers of API types.
+export interface EdgeCacheStore {
+  match(request: Request): Promise<Response | undefined>;
+  put(request: Request, response: Response): Promise<void>;
+}
 export const EDGE_CACHE_TTL_SECONDS = 60;
 
 /** caches.default is available in Workers, but not in Node/test runtimes. */
@@ -45,7 +49,9 @@ export class EdgeSourceCache implements SourceCache {
       log("warn", "cache.edge.read_failed");
     }
 
+    const sharedStartedAt = performance.now();
     const result = await this.shared.remember(key, ttlSeconds, load, dependencyExpiry);
+    log("info", "cache.shared.completed", { hit: result.hit, durationMs: Math.round(performance.now() - sharedStartedAt) });
     const publishedAt = Date.now();
     const maxAge = Math.floor(Math.min(EDGE_CACHE_TTL_SECONDS, ttlSeconds, (result.expiresAt - publishedAt) / 1000));
     if (maxAge > 0 && Number.isFinite(maxAge)) {
