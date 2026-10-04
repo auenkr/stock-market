@@ -167,10 +167,10 @@ the validation below. Keep the service configuration available during rollout.
 To roll back, remove the binding from Wrangler and redeploy: authorization then
 returns to the account service. Do not enable runtime fallback on errors.
 
-No Hyperdrive resource or production binding was created during this PR. The
-origin's connectivity, credentials, actual pool behavior and improvement must be
-verified during a staging/canary rollout. The committed code is opt-in, so merging
-alone does not switch authorization backends.
+Hyperdrive was provisioned and deployed on 2026-10-04 following the owner's
+request. Wrangler now binds configuration `609da84cf3e042dd8a011224d00d9eb2`
+to `ACCOUNT_HYPERDRIVE`, targeting `prod_db`, with caching disabled and an origin
+connection limit of five. See the live validation results below.
 
 Primary references (checked 2026-10-04):
 
@@ -322,6 +322,44 @@ After deployment:
    may also benefit from Worker placement near the database; select a region
    only after confirming the actual database location and measuring the full path.
 
-No production speedup is claimed until this change is deployed and measured.
+The following live samples verify functionality, not production latency SLOs.
 If pool contention or error rate regresses, revert the shared-pool route change
 and redeploy the web application; the timing logs can remain for diagnosis.
+
+## Production deployment and verification (2026-10-04)
+
+Deployed through `pnpm --filter @stock-market/api exec wrangler deploy` before
+committing the production binding and cross-package type fix. Final Worker
+version: `2788a45c-762b-41b4-9863-986ec976fa31`. Existing Valkey and source-session
+secrets were retained. The production web app was not redeployed in this step;
+the API now uses Hyperdrive directly for authorization.
+
+Wrangler confirmed the Hyperdrive origin database is `prod_db`, query caching
+is disabled and the origin connection limit is five. Live requests used a
+temporary production account/key, removed after verification, and Wrangler tail
+confirmed `backend: "hyperdrive"` throughout.
+
+| Final deployment check | Result |
+| --- | --- |
+| Health | 200 |
+| Missing / unknown well-formed API key | 401 / 401 |
+| Authenticated coverage (three requests) | All 200 |
+| Company search: edge miss → Valkey hit | 200; shared cache lookup 1010 ms |
+| Repeated search | 200; edge hits with no shared lookup |
+| Company profile: edge miss → Valkey hit | 200; shared cache lookup 1213 ms |
+| Repeated company profile | 200; edge hit with no shared lookup |
+| Immediate key revocation with warm data | 401 |
+| Twelve concurrent free-plan requests after quota reset | Exactly 10 × 200 and 2 × 429, with Retry-After |
+
+On the final deployment, client-observed search time was 2604 ms on an edge miss
+and 1344/1633 ms on edge hits. Profile time was 2765 ms on an edge miss and
+1232 ms on the edge hit. The well-formed unknown key returned in 979 ms versus
+the earlier 3998–4903 ms samples. These are different small samples with network
+variation and connection reuse, not controlled A/B results or percentiles.
+Authorization remains a material portion of warm-request time. Database/Worker
+placement and SQL round trips should be measured next if lower latency is needed.
+
+`cache.shared.completed` now records shared-cache hit state and lookup/load
+duration after an edge miss, making Valkey-hit versus source-load behavior
+observable without exposing cache keys or payloads. No cache-unavailable events
+were observed during the verification requests.
