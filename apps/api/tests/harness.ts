@@ -63,7 +63,10 @@ export async function setup({ seedUsagePolicy = true }: { seedUsagePolicy?: bool
     });
     servers.push(source.server);
     if (seedUsagePolicy) await sql`INSERT INTO usage_policy (id, request_limit) VALUES ('default', 10000), ('personal', 10000), ('professional', 10000) ON CONFLICT (id) DO UPDATE SET request_limit = 10000`;
-    const bindings = { DB_CONNECTION_URL: databaseUrl, BASE_URL: source.url, COOKIE: 'fixture-session', ENVIRONMENT: 'dev' };
+    const valkeyUrl = process.env.INTEGRATION_VALKEY_URL;
+    if (!valkeyUrl || new URL(valkeyUrl).hostname !== '127.0.0.1') throw new Error('Use the disposable Redis/Valkey test runner');
+    const bindings = { DB_CONNECTION_URL: databaseUrl, BASE_URL: source.url, COOKIE: 'fixture-session', ENVIRONMENT: 'dev',
+      VALKEY_URL: valkeyUrl, VALKEY_CACHE_PREFIX: `stock-market:test:${randomUUID()}`, CACHE_ENABLED: 'true' };
     async function startApi(env: Bindings & AccountAccessBindings = bindings) {
       const app = createApp(); // Real authorization and real provider, no injected decisions.
       const api = await listen(async (req, res) => {

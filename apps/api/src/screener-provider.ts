@@ -1,4 +1,6 @@
-import { parseCompanySnapshot, parsePeerComparison, parseAdminRows, parseCorporateActions, sourceDate, numericValue, nextPage, type CompanySnapshot, type FinancialRow } from "@stock-market/scraper/helper/getCompanySnapshot";
+import { getCompanySnapshot, parsePeerComparison, parseAdminRows, parseCorporateActions, sourceDate, numericValue, nextPage, type CompanySnapshot, type FinancialRow } from "@stock-market/scraper/helper/getCompanySnapshot";
+import { cachedSourceText, SourceError } from "@stock-market/scraper/utils/source";
+import { CacheBusyError, type SourceCache } from "@stock-market/scraper/utils/cache";
 import { responseSchemas } from "./reference-schemas.js";
 import { errorDetails, log } from "@stock-market/common/logger";
 import { validCompanyPath } from "./company-symbol.js";
@@ -91,25 +93,24 @@ function ratios(snapshot: CompanySnapshot, type: string) {
 }
 
 export class ScreenerProvider implements DataProvider {
-  private readonly cache = new Map<string, { html: string; expiresAt: number }>();
   private readonly pending = new Map<string, Promise<string>>();
   private readonly fetcher: typeof fetch;
   private readonly baseUrl: string;
   private readonly cookie?: string;
-  constructor(options: { baseUrl?: string; cookie?: string; fetcher?: typeof fetch } = {}) {
+  private readonly sourceCache?: SourceCache;
+  constructor(options: { baseUrl?: string; cookie?: string; fetcher?: typeof fetch; cache?: SourceCache; cacheEnabled?: boolean } = {}) {
     this.baseUrl = options.baseUrl ?? "https://www.screener.in";
     this.cookie = options.cookie;
+    this.sourceCache = options.cacheEnabled !== false ? options.cache : undefined;
     // Workers requires the native fetch receiver to be globalThis, not this provider.
     this.fetcher = options.fetcher ?? fetch.bind(globalThis);
   }
 
   async html(path: string, ajax = false): Promise<string> {
     const cacheKey = `${ajax ? "ajax:" : ""}${path}`;
-    const cached = this.cache.get(cacheKey);
-    if (cached && cached.expiresAt > Date.now()) return cached.html;
     const pending = this.pending.get(cacheKey); if (pending) return pending;
     if (this.pending.size >= 8) throw new DataError("Source capacity reached; retry later", 503, "SOURCE_BUSY");
-    const request = (async () => {
+    const fetchHtml = async () => {
       let response: Response;
       try { response = await this.fetcher(new URL(path, this.baseUrl), { headers: { Accept: "text/html, application/json", ...(ajax ? { "X-Requested-With": "XMLHttpRequest" } : {}), ...(this.cookie ? { Cookie: this.cookie } : {}) }, signal: AbortSignal.timeout(15_000) }); }
       catch (error) {
@@ -126,10 +127,21 @@ export class ScreenerProvider implements DataProvider {
       if (path.includes("/consolidated/") && response.url && !new URL(response.url).pathname.includes("/consolidated/")) throw new DataError("Consolidated company statements are unavailable", 404, "NOT_FOUND");
       const html = await response.text();
       if (/form[^>]+action=["'][^"']*login/i.test(html) || /<title>[^<]*(?:login|sign in|register)/i.test(html)) throw new DataError("The data source requires authentication", 502, "SOURCE_AUTH_REQUIRED");
-      // Bound the cache and coalesce concurrent requests for the same source page.
-      this.cache.delete(cacheKey); this.cache.set(cacheKey, { html, expiresAt: Date.now() + 900_000 });
-      if (this.cache.size > 256) this.cache.delete(this.cache.keys().next().value!);
-      return html;
+      return { text: html, finalUrl: response.url || undefined };
+    };
+    const request = (async () => {
+      try {
+        // Company pages are cached as parsed snapshots, never as a second raw
+        // entry with a separate expiry. Additional responses share Axios' cache.
+        const url = new URL(path, this.baseUrl);
+        const companyPage = validCompanyPath(url.pathname);
+        const html = companyPage ? (await fetchHtml()).text : (await cachedSourceText(url, { baseUrl: this.baseUrl, cookie: this.cookie, cache: this.sourceCache }, fetchHtml)).value.text;
+        return html;
+      } catch (error) {
+        if (error instanceof SourceError) throw new DataError(error.message, error.status, error.code);
+        if (error instanceof CacheBusyError) throw new DataError(error.message, 503, "SOURCE_BUSY");
+        throw error;
+      }
     })();
     this.pending.set(cacheKey, request);
     try { return await request; } finally { this.pending.delete(cacheKey); }
@@ -171,8 +183,15 @@ export class ScreenerProvider implements DataProvider {
   async snapshot(symbol: string) {
     const path = symbol.endsWith("/") ? symbol : `${symbol}/`;
     if (!validCompanyPath(path)) throw new DataError("symbol must be a company URL path", 400, "INVALID_QUERY");
-    try { return parseCompanySnapshot(await this.html(path), symbol, path.includes("/consolidated/")); }
-    catch (error) { this.cache.delete(path); if (error instanceof DataError) throw error; throw new DataError("Source company page could not be parsed", 502, "UPSTREAM_SCHEMA_CHANGED"); }
+    try {
+      const result = await getCompanySnapshot(path, { baseUrl: this.baseUrl, cookie: this.cookie, cache: this.sourceCache }, () => this.html(path));
+      return { ...result.value, symbol };
+    }
+    catch (error) {
+      if (error instanceof DataError) throw error;
+      if (error instanceof CacheBusyError) throw new DataError(error.message, 503, "SOURCE_BUSY");
+      throw new DataError("Source company page could not be parsed", 502, "UPSTREAM_SCHEMA_CHANGED");
+    }
   }
 
   private paged(body: unknown, html: string, page: number): DataResult {

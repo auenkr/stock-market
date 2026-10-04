@@ -8,7 +8,7 @@ The tests exercise the existing API without changing routes, query parameters, a
 
 ## Requirements and isolation
 
-Run `pnpm install`. Integration tests require a PostgreSQL server installation (`initdb`, `postgres`, `pg_ctl`) or a running Docker daemon. Performance tests also require `k6` on PATH. On macOS, `brew install postgresql@17 k6` provides these tools; the runner discovers Homebrew PostgreSQL 17 automatically. Set `POSTGRES_BIN=/path/to/postgres/bin` for another installation. PostgreSQL initialization must run as a non-root user; use Docker or `TEST_DATABASE_URL` in root-based CI containers.
+Run `pnpm install`. Integration tests require a PostgreSQL server installation (`initdb`, `postgres`, `pg_ctl`) or a running Docker daemon, and `valkey-server`/`redis-server` on PATH or Docker for the isolated cache. Performance tests also require `k6` on PATH. On macOS, `brew install postgresql@17 redis k6` provides these tools; the runner discovers Homebrew PostgreSQL 17 automatically. Set `POSTGRES_BIN=/path/to/postgres/bin` for another installation. PostgreSQL initialization must run as a non-root user; use Docker or `TEST_DATABASE_URL` in root-based CI containers.
 
 ```sh
 pnpm test:integration
@@ -21,7 +21,7 @@ SCENARIO=spike pnpm test:performance
 SCENARIO=soak DURATION=30m VUS=5 pnpm test:performance
 ```
 
-The runner creates a temporary PostgreSQL cluster (or container) on a free loopback port, then creates a uniquely named `stock_test_*` database and applies the actual application schema with Drizzle. It builds the shared packages, starts local source-fixture and API HTTP servers on free ports, seeds profile-complete users, hashed keys and a usage policy, and runs the selected suite. Teardown closes HTTP connections and database clients, drops the database, stops the owned cluster/container and removes its temporary directory, including after test failures. Ctrl-C and SIGTERM are forwarded to the test process so the outer runner can clean up; SIGKILL cannot run cleanup.
+The runner creates a temporary PostgreSQL cluster (or container) on a free loopback port, then creates a uniquely named `stock_test_*` database and applies the actual application schema with Drizzle. Integration/performance runs also start a non-persistent Redis/Valkey process (or Valkey container) on a free loopback port. Each fixture uses a unique cache prefix, and the API connects with its production Redis SDK. It builds the shared packages, starts local source-fixture and API HTTP servers on free ports, seeds profile-complete users, hashed keys and a usage policy, and runs the selected suite. Teardown closes HTTP connections and database clients, drops the database, stops the owned cache and cluster/container and removes its temporary directory, including after test failures. Ctrl-C and SIGTERM are forwarded to the test process so the outer runner can clean up; SIGKILL cannot run cleanup. No development/production Valkey URL or existing cache entries are used.
 
 To use an existing **test PostgreSQL server**, set `TEST_DATABASE_URL` to an admin connection with `CREATE DATABASE` permission. The runner creates and drops a new database on that server; it does not alter the database named in the connection URL. It does not use your root `.env` connection or the dev server. No source cookie, dashboard login or existing customer key is needed.
 

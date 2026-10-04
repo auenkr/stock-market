@@ -54,11 +54,11 @@ jobs:
           node-version: "24"
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Create fixture environment and install tmux
+      - name: Create fixture environment and install test services
         run: |
           cp sample.env .env
           sudo apt-get update
-          sudo apt-get install --yes tmux
+          sudo apt-get install --yes tmux redis-server
       - name: Install Chromium and browser dependencies
         run: pnpm --filter @stock-market/web exec playwright install --with-deps chromium
       - name: Docs, types, API, auth, keys, integration and browser E2E
