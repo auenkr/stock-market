@@ -40,20 +40,20 @@ GitHub already blocks merging conflicting PRs. A `pull_request` workflow [does n
 
 The founder requested that payment checks be removed from automatic CI because purchasing requires manual verification. Every PR now runs without purchase/payment suites. A passing PR does **not** establish that purchasing works.
 
-- `packages/auth/tests/payment.integration.test.ts` is excluded from normal integration runs.
-- `apps/web/tests/browser/payment.spec.ts` is excluded from normal browser E2E runs.
+- `packages/auth/tests/payment.integration.test.ts` is excluded in `TEST_MODE=CICD`.
+- `apps/web/tests/browser/payment.spec.ts` is excluded in `TEST_MODE=CICD`.
 - Real Polar sandbox purchasing (`pnpm test:payments:live`) remains a separately invoked check requiring the testing account, sandbox configuration and webhook tunnel.
 - The simulated integration/browser purchase suites are automated fixtures, but are also excluded to keep the entire purchase flow opt-in as requested. Pricing, consent, billing authorization, signed subscription-state webhooks and account limits remain covered by CI.
-- `pnpm test:ci` forces `RUN_PAYMENT_TESTS=0`, even if the caller's shell enables payment checks.
+- GitHub Actions sets `TEST_MODE=CICD`, and `pnpm test:ci` forces that mode regardless of the caller's shell. This single mode also excludes the existing webhook lifecycle checks and Redis/Valkey service checks; API/MCP fixtures run with caching disabled, and CI does not install or start Redis/Valkey. Pure cache logic unit tests still run without a service.
 
 To explicitly include simulated payment suites locally:
 
 ```sh
-RUN_PAYMENT_TESTS=1 pnpm test:integration
-RUN_PAYMENT_TESTS=1 pnpm test:e2e
+TEST_MODE=LOCAL pnpm test:integration
+TEST_MODE=LOCAL pnpm test:e2e
 ```
 
-Manually verify actual sandbox checkout, receipt amounts, paid-plan activation, plan changes and cancellation before releasing billing changes. Record that evidence separately from the required PR checks.
+Local mode is also the default when `TEST_MODE` is unset and starts disposable Redis/Valkey for cache coverage, including the MCP browser journey. The previous per-suite enable flags are replaced by `TEST_MODE`. Manually verify actual sandbox checkout, receipt amounts, paid-plan activation, plan changes and cancellation before releasing billing changes. Record that evidence separately from the required PR checks.
 
 `pnpm test:payments:live` is an opt-in external sandbox suite, separate from PR CI. It requires a running development app, a seeded test account with no existing subscription, and a reachable webhook endpoint. For that environment, store these sensitive values in a dedicated GitHub testing environment if you later automate it:
 

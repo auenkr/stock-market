@@ -13,6 +13,9 @@ if (app === "api") {
   const bindings = {
     BASE_URL: process.env.BASE_URL ?? "https://www.screener.in",
     COOKIE: process.env.COOKIE ?? "",
+    CACHE_ENABLED: process.env.CACHE_ENABLED ?? "true",
+    VALKEY_URL: process.env.VALKEY_URL ?? "",
+    VALKEY_CACHE_PREFIX: process.env.VALKEY_CACHE_PREFIX ?? "stock-market:dev",
     ACCOUNT_SERVICE_URL: process.env.ACCOUNT_SERVICE_URL ?? `http://localhost:${process.env.WEB_PORT ?? "3001"}/api/internal/account-access`,
     ACCOUNT_SERVICE_SECRET: process.env.ACCOUNT_SERVICE_SECRET ?? (process.env.BETTER_AUTH_SECRET
       ? createHash("sha256").update(`${process.env.BETTER_AUTH_SECRET}:account-access-v1`).digest("hex") : ""),

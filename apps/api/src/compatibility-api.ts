@@ -6,21 +6,16 @@ import { errorDetails, log } from "@stock-market/common/logger";
 import { freeCompanySymbols, freeCompaniesAsOf, requireCompanyAccess, type AccessVariables } from "./endpoint-access.js";
 import { endpointUseCase, endpointOrder, userJourney } from "./endpoint-journey.js";
 import { validCompanyPath } from "./company-symbol.js";
+import type { SourceCache } from "@stock-market/scraper/utils/cache";
 export { validCompanyPath } from "./company-symbol.js";
 
-export type Bindings = { BASE_URL?: string; COOKIE?: string; ENVIRONMENT?: string };
-export type ProviderFactory = (bindings: Bindings) => DataProvider;
-const providers = new Map<string, DataProvider>();
-export const defaultProvider: ProviderFactory = (bindings) => {
+export type Bindings = { BASE_URL?: string; COOKIE?: string; ENVIRONMENT?: string; CACHE_ENABLED?: string; VALKEY_URL?: string; VALKEY_CACHE_PREFIX?: string };
+export type ProviderFactory = (bindings: Bindings, cache?: SourceCache) => DataProvider;
+export const defaultProvider: ProviderFactory = (bindings, cache) => {
   const baseUrl = bindings.BASE_URL ?? (typeof process === "undefined" ? undefined : process.env.BASE_URL) ?? "https://www.screener.in";
   const cookie = bindings.COOKIE ?? (typeof process === "undefined" ? undefined : process.env.COOKIE);
-  const key = `${baseUrl}\n${cookie ?? ""}`;
-  let provider = providers.get(key);
-  if (!provider) {
-    provider = new ScreenerProvider({ baseUrl, cookie }); providers.set(key, provider);
-    if (providers.size > 4) providers.delete(providers.keys().next().value!);
-  }
-  return provider;
+  if (bindings.CACHE_ENABLED?.trim().toLowerCase() === "false") return new ScreenerProvider({ baseUrl, cookie, cacheEnabled: false });
+  return new ScreenerProvider({ baseUrl, cookie, cache });
 };
 
 export function validDate(value: string) {
@@ -69,7 +64,7 @@ export function createCompatibilityApi(providerFactory: ProviderFactory = defaul
         const symbols = query.symbol ? [query.symbol] : [];
         requireCompanyAccess(plan, symbols);
         if (contract.status === "unavailable") throw new DataError(contract.limitation);
-        const provider = providerFactory(c.env ?? {});
+        const provider = providerFactory(c.env ?? {}, c.get("sourceCache"));
         const result = await provider.execute(contract.resource, query);
         for (const [name, value] of Object.entries(result.headers ?? {})) if (name.toLowerCase() !== "x-data-source") c.header(name, value);
         c.header("Cache-Control", "private, max-age=900");

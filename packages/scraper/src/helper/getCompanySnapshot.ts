@@ -1,4 +1,7 @@
 import * as cheerio from "cheerio";
+import { BASE_URL, COOKIE } from "@stock-market/common/env";
+import { sourceGet, SourceError, type SourceOptions } from "../utils/source.js";
+import { COMPANY_CACHE_TTL, sourceCacheKey, type CacheResult } from "../utils/cache.js";
 
 export type FinancialRow = { header: string; values: Record<string, number | null> };
 export type DocumentLink = { title: string; url: string; date: string | null; year: number | null; kind: string };
@@ -19,6 +22,8 @@ export type CompanySnapshot = {
   change: string | null;
   tables: Record<string, FinancialRow[]>;
   documents: DocumentLink[];
+  quarterlySourceUrls: string[];
+  peerSector: string;
 };
 
 export function numericValue(text: string): number | null {
@@ -157,5 +162,37 @@ export function parseCompanySnapshot(html: string, symbol: string, consolidated:
     website: website?.href ?? null, description: $(".about p").text().trim(),
     keyPoints: $("div.title:contains('Key Points')").next(".sub.commentary").text().trim(),
     analysis: { pros: $(".pros ul li").map((_, el) => $(el).text().trim()).get(), cons: $(".cons ul li").map((_, el) => $(el).text().trim()).get() }, consolidated,
-    classifications, summary, change, tables, documents };
+    classifications, summary, change, tables, documents,
+    quarterlySourceUrls: $("#quarters tbody tr.font-size-14.ink-600 td a").map((_, a) => $(a).attr("href") ?? "").get(),
+    peerSector: $('p[class="sub"]').first().text().replace(/\s+/g, " ").trim() };
+}
+
+/** The canonical page is fetched and parsed once for both API adapters. */
+export async function getCompanySnapshot(symbol: string, source: SourceOptions = {}, loadHtml?: () => Promise<string>): Promise<CacheResult<CompanySnapshot>> {
+  const path = symbol.endsWith("/") ? symbol : `${symbol}/`;
+  const consolidated = path.includes("/consolidated/");
+  const load = async () => {
+    let html: string;
+    if (loadHtml) html = await loadHtml();
+    else {
+      try {
+        // Do not allow a legacy load to fill the shared consolidated key with
+        // a redirect to standalone statements. fetch and Axios use the same rule.
+        html = (await sourceGet<string>(path, { ...source, cache: undefined }, consolidated
+          ? { maxRedirects: 0, fetchOptions: { cache: "no-store", redirect: "manual" } } : {})).data;
+      } catch (error) {
+        const response = (error as { response?: { status: number; headers?: { location?: string } } }).response;
+        if (consolidated && response && response.status >= 300 && response.status < 400 && response.headers?.location && !new URL(response.headers.location, source.baseUrl ?? BASE_URL).pathname.includes("/consolidated/")) {
+          throw new SourceError("Consolidated company statements are unavailable", "NOT_FOUND", 404);
+        }
+        throw error;
+      }
+    }
+    return parseCompanySnapshot(html, path, consolidated);
+  };
+  const result = source.cache && source.cacheEnabled !== false
+    ? await source.cache.remember(await sourceCacheKey("company", new URL(path, source.baseUrl ?? BASE_URL), source.cookie ?? COOKIE), COMPANY_CACHE_TTL, load)
+    : { value: await load(), hit: false, expiresAt: Date.now() + COMPANY_CACHE_TTL * 1000 };
+  // Enrichments mutate financial rows; never let them modify the cached base.
+  return { ...result, value: { ...structuredClone(result.value), symbol } };
 }

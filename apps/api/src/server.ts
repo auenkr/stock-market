@@ -15,16 +15,11 @@ import { agentOpenApi, agentPluginManifest, agentTools } from "@stock-market/age
 import { apiDocsHtml } from "./api-docs.js";
 import { DataError } from "./screener-provider.js";
 import { authorizeAccountRequest, type AuthorizeRequest, type AccountAccessBindings } from "@stock-market/db/account-access";
+import { CacheBusyError, COMPANY_CACHE_TTL, createRedisCache, sourceCacheKey, type SourceCache } from "@stock-market/scraper/utils/cache";
+import { BASE_URL, COOKIE } from "@stock-market/common/env";
 
 type ApiBindings = Bindings & AccountAccessBindings;
 
-type CachedCompanyData = {
-  value: Awaited<ReturnType<typeof GetCompanyData>>;
-  expiresAt: number;
-};
-
-const companyDataCache = new Map<string, CachedCompanyData>();
-const cacheTtlMs = 15 * 60 * 1000;
 const extractTypes = ["quarterly", "profit-loss", "balance-sheet", "cash-flow", "ratios", "shareholding", "peers"] as const;
 type ExtractType = (typeof extractTypes)[number];
 
@@ -40,14 +35,15 @@ function errorResponse(c: any, message: string, status: 400 | 401 | 404 | 429 | 
 }
 
 function sourceOptions(c: Context<{ Bindings: ApiBindings; Variables: AccessVariables }>): SourceOptions {
-  return { baseUrl: c.env?.BASE_URL, cookie: c.env?.COOKIE, requestId: c.res.headers.get("X-Request-ID") ?? undefined };
+  return { baseUrl: c.env?.BASE_URL, cookie: c.env?.COOKIE, cache: c.get("sourceCache"), cacheEnabled: c.env?.CACHE_ENABLED?.trim().toLowerCase() !== "false", requestId: c.res.headers.get("X-Request-ID") ?? undefined };
 }
 
 function upstreamFailure(c: Context, error: unknown) {
   log("error", "api.request.failed", { requestId: c.res.headers.get("X-Request-ID"), method: c.req.method, path: c.req.path, error: errorDetails(error) });
   const upstream = error as { response?: { status?: number }; code?: string };
   const failure = error instanceof DataError ? error
-    : error instanceof SourceError ? new DataError(error.message, 502, error.code)
+    : error instanceof CacheBusyError ? new DataError(error.message, 503, "SOURCE_BUSY")
+    : error instanceof SourceError ? new DataError(error.message, error.status, error.code)
     : upstream.response?.status === 404 ? new DataError("Company or source resource not found", 404, "NOT_FOUND")
     : new DataError("The data source could not be loaded", 502, "UPSTREAM_UNAVAILABLE");
   c.header("Cache-Control", "no-store");
@@ -59,16 +55,17 @@ function isExtractType(value: string | undefined): value is ExtractType {
 }
 
 async function getCachedCompanyData(endpoint: string, source: SourceOptions) {
-  const key = JSON.stringify([source.baseUrl, source.cookie, endpoint]);
-  const cached = companyDataCache.get(key);
-  if (cached && cached.expiresAt > Date.now()) return { value: cached.value, hit: true };
-  const value = await GetCompanyData(endpoint, { ...source, includeMarketHistory: false });
-  companyDataCache.set(key, { value, expiresAt: Date.now() + cacheTtlMs });
-  if (companyDataCache.size > 100) companyDataCache.delete(companyDataCache.keys().next().value!);
-  return { value, hit: false };
+  if (source.cache && source.cacheEnabled !== false) {
+    let snapshotExpiry = Infinity;
+    return source.cache.remember(await sourceCacheKey("legacy-company", new URL(endpoint.endsWith("/") ? endpoint : `${endpoint}/`, source.baseUrl ?? BASE_URL), source.cookie ?? COOKIE), COMPANY_CACHE_TTL,
+      () => GetCompanyData(endpoint, { ...source, includeMarketHistory: false, onSnapshot: (expiresAt) => { snapshotExpiry = expiresAt; } }),
+      () => snapshotExpiry);
+  }
+  return { value: await GetCompanyData(endpoint, { ...source, includeMarketHistory: false }), hit: false };
 }
 
-export function createApp(providerFactory: ProviderFactory = defaultProvider, authorize: AuthorizeRequest = authorizeAccountRequest) {
+export type CacheFactory = (url: string, prefix: string) => SourceCache;
+export function createApp(providerFactory: ProviderFactory = defaultProvider, authorize: AuthorizeRequest = authorizeAccountRequest, cacheFactory: CacheFactory = createRedisCache) {
   const app = new Hono<{ Bindings: ApiBindings; Variables: AccessVariables }>();
   app.use("*", async (c, next) => {
     const requestId = crypto.randomUUID();
@@ -102,8 +99,15 @@ export function createApp(providerFactory: ProviderFactory = defaultProvider, au
     if (!hasDetailedData(access.plan ?? "free") && legacyResource && legacyEndpointTiers[legacyResource as keyof typeof legacyEndpointTiers] === "paid") {
       return c.json({ error: "This endpoint requires Personal or Professional", code: "PAID_PLAN_REQUIRED", docs: "/v1/coverage" }, 403);
     }
-    await next();
-    c.header("Cache-Control", "no-store");
+    const cache = c.env?.CACHE_ENABLED?.trim().toLowerCase() !== "false" && c.env?.VALKEY_URL?.trim()
+      ? cacheFactory(c.env.VALKEY_URL.trim(), c.env.VALKEY_CACHE_PREFIX?.trim() || `stock-market:${c.env.ENVIRONMENT ?? "production"}`)
+      : undefined;
+    c.set("sourceCache", cache);
+    try { await next(); }
+    finally {
+      if (cache) await cache.close();
+      c.header("Cache-Control", "no-store");
+    }
   });
 
   const api = new Hono<{ Bindings: ApiBindings; Variables: AccessVariables }>();

@@ -1,9 +1,9 @@
-// Own a disposable PostgreSQL cluster/database; never load the application's .env.
+// Own disposable PostgreSQL and Redis/Valkey services; never load the application's .env.
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdtemp, rm, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createServer } from 'node:net';
+import { createServer, createConnection } from 'node:net';
 import { fileURLToPath } from 'node:url';
 import postgres from 'postgres';
 
@@ -16,6 +16,7 @@ const pgEnv = { ...process.env, LC_ALL: 'C' };
 if (!['integration', 'performance', 'e2e'].includes(mode)) throw new Error('Use integration, performance, or e2e');
 const database = `stock_test_${process.pid}_${Date.now()}`;
 let directory, container, admin, child, clusterStarted = false;
+let cacheProcess, cacheContainer;
 const port = async () => {
   const server = createServer();
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -28,7 +29,7 @@ const run = (command, args, env = process.env) => new Promise((resolve, reject) 
   child.on('error', reject);
   child.on('exit', code => code === 0 ? resolve() : reject(new Error(`${command} exited ${code}`)));
 });
-for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => child?.kill(signal));
+for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => { child?.kill(signal); cacheProcess?.kill(signal); });
 try {
   let adminUrl = process.env.TEST_DATABASE_URL;
   if (!adminUrl) {
@@ -54,14 +55,40 @@ try {
   admin = postgres(adminUrl, { max: 1 });
   await admin.unsafe(`CREATE DATABASE "${database}"`);
   const url = new URL(adminUrl); url.pathname = `/${database}`;
-  const env = { ...process.env, DB_CONNECTION_URL: url.href, INTEGRATION_DATABASE_URL: url.href };
+   const valkeyTests = process.env.TEST_MODE !== 'CICD';
+   const env = { ...process.env, DB_CONNECTION_URL: url.href, INTEGRATION_DATABASE_URL: url.href,
+     TEST_MODE: process.env.TEST_MODE ?? 'LOCAL', CACHE_ENABLED: valkeyTests ? 'true' : 'false', INTEGRATION_VALKEY_URL: '' };
+   // Service-backed cache checks run locally, including the MCP E2E fixture.
+   if (valkeyTests) {
+     const cachePort = await port();
+     const binary = ['valkey-server', 'redis-server'].find(command => spawnSync(command, ['--version'], { stdio: 'ignore' }).status === 0);
+     if (binary) {
+       cacheProcess = spawn(binary, ['--bind', '127.0.0.1', '--port', String(cachePort), '--save', '', '--appendonly', 'no'], { stdio: 'ignore' });
+     } else {
+       cacheContainer = `${database}_cache`;
+       await run('docker', ['run', '-d', '--name', cacheContainer, '-p', `127.0.0.1:${cachePort}:6379`, 'valkey/valkey:8-alpine', 'valkey-server', '--save', '', '--appendonly', 'no']);
+     }
+     let ready = false;
+     for (let attempt = 0; attempt < 60; attempt++) {
+       ready = await new Promise(resolve => {
+         const socket = createConnection({ host: '127.0.0.1', port: cachePort });
+         socket.once('connect', () => { socket.destroy(); resolve(true); });
+         socket.once('error', () => { socket.destroy(); resolve(false); });
+         socket.setTimeout(1000, () => { socket.destroy(); resolve(false); });
+       });
+       if (ready) break;
+       if (cacheProcess?.exitCode != null) throw new Error('Disposable Redis/Valkey exited before startup');
+       await new Promise(resolve => setTimeout(resolve, 100));
+     }
+     if (!ready) throw new Error('Disposable Redis/Valkey did not become ready');
+     env.INTEGRATION_VALKEY_URL = `redis://127.0.0.1:${cachePort}`;
+   }
   await run('pnpm', ['--filter', '@stock-market/db', 'build'], env);
   await run('pnpm', ['--filter', '@stock-market/agent-tools', 'build'], env);
   await run('pnpm', ['--filter', '@stock-market/common', 'build'], env);
   await run('pnpm', ['--filter', '@stock-market/scraper', 'build'], env);
   // Apply the real application schema, including auth and foreign keys.
   await run('pnpm', ['--filter', '@stock-market/web', 'exec', 'drizzle-kit', 'push', '--force'], env);
-  await run('node', ['packages/db/scripts/migrate-mcp-oauth.mjs'], env);
   if (mode === 'e2e') {
     const testEnv = { ...env, ENVIRONMENT: 'dev', DEV_USERNAME: 'dev', DEV_PASSWORD: 'test-development-password', DEV_BILLING_EMAIL: 'billing@example.org',
       BETTER_AUTH_URL: 'http://127.0.0.1:3105', BETTER_AUTH_SECRET: 'e2e-auth-secret-at-least-thirty-two-characters',
@@ -72,7 +99,7 @@ try {
     await run('pnpm', ['--filter', '@stock-market/auth', 'build'], testEnv);
     await run('pnpm', ['--filter', '@stock-market/auth', 'seed:dev'], testEnv);
     await run('pnpm', ['--filter', '@stock-market/web', 'test'], testEnv);
-  } else await run('node', ['--import', 'tsx', ...(mode === 'integration' ? ['--test', '--test-concurrency=1', '--test-timeout=60000', 'apps/api/src/account-access.test.ts', 'apps/api/tests/integration/api.test.ts', 'apps/api/tests/integration/plugin.test.ts', 'apps/legerline-cli/tests/e2e.test.ts', 'packages/auth/tests/billing.integration.test.ts', 'packages/auth/tests/mcp-oauth.integration.test.ts', ...(process.env.RUN_PAYMENT_TESTS === '1' ? ['packages/auth/tests/payment.integration.test.ts'] : [])] : ['apps/api/tests/performance/run.ts'])], env);
+   } else await run('node', ['--import', 'tsx', ...(mode === 'integration' ? ['--test', '--test-concurrency=1', '--test-timeout=60000', 'apps/api/src/account-access.test.ts', 'apps/api/tests/integration/api.test.ts', 'apps/api/tests/integration/plugin.test.ts', 'apps/legerline-cli/tests/e2e.test.ts', 'packages/auth/tests/billing.integration.test.ts', 'packages/auth/tests/mcp-oauth.integration.test.ts', ...(env.TEST_MODE !== 'CICD' ? ['packages/auth/tests/payment.integration.test.ts'] : [])] : ['apps/api/tests/performance/run.ts'])], env);
 } catch (error) {
   if (directory && !clusterStarted) console.error(await readFile(join(directory, 'postgres.log'), 'utf8').catch(() => 'PostgreSQL startup log unavailable'));
   console.error(error.message); process.exitCode = 1;
@@ -92,9 +119,18 @@ try {
         else await rm(directory, { recursive: true, force: true });
       } else await rm(directory, { recursive: true, force: true });
     }
-    if (container) {
+     if (container) {
       const removed = spawnSync('docker', ['rm', '-f', container], { stdio: 'inherit' });
       if (removed.status !== 0) { console.error(`Could not remove test container ${container}`); process.exitCode = 1; }
-    }
+     }
+     if (cacheProcess && cacheProcess.exitCode === null && cacheProcess.signalCode === null) {
+       const stopped = new Promise(resolve => cacheProcess.once('exit', resolve));
+       cacheProcess.kill('SIGTERM');
+       await stopped;
+     }
+     if (cacheContainer) {
+       const removed = spawnSync('docker', ['rm', '-f', cacheContainer], { stdio: 'inherit' });
+       if (removed.status !== 0) { console.error(`Could not remove test cache container ${cacheContainer}`); process.exitCode = 1; }
+     }
   }
 }

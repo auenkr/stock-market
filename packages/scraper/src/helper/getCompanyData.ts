@@ -3,6 +3,7 @@ import { errorDetails, log } from "@stock-market/common/logger";
 import { DELAY_BETWEEN_API_REQUEST } from "../utils/constant.js";
 import * as cheerio from "cheerio";
 import { getCompanyMetrics, type CompanyMetricDataType } from "./getCompanyMetric.js";
+import { getCompanySnapshot, type CompanySnapshot } from "./getCompanySnapshot.js";
 
 export interface NewsItem {
   link_src: string;
@@ -219,36 +220,29 @@ function parseDetailData(
 
 /**
  * Extracts all financial statement tables which share a common structure.
- * @param $ - Cheerio instance
+ * @param snapshot - Parsed company page shared by the API adapters
  * @param sectionId - The ID of the section to process (e.g., #quarters)
  * @param rowToFieldMap - A map to convert table row text to object keys
  * @param detailFields - A set of fields that are detail fields and need to be parsed as DetailStatementDataType
  * @returns An array of statement objects
  */
 async function extractFinancialTable<T>(
-  $: cheerio.CheerioAPI,
+  snapshot: CompanySnapshot,
   sectionId: string,
   rowToFieldMap: Map<string, string>,
   detailFields: Set<string>,
   consolidated = false,
   source: SourceOptions = {}
 ): Promise<T[]> {
-  const table = $(`${sectionId} table`);
-  if (table.length === 0) return [];
-
-  const headers: string[] = [];
-  table.find("thead th").each((i, el) => {
-    if (i > 0) {
-      // Skip first empty header
-      headers.push($(el).text().trim());
-    }
-  });
+  const rows = snapshot.tables[sectionId.replace(/^#/, "")] ?? [];
+  if (rows.length === 0) return [];
+  const headers = rows.map((row) => row.header);
 
   // Initialize an array of objects, one for each time period (column)
   const statements: any[] = headers.map((header) => ({ timePeriod: header }));
 
   // Get out the detail fields from the statements
-  const refId = $("#company-info").attr("data-company-id") as string;
+  const refId = snapshot.refId;
 
   const allDataMap: Map<string, Map<string, Map<string, string>>> = new Map();
 
@@ -258,10 +252,8 @@ async function extractFinancialTable<T>(
 
     const response = await sourceGet(url, source);
     const data = response.data;
-    // deplay to avoid rate limiting
-    await new Promise((resolve) =>
-      setTimeout(resolve, DELAY_BETWEEN_API_REQUEST)
-    );
+    // Only upstream misses need pacing; cached details add no source traffic.
+    if (!response.cached) await new Promise((resolve) => setTimeout(resolve, DELAY_BETWEEN_API_REQUEST));
 
     // Convert data from object to map
     const dataMap = new Map<string, Map<string, string>>();
@@ -277,17 +269,13 @@ async function extractFinancialTable<T>(
     allDataMap.set(rowToFieldMap.get(field) as string, dataMap);
   }
 
-  table.find("tbody tr").each((_, row) => {
-    const cells = $(row).find("td");
-    if (cells.length === 0) return;
-
-    let rowTitle = cells.first().text().trim().replace("+", "").trim();
+  for (const rowTitle of new Set(rows.flatMap((row) => Object.keys(row.values)))) {
     const fieldKey = rowToFieldMap.get(rowTitle);
 
     if (fieldKey) {
-      cells.slice(1).each((i, cell) => {
+      rows.forEach((row, i) => {
         if (statements[i]) {
-          const cellText = $(cell).text().trim();
+          const cellText = row.values[rowTitle] == null ? "" : String(row.values[rowTitle]);
 
           // Logic to determine the correct base value for each row type
           const isPercentage = rowTitle.includes("%");
@@ -338,7 +326,7 @@ async function extractFinancialTable<T>(
         }
       });
     }
-  });
+  }
 
   return statements as T[];
 }
@@ -354,33 +342,21 @@ async function extractFinancialTable<T>(
  */
 export async function GetCompanyData(
   endpoint: string,
-  options: SourceOptions & { includeMarketHistory?: boolean } = {}
+  options: SourceOptions & { includeMarketHistory?: boolean; onSnapshot?: (expiresAt: number) => void } = {}
 ): Promise<CompanyDataType> {
   try {
-    // 1. Fetch HTML from the endpoint
-    const response = await sourceGet<string>(endpoint, options);
-    const html = response.data;
-
-    // 2. Load HTML into Cheerio for parsing
-    const $ = cheerio.load(html);
-
-    // 3. Extract Data
-    const refId = $("#company-info").attr("data-company-id") || "";
-    const name = $("h1.margin-0.show-from-tablet-landscape").text().trim();
-    if (!refId || !name) throw new Error("Source did not return a company page");
-    const consolidated = endpoint.includes("/consolidated");
-    const url = $('.company-links a[href^="http"]').first().attr("href") || "";
-    const about = $(".about p").text().trim();
-    const keyPoints = $("div.title:contains('Key Points')")
-      .next(".sub.commentary")
-      .text()
-      .trim();
+    const snapshotResult = await getCompanySnapshot(endpoint, options);
+    options.onSnapshot?.(snapshotResult.expiresAt);
+    const snapshot = snapshotResult.value;
+    const { refId, name, consolidated } = snapshot;
+    const url = snapshot.website ?? "";
+    const about = snapshot.description;
+    const keyPoints = snapshot.keyPoints;
 
     // -- Summary Data --
     const summary: Partial<CompanySummaryDataType> = {};
-    $("#top-ratios li").each((_, el) => {
-      const name = $(el).find(".name").text().trim();
-      const value = $(el).find(".value").text().trim();
+    for (const [name, amount] of Object.entries(snapshot.summary)) {
+      const value = amount == null ? "" : String(amount);
 
       switch (name) {
         case "Market Cap":
@@ -389,10 +365,11 @@ export async function GetCompanyData(
         case "Current Price":
           summary.currentPrice = parseNumberData(value, "one");
           break;
-        case "High / Low":
-          const [high, low] = value.split(" / ").map((v) => v.trim());
-          summary.high = parseNumberData(high, "one");
-          summary.low = parseNumberData(low, "one");
+        case "high52":
+          summary.high = parseNumberData(value, "one");
+          break;
+        case "low52":
+          summary.low = parseNumberData(value, "one");
           break;
         case "Stock P/E":
           summary.stockPE = parseNumberData(value, "ratio");
@@ -413,16 +390,11 @@ export async function GetCompanyData(
           summary.faceValue = parseNumberData(value, "one");
           break;
       }
-    });
-    summary.pros = $(".pros ul li")
-      .map((_, el) => $(el).text().trim())
-      .get();
-    summary.cons = $(".cons ul li")
-      .map((_, el) => $(el).text().trim())
-      .get();
+    }
+    summary.pros = snapshot.analysis.pros;
+    summary.cons = snapshot.analysis.cons;
 
-    // TODO: Peer Companies
-    const peerCompanies = await getPeerCompanies($, options); // TODO: Implement this
+    const peerCompanies = await getPeerCompanies(snapshot, options);
 
     // -- Quarterly Results --
     const quarterlyMap = new Map([
@@ -450,7 +422,7 @@ export async function GetCompanyData(
 
     const quarterlyResultStatements =
       await extractFinancialTable<QuarterlyResultStatementType>(
-        $,
+        snapshot,
         "#quarters",
         quarterlyMap,
         quarterlyDetailFields,
@@ -458,9 +430,9 @@ export async function GetCompanyData(
         options
       );
     // Add source URLs
-    $("#quarters tbody tr.font-size-14.ink-600 td a").each((i, el) => {
+    snapshot.quarterlySourceUrls.forEach((sourceUrl, i) => {
       if (quarterlyResultStatements[i]) {
-        quarterlyResultStatements[i].sourceUrl = $(el).attr("href") || "";
+        quarterlyResultStatements[i].sourceUrl = sourceUrl;
       }
     });
 
@@ -468,7 +440,7 @@ export async function GetCompanyData(
     const profitAndLossDetailFields = quarterlyDetailFields;
     const profitAndLossStatements =
       await extractFinancialTable<ProfitAndLossStatementType>(
-        $,
+        snapshot,
         "#profit-loss",
         quarterlyMap,
         profitAndLossDetailFields,
@@ -498,7 +470,7 @@ export async function GetCompanyData(
     ]);
     const balanceSheetStatements =
       await extractFinancialTable<BalanceSheetStatementType>(
-        $,
+        snapshot,
         "#balance-sheet",
         balanceSheetMap,
         balanceSheetDetailFields,
@@ -520,7 +492,7 @@ export async function GetCompanyData(
     ]);
     const cashFlowStatements =
       await extractFinancialTable<CashFlowStatementType>(
-        $,
+        snapshot,
         "#cash-flow",
         cashFlowMap,
         cashFlowDetailFields,
@@ -539,7 +511,7 @@ export async function GetCompanyData(
     ]);
     const ratioDetailFields = new Set<string>();
     const ratioStatements = await extractFinancialTable<RatioStatementType>(
-      $,
+      snapshot,
       "#ratios",
       ratioMap,
       ratioDetailFields,
@@ -566,7 +538,7 @@ export async function GetCompanyData(
     ]);
     const shareholdingPatternStatements =
       await extractFinancialTable<ShareholdingPatternStatementType>(
-        $,
+        snapshot,
         "#quarterly-shp",
         shareHoldingMap,
         shareholdingPatternDetailFields,
@@ -605,7 +577,7 @@ export async function GetCompanyData(
     // Call new req
     const query = companyData.name.replace(/[^a-zA-Z0-9]+/g, " ").trim();
     try {
-      const newsResponse = await sourceGet("https://www.moneycontrol.com/mccode/common/autosuggestion_solr.php", { requestId: options.requestId, cookie: "" }, {
+      const newsResponse = await sourceGet("https://www.moneycontrol.com/mccode/common/autosuggestion_solr.php", { requestId: options.requestId, cache: options.cache, cacheEnabled: options.cacheEnabled, cookie: "" }, {
         params: { query, type: 3, format: "json" },
       });
       companyData.news = Array.isArray(newsResponse.data) ? newsResponse.data as NewsItem[] : [];
@@ -641,12 +613,11 @@ async function getEnterpriseValue(
 }
 
 async function getPeerCompanies(
-  $: cheerio.CheerioAPI,
+  snapshot: CompanySnapshot,
   source: SourceOptions = {}
 ): Promise<CompanyPeerCompaniesDataType[]> {
-  const warehouseNo = $("#company-info").data("warehouse-id");
-  const sectorNode = $('p[class="sub"]').first();
-  const sectorValue = sectorNode.text().trim().replace(/\s+/g, " ").trim();
+  const warehouseNo = snapshot.warehouseId;
+  const sectorValue = snapshot.peerSector;
 
   const response = await sourceGet(`/api/company/${warehouseNo}/peers`, source);
   const html = response.data;

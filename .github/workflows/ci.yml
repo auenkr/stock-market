@@ -17,7 +17,7 @@ env:
   NX_DAEMON: "false"
   NX_SKIP_NX_CACHE: "true"
   NEXT_TELEMETRY_DISABLED: "1"
-  RUN_PAYMENT_TESTS: "0"
+  TEST_MODE: CICD
   ENVIRONMENT: dev
   BETTER_AUTH_SECRET: ci-auth-secret-for-isolated-tests-only
   API_KEY_ENCRYPTION_SECRET: ci-key-secret-for-isolated-tests-only

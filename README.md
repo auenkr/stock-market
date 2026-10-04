@@ -92,6 +92,46 @@ const response = await fetch(`/v1/company-data?${query}`);
 
 This request can take around 20 seconds on a cache miss. It returns `{data, companyData}` with the same object in both fields, including `symbol` and `website`, and caches it for 15 minutes. Obsolete `companyUrl` and `endpoint` inputs are rejected.
 
+### Shared API caching (Valkey)
+
+Set `VALKEY_URL` to a Redis-compatible connection URL (`rediss://` for TLS). The API uses the official Node Redis SDK directly against Valkey. Each Cloudflare request lazily opens one connection, reuses it for its cache operations, and closes it before responding.
+
+```dotenv
+CACHE_ENABLED="true"
+VALKEY_URL="rediss://default:<password>@<host>:<port>"
+VALKEY_CACHE_PREFIX="stock-market:dev"
+```
+
+`CACHE_ENABLED=false` bypasses Valkey for all API datasets. It defaults to `true`; with no `VALKEY_URL`, requests fetch the source directly. **There are no in-memory data caches or cached provider instances.** Local API bindings come from the root `.env`, with `apps/api/.dev.vars` overriding matching values. Restart the dev command after editing either file. Use a separate cache prefix per environment; without an explicit prefix, the API uses `stock-market:<ENVIRONMENT>` (or `stock-market:production`).
+
+The cache is request-driven: a miss or expired entry fetches Screener synchronously, validates the result, and stores it. There are no background refresh jobs or stale responses. The canonical company page is parsed once and shared by Company overview/Finance endpoints and legacy `company-data`/`extract`. Schedule, investor, peer, calendar, action, search, company-list and IPO source responses are also cached; fetch and Axios share equivalent source keys. Supplementary Moneycontrol/GMP requests have separate, cookie-free cache entries.
+
+| Cached data | TTL |
+| --- | --- |
+| Parsed company page, assembled legacy company, peers and company-list pages | 15 minutes |
+| Financial schedules and investor-group detail responses | 6 hours |
+| Company search results | 24 hours |
+| Corporate-action and results-calendar pages | 30 minutes |
+| IPO pages and GMP | 5 minutes |
+
+Legacy assembled entries cannot outlive their underlying company snapshot. Cache hits skip the schedule scraper's pacing delay. Keys include a schema version and a hash of the source URL/query and source-cookie scope; standalone/consolidated paths stay distinct, route aliases share entries, and API keys/request IDs are excluded. Expiring, token-owned Valkey locks coalesce concurrent loads across API instances. Waiting requests return `503 SOURCE_BUSY` after 30 seconds if a load is still running. Loader failures/login pages/malformed detail JSON are not cached; a cache outage falls back to the source with credential-free diagnostics.
+
+Authorization, subscription/company access checks, and quota charging still run for every request, including cache hits. Protected HTTP responses retain `Cache-Control: no-store`.
+
+In production, store the connection URL as a Worker secret:
+
+```bash
+pnpm --filter @stock-market/api exec wrangler secret put VALKEY_URL
+```
+
+Set `CACHE_ENABLED` and an environment-specific `VALKEY_CACHE_PREFIX` as Worker bindings. To check the actual TLS connection and Redis SDK under workerd with isolated synthetic source fixtures:
+
+```bash
+pnpm --filter @stock-market/api exec node --env-file=.dev.vars scripts/smoke-cache.mjs
+```
+
+The smoke check uses a unique key prefix and removes only its own entries afterward.
+
 Invalid query parameters return a JSON response with an `error` field and an appropriate HTTP status code.
 
 ### Extract focused financial data
