@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ledgerline",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Search Indian companies and retrieve company fundamentals, financial statements, peer comparisons, and shareholding data with Ledgerline.",
   "homepage": "https://stock-market.auenkr.com",
   "keywords": [
@@ -86,10 +86,11 @@
             }
           ]
         },
+        "demo_recording_url": "https://drive.google.com/file/d/1rZQZGCbvo6OqBDga716lw7vYFFVx-Tx-/view?usp=sharing",
         "commerce": false
       },
       "publication": {
-        "release_notes": "Version 1.0.2 updates the Finance listing and deploys OAuth discovery and authenticated Streamable HTTP GET support for the thirteen read-only company tools."
+        "release_notes": "Version 1.0.3 adds the Ledgerline ChatGPT demonstration recording and retains the Finance listing, OAuth account linking, and thirteen read-only company tools."
       }
     }
   }
