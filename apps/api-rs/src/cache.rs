@@ -2,7 +2,7 @@
 //! coalescing. Same key derivation, TTLs and JSON envelope as the TypeScript
 //! adapter, so both implementations share cache entries.
 
-use redis::{aio::ConnectionManager, AsyncCommands, RedisError};
+use redis::{aio::{ConnectionManager, ConnectionManagerConfig}, AsyncCommands, RedisError};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::{collections::HashMap, sync::Arc, time::Duration};
@@ -97,8 +97,21 @@ impl SourceCache {
         // only degrades to direct loads, never to request errors.
         let mut manager = None;
         if let Some(url) = valkey_url {
-            if let Ok(client) = redis::Client::open(url) {
-                manager = ConnectionManager::new(client).await.ok();
+            match redis::Client::open(url) {
+                Ok(client) => {
+                    let connection = ConnectionManager::new_with_config(
+                        client,
+                        ConnectionManagerConfig::new()
+                            .set_number_of_retries(1)
+                            .set_connection_timeout(Duration::from_secs(5)),
+                    )
+                    .await;
+                    match connection {
+                        Ok(connection) => manager = Some(connection),
+                        Err(error) => tracing::warn!(event = "api.cache.connect_failed", error = %error, "Valkey connection failed; caching disabled"),
+                    }
+                }
+                Err(error) => tracing::warn!(event = "api.cache.url_invalid", error = %error, "Valkey URL invalid; caching disabled"),
             }
         }
         Self { manager, prefix, pending: Arc::new(Mutex::new(HashMap::new())) }

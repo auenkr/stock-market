@@ -15,7 +15,7 @@ mod routes;
 mod source;
 
 use deadpool_postgres::{Config as PgConfig, Runtime};
-use tokio_postgres::NoTls;
+use std::time::Duration;
 
 #[tokio::main]
 async fn main() {
@@ -29,12 +29,17 @@ async fn main() {
         let mut pg = PgConfig::new();
         pg.url = Some(config.database_url.clone());
         pg.pool = Some(deadpool_postgres::PoolConfig::new(config.db_pool_max));
-        match pg.create_pool(Some(Runtime::Tokio1), NoTls) {
+        let tls = tokio_postgres_rustls::MakeRustlsConnect::with_webpki_roots();
+        match pg.create_pool(Some(Runtime::Tokio1), tls) {
             Ok(pool) => {
-                // Warm one connection so the first authorization pays no setup cost.
-                if let Ok(client) = pool.get().await {
-                    let _ = client.query_opt("SELECT 1", &[]).await;
-                }
+                // Warm asynchronously: an unreachable remote database must not
+                // prevent the HTTP listener (including /health) from starting.
+                let warm_pool = pool.clone();
+                tokio::spawn(async move {
+                    if let Ok(Ok(client)) = tokio::time::timeout(Duration::from_secs(3), warm_pool.get()).await {
+                        let _ = tokio::time::timeout(Duration::from_secs(2), client.query_opt("SELECT 1", &[])).await;
+                    }
+                });
                 Some(pool)
             }
             Err(e) => {
@@ -45,7 +50,18 @@ async fn main() {
     };
 
     let cache = if config.cache_enabled() {
-        Some(cache::SourceCache::new(config.valkey_url.as_deref(), config.valkey_prefix.clone()).await)
+        match tokio::time::timeout(
+            Duration::from_secs(12),
+            cache::SourceCache::new(config.valkey_url.as_deref(), config.valkey_prefix.clone()),
+        )
+        .await
+        {
+            Ok(cache) => Some(cache),
+            Err(_) => {
+                tracing::warn!(event = "api.cache.startup_timeout", "Valkey connection timed out; starting without cache");
+                None
+            }
+        }
     } else {
         None
     };

@@ -22,6 +22,7 @@
     "test:keys": "tsx --test apps/web/src/lib/key-expiration.test.ts",
     "db:seed:dev": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/auth seed:dev",
     "test:integration": "pnpm --filter @stock-market/api test:integration",
+    "test:contract:rust": "node apps/api-rs/tests/contract.mjs",
     "test:e2e": "node apps/api/tests/run.mjs e2e",
     "test:payments:live": "node --env-file=.env apps/web/node_modules/@playwright/test/cli.js test --config apps/web/playwright.payments.config.ts",
     "test:performance": "pnpm --filter @stock-market/api test:performance",
