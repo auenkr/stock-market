@@ -116,6 +116,7 @@ test("Better Auth account linking, PKCE, refresh, account quota and revocation",
   assert(accesses.every(result => result.apiKey === access.apiKey));
   assert.equal((await db.select().from(apiKey).where(eq(apiKey.userId, uid))).length, 1, "reconnecting and concurrent requests must not create extra keys");
   const [originalConsent] = await db.select().from(oauthConsent).where(eq(oauthConsent.userId, uid));
+  assert(originalConsent, "OAuth authorization must persist consent");
   await db.update(oauthConsent).set({ id: randomUUID() }).where(eq(oauthConsent.id, originalConsent.id));
   assert.equal((await checkedJson(await bridge(refreshed.access_token))).apiKey, access.apiKey, "replaced consent must reuse the key");
   const originalFetch = globalThis.fetch;
