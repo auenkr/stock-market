@@ -19,7 +19,6 @@ use tokio_postgres::NoTls;
 
 #[tokio::main]
 async fn main() {
-    eprintln!("api-rs boot");
     tracing_subscriber::fmt().json().init();
     let config = config::Config::from_env();
 
