@@ -86,29 +86,12 @@ jobs:
         run: node scripts/smoke-dev.mjs
 
   npm-dev:
-    name: Publish ${{ matrix.label }} development package
+    name: Publish changed development packages
     needs: [changed-packages, validate]
-    if: needs.changed-packages.outputs[matrix.change] == 'true'
+    if: needs.changed-packages.outputs.cli == 'true' || needs.changed-packages.outputs.mcp == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - label: CLI
-            change: cli
-            source_package: '@auenkr/legerline-cli'
-            directory: apps/legerline-cli
-            package: '@auenkr/legerline-cli-dev'
-          - label: MCP
-            change: mcp
-            source_package: '@auenkr/legerline-mcp'
-            directory: apps/mcp
-            package: '@auenkr/legerline-mcp-dev'
     env:
-      PACKAGE_DIRECTORY: ${{ matrix.directory }}
-      PACKAGE_NAME: ${{ matrix.package }}
-      SOURCE_PACKAGE: ${{ matrix.source_package }}
       PACKAGE_VERSION_SUFFIX: dev.${{ github.run_number }}.${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v6
@@ -121,13 +104,36 @@ jobs:
           cache: pnpm
           registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
-      - name: Build package and prepare dev identity
+      - name: Build CLI package and prepare dev identity
+        if: needs.changed-packages.outputs.cli == 'true'
+        env:
+          PACKAGE_DIRECTORY: apps/legerline-cli
+          PACKAGE_NAME: '@auenkr/legerline-cli-dev'
+          SOURCE_PACKAGE: '@auenkr/legerline-cli'
         run: |
           pnpm --filter "$SOURCE_PACKAGE"... build
           version=$(node -p "require('./' + process.env.PACKAGE_DIRECTORY + '/package.json').version")
           pnpm --dir "$PACKAGE_DIRECTORY" pkg set "name=$PACKAGE_NAME" "version=$version-$PACKAGE_VERSION_SUFFIX"
-      - name: Publish development package
-        working-directory: ${{ matrix.directory }}
+      - name: Publish CLI development package
+        if: needs.changed-packages.outputs.cli == 'true'
+        working-directory: apps/legerline-cli
+        run: pnpm publish --access public --tag dev --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Build MCP package and prepare dev identity
+        if: needs.changed-packages.outputs.mcp == 'true'
+        env:
+          PACKAGE_DIRECTORY: apps/mcp
+          PACKAGE_NAME: '@auenkr/legerline-mcp-dev'
+          SOURCE_PACKAGE: '@auenkr/legerline-mcp'
+        run: |
+          pnpm --filter "$SOURCE_PACKAGE"... build
+          version=$(node -p "require('./' + process.env.PACKAGE_DIRECTORY + '/package.json').version")
+          pnpm --dir "$PACKAGE_DIRECTORY" pkg set "name=$PACKAGE_NAME" "version=$version-$PACKAGE_VERSION_SUFFIX"
+      - name: Publish MCP development package
+        if: needs.changed-packages.outputs.mcp == 'true'
+        working-directory: apps/mcp
         run: pnpm publish --access public --tag dev --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
