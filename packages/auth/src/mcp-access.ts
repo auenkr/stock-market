@@ -34,8 +34,10 @@ export function mcpAccountAccess() {
         const consents = await db.select().from(oauthConsent).where(and(eq(oauthConsent.userId, owner.id), eq(oauthConsent.clientId, payload.client_id)));
         const consent = consents.find(row => row.scopes.includes(mcpScope) && row.resources?.includes(mcpResource));
         if (!consent) throw deny();
-        // Consent-specific key is stable across refreshes. Revoked keys stay revoked.
-        const key = `sm_live_${createHmac("sha256", secret).update(`mcp-key-v1:${owner.id}:${consent.id}`).digest("hex").slice(0, 48)}`;
+        // Share one backing key across this account's MCP connections, even when
+        // clients register again or consent is replaced. OAuth authorization above
+        // remains connection-specific. Revoked keys stay revoked.
+        const key = `sm_live_${createHmac("sha256", secret).update(`mcp-key-v2:${owner.id}:${mcpResource}`).digest("hex").slice(0, 48)}`;
         const keyHash = createHash("sha256").update(key).digest("hex");
         await db.insert(apiKey).values({ id: createId(), userId: owner.id, name: "ChatGPT / MCP connection", keyHash, encryptedSecret: encryptApiKey(key) }).onConflictDoNothing({ target: apiKey.keyHash });
         const [record] = await db.select().from(apiKey).where(eq(apiKey.keyHash, keyHash));
