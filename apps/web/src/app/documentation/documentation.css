@@ -29,6 +29,10 @@
 .documentation-limits strong { font-size: 32px; }
 .documentation-limits small { font-size: 12px; font-weight: 400; color: var(--muted); }
 .documentation-content pre { padding: 18px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; line-height: 1.7; }
+.documentation-code { position: relative; min-width: 0; }
+.documentation-code pre { padding-top: 46px; }
+.documentation-code > .copy-button { position: absolute; top: 8px; right: 8px; z-index: 1; padding: 6px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); font-size: 11px; cursor: pointer; }
+.documentation-code > .copy-button:hover { border-color: var(--accent); }
 .documentation-content h3 { font-size: 17px; margin: 28px 0 12px; }
 .documentation-content .documentation-reference { border-top: 1px solid var(--line); padding-top: 28px; }
 .documentation-reference-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
