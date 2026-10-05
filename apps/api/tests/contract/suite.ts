@@ -253,7 +253,7 @@ export async function defineContractSuite(ctx: ContractContext) {
     // for free plans regardless of symbol; free resources check the company.
     // Compatibility rejections are raised inside the route, so they carry the
     // canonical endpoint pointer; the legacy middleware gate does not.
-    for (const [path, endpoint] of [['/v1/profit-loss?symbol=/company/ACME/', '/api/v1/profit-loss'], ['/v1/profit-loss?symbol=/company/RELIANCE/', '/api/v1/profit-loss']]) {
+    for (const [path, endpoint] of [['/v1/profit-loss?symbol=/company/ACME/', '/api/v1/profit-loss'], ['/v1/profit-loss?symbol=/company/RELIANCE/', '/api/v1/profit-loss']] as const) {
       const response = await request(path, freeSecret); assert.equal(response.status, 403, path);
       assert.deepEqual(await response.json(), { error: 'This endpoint requires Personal or Professional', code: 'PAID_PLAN_REQUIRED', endpoint, docs: '/v1/coverage' }, path);
     }
