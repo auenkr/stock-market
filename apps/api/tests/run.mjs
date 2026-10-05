@@ -13,7 +13,7 @@ const brewPrefix = spawnSync('brew', ['--prefix', 'postgresql@17'], { encoding: 
 const pgBin = process.env.POSTGRES_BIN ?? (brewPrefix.status === 0 ? join(brewPrefix.stdout.trim(), 'bin') : '');
 const pgTool = name => pgBin ? join(pgBin, name) : name;
 const pgEnv = { ...process.env, LC_ALL: 'C' };
-if (!['integration', 'performance', 'e2e'].includes(mode)) throw new Error('Use integration, performance, or e2e');
+if (!['integration', 'performance', 'contract', 'e2e'].includes(mode)) throw new Error('Use integration, performance, contract, or e2e');
 const database = `stock_test_${process.pid}_${Date.now()}`;
 let directory, container, admin, child, clusterStarted = false;
 let cacheProcess, cacheContainer;
@@ -100,7 +100,7 @@ try {
     await run('pnpm', ['--filter', '@stock-market/auth', 'build'], testEnv);
     await run('pnpm', ['--filter', '@stock-market/auth', 'seed:dev'], testEnv);
     await run('pnpm', ['--filter', '@stock-market/web', 'test'], testEnv);
-   } else await run('node', ['--import', 'tsx', ...(mode === 'integration' ? ['--test', '--test-concurrency=1', '--test-timeout=60000', 'apps/api/src/account-access.test.ts', 'apps/api/tests/integration/api.test.ts', 'apps/api/tests/integration/plugin.test.ts', 'apps/legerline-cli/tests/e2e.test.ts', 'packages/auth/tests/billing.integration.test.ts', 'packages/auth/tests/mcp-oauth.integration.test.ts', 'packages/auth/tests/reviewer.integration.test.ts', ...(env.TEST_MODE !== 'CICD' ? ['packages/auth/tests/payment.integration.test.ts'] : [])] : ['apps/api/tests/performance/run.ts'])], env);
+   } else await run('node', ['--import', 'tsx', ...(mode === 'integration' ? ['--test', '--test-concurrency=1', '--test-timeout=60000', 'apps/api/src/account-access.test.ts', 'apps/api/tests/integration/api.test.ts', 'apps/api/tests/integration/plugin.test.ts', 'apps/legerline-cli/tests/e2e.test.ts', 'packages/auth/tests/billing.integration.test.ts', 'packages/auth/tests/mcp-oauth.integration.test.ts', 'packages/auth/tests/reviewer.integration.test.ts', ...(env.TEST_MODE !== 'CICD' ? ['packages/auth/tests/payment.integration.test.ts'] : [])] : mode === 'contract' ? ['--test', '--test-concurrency=1', '--test-timeout=60000', 'apps/api/tests/contract/run-local.ts'] : ['apps/api/tests/performance/run.ts'])], env);
 } catch (error) {
   if (directory && !clusterStarted) console.error(await readFile(join(directory, 'postgres.log'), 'utf8').catch(() => 'PostgreSQL startup log unavailable'));
   console.error(error.message); process.exitCode = 1;
