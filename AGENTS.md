@@ -24,6 +24,6 @@ expire: any future date
 
 # NOTE
 
-1. All feature are developed on dev branch
-2. Only PR is valid that is from dev to main
-3. After PR, babysite the PR till all checks CICD pass.
+1. All feature, bugs, everything goes through dev branch
+2. Only Sync from dev to main push everything in prod.
+3. After commit, push create a PR to dev branch, babysit the PR till all checks CICD pass.

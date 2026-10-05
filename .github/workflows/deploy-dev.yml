@@ -14,6 +14,36 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  changed-packages:
+    name: Detect changed npm packages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-24.04
+    outputs:
+      cli: ${{ steps.changed.outputs.cli }}
+      mcp: ${{ steps.changed.outputs.mcp }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Identify changed package sources
+        id: changed
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          files=$(git diff --name-only "$BEFORE" "$AFTER")
+          if grep -q '^apps/legerline-cli/' <<< "$files"; then
+            echo 'cli=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'cli=false' >> "$GITHUB_OUTPUT"
+          fi
+          if grep -q '^apps/mcp/' <<< "$files"; then
+            echo 'mcp=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'mcp=false' >> "$GITHUB_OUTPUT"
+          fi
+
   validate:
     if: github.ref == 'refs/heads/dev'
     uses: ./.github/workflows/ci.yml
@@ -54,3 +84,50 @@ jobs:
         run: pnpm --filter @auenkr/legerline-mcp deploy:dev
       - name: Verify deployed service wiring
         run: node scripts/smoke-dev.mjs
+
+  npm-dev:
+    name: Publish ${{ matrix.label }} development package
+    needs: [changed-packages, validate]
+    if: needs.changed-packages.outputs[matrix.change] == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: CLI
+            change: cli
+            source_package: '@auenkr/legerline-cli'
+            directory: apps/legerline-cli
+            package: '@auenkr/legerline-cli-dev'
+          - label: MCP
+            change: mcp
+            source_package: '@auenkr/legerline-mcp'
+            directory: apps/mcp
+            package: '@auenkr/legerline-mcp-dev'
+    env:
+      PACKAGE_DIRECTORY: ${{ matrix.directory }}
+      PACKAGE_NAME: ${{ matrix.package }}
+      SOURCE_PACKAGE: ${{ matrix.source_package }}
+      PACKAGE_VERSION_SUFFIX: dev.${{ github.run_number }}.${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - name: Build package and prepare dev identity
+        run: |
+          pnpm --filter "$SOURCE_PACKAGE"... build
+          version=$(node -p "require('./' + process.env.PACKAGE_DIRECTORY + '/package.json').version")
+          pnpm --dir "$PACKAGE_DIRECTORY" pkg set "name=$PACKAGE_NAME" "version=$version-$PACKAGE_VERSION_SUFFIX"
+      - name: Publish development package
+        working-directory: ${{ matrix.directory }}
+        run: pnpm publish --access public --tag dev --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
