@@ -14,6 +14,10 @@ the same file verifies the TypeScript service and this rewrite:
 - `CONTRACT_BASE_URL=... CONTRACT_DATABASE_URL=... CONTRACT_FIXTURE_SOURCE=1
   pnpm --filter @stock-market/api test:contract:external` — same suite against
   a running server (this service).
+- `pnpm test:contract:rust` — builds and starts this Rust service and a fixture
+  upstream, then runs the shared HTTP suite against a migrated disposable
+  database. Set `CONTRACT_DATABASE_URL` and optionally `VALKEY_URL` first; CI
+  provisions both services automatically.
 
 ## Latency design
 
@@ -51,6 +55,11 @@ DATABASE_URL=postgresql://... VALKEY_URL=redis://... cargo run
 ```
 
 ## Docker
+
+The multi-platform image statically links the Rust executable against musl and
+uses `scratch` at runtime. The runtime filesystem contains the API executable
+and CA certificate data only; it does not require glibc, QEMU, or another
+runtime executable.
 
 ```sh
 docker build -t stock-market-api-rs ./apps/api-rs
