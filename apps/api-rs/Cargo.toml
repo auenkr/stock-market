@@ -15,6 +15,9 @@ serde_json = { version = "1", features = ["preserve_order"] }
 deadpool-postgres = { version = "0.12", features = ["serde"] }
 tokio-postgres = { version = "0.7", features = ["with-uuid-1"] }
 tokio-postgres-rustls = { version = "0.14", features = ["webpki-roots"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+rustls-pemfile = "2"
+webpki-roots = "1"
 redis = { version = "0.27", features = ["tokio-comp", "tokio-rustls-comp", "connection-manager", "tls-rustls-webpki-roots"] }
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "gzip", "json"] }
 scraper = "0.20"
