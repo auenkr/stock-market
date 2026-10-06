@@ -38,7 +38,15 @@ Peer comparison, quarterly and annual profit and loss, balance sheet, cash flow,
 | Shareholding pattern | `/api/v1/shareholding-pattern` | paid | partial |
 | Shareholding distribution | `/api/v1/shareholdings/distribution` | paid | partial |
 
-## 4. Internal
+## 4. Screening
+
+Run a custom company query and receive matching companies with the selected column values.
+
+| Use | Endpoint | Tier | Coverage |
+| --- | --- | --- | --- |
+| Run a company screen | `/api/v1/screen` | paid | partial |
+
+## 5. Internal
 
 Supplementary ownership, corporate actions, results calendar, upcoming IPOs, full-company extraction, and service endpoints. Documented only in dev mode.
 

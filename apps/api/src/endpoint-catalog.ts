@@ -21,6 +21,7 @@ export const endpointCatalog: EndpointContract[] = [
   company("ratios", "Ratios"),
   company("shareholding-pattern", "Shareholding pattern"),
   company("shareholdings/distribution", "Shareholding distribution"),
+  endpoint("screen", "Run a company screen", [parameter("query")], "partial", "/api/v1/screen"),
   endpoint("daily-price-ratios", "Price ratios daily", [parameter("symbol")], "excluded"),
   endpoint("annual-price-ratios", "Price ratios annual", [parameter("symbol")], "excluded"),
   ...["summary", "ownership-current", "ownership-history"].map((kind) => endpoint(`shareholdings/${kind}`, ({ summary: "Ownership structure", "ownership-current": "Current owners", "ownership-history": "Owner history" })[kind]!, [parameter("symbol"), ...(kind === "ownership-current" ? [] : [period()])])),

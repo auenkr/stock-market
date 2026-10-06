@@ -13,6 +13,34 @@ export type DataResult = { body: unknown; headers?: Record<string, string> };
 export type DataQuery = Record<string, string>;
 export interface DataProvider { execute(resource: string, query: DataQuery): Promise<DataResult> }
 
+function decodeHtml(value: string): string {
+  return value.replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'").replace(/&#(\d+);/g, (_, n: string) => String.fromCodePoint(Number(n))).replace(/&#x([\da-f]+);/gi, (_, n: string) => String.fromCodePoint(parseInt(n, 16)));
+}
+function htmlText(value: string): string {
+  return decodeHtml(value.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim());
+}
+function parseScreenRows(html: string) {
+  const table = html.match(/<table\b[^>]*class=["'][^"']*data-table[^"']*["'][^>]*>([\s\S]*?)<\/table>/i)?.[1]
+    ?? html.match(/<table\b[^>]*class=["'][^"']*results-table[^"']*["'][^>]*>([\s\S]*?)<\/table>/i)?.[1];
+  if (!table) throw new DataError("Screen results could not be parsed", 502, "UPSTREAM_SCHEMA_CHANGED");
+  const headers = [...(table.match(/<thead\b[\s\S]*?<\/thead>/i)?.[0] ?? "").matchAll(/<th\b[^>]*>([\s\S]*?)<\/th>/gi)].map((m) => htmlText(m[1]!));
+  const body = table.match(/<tbody\b[\s\S]*?<\/tbody>/i)?.[0] ?? table;
+  const rows = [...body.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)].map((row) => {
+    const cells = [...row[1]!.matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)].map((m) => m[1]!);
+    if (!cells.length) return null;
+    const result: Record<string, string | number | null> = {};
+    cells.forEach((cell, index) => {
+      const key = headers[index] || `column_${index + 1}`;
+      const link = cell.match(/<a\b[^>]*href=["']([^"']*\/company\/[^"']*)["'][^>]*>([\s\S]*?)<\/a>/i);
+      const text = htmlText(link?.[2] ?? cell);
+      if (index === 0 && link) result.symbol = decodeHtml(link[1]!);
+      result[key] = text === "" || text === "-" ? null : /^-?\d+(?:,\d{3})*(?:\.\d+)?%?$/.test(text) ? Number(text.replace(/,/g, "").replace(/%$/, "")) : text;
+    });
+    return result;
+  }).filter((row): row is Record<string, string | number | null> => row !== null);
+  return { columns: headers, rows };
+}
+
 const groupDepth: Record<string, number> = { macro_sector: 1, industry: 2, sector: 3, sub_industry: 4 };
 const sum = (...xs: (number | null | undefined)[]): number | null => xs.some((x) => x == null) ? null : xs.reduce<number>((a, b) => a + b!, 0);
 const divide = (a: number | null | undefined, b: number | null | undefined) => a == null || b == null || b === 0 ? null : a / b;
@@ -200,6 +228,13 @@ export class ScreenerProvider implements DataProvider {
   }
 
   async execute(resource: string, query: DataQuery): Promise<DataResult> {
+    if (resource === "screen") {
+      const expression = query.query?.trim();
+      if (!expression) throw new DataError("query is required", 400, "INVALID_QUERY");
+      const html = await this.html(`/screen/raw/?${new URLSearchParams({ query: expression })}`);
+      const parsed = parseScreenRows(html);
+      return { body: { query: expression, count: parsed.rows.length, columns: parsed.columns, data: parsed.rows } };
+    }
     const page = Number(query.page ?? "1");
     const symbol = query.symbol;
     const within = (date: string | null) => (!query.from_date || (date != null && date >= query.from_date)) && (!query.to_date || (date != null && date <= query.to_date));

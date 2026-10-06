@@ -85,6 +85,10 @@
       "description": "Peer comparison, quarterly and annual profit and loss, balance sheet, cash flow, ratios, shareholding pattern and distribution. Only symbol is required; its URL selects standalone or consolidated data."
     },
     {
+      "name": "Screening",
+      "description": "Run a custom company query and receive matching companies with the selected column values."
+    },
+    {
       "name": "Internal",
       "description": "Supplementary ownership, corporate actions, results calendar, upcoming IPOs, full-company extraction, and service endpoints. Documented only in dev mode."
     }
@@ -109,15 +113,21 @@
       "order": 3
     },
     {
+      "id": "screening",
+      "title": "Screening",
+      "description": "Run a custom company query and receive matching companies with the selected column values.",
+      "order": 4
+    },
+    {
       "id": "internal",
       "title": "Internal",
       "description": "Supplementary ownership, corporate actions, results calendar, upcoming IPOs, full-company extraction, and service endpoints. Documented only in dev mode.",
-      "order": 4
+      "order": 5
     }
   ],
   "x-coverage-summary": {
-    "total": 23,
-    "partial": 18,
+    "total": 24,
+    "partial": 19,
     "unavailable": 0,
     "excluded": 5,
     "inspectedAt": "2026-10-02"
@@ -2545,6 +2555,48 @@
           ]
         }
       },
+      "screen": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "query",
+          "count",
+          "columns",
+          "data"
+        ]
+      },
       "index_market_price_historical": {
         "type": "object",
         "properties": {
@@ -4453,7 +4505,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -4683,7 +4735,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -4913,7 +4965,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -5143,7 +5195,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -5373,7 +5425,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -5603,7 +5655,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -5833,7 +5885,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -6063,7 +6115,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -6293,7 +6345,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -6523,7 +6575,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -6753,7 +6805,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -6983,7 +7035,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -7213,7 +7265,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -7443,7 +7495,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -7673,7 +7725,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -7903,7 +7955,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -8133,7 +8185,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -8363,7 +8415,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -8593,7 +8645,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -8823,7 +8875,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -9053,7 +9105,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -9283,7 +9335,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -9497,6 +9549,466 @@
         "x-order": 13
       }
     },
+    "/api/v1/screen": {
+      "get": {
+        "operationId": "get_api_v1_screen",
+        "summary": "Run a company screen",
+        "tags": [
+          "Screening"
+        ],
+        "description": "Runs a custom screening expression. Returns the query, displayed columns, matching row count, and one object per company. Numeric cells are numbers; unavailable cells are null. Query syntax and available measures are documented in the screening guide.",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A screening expression using available measure names, comparison operators, arithmetic, and AND/OR. Maximum 4000 characters. See the screening guide for syntax and measures.",
+            "example": "Market capitalization > 500 AND Price to earning < 15"
+          }
+        ],
+        "x-tier": "paid",
+        "x-api-style": "personal",
+        "x-coverage": "partial",
+        "x-resource": "screen",
+        "x-canonical-path": "/api/v1/screen",
+        "x-alias": false,
+        "responses": {
+          "200": {
+            "description": "Source-backed subset. Missing fields are null; an empty list is not proof of a complete historical dataset.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "X-Data-Coverage": {
+                "description": "Current adapters expose partial coverage.",
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "partial"
+                  ]
+                }
+              },
+              "X-Page": {
+                "description": "Requested source page, for paginated resources.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-Next-Page": {
+                "description": "Next source page; empty when the source exposes no next page.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/screen"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid, missing or unknown parameter",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Source resource not found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "Seconds until retry, when the quota bucket is exhausted."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Dataset or requested variation is unavailable",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Data could not be retrieved",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-use-case": "screening",
+        "x-order": 14
+      }
+    },
+    "/v1/screen": {
+      "get": {
+        "operationId": "get_v1_screen",
+        "summary": "Run a company screen",
+        "tags": [
+          "Screening"
+        ],
+        "description": "Runs a custom screening expression. Returns the query, displayed columns, matching row count, and one object per company. Numeric cells are numbers; unavailable cells are null. Query syntax and available measures are documented in the screening guide.",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "A screening expression using available measure names, comparison operators, arithmetic, and AND/OR. Maximum 4000 characters. See the screening guide for syntax and measures.",
+            "example": "Market capitalization > 500 AND Price to earning < 15"
+          }
+        ],
+        "x-tier": "paid",
+        "x-api-style": "personal",
+        "x-coverage": "partial",
+        "x-resource": "screen",
+        "x-canonical-path": "/api/v1/screen",
+        "x-alias": true,
+        "responses": {
+          "200": {
+            "description": "Source-backed subset. Missing fields are null; an empty list is not proof of a complete historical dataset.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "X-Data-Coverage": {
+                "description": "Current adapters expose partial coverage.",
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "partial"
+                  ]
+                }
+              },
+              "X-Page": {
+                "description": "Requested source page, for paginated resources.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "X-Next-Page": {
+                "description": "Next source page; empty when the source exposes no next page.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/screen"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid, missing or unknown parameter",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid, expired or revoked API key",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Personal or Professional required (PAID_PLAN_REQUIRED), or company outside the Hobby allowlist (FREE_COMPANY_RESTRICTED)",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Source resource not found",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Your account's shared request allowance is exhausted. Wait for Retry-After before retrying.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                },
+                "description": "Seconds until retry, when the quota bucket is exhausted."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Dataset or requested variation is unavailable",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Data could not be retrieved",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service temporarily unavailable; retry later",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Request identifier for correlating the response with API logs.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-use-case": "screening",
+        "x-order": 14
+      }
+    },
     "/api/v1/shareholdings/summary": {
       "get": {
         "operationId": "get_api_v1_shareholdings_summary",
@@ -9513,7 +10025,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           },
           {
@@ -9738,7 +10250,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 16
+        "x-order": 17
       }
     },
     "/v1/shareholdings/summary": {
@@ -9757,7 +10269,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           },
           {
@@ -9982,7 +10494,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 16
+        "x-order": 17
       }
     },
     "/api/v1/shareholdings/ownership-current": {
@@ -10001,7 +10513,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -10212,7 +10724,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 17
+        "x-order": 18
       }
     },
     "/v1/shareholdings/ownership-current": {
@@ -10231,7 +10743,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -10442,7 +10954,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 17
+        "x-order": 18
       }
     },
     "/api/v1/shareholdings/ownership-history": {
@@ -10461,7 +10973,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           },
           {
@@ -10686,7 +11198,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 18
+        "x-order": 19
       }
     },
     "/v1/shareholdings/ownership-history": {
@@ -10705,7 +11217,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           },
           {
@@ -10930,7 +11442,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 18
+        "x-order": 19
       }
     },
     "/api/v1/corporate-actions": {
@@ -10949,7 +11461,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           },
           {
@@ -11187,7 +11699,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 19
+        "x-order": 20
       }
     },
     "/v1/corporate-actions": {
@@ -11206,7 +11718,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           },
           {
@@ -11444,7 +11956,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 19
+        "x-order": 20
       }
     },
     "/api/v1/dividend": {
@@ -11463,7 +11975,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -11674,7 +12186,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 20
+        "x-order": 21
       }
     },
     "/v1/dividend": {
@@ -11693,7 +12205,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           }
         ],
@@ -11904,7 +12416,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 20
+        "x-order": 21
       }
     },
     "/api/v1/corporate-actions/all": {
@@ -11923,7 +12435,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           },
           {
@@ -12183,7 +12695,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 21
+        "x-order": 22
       }
     },
     "/v1/corporate-actions/all": {
@@ -12202,7 +12714,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "example": "/company/RELIANCE/consolidated/"
           },
           {
@@ -12462,7 +12974,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 21
+        "x-order": 22
       }
     },
     "/api/v1/results-calendar": {
@@ -12715,7 +13227,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 22
+        "x-order": 23
       }
     },
     "/v1/results-calendar": {
@@ -12968,7 +13480,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 22
+        "x-order": 23
       }
     },
     "/v1/list-of-ipo": {
@@ -13184,7 +13696,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 23
+        "x-order": 24
       }
     },
     "/api/list-of-ipo": {
@@ -13400,7 +13912,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 23
+        "x-order": 24
       }
     },
     "/v1/company-data": {
@@ -13412,7 +13924,7 @@
             "name": "symbol",
             "in": "query",
             "required": true,
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "schema": {
               "type": "string"
             },
@@ -13636,7 +14148,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 27
+        "x-order": 28
       }
     },
     "/api/company-data": {
@@ -13648,7 +14160,7 @@
             "name": "symbol",
             "in": "query",
             "required": true,
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "schema": {
               "type": "string"
             },
@@ -13872,7 +14384,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 27
+        "x-order": 28
       }
     },
     "/v1/extract": {
@@ -13884,7 +14396,7 @@
             "name": "symbol",
             "in": "query",
             "required": true,
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "schema": {
               "type": "string"
             },
@@ -14169,7 +14681,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 28
+        "x-order": 29
       }
     },
     "/api/extract": {
@@ -14181,7 +14693,7 @@
             "name": "symbol",
             "in": "query",
             "required": true,
-            "description": "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+            "description": "Company URL path returned by company search, listing, or IPO listing. Pass unchanged.",
             "schema": {
               "type": "string"
             },
@@ -14466,7 +14978,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 28
+        "x-order": 29
       }
     },
     "/health": {
@@ -14504,7 +15016,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 29
+        "x-order": 30
       }
     },
     "/v1/coverage": {
@@ -14612,7 +15124,7 @@
           }
         },
         "x-use-case": "internal",
-        "x-order": 30
+        "x-order": 31
       }
     }
   }

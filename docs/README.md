@@ -5,6 +5,7 @@ This directory records endpoint coverage, source limitations, implementation pro
 - [Endpoint user journey](endpoint-journey.md): Search, Company overview, Finance, and Internal categories and endpoint order.
 - [Endpoint coverage](endpoint-coverage.md): personal routes grouped by use case, available sources, and exclusions.
 - [API compatibility](api-compatibility.md): requests, response shapes, units, pagination, and errors.
+- [Company screening](screening.md): query syntax, structured responses, and the ratio gallery measure catalog.
 - [Limitations](limitations.md): missing datasets and SaaS infrastructure requirements.
 - [Progress](progress.md): completed work and validation evidence.
 - [Screener exploration](screener-exploration.md): browser findings, source paths and remaining access/data gaps.

@@ -18,4 +18,5 @@ export const coverageDetails: Record<string, string> = {
   "corporate-actions/all": "Paginated market corporate-action records. Optional action filters split, bonus, rights, or dividend; omit it for all. Optional URL-valued symbol selects a single company, including its rights records. Market-wide dividend amounts may be null. Date filters apply to the requested page; follow X-Next-Page.",
   "dividend": "Dividend dates, INR per share, type, and description. Dates use YYYY-MM-DD; historically adjusted amounts are unavailable.",
   "results-calendar": "Upcoming results within a YYYY-MM-DD date window. Filters apply to each requested page. Dates indicate expected publication dates. Past calendars are unavailable.",
+  "screen": "Runs a custom screening expression. Returns the query, displayed columns, matching row count, and one object per company. Numeric cells are numbers; unavailable cells are null. Query syntax and available measures are documented in the screening guide.",
 };
