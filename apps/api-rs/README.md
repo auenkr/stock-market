@@ -49,6 +49,13 @@ the same file verifies the TypeScript service and this rewrite:
 | `SOURCE_COOKIE` | — | Upstream session cookie |
 | `SOURCE_PACING_MS` | `1200` | Delay after uncached upstream detail fetches (`0` for tests) |
 
+The JSON logs include `api.request.started` / `api.request.completed` for each
+HTTP request, and source failures include `api.source.authentication_required`,
+`api.source.http_error`, or `api.source.transport_error`. Logs include request
+paths and status codes, but never API keys or cookie values. The authentication
+event includes the requested and final source paths plus whether a cookie was
+configured, which helps distinguish upstream login pages from network failures.
+
 ## Run locally
 
 ```sh

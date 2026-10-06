@@ -133,8 +133,39 @@ struct Authed {
     plan: String,
 }
 
-async fn gate(State(state): State<AppState>, req: axum::extract::Request, next: axum::middleware::Next) -> Response {
+async fn gate(
+    State(state): State<AppState>,
+    req: axum::extract::Request,
+    next: axum::middleware::Next,
+) -> Response {
     let id = request_id();
+    let method = req.method().to_string();
+    let path = req.uri().path().to_string();
+    let started = std::time::Instant::now();
+    tracing::info!(event = "api.request.started", request_id = %id, method = %method, path = %path);
+
+    let response = gate_request(State(state), req, next, id.clone()).await;
+    let status = response.status().as_u16();
+    tracing::info!(
+        event = "api.request.completed",
+        request_id = %id,
+        method = %method,
+        path = %path,
+        status,
+        elapsed_ms = started.elapsed().as_millis() as u64
+    );
+    if status >= 500 {
+        tracing::warn!(event = "api.request.server_error", request_id = %id, method = %method, path = %path, status);
+    }
+    response
+}
+
+async fn gate_request(
+    State(state): State<AppState>,
+    req: axum::extract::Request,
+    next: axum::middleware::Next,
+    id: String,
+) -> Response {
     let path = req.uri().path().to_string();
     if req.method() == Method::OPTIONS {
         return Response::builder()
@@ -302,7 +333,17 @@ async fn compat_handler(
             builder = builder.header("x-data-coverage", "partial");
             builder.body(axum::body::Body::from(serde_json::to_string(&result.body).unwrap())).unwrap()
         }
-        Err(e) => e.into_compat_response(contract.path),
+        Err(e) => {
+            tracing::warn!(
+                event = "api.endpoint.failed",
+                endpoint = %contract.path,
+                resource = %contract.resource,
+                status = e.status,
+                code = %e.code,
+                message = %e.message
+            );
+            e.into_compat_response(contract.path)
+        }
     }
 }
 
@@ -343,7 +384,10 @@ async fn legacy_list(State(state): State<AppState>, Query(multi): Query<Vec<(Str
             });
             (StatusCode::OK, Json(body)).into_response()
         }
-        Err(e) => e.into_legacy_response(),
+        Err(e) => {
+            tracing::warn!(event = "api.endpoint.failed", endpoint = "/v1/extract", status = e.status, code = %e.code, message = %e.message);
+            e.into_legacy_response()
+        }
     }
 }
 
