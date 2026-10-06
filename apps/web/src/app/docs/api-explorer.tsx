@@ -7,6 +7,7 @@ import { ThemePicker } from "../../components/theme-picker";
 import { Download, ExternalLink, Send } from "lucide-react";
 import Fuse from "fuse.js";
 import { OptionSelect } from "../../components/option-select";
+import { CopyButton } from "../../components/copy-button";
 
 type Schema = { $ref?: string; type?: string; nullable?: boolean; description?: string; properties?: Record<string, Schema>; required?: string[]; items?: Schema; additionalProperties?: boolean | Schema; enum?: string[]; format?: string; oneOf?: Schema[]; anyOf?: Schema[]; example?: unknown; minimum?: number; maxItems?: number };
 type Parameter = { name: string; in: string; required?: boolean; description?: string; schema: Schema; example?: unknown };
@@ -171,13 +172,6 @@ function OperationPanel({ entry: { path, operation: op, aliases }, spec, server,
       {hasRequested && liveResponse}
       {codeExample}
     </section>}
-    {tab !== "request" && <section role="tabpanel" id="operation-tab-panel" aria-labelledby={`tab-${tab}`} className="operation-body"><label className="response-status">Response<OptionSelect label="Response status" value={status} onChange={setStatus} options={Object.keys(op.responses).map((value) => ({ value, label: value }))} /></label><p className="subtle">{response.description}</p>{schema && (tab === "schema" ? <SchemaTree schema={schema} spec={spec} /> : <><span className="code-label">Synthetic shape example · not live data</span><pre>{JSON.stringify(example(schema, spec), null, 2)}</pre></>)}{response.headers && <details className="response-headers"><summary>Response headers</summary>{Object.entries(response.headers).map(([name, h]) => <p key={name}><code>{name}</code> — {h.description}</p>)}</details>}</section>}
+    {tab !== "request" && <section role="tabpanel" id="operation-tab-panel" aria-labelledby={`tab-${tab}`} className="operation-body"><label className="response-status">Response<OptionSelect label="Response status" value={status} onChange={setStatus} options={Object.keys(op.responses).map((value) => ({ value, label: value }))} /></label><p className="subtle">{response.description}</p>{schema && (tab === "schema" ? <SchemaTree schema={schema} spec={spec} /> : <><span className="code-label">Synthetic shape example · not live data</span><div className="synthetic-code"><CopyButton text={JSON.stringify(example(schema, spec), null, 2)} label="Copy example" /><pre>{JSON.stringify(example(schema, spec), null, 2)}</pre></div></>)}{response.headers && <details className="response-headers"><summary>Response headers</summary>{Object.entries(response.headers).map(([name, h]) => <p key={name}><code>{name}</code> — {h.description}</p>)}</details>}</section>}
   </article>;
-}
-
-function CopyButton({ text, label }: { text: string; label: string }) {
-  const [feedback, setFeedback] = useState("");
-  useEffect(() => { setFeedback(""); }, [text]);
-  useEffect(() => { if (!feedback) return; const timer = setTimeout(() => setFeedback(""), 2000); return () => clearTimeout(timer); }, [feedback]);
-  return <button className="copy-button" type="button" onClick={async () => { try { await navigator.clipboard.writeText(text); setFeedback("Copied ✓"); } catch { setFeedback("Select text to copy"); } }} aria-live="polite">{feedback || label}</button>;
 }
