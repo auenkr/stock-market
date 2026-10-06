@@ -41,6 +41,7 @@ impl Source {
     /// Fetch a URL with retries. Returns (body text, final URL, http status).
     pub async fn fetch_raw(&self, path: &str, ajax: bool) -> Result<(String, String, u16), DataError> {
         let url = self.url(path)?;
+        let source_path = url.path().to_string();
         let mut last_error: Option<DataError> = None;
         for attempt in 0..=3 {
             let request = self.client.get(url.clone()).header("Accept", "text/html, application/json");
@@ -52,6 +53,13 @@ impl Source {
                     let final_url = response.url().to_string();
                     // Retryable statuses go through backoff like the TS adapter.
                     if status == 408 || status == 429 || status >= 500 {
+                        tracing::warn!(
+                            event = "api.source.http_error",
+                            path = %source_path,
+                            response_path = %response.url().path(),
+                            status,
+                            attempt = attempt + 1
+                        );
                         let retry_after = response.headers().get("retry-after").and_then(|v| v.to_str().ok()).map(|s| s.to_string());
                         last_error = Some(upstream_error(Some(status)));
                         if attempt < 3 {
@@ -61,21 +69,44 @@ impl Source {
                         return Err(last_error.unwrap());
                     }
                     if status == 404 {
+                        tracing::warn!(event = "api.source.http_error", path = %source_path, status, attempt = attempt + 1);
                         return Err(upstream_error(Some(404)));
                     }
                     if status == 429 {
+                        tracing::warn!(event = "api.source.http_error", path = %source_path, status, attempt = attempt + 1);
                         return Err(upstream_error(Some(429)));
                     }
                     if !(200..300).contains(&status) {
+                        tracing::warn!(event = "api.source.http_error", path = %source_path, status, attempt = attempt + 1);
                         return Err(upstream_error(Some(status)));
                     }
                     let text = response.text().await.map_err(|_| upstream_error(None))?;
                     if is_login_page(&text) {
+                        let response_path = url::Url::parse(&final_url)
+                            .map(|url| url.path().to_string())
+                            .unwrap_or_default();
+                        tracing::warn!(
+                            event = "api.source.authentication_required",
+                            path = %source_path,
+                            response_path = %response_path,
+                            status,
+                            cookie_present = !self.cookie.is_empty(),
+                            attempt = attempt + 1
+                        );
                         return Err(DataError::new("The data source requires authentication", 502, "SOURCE_AUTH_REQUIRED"));
                     }
+                    tracing::debug!(event = "api.source.fetch_succeeded", path = %source_path, status, attempt = attempt + 1);
                     return Ok((text, final_url, status));
                 }
-                Err(_) => {
+                Err(error) => {
+                    tracing::warn!(
+                        event = "api.source.transport_error",
+                        path = %source_path,
+                        attempt = attempt + 1,
+                        timeout = error.is_timeout(),
+                        connect = error.is_connect(),
+                        error = %error
+                    );
                     last_error = Some(upstream_error(None));
                     if attempt < 3 {
                         backoff(attempt, None).await;
@@ -146,8 +177,22 @@ pub struct CachedText {
 
 fn is_login_page(text: &str) -> bool {
     let lower = text.to_lowercase();
-    (lower.contains("<title>") && (lower.contains("login") || lower.contains("sign in") || lower.contains("register")))
-        || lower.contains("form") && login_action(&lower)
+    title_indicates_login(&lower) || login_action(&lower)
+}
+
+fn title_indicates_login(lower: &str) -> bool {
+    let Some(title_tag) = lower.find("<title") else {
+        return false;
+    };
+    let Some(title_content_offset) = lower[title_tag..].find('>') else {
+        return false;
+    };
+    let title_start = title_tag + title_content_offset + 1;
+    let Some(title_end_offset) = lower[title_start..].find("</title>") else {
+        return false;
+    };
+    let title = &lower[title_start..title_start + title_end_offset];
+    title.contains("login") || title.contains("sign in") || title.contains("register")
 }
 
 fn login_action(lower: &str) -> bool {
@@ -198,6 +243,30 @@ pub fn validate_source_text(url: &url::Url, text: &str) -> Result<(), DataError>
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::is_login_page;
+
+    #[test]
+    fn company_page_with_login_and_register_links_is_not_a_login_page() {
+        let html = r#"<!doctype html><html><head><title>Reliance Industries Ltd share price</title></head>
+            <body><a href="/login/">Login</a><a href="/register/">Register</a>
+            <form action="/search/"></form></body></html>"#;
+
+        assert!(!is_login_page(html));
+    }
+
+    #[test]
+    fn login_title_is_detected() {
+        assert!(is_login_page("<html><head><title>Login - Screener</title></head></html>"));
+    }
+
+    #[test]
+    fn login_form_action_is_detected() {
+        assert!(is_login_page("<html><form action=\"/account/login/\"></form></html>"));
+    }
 }
 
 async fn backoff(attempt: u32, retry_after: Option<String>) {
