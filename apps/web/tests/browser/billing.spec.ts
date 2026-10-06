@@ -56,7 +56,7 @@ test("real console and signed Polar webhook upgrade existing keys, downgrade on 
   await page.goto("/pricing");
   await page.getByRole("link", { name: "Choose Personal", exact: true }).click();
   await expect(page).toHaveURL(/\/signin\?next=/);
-  await page.getByLabel("Username", { exact: true }).fill("dev");
+  await page.getByLabel("Username or email", { exact: true }).fill("dev");
   await page.getByLabel("Password", { exact: true }).fill("test-development-password");
   await page.getByRole("button", { name: "Sign in with password" }).click();
   await expect(page).toHaveURL(/\/dashboard\/billing$/);

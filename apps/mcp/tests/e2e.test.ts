@@ -23,19 +23,27 @@ async function devStackReady() {
 let mcpPort = 0;
 let mcp: Awaited<ReturnType<typeof startServer>>;
 let fixture: Awaited<ReturnType<typeof setup>> | undefined;
+let previousDevPlan: { api_plan: string; plan_expires_at: Date | null } | undefined;
 
 before(async () => {
   if (process.env.INTEGRATION_DATABASE_URL) {
     fixture = await setup({ seedUsagePolicy: false });
     apiUrl = fixture.urls[0]!;
     // The harness only accepts a stock_test_* database; grant screening access for this fixture user.
+    [previousDevPlan] = await fixture.sql`SELECT api_plan, plan_expires_at FROM "user" WHERE email = 'dev@auenkr.com'`;
     await fixture.sql`UPDATE "user" SET api_plan = 'professional', plan_expires_at = now() + interval '1 month' WHERE email = 'dev@auenkr.com'`;
   }
 });
 
 after(async () => {
   mcp?.close();
-  await fixture?.cleanup();
+  try {
+    if (fixture && previousDevPlan) {
+      await fixture.sql`UPDATE "user" SET api_plan = ${previousDevPlan.api_plan}, plan_expires_at = ${previousDevPlan.plan_expires_at} WHERE email = 'dev@auenkr.com'`;
+    }
+  } finally {
+    await fixture?.cleanup();
+  }
 });
 
 test("e2e: dev stack through MCP tools", { timeout: 120000, skip: process.env.TEST_MODE === "CICD" && !process.env.INTEGRATION_DATABASE_URL }, async (t) => {
