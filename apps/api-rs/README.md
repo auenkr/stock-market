@@ -40,6 +40,8 @@ the same file verifies the TypeScript service and this rewrite:
 | `PORT` | `3000` | Listen port |
 | `ENVIRONMENT` | `production` | `dev` exposes internal docs routes |
 | `DATABASE_URL` | — | Direct Postgres connection string (empty fails auth closed) |
+| `DATABASE_CA_CERT_FILE` | — | Optional PEM CA bundle path for a private database CA; certificates are added to the normal public roots for Postgres |
+| `DATABASE_TLS_VERIFY` | `false` | Verify the Postgres server certificate and hostname; `false` uses TLS without server identity verification |
 | `DB_POOL_MAX` | `5` | Postgres pool size |
 | `VALKEY_URL` | — | Valkey/Redis URL (empty disables caching) |
 | `VALKEY_CACHE_PREFIX` | `stock-market:{ENVIRONMENT}` | Cache namespace |
@@ -65,8 +67,16 @@ runtime executable.
 docker build -t stock-market-api-rs ./apps/api-rs
 docker run -p 3000:3000 \
   -e DATABASE_URL=postgresql://... \
+  -e DATABASE_TLS_VERIFY=true \
+  -e DATABASE_CA_CERT_FILE=/run/secrets/database-ca.pem \
+  -v /path/to/database-ca.pem:/run/secrets/database-ca.pem:ro \
   -e VALKEY_URL=redis://... \
   -e VALKEY_CACHE_PREFIX=stock-market:production \
   -e ENVIRONMENT=production \
   stock-market-api-rs
 ```
+
+By default, Postgres connections use TLS without verifying the server identity
+to match `sslmode=require` behavior. This still encrypts the connection, but can
+permit man-in-the-middle interception. Set `DATABASE_TLS_VERIFY=true` and
+provide `DATABASE_CA_CERT_FILE` to verify a private database CA.
