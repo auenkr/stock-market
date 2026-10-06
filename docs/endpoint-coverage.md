@@ -8,6 +8,7 @@ Partial means an independently sourced subset, not full field or history parity.
 
 | Use case | Tier | Path | Status | Coverage / missing data |
 | --- | --- | --- | --- | --- |
+| Search | paid | `/api/v1/screen` | partial | Run a company screen with one query expression; no company symbol or prior search is needed. Use exact measure labels. Example: Market Capitalization > 500 AND Price to Earning < 15. Comparisons, arithmetic, parentheses, AND, and OR are supported; the query limit is 4,000 characters. The public screening guide at https://stock-market.auenkr.com/documentation#screening has the full supported Ratios and User-created ratios lists, MCP/CLI examples, and instructions for translating user criteria into expressions. Returns the query, displayed columns, matching row count, and one object per company keyed by its displayed column headings; each row also includes Symbol, the company URL path extracted from its link. Missing cells are null. |
 | Company overview | free | `/api/v1/company-profile` | partial | Company description, website, exchange identifiers, classification, and market capitalization in INR crores. Missing values are null. |
 | Company overview | free | `/api/v1/basic-financials` | partial | Summary, business description, key points, current price data, and pros/cons analysis. Prices may be delayed. Market capitalization is INR crores; unavailable shares, trade time, and volume are null. |
 | Company overview | paid | `/api/v1/company-documents` | partial | Company documents grouped into annual reports, announcements, credit ratings, call transcripts, presentations, and other links. Exact dates may be null; missing document groups are empty arrays. |
@@ -31,4 +32,3 @@ Partial means an independently sourced subset, not full field or history parity.
 | Internal | paid | `/api/v1/index/market-price/historical` | excluded | Market history is excluded from this project. |
 | Internal | paid | `/api/v1/index/valuation/historical` | excluded | Market history is excluded from this project. |
 | Internal | paid | `/api/v1/commodity-price/{code}` | excluded | Market history is excluded from this project. |
-| Internal | paid | `/api/v1/screen` | partial | Runs a custom screening expression. Returns the query, displayed columns, matching row count, and one object per company. Numeric cells are numbers; unavailable cells are null. Query syntax and available measures are documented in the screening guide. |

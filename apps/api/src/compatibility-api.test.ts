@@ -74,7 +74,7 @@ test("all reference routes are registered with real response shapes or explicit 
     if (contract.resource === "screen") {
       assert.equal(body.count, 1);
       assert.deepEqual(body.columns, ["Company", "Market Capitalization"]);
-      assert.equal(body.data[0].symbol, "/company/ACME/");
+      assert.equal(body.data[0].Symbol, "/company/ACME/");
       assert.equal(body.data[0]["Market Capitalization"], 1234.5);
     }
     if (contract.status === "partial" && !unavailable) { assertShape(body, contract.response, contract.path); assert.equal(response.headers.get("x-data-coverage"), "partial"); }

@@ -62,7 +62,7 @@ test('every catalogue route preserves its schema, coverage, gaps and personal al
     if (contract.resource === 'screen') {
       assert.equal(body.count, 1);
       assert.deepEqual(body.columns, ['Company', 'Market Capitalization']);
-      assert.equal(body.data[0].symbol, '/company/ACME/');
+      assert.equal(body.data[0].Symbol, '/company/ACME/');
       assert.equal(body.data[0]['Market Capitalization'], 1234.5);
     }
     assert.equal(response.headers.get('cache-control'), 'no-store', path);

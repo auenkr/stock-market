@@ -6,12 +6,13 @@ Aliases stay beside their canonical endpoint in the API reference. Free/Paid lab
 
 ## 1. Search
 
-Search by company name or browse the paginated company list. Both return the original company URL path as symbol.
+Search by company name, browse the paginated company list, or screen companies with a financial expression. Search and listing return the original company URL path as symbol.
 
 | Use | Endpoint | Tier | Coverage |
 | --- | --- | --- | --- |
 | Search companies by name | `/v1/company-search` | free | legacy |
 | List companies | `/v1/list-of-company` | free | legacy |
+| Run a company screen | `/api/v1/screen` | paid | partial |
 
 ## 2. Company overview
 
@@ -52,7 +53,6 @@ Supplementary ownership, corporate actions, results calendar, upcoming IPOs, ful
 | Market corporate actions | `/api/v1/corporate-actions/all` | paid | partial |
 | Results calendar | `/api/v1/results-calendar` | free | partial |
 | List upcoming IPOs | `/v1/list-of-ipo` | free | legacy |
-| Run a company screen | `/api/v1/screen` | paid | partial |
 | Get detailed company data | `/v1/company-data` | paid | legacy |
 | Extract a company dataset | `/v1/extract` | paid | legacy |
 | Service health | `/health` | free | service |

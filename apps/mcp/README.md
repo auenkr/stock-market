@@ -40,4 +40,20 @@ The resource is available to registered public OAuth clients after explicit user
 
 ## Tools
 
-Search (`search_companies`, `list_companies`), Company overview (`company_profile`, `basic_financials`, `company_documents`), Finance (`peer_comparison`, `quarterly_profit_loss`, `profit_loss`, `balance_sheet`, `cash_flow`, `ratios`, `shareholding_pattern`, `shareholding_distribution`).
+Search and screening (`search_companies`, `list_companies`, `screen_companies`), Company overview (`company_profile`, `basic_financials`, `company_documents`), Finance (`peer_comparison`, `quarterly_profit_loss`, `profit_loss`, `balance_sheet`, `cash_flow`, `ratios`, `shareholding_pattern`, `shareholding_distribution`).
+
+### Screen companies
+
+Call `screen_companies` with one `query` string. A screen evaluates a company universe, so it does not take a company symbol and does not require calling `search_companies` first. Ask the user about missing thresholds or units instead of guessing, then use the exact field labels from the [screening guide](https://stock-market.auenkr.com/documentation#screening).
+
+```json
+{
+  "query": "Market Capitalization > 500 AND Price to Earning < 15 AND Return on capital employed > 22%"
+}
+```
+
+The expression supports comparisons (`>`, `<`, `>=`, `<=`, `=`), arithmetic (`+`, `-`, `*`, `/`), parentheses, and `AND`/`OR`. Keep the expression under 4,000 characters. Prefer `AND` when every criterion must match; use parentheses when combining `AND` and `OR`. Use units stated in the measure gallery. For example, market capitalization is compared in INR crores and percentage measures use percentage points when displayed with `%`.
+
+The result contains `query`, `count`, `columns`, and `data`. Each data row uses the displayed column labels as JSON keys, includes the company's URL-valued `Symbol`, and preserves unavailable values as `null`. Treat the count and rows as the matches returned for that query, not as proof of complete market coverage. Screening access requires Personal or Professional; MCP and API calls use the account's shared allowance.
+
+The public [screening guide](https://stock-market.auenkr.com/documentation#screening) includes the ratio catalog, more expression examples, response details, and guidance for turning a user's request into a query. The [API reference](https://stock-market.auenkr.com/docs#endpoint=%2Fapi%2Fv1%2Fscreen) shows the request and response schema.

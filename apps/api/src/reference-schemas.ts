@@ -47,7 +47,7 @@ export const responseSchemas: Record<string, Schema> = {
   corporate_actions: envelope("actions", array(corporateActionRow)),
   dividend: envelope("dividend", array(object({ adj_amount: number, amount: number, date: text, dividend_type: text, subject: text }))),
   results_calendar: array(object({ company_name: text, expected_result_date: text, symbol: text })),
-  screen: object({ query: { type: "string" }, count: { type: "integer" }, columns: array({ type: "string" }), data: array({ type: "object", additionalProperties: { oneOf: [{ type: "string" }, { type: "number" }, { type: "null" }] } }) }),
+  screen: object({ query: { type: "string" }, count: { type: "integer" }, columns: array({ type: "string" }), data: array({ type: "object", properties: { Symbol: { oneOf: [{ type: "string" }, { type: "null" }], description: "Company URL path extracted from its result link; null when no company link is present." } }, required: ["Symbol"], additionalProperties: { oneOf: [{ type: "string" }, { type: "number" }, { type: "null" }] } }) }),
   index_market_price_historical: object({ index_symbol: text, rows: array(object({ index_symbol: text, quote_date: text, ...fields(["change_pct", "close_price", "high_price", "low_price", "open_price", "points_change", "timestamp", "turnover", "volume"]) })) }),
   index_valuation_historical: object({ index_symbol: text, rows: array(object({ quote_date: text, ...fields(["div_yield", "pb", "pe", "timestamp"]) })) }),
   commodity_price: array(object({ date_header: text, timestamp: number, value: number })),

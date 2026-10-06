@@ -23,21 +23,34 @@ function parseScreenRows(html: string) {
   const table = html.match(/<table\b[^>]*class=["'][^"']*data-table[^"']*["'][^>]*>([\s\S]*?)<\/table>/i)?.[1]
     ?? html.match(/<table\b[^>]*class=["'][^"']*results-table[^"']*["'][^>]*>([\s\S]*?)<\/table>/i)?.[1];
   if (!table) throw new DataError("Screen results could not be parsed", 502, "UPSTREAM_SCHEMA_CHANGED");
-  const headers = [...(table.match(/<thead\b[\s\S]*?<\/thead>/i)?.[0] ?? "").matchAll(/<th\b[^>]*>([\s\S]*?)<\/th>/gi)].map((m) => htmlText(m[1]!));
-  const body = table.match(/<tbody\b[\s\S]*?<\/tbody>/i)?.[0] ?? table;
-  const rows = [...body.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)].map((row) => {
-    const cells = [...row[1]!.matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)].map((m) => m[1]!);
-    if (!cells.length) return null;
+  const tableRows = [...table.matchAll(/<tr\b[^>]*>[\s\S]*?<\/tr>/gi)];
+  const headerRow = tableRows.find((row) => /<th\b/i.test(row[0]!));
+  const headerCells = [...(headerRow?.[0] ?? "").matchAll(/<th\b[^>]*>([\s\S]*?)<\/th>/gi)];
+  const headers = headerCells.map((match, index) => {
+    // Units are rendered in nested spans, while the short visible label is the
+    // useful object key (for example "CMP" instead of "CMP Rs.").
+    const label = htmlText(match[1]!.replace(/<span\b[^>]*>[\s\S]*?<\/span>/gi, " "));
+    if (/^(?:s\.?\s*no\.?|col_no_header)$/i.test(label) || (!label && index === 0)) return "Order";
+    return label || `Column ${index + 1}`;
+  });
+  if (!headers.length) throw new DataError("Screen result column headers could not be parsed", 502, "UPSTREAM_SCHEMA_CHANGED");
+  const rows = tableRows.filter((row) => row !== headerRow && /<td\b/i.test(row[0]!)).map((row) => {
+    const cells = [...row[0]!.matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)].map((match) => match[1]!);
     const result: Record<string, string | number | null> = {};
-    cells.forEach((cell, index) => {
-      const key = headers[index] || `column_${index + 1}`;
+    let symbol: string | null = null;
+    headers.forEach((key, index) => {
+      const cell = cells[index] ?? "";
       const link = cell.match(/<a\b[^>]*href=["']([^"']*\/company\/[^"']*)["'][^>]*>([\s\S]*?)<\/a>/i);
       const text = htmlText(link?.[2] ?? cell);
-      if (index === 0 && link) result.symbol = decodeHtml(link[1]!);
-      result[key] = text === "" || text === "-" ? null : /^-?\d+(?:,\d{3})*(?:\.\d+)?%?$/.test(text) ? Number(text.replace(/,/g, "").replace(/%$/, "")) : text;
+      if (link) symbol = decodeHtml(link[1]!);
+      result[key] = text === "" || text === "-" ? null
+        : key === "Order" && /^\d+\.$/.test(text) ? Number(text.slice(0, -1))
+        : /^-?\d+(?:,\d{3})*(?:\.\d+)?%?$/.test(text) ? Number(text.replace(/,/g, "").replace(/%$/, ""))
+        : text;
     });
+    result.Symbol = symbol;
     return result;
-  }).filter((row): row is Record<string, string | number | null> => row !== null);
+  });
   return { columns: headers, rows };
 }
 
