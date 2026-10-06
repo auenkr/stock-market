@@ -50,7 +50,7 @@ test('public health, docs and contracts; CORS preflight; protected paths fail cl
 });
 
 test('every catalogue route preserves its schema, coverage, gaps and personal aliases over HTTP', async () => {
-  const values: Record<string, string> = { symbol: 'ACME', symbols: 'ACME', statement_type: 's', statement_code: 'pl', period: 'annual', ratio_type: 'pr', group: 'sub_industry', value: 'Widgets', from_date: '2024-01-01', to_date: '2024-12-31', corp_action: 'bonus', category: 'monthly_index', code: '123', index_symbol: 'NIF50' };
+  const values: Record<string, string> = { symbol: 'ACME', symbols: 'ACME', query: 'Market capitalization > 500', statement_type: 's', statement_code: 'pl', period: 'annual', ratio_type: 'pr', group: 'sub_industry', value: 'Widgets', from_date: '2024-01-01', to_date: '2024-12-31', corp_action: 'bonus', category: 'monthly_index', code: '123', index_symbol: 'NIF50' };
   for (const contract of endpointCatalog) {
     const query = new URLSearchParams();
     for (const parameter of contract.parameters) if (parameter.required && parameter.in === 'query') query.set(parameter.name, parameter.name === 'symbol' ? '/company/ACME/' : values[parameter.name]!);
@@ -59,6 +59,12 @@ test('every catalogue route preserves its schema, coverage, gaps and personal al
     const unavailable = contract.status === 'unavailable';
     assert.equal(response.status, contract.status === 'excluded' ? 404 : unavailable ? 501 : 200, path);
     const body = await response.json() as any;
+    if (contract.resource === 'screen') {
+      assert.equal(body.count, 1);
+      assert.deepEqual(body.columns, ['Company', 'Market Capitalization']);
+      assert.equal(body.data[0].symbol, '/company/ACME/');
+      assert.equal(body.data[0]['Market Capitalization'], 1234.5);
+    }
     assert.equal(response.headers.get('cache-control'), 'no-store', path);
     assert.equal(response.headers.get('x-data-source'), null, path);
     if (contract.status === 'partial' && !unavailable) { shape(body, contract.response, path); assert.equal(response.headers.get('x-data-coverage'), 'partial'); }
