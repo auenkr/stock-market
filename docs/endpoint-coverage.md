@@ -19,7 +19,6 @@ Partial means an independently sourced subset, not full field or history parity.
 | Finance | paid | `/api/v1/ratios` | partial | Profitability ratios as fractions (0.25 means 25%), plus the reported historical ratio table. Only symbol is accepted. |
 | Finance | paid | `/api/v1/shareholding-pattern` | partial | Quarterly ownership percentages for categories and disclosed holders. Missing percentages are null. This is not a complete shareholder register. Only symbol is accepted. |
 | Finance | paid | `/api/v1/shareholdings/distribution` | partial | Quarterly ownership categories and percentages by reporting period. Only URL-valued symbol is accepted. Category-specific counts, voting rights, and share totals may be null. |
-| Screening | paid | `/api/v1/screen` | partial | Runs a custom screening expression. Returns the query, displayed columns, matching row count, and one object per company. Numeric cells are numbers; unavailable cells are null. Query syntax and available measures are documented in the screening guide. |
 | Internal | paid | `/api/v1/daily-price-ratios` | excluded | Market history is excluded from this project. |
 | Internal | paid | `/api/v1/annual-price-ratios` | excluded | Market history is excluded from this project. |
 | Internal | paid | `/api/v1/shareholdings/summary` | partial | Reporting period, total shareholder count, and promoter percentage where available. Share counts, voting rights, pledges, and warrants may be null. |
@@ -32,3 +31,4 @@ Partial means an independently sourced subset, not full field or history parity.
 | Internal | paid | `/api/v1/index/market-price/historical` | excluded | Market history is excluded from this project. |
 | Internal | paid | `/api/v1/index/valuation/historical` | excluded | Market history is excluded from this project. |
 | Internal | paid | `/api/v1/commodity-price/{code}` | excluded | Market history is excluded from this project. |
+| Internal | paid | `/api/v1/screen` | partial | Runs a custom screening expression. Returns the query, displayed columns, matching row count, and one object per company. Numeric cells are numbers; unavailable cells are null. Query syntax and available measures are documented in the screening guide. |

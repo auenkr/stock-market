@@ -19,6 +19,7 @@ function setup() {
   const requests: string[] = [];
   const fetcher: typeof fetch = async (input) => {
     const url = new URL(String(input)); requests.push(url.pathname + url.search);
+    if (url.pathname.endsWith("/screen/raw/")) return new Response('<table class="data-table"><thead><tr><th>Company</th><th>Market Capitalization</th></tr></thead><tbody><tr><td><a href="/company/ACME/">Acme Ltd</a></td><td>1,234.5</td></tr></tbody></table>');
     if (url.pathname.endsWith("/peers")) return new Response(directory);
     if (url.pathname.startsWith("/api/")) return Response.json({});
     if (url.pathname.startsWith("/actions/") || url.pathname.startsWith("/upcoming-results/")) return new Response('<table id="result_list"><tbody></tbody></table>');
@@ -60,7 +61,7 @@ test("source parser distinguishes missing numbers, extracts identifiers and pres
 
 test("all reference routes are registered with real response shapes or explicit dataset gaps", async () => {
   const { app } = setup();
-  const values: Record<string, string> = { symbol: "ACME", symbols: "ACME", statement_type: "s", statement_code: "pl", period: "annual", ratio_type: "pr", group: "sub_industry", value: "Widgets", from_date: "2024-01-01", to_date: "2024-12-31", corp_action: "bonus", category: "monthly_index", code: "123", index_symbol: "NIF50" };
+  const values: Record<string, string> = { symbol: "ACME", symbols: "ACME", query: "Market capitalization > 500", statement_type: "s", statement_code: "pl", period: "annual", ratio_type: "pr", group: "sub_industry", value: "Widgets", from_date: "2024-01-01", to_date: "2024-12-31", corp_action: "bonus", category: "monthly_index", code: "123", index_symbol: "NIF50" };
   for (const contract of endpointCatalog) {
     let path = contract.path.replace(/\{([^}]+)\}/g, (_, name: string) => values[name]!);
     const query = new URLSearchParams();
@@ -70,6 +71,12 @@ test("all reference routes are registered with real response shapes or explicit 
     const unavailable = contract.status === "unavailable";
     assert.equal(response.status, contract.status === "excluded" ? 404 : unavailable ? 501 : 200, contract.path);
     const body = await response.json<any>();
+    if (contract.resource === "screen") {
+      assert.equal(body.count, 1);
+      assert.deepEqual(body.columns, ["Company", "Market Capitalization"]);
+      assert.equal(body.data[0].symbol, "/company/ACME/");
+      assert.equal(body.data[0]["Market Capitalization"], 1234.5);
+    }
     if (contract.status === "partial" && !unavailable) { assertShape(body, contract.response, contract.path); assert.equal(response.headers.get("x-data-coverage"), "partial"); }
     else if (unavailable) assert.equal(body.code, "DATASET_UNAVAILABLE");
     if (contract.status !== "excluded" && contract.path.startsWith("/api/v")) {
