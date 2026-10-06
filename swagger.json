@@ -67,7 +67,7 @@
   ],
   "servers": [
     {
-      "url": "https://stock-market-api-dev.auenkr.com",
+      "url": "http://localhost:8787",
       "description": "API server (configure your running instance)"
     }
   ],
