@@ -52,6 +52,7 @@ export function createCompatibilityApi(providerFactory: ProviderFactory = defaul
     endpoints: endpointCatalog.map(({ response: _, parameters: __, ...endpoint }) => ({ ...endpoint, useCase: endpointUseCase(endpoint.path).id, order: endpointOrder(endpoint.path) })),
   }));
   for (const contract of endpointCatalog.filter((x) => x.status !== "excluded")) {
+    if (contract.resource === "screen") continue;
     const paths = [contract.path];
     if (contract.path.startsWith("/api/v")) paths.push(contract.path.replace(/^\/api/, ""));
     for (const path of paths) app.get(path.replace(/\{([^}]+)\}/g, ":$1"), async (c) => {
@@ -78,5 +79,25 @@ export function createCompatibilityApi(providerFactory: ProviderFactory = defaul
       }
     });
   }
+  const runScreen = async (c: Context<{ Bindings: Bindings; Variables: AccessVariables }>) => {
+    const contract = endpointCatalog.find((entry) => entry.resource === "screen")!;
+    try {
+      const query = c.req.query("query");
+      if (Object.keys(c.req.query()).some((name) => name !== "query") || c.req.queries("query")?.length !== 1) throw new DataError("Only one query parameter is accepted", 400, "INVALID_QUERY");
+      if (!query?.trim() || query.length > 4000) throw new DataError("query must be a non-empty string of at most 4000 characters", 400, "INVALID_QUERY");
+      if (!hasDetailedData(c.get("apiPlan") ?? "free")) throw new DataError("This endpoint requires Personal or Professional", 403, "PAID_PLAN_REQUIRED");
+      const provider = providerFactory(c.env ?? {}, c.get("sourceCache"));
+      const result = await provider.execute("screen", { query: query.trim() });
+      c.header("Cache-Control", "no-store");
+      c.header("X-Data-Coverage", "partial");
+      return c.json(result.body as Record<string, unknown>);
+    } catch (error) {
+      const failure = error instanceof DataError ? error : new DataError("Could not run the requested screen", 502, "UPSTREAM_UNAVAILABLE");
+      c.header("Cache-Control", "no-store");
+      return c.json({ error: failure.message, code: failure.code, endpoint: contract.path, docs: "/v1/coverage" }, failure.status);
+    }
+  };
+  app.get("/api/v1/screen", runScreen);
+  app.get("/v1/screen", runScreen);
   return app;
 }

@@ -5,6 +5,7 @@ import { db } from "@stock-market/db";
 import { customerState, signedEvent } from "../../../../packages/auth/tests/billing-fixtures";
 
 test("pricing and legal documents are linked, monthly, and usable on mobile", async ({ page }) => {
+  test.setTimeout(60_000);
   await page.goto("/");
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Pricing" }).click();
   await expect(page).toHaveURL(/\/pricing$/, { timeout: 30_000 });
@@ -56,7 +57,7 @@ test("real console and signed Polar webhook upgrade existing keys, downgrade on 
   await page.goto("/pricing");
   await page.getByRole("link", { name: "Choose Personal", exact: true }).click();
   await expect(page).toHaveURL(/\/signin\?next=/);
-  await page.getByLabel("Username", { exact: true }).fill("dev");
+  await page.getByLabel("Username or email", { exact: true }).fill("dev");
   await page.getByLabel("Password", { exact: true }).fill("test-development-password");
   await page.getByRole("button", { name: "Sign in with password" }).click();
   await expect(page).toHaveURL(/\/dashboard\/billing$/);

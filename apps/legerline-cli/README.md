@@ -55,6 +55,9 @@ legerline get_api_v1_profit_loss --symbol /company/RELIANCE/consolidated/
 legerline get_api_v1_balance_sheet --symbol /company/RELIANCE/consolidated/
 legerline get_api_v1_cash_flow --symbol /company/RELIANCE/consolidated/
 legerline get_api_v1_ratios --symbol /company/RELIANCE/consolidated/
+
+# Screen companies (quote the complete expression so the shell passes one value)
+legerline get_api_v1_screen --query 'Market Capitalization > 500 AND Price to Earning < 15'
 ```
 
 Results are JSON on stdout; errors go to stderr with a non-zero exit code:
@@ -70,5 +73,19 @@ Error: Cannot reach API at https://stock-market-api.auenkr.com
 
 - Always call `get_v1_company_search` (or `get_v1_list_of_company`) first and pass
   the returned `symbol` unchanged to company endpoints.
+- For `get_api_v1_screen`, pass one complete expression to `--query`; screening
+  does not take a `symbol` and does not require a search call first. Ask for
+  unclear thresholds or units rather than inventing them. Use exact measure
+  labels from the [screening guide](https://stock-market.auenkr.com/documentation#screening).
+- Supported syntax includes comparisons (`>`, `<`, `>=`, `<=`, `=`), arithmetic
+  (`+`, `-`, `*`, `/`), parentheses, and `AND`/`OR`. Keep the expression within
+  4,000 characters. Quote it as one shell argument; the CLI URL-encodes it.
+- Screening JSON rows use displayed column names as keys and include a URL-valued
+  `Symbol`. Missing cells remain `null`; the returned rows are the matches
+  available for that query, not a guarantee of complete market coverage.
 - Amounts are INR rupees; may be `null` when unavailable.
 - Free tier is limited to RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, SBIN.
+
+Screening requires Personal or Professional access. REST, MCP and CLI requests
+share the account's plan access and rate allowance. See the [screening guide](https://stock-market.auenkr.com/documentation#screening)
+for the complete supported ratio catalog and agent query-writing examples.

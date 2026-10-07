@@ -27,8 +27,10 @@ export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError
     setError("");
     setPending("dev");
     try {
+      const enteredUsername = username.trim().toLowerCase();
       const result = await authClient.signIn.email({
-        email: `${username.trim().toLowerCase()}@auenkr.com`, password, callbackURL: destination,
+        email: enteredUsername.includes("@") ? enteredUsername : `${enteredUsername}@auenkr.com`,
+        password, callbackURL: destination,
       });
       if (result.error) {
         setError(result.error.message || "Could not sign in.");
@@ -79,7 +81,7 @@ export function AuthForm({ mode, googleEnabled, devEnabled = false, initialError
       {devEnabled && (isLogin || oauth) && <>
         <div className="auth-divider"><span>Development login</span></div>
         <form className="form" onSubmit={signInDev}>
-          <label className="field-label" htmlFor="dev-username">Username<input id="dev-username" className="input" autoComplete="username" required value={username} onChange={(event) => setUsername(event.target.value)} disabled={pending !== null} /></label>
+          <label className="field-label" htmlFor="dev-username">Username or email<input id="dev-username" className="input" autoComplete="username" required value={username} onChange={(event) => setUsername(event.target.value)} disabled={pending !== null} /></label>
           <label className="field-label" htmlFor="dev-password">Password<input id="dev-password" className="input" type="password" autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} disabled={pending !== null} /></label>
           <button className="button secondary" type="submit" disabled={pending !== null}>{pending === "dev" ? "Signing in…" : "Sign in with password"}</button>
         </form>

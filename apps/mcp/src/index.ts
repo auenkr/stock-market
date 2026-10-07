@@ -1,5 +1,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { realpathSync } from "node:fs";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { pathToFileURL } from "node:url";
 import { createMcpServer, DEFAULT_API_URL, extractApiKey, type AuthShape } from "./shared.js";
 
 export function parseArgs(argv: string[]): { port: number; host: string; apiUrl: string; help: boolean } {
@@ -116,5 +118,5 @@ async function main() {
   }
 }
 
-const invokedDirectly = process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href;
+const invokedDirectly = process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
 if (invokedDirectly) await main();

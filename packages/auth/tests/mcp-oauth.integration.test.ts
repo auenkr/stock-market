@@ -19,6 +19,7 @@ process.env.API_KEY_ENCRYPTION_SECRET = secret;
 const { auth } = await import("../src/index.js");
 const uid = randomUUID();
 let clientId = "";
+const additionalClientIds: string[] = [];
 let cookie = "";
 const call = (path: string, body?: unknown, signedIn = false, extra: Record<string, string> = {}) => auth.handler(new Request(`${origin}/api/auth${path}`, {
   method: body ? "POST" : "GET", headers: { origin, ...(body ? { "Content-Type": path === "/oauth2/token" ? "application/x-www-form-urlencoded" : "application/json" } : {}), ...(signedIn ? { cookie } : {}), ...extra }, ...(body ? { body: path === "/oauth2/token" ? new URLSearchParams(body as Record<string, string>).toString() : JSON.stringify(body) } : {}),
@@ -29,7 +30,7 @@ const bridge = (token: string, overrides: Record<string, string> = {}) => {
   const signature = createHmac("sha256", secret).update(`${timestamp}.${JSON.stringify(body)}`).digest("hex");
   return call("/mcp/access", body, false, { "X-MCP-Timestamp": timestamp, "X-MCP-Signature": signature, ...overrides });
 };
-after(async () => { await db.$client`DELETE FROM oauth_client WHERE client_id = ${clientId}`; await db.$client`DELETE FROM "user" WHERE id = ${uid}`; await db.$client.end(); });
+after(async () => { for (const id of [clientId, ...additionalClientIds]) await db.$client`DELETE FROM oauth_client WHERE client_id = ${id}`; await db.$client`DELETE FROM "user" WHERE id = ${uid}`; await db.$client.end(); });
 
 test("Better Auth account linking, PKCE, refresh, account quota and revocation", async () => {
   assert.match(process.env.INTEGRATION_DATABASE_URL || "", /stock_test_/);
@@ -97,6 +98,27 @@ test("Better Auth account linking, PKCE, refresh, account quota and revocation",
   assert.equal((await authorizeAccountRequest(access.apiKey, env, db.$client)).status, "limited");
   const refreshed = await checkedJson(await call("/oauth2/token", { grant_type: "refresh_token", client_id: clientId, refresh_token: tokens.refresh_token, resource }));
   assert.equal((await checkedJson(await bridge(refreshed.access_token))).apiKey, access.apiKey);
+  // ChatGPT/custom connectors can dynamically register a new client on reconnect.
+  // Both new clients and replaced consent must reuse the account's backing key.
+  const reconnect = async () => {
+    const response = await call("/oauth2/register", { client_name: "MCP reconnect", redirect_uris: [redirectUri], token_endpoint_auth_method: "none", grant_types: ["authorization_code", "refresh_token"], response_types: ["code"], scope: "market:read offline_access" });
+    const registration = await response.json() as any;
+    assert([200, 201].includes(response.status), JSON.stringify(registration));
+    additionalClientIds.push(registration.client_id);
+    const reconnectQuery = new URLSearchParams(query);
+    reconnectQuery.set("client_id", registration.client_id);
+    const authorize = await call(`/oauth2/authorize?${reconnectQuery}`, undefined, true);
+    const consent = await checkedJson(await call("/oauth2/consent", { accept: true, oauth_query: new URL(authorize.headers.get("location")!, origin).search.slice(1) }, true));
+    return checkedJson(await call("/oauth2/token", { ...tokenBody, client_id: registration.client_id, code: new URL(consent.url).searchParams.get("code") }));
+  };
+  const reconnected = await reconnect();
+  const accesses = await Promise.all(Array.from({ length: 4 }, () => bridge(reconnected.access_token).then(checkedJson)));
+  assert(accesses.every(result => result.apiKey === access.apiKey));
+  assert.equal((await db.select().from(apiKey).where(eq(apiKey.userId, uid))).length, 1, "reconnecting and concurrent requests must not create extra keys");
+  const [originalConsent] = await db.select().from(oauthConsent).where(eq(oauthConsent.userId, uid));
+  assert(originalConsent, "OAuth authorization must persist consent");
+  await db.update(oauthConsent).set({ id: randomUUID() }).where(eq(oauthConsent.id, originalConsent.id));
+  assert.equal((await checkedJson(await bridge(refreshed.access_token))).apiKey, access.apiKey, "replaced consent must reuse the key");
   const originalFetch = globalThis.fetch;
   globalThis.fetch = (async (input, init) => {
     const url = String(input);
@@ -118,6 +140,10 @@ test("Better Auth account linking, PKCE, refresh, account quota and revocation",
     await db.update(apiKey).set({ revokedAt: new Date() }).where(eq(apiKey.id, keyRecord.id));
     const revoked = await worker.fetch(new Request(resource, { method: "POST", headers: { Authorization: `Bearer ${refreshed.access_token}` } }), workerEnv);
     assert.equal(revoked.status, 401);
+    assert.equal((await bridge(reconnected.access_token)).status, 401, "another connection cannot bypass key revocation");
+    const afterRevocation = await reconnect();
+    assert.equal((await bridge(afterRevocation.access_token)).status, 401, "fresh registration cannot recreate a revoked key");
+    assert.equal((await db.select().from(apiKey).where(eq(apiKey.userId, uid))).length, 1);
   } finally { globalThis.fetch = originalFetch; }
   assert((await call("/oauth2/token", tokenBody)).status >= 400, "code reuse must fail");
   await db.update(apiKey).set({ revokedAt: null }).where(eq(apiKey.id, keyRecord.id));

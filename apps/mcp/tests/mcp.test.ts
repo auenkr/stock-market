@@ -26,6 +26,11 @@ before(async () => {
       res.end(JSON.stringify({ name: "Reliance Industries" }));
       return;
     }
+    if (url.pathname === "/api/v1/screen") {
+      res.writeHead(200, { "content-type": "application/json" });
+      res.end(JSON.stringify({ query: url.searchParams.get("query"), count: 0, columns: [], data: [] }));
+      return;
+    }
     if (url.pathname === "/api/v1/profit-loss") {
       res.writeHead(403, { "content-type": "application/json" });
       res.end(JSON.stringify({ error: "Paid plan required", code: "PAID_PLAN_REQUIRED" }));
@@ -72,8 +77,9 @@ test("lists public tools only", async () => {
   const names = tools.map((t) => t.name);
   assert.ok(names.includes("company_profile"));
   assert.ok(names.includes("search_companies"));
+  assert.ok(names.includes("screen_companies"));
   assert.equal(names.some((n) => /internal|dividend|corporate|ownership|results|ipo|extract/.test(n)), false);
-  assert.equal(tools.length, 13);
+  assert.equal(tools.length, 14);
   for (const tool of tools) {
     assert.deepEqual(tool.annotations, {
       readOnlyHint: true,
@@ -91,6 +97,10 @@ test("forwards API key and query params", async () => {
   assert.equal(lastUpstreamAuth, "bearer-key");
   assert.equal(lastUpstreamUrl, "/v1/company-search?q=reliance");
   assert.match((result.content as { text: string }[])[0]!.text, /Reliance Industries/);
+  const screened = await client.callTool({ name: "screen_companies", arguments: { query: "Market Capitalization > 500 AND Price to Earning < 15" } });
+  assert.equal(lastUpstreamAuth, "bearer-key");
+  assert.equal(new URL(`http://localhost${lastUpstreamUrl}`).searchParams.get("query"), "Market Capitalization > 500 AND Price to Earning < 15");
+  assert.match((screened.content as { text: string }[])[0]!.text, /"count": 0/);
   await client.close();
 });
 

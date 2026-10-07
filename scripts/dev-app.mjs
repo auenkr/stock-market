@@ -28,7 +28,10 @@ if (app === "api") {
   const file = resolve(directory, ".env");
   writeFileSync(file, Object.entries(bindings).map(([key, value]) => `${key}=${JSON.stringify(value)}`).join("\n"), { mode: 0o600 });
   const cli = resolve(require.resolve("wrangler/package.json"), "..", "bin/wrangler.js");
-  const child = run([cli, "dev", "--port", process.env.API_PORT ?? "8787", "--env-file", file], { cwd, command: process.execPath });
+  const remoteDev = process.env.API_DEV_REMOTE === "true";
+  const args = [cli, "dev", "--port", process.env.API_PORT ?? "8787", "--env-file", file];
+  if (remoteDev) args.push("--env", "dev", "--remote");
+  const child = run(args, { cwd, command: process.execPath });
   child.once("exit", () => rmSync(directory, { recursive: true, force: true }));
 } else if (app === "web") {
   const cli = resolve(require.resolve("next/package.json"), "..", "dist/bin/next");
