@@ -1,11 +1,11 @@
-name: Build and publish Rust API image (dev)
+name: Build and publish Rust API image
 
 on:
   push:
-    branches: [dev]
+    branches: [dev, main]
     paths:
       - apps/api-rs/**
-      - .github/workflows/build-api-image-dev.yml
+      - .github/workflows/build-api-image.yml
   workflow_dispatch:
 
 permissions:
@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   build-and-push:
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
@@ -41,7 +41,9 @@ jobs:
         with:
           images: auenkr/stock-market-api-rs
           tags: |
-            type=raw,value=dev
+            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
+            type=raw,value=dev-latest,enable=${{ github.ref == 'refs/heads/dev' }}
+            type=raw,value=main-latest,enable=${{ github.ref == 'refs/heads/main' }}
             type=sha,prefix=sha-
 
       - name: Build and push multi-platform image
