@@ -242,6 +242,131 @@ pub struct Analysis {
     pub cons: Vec<String>,
 }
 
+#[derive(Debug, Clone)]
+pub struct ScreenResults {
+    pub columns: Vec<String>,
+    pub rows: Vec<serde_json::Value>,
+}
+
+/// Parse the result table returned by Screener's /screen/raw/ endpoint.
+pub fn parse_screen_rows(html: &str) -> Result<ScreenResults, String> {
+    let doc = Html::parse_document(html);
+    let data_table = sel("table.data-table");
+    let results_table = sel("table.results-table");
+    let table = doc.select(&data_table).next().or_else(|| doc.select(&results_table).next())
+        .ok_or_else(|| "Screen results could not be parsed".to_string())?;
+
+    let row_selector = sel("tr");
+    let cell_selector = sel("td");
+    let header_selector = sel("th");
+    let table_rows: Vec<_> = table.select(&row_selector).collect();
+    let header_row_index = table_rows.iter().position(|row| row.select(&header_selector).next().is_some())
+        .ok_or_else(|| "Screen result column headers could not be parsed".to_string())?;
+    let header_row = table_rows[header_row_index];
+    let mut columns = Vec::new();
+    for (index, th) in header_row.select(&header_selector).enumerate() {
+        let mut label = text_of(th);
+        // Screener nests display units (for example "Rs.") in spans. The
+        // TypeScript parser omits those spans and keeps the visible short label.
+        for span in th.select(&sel("span")) {
+            let unit = text_of(span);
+            if !unit.is_empty() {
+                if let Some(prefix) = label.strip_suffix(&unit) {
+                    label = prefix.trim().to_string();
+                }
+            }
+        }
+        let label = label.trim();
+        let name = if label.is_empty() && index == 0 || is_serial_header(label) {
+            "Order".to_string()
+        } else if label.is_empty() {
+            format!("Column {}", index + 1)
+        } else {
+            label.to_string()
+        };
+        columns.push(name);
+    }
+    if columns.is_empty() {
+        return Err("Screen result column headers could not be parsed".to_string());
+    }
+
+    let mut rows = Vec::new();
+    for (row_index, row) in table_rows.into_iter().enumerate() {
+        if row_index == header_row_index {
+            continue;
+        }
+        let cells: Vec<_> = row.select(&cell_selector).collect();
+        if cells.is_empty() {
+            continue;
+        }
+        let mut values = serde_json::Map::new();
+        let mut symbol = serde_json::Value::Null;
+        for (index, header) in columns.iter().enumerate() {
+            let Some(cell) = cells.get(index) else {
+                values.insert(header.clone(), serde_json::Value::Null);
+                continue;
+            };
+            if let Some(link) = cell.select(&sel("a[href*='/company/']")).next() {
+                if let Some(href) = link.value().attr("href") {
+                    symbol = serde_json::Value::String(href.to_string());
+                }
+            }
+            values.insert(header.clone(), screen_cell_value(&text_of(*cell), header));
+        }
+        values.insert("Symbol".to_string(), symbol);
+        rows.push(serde_json::Value::Object(values));
+    }
+    Ok(ScreenResults { columns, rows })
+}
+
+fn is_serial_header(label: &str) -> bool {
+    let normalized = label.to_ascii_lowercase().replace(['.', ' ', '\t', '\n', '\r'], "");
+    normalized == "sno"
+        || label.trim().eq_ignore_ascii_case("col_no_header")
+}
+
+fn screen_cell_value(text: &str, header: &str) -> serde_json::Value {
+    let value = text.trim();
+    if value.is_empty() || value == "-" {
+        return serde_json::Value::Null;
+    }
+    if header == "Order" && value.ends_with('.') {
+        if let Ok(order) = value[..value.len() - 1].parse::<i64>() {
+            return serde_json::json!(order);
+        }
+    }
+    screen_numeric_value(value).map(serde_json::Value::from).unwrap_or_else(|| serde_json::Value::String(value.to_string()))
+}
+
+fn screen_numeric_value(value: &str) -> Option<f64> {
+    // Keep this aligned with the TypeScript screen parser: only plain numbers,
+    // conventionally comma-grouped numbers, and a trailing percent sign become
+    // JSON numbers. Currency/unit annotations remain strings.
+    let number = value.strip_suffix('%').unwrap_or(value);
+    let number = number.strip_prefix('-').unwrap_or(number);
+    if number.is_empty() {
+        return None;
+    }
+    let (integer, fraction) = match number.split_once('.') {
+        Some((integer, fraction)) if !fraction.is_empty() && !fraction.contains('.') => (integer, Some(fraction)),
+        Some(_) => return None,
+        None => (number, None),
+    };
+    let integer_valid = if integer.contains(',') {
+        let mut groups = integer.split(',');
+        let first = groups.next()?;
+        (1..=3).contains(&first.len())
+            && first.bytes().all(|b| b.is_ascii_digit())
+            && groups.all(|group| group.len() == 3 && group.bytes().all(|b| b.is_ascii_digit()))
+    } else {
+        !integer.is_empty() && integer.bytes().all(|b| b.is_ascii_digit())
+    };
+    if !integer_valid || fraction.is_some_and(|digits| !digits.bytes().all(|b| b.is_ascii_digit())) {
+        return None;
+    }
+    value.replace(',', "").trim_end_matches('%').parse::<f64>().ok().filter(|n| n.is_finite())
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CompanySnapshot {
@@ -658,5 +783,48 @@ fn collect_sections<'a>(el: scraper::ElementRef<'a>, out: &mut Vec<(String, scra
             }
         }
         collect_sections(child, out);
+    }
+}
+
+#[cfg(test)]
+mod screen_tests {
+    use super::parse_screen_rows;
+    use serde_json::json;
+
+    #[test]
+    fn parses_screen_headers_units_numeric_cells_and_company_symbols() {
+        let html = r#"<table class="data-table"><thead><tr>
+            <th>S.No.</th><th>Company</th><th>CMP<span> Rs.</span></th><th>Change %</th><th>Notes</th>
+            </tr></thead><tbody>
+            <tr><td>1.</td><td><a href="/company/ACME/">Acme &amp; Co</a></td><td>1,234.5</td><td>4.5%</td><td>-</td></tr>
+            <tr><td>2.</td><td>Unlinked Co</td><td>-</td><td></td></tr>
+            </tbody></table>"#;
+        let parsed = parse_screen_rows(html).unwrap();
+        assert_eq!(parsed.columns, ["Order", "Company", "CMP", "Change %", "Notes"]);
+        assert_eq!(parsed.rows.len(), 2);
+        assert_eq!(parsed.rows[0]["Order"], json!(1));
+        assert_eq!(parsed.rows[0]["Company"], json!("Acme & Co"));
+        assert_eq!(parsed.rows[0]["CMP"], json!(1234.5));
+        assert_eq!(parsed.rows[0]["Change %"], json!(4.5));
+        assert_eq!(parsed.rows[0]["Notes"], json!(null));
+        assert_eq!(parsed.rows[0]["Symbol"], json!("/company/ACME/"));
+        assert_eq!(parsed.rows[1]["Order"], json!(2));
+        assert_eq!(parsed.rows[1]["CMP"], json!(null));
+        assert_eq!(parsed.rows[1]["Notes"], json!(null));
+        assert_eq!(parsed.rows[1]["Symbol"], json!(null));
+    }
+
+    #[test]
+    fn screen_values_only_coerce_plain_numbers_and_percentages() {
+        assert_eq!(super::screen_cell_value("1,234 Cr", "Market Cap"), json!("1,234 Cr"));
+        assert_eq!(super::screen_cell_value("₹1,234", "CMP"), json!("₹1,234"));
+        assert_eq!(super::screen_cell_value("12,34.5", "CMP"), json!("12,34.5"));
+        assert_eq!(super::screen_cell_value("-1,234.5%", "Change"), json!(-1234.5));
+    }
+
+    #[test]
+    fn rejects_screen_html_without_a_results_table_or_headers() {
+        assert_eq!(parse_screen_rows("<html><body>Login</body></html>").unwrap_err(), "Screen results could not be parsed");
+        assert_eq!(parse_screen_rows("<table class='results-table'><tbody><tr><td>1</td></tr></tbody></table>").unwrap_err(), "Screen result column headers could not be parsed");
     }
 }

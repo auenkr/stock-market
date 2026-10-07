@@ -415,6 +415,19 @@ impl Provider {
     }
 
     pub async fn execute(&self, resource: &str, query: &HashMap<String, String>) -> Result<DataResult, DataError> {
+        if resource == "screen" {
+            let expression = query.get("query").map(|value| value.trim()).filter(|value| !value.is_empty())
+                .ok_or_else(|| DataError::new("query must be a non-empty string of at most 4000 characters", 400, "INVALID_QUERY"))?;
+            if expression.encode_utf16().count() > 4000 {
+                return Err(DataError::new("query must be a non-empty string of at most 4000 characters", 400, "INVALID_QUERY"));
+            }
+            let html = self.html(&format!("/screen/raw/?query={}", urlencoding(expression)), false).await?;
+            let parsed = parse_screen_rows(&html).map_err(|message| DataError::new(message, 502, "UPSTREAM_SCHEMA_CHANGED"))?;
+            return Ok(DataResult {
+                body: json!({ "query": expression, "count": parsed.rows.len(), "columns": parsed.columns, "data": parsed.rows }),
+                headers: [("X-Data-Coverage".to_string(), "partial".to_string())].into_iter().collect(),
+            });
+        }
         let page: i64 = query.get("page").and_then(|p| p.parse().ok()).unwrap_or(1);
         let symbol = query.get("symbol").cloned();
         let within = |date: &Option<String>| {
@@ -739,6 +752,57 @@ fn urlencoding(s: &str) -> String {
 
 fn url_path(url: &str) -> String {
     url::Url::parse(url).map(|u| u.path().to_string()).unwrap_or_default()
+}
+
+#[cfg(test)]
+mod screen_tests {
+    use super::Provider;
+    use crate::source::Source;
+    use serde_json::json;
+    use std::collections::HashMap;
+    use tokio::{io::{AsyncReadExt, AsyncWriteExt}, net::TcpListener};
+
+    #[tokio::test]
+    async fn screen_resource_fetches_raw_results_and_returns_screen_contract() {
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let html = r#"<table class="data-table"><thead><tr><th>Company</th><th>Market Capitalization</th></tr></thead><tbody><tr><td><a href="/company/ACME/">Acme Ltd</a></td><td>1,234.5</td></tr></tbody></table>"#;
+        let server = tokio::spawn(async move {
+            let (mut stream, _) = listener.accept().await.unwrap();
+            let mut request = Vec::new();
+            let mut chunk = [0; 1024];
+            loop {
+                let count = stream.read(&mut chunk).await.unwrap();
+                request.extend_from_slice(&chunk[..count]);
+                if count == 0 || request.windows(4).any(|window| window == b"\r\n\r\n") {
+                    break;
+                }
+            }
+            let request = String::from_utf8(request).unwrap();
+            let target = request.split_whitespace().nth(1).unwrap();
+            let url = url::Url::parse(&format!("http://localhost{target}")).unwrap();
+            assert_eq!(url.path(), "/screen/raw/");
+            assert_eq!(url.query_pairs().find(|(key, _)| key == "query").unwrap().1, "Market Capitalization > 500");
+            let response = format!(
+                "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+                html.len(), html
+            );
+            stream.write_all(response.as_bytes()).await.unwrap();
+        });
+
+        let source = Source::new(format!("http://{address}"), String::new(), None, 0);
+        let provider = Provider::new(source);
+        let query = HashMap::from([("query".to_string(), "Market Capitalization > 500".to_string())]);
+        let result = provider.execute("screen", &query).await.unwrap();
+        server.await.unwrap();
+
+        assert_eq!(result.body["query"], json!("Market Capitalization > 500"));
+        assert_eq!(result.body["count"], json!(1));
+        assert_eq!(result.body["columns"], json!(["Company", "Market Capitalization"]));
+        assert_eq!(result.body["data"][0]["Symbol"], json!("/company/ACME/"));
+        assert_eq!(result.body["data"][0]["Market Capitalization"], json!(1234.5));
+        assert_eq!(result.headers.get("X-Data-Coverage").map(String::as_str), Some("partial"));
+    }
 }
 
 #[derive(Debug, Clone)]

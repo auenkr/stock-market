@@ -16,6 +16,7 @@ pub struct Parameter {
     pub location: &'static str,
     pub required: bool,
     pub schema_type: Option<&'static str>,
+    pub max_length: Option<usize>,
     pub values: Option<&'static [&'static str]>,
     pub format_date: bool,
 }
@@ -32,7 +33,7 @@ pub struct Contract {
 }
 
 fn param(name: &'static str, values: Option<&'static [&'static str]>, required: bool) -> Parameter {
-    Parameter { name, location: "query", required, schema_type: Some("string"), values, format_date: false }
+    Parameter { name, location: "query", required, schema_type: Some("string"), max_length: None, values, format_date: false }
 }
 fn symbol_param() -> Parameter {
     param("symbol", None, true)
@@ -41,7 +42,7 @@ fn period_param() -> Parameter {
     param("period", Some(&["annual", "quarterly"]), true)
 }
 fn date_param(name: &'static str, required: bool) -> Parameter {
-    Parameter { name, location: "query", required, schema_type: Some("string"), values: None, format_date: true }
+    Parameter { name, location: "query", required, schema_type: Some("string"), max_length: None, values: None, format_date: true }
 }
 fn company(resource: &'static str, title: &'static str, tier: &'static str) -> Contract {
     Contract {
@@ -87,6 +88,7 @@ fn limitation_for(resource: &str) -> &'static str {
         "corporate-actions/all" => "Paginated market corporate-action records. Optional action filters split, bonus, rights, or dividend; omit it for all. Optional URL-valued symbol selects a single company, including its rights records. Market-wide dividend amounts may be null. Date filters apply to the requested page; follow X-Next-Page.",
         "dividend" => "Dividend dates, INR per share, type, and description. Dates use YYYY-MM-DD; historically adjusted amounts are unavailable.",
         "results-calendar" => "Upcoming results within a YYYY-MM-DD date window. Filters apply to each requested page. Dates indicate expected publication dates. Past calendars are unavailable.",
+        "screen" => "Run a company screen with one query expression; no company symbol or prior search is needed. Use exact measure labels. Example: Market Capitalization > 500 AND Price to Earning < 15. Comparisons, arithmetic, parentheses, AND, and OR are supported; the query limit is 4,000 characters. Returns the query, displayed columns, matching row count, and one object per company keyed by its displayed column headings; each row also includes Symbol, the company URL path extracted from its link. Missing cells are null.",
         _ => "The connected source does not supply this dataset.",
     }
 }
@@ -104,17 +106,18 @@ pub fn endpoint_catalog() -> Vec<Contract> {
         company("ratios", "Ratios", "paid"),
         company("shareholding-pattern", "Shareholding pattern", "paid"),
         company("shareholdings/distribution", "Shareholding distribution", "paid"),
+        endpoint("screen", "Run a company screen", vec![Parameter { name: "query", location: "query", required: true, schema_type: Some("string"), max_length: Some(4000), values: None, format_date: false }], "partial", Some("/api/v1/screen"), "paid"),
         endpoint("daily-price-ratios", "Price ratios daily", vec![symbol_param()], "excluded", None, "paid"),
         endpoint("annual-price-ratios", "Price ratios annual", vec![symbol_param()], "excluded", None, "paid"),
         endpoint("shareholdings/summary", "Ownership structure", vec![symbol_param(), period_param()], "partial", None, "paid"),
         endpoint("shareholdings/ownership-current", "Current owners", vec![symbol_param()], "partial", None, "paid"),
         endpoint("shareholdings/ownership-history", "Owner history", vec![symbol_param(), period_param()], "partial", None, "paid"),
         endpoint("corporate-actions/all", "Market corporate actions",
-            vec![Parameter { name: "symbol", location: "query", required: false, schema_type: Some("string"), values: None, format_date: false },
-                 Parameter { name: "action", location: "query", required: false, schema_type: Some("string"), values: Some(&["split", "bonus", "rights", "dividend"]), format_date: false },
+            vec![Parameter { name: "symbol", location: "query", required: false, schema_type: Some("string"), max_length: None, values: None, format_date: false },
+                 Parameter { name: "action", location: "query", required: false, schema_type: Some("string"), max_length: None, values: Some(&["split", "bonus", "rights", "dividend"]), format_date: false },
                  date_param("from_date", false), date_param("to_date", false)], "partial", None, "paid"),
         endpoint("corporate-actions", "Company corporate actions",
-            vec![symbol_param(), Parameter { name: "action", location: "query", required: false, schema_type: Some("string"), values: Some(&["split", "bonus", "rights", "dividend"]), format_date: false }], "partial", None, "paid"),
+            vec![symbol_param(), Parameter { name: "action", location: "query", required: false, schema_type: Some("string"), max_length: None, values: Some(&["split", "bonus", "rights", "dividend"]), format_date: false }], "partial", None, "paid"),
         company("dividend", "Dividends", "paid"),
         endpoint("results-calendar", "Results calendar", vec![date_param("from_date", true), date_param("to_date", true)], "partial", None, "free"),
         endpoint("index/market-price/historical", "Index historical market price",
@@ -122,7 +125,7 @@ pub fn endpoint_catalog() -> Vec<Contract> {
         endpoint("index/valuation/historical", "Index valuation",
             vec![param("index_symbol", None, true), date_param("from_date", true), date_param("to_date", true)], "excluded", None, "paid"),
         endpoint("commodity-price", "Commodity price trend",
-            vec![Parameter { name: "code", location: "path", required: true, schema_type: Some("integer"), values: None, format_date: false }], "excluded", Some("/api/v1/commodity-price/{code}"), "paid"),
+            vec![Parameter { name: "code", location: "path", required: true, schema_type: Some("integer"), max_length: None, values: None, format_date: false }], "excluded", Some("/api/v1/commodity-price/{code}"), "paid"),
     ];
     catalog.sort_by_key(|c| endpoint_order(c.path));
     catalog
@@ -132,7 +135,7 @@ pub const PAGED_RESOURCES: &[&str] = &["results-calendar", "corporate-actions/al
 
 pub fn journey() -> Vec<(&'static str, &'static str, &'static str, Vec<&'static str>)> {
     vec![
-        ("company-search", "Search", "Search by company name or browse the paginated company list. Both return the original company URL path as symbol.", vec!["/v1/company-search", "/v1/list-of-company"]),
+        ("company-search", "Search", "Search by company name, browse the paginated company list, or screen companies with a financial expression. Search and listing return the original company URL path as symbol.", vec!["/v1/company-search", "/v1/list-of-company", "/api/v1/screen"]),
         ("company-overview", "Company overview", "Company profile, basic finance, business description, analysis, and documents.", vec!["/api/v1/company-profile", "/api/v1/basic-financials", "/api/v1/company-documents"]),
         ("finance", "Finance", "Peer comparison, quarterly and annual profit and loss, balance sheet, cash flow, ratios, shareholding pattern and distribution. Only symbol is required; its URL selects standalone or consolidated data.", vec!["/api/v1/peer-comparison", "/api/v1/quarterly-profit-loss", "/api/v1/profit-loss", "/api/v1/balance-sheet", "/api/v1/cash-flow", "/api/v1/ratios", "/api/v1/shareholding-pattern", "/api/v1/shareholdings/distribution"]),
         ("internal", "Internal", "Supplementary ownership, corporate actions, results calendar, upcoming IPOs, full-company extraction, and service endpoints. Documented only in dev mode.", vec![
@@ -181,6 +184,11 @@ pub fn validate_query(contract: &Contract, params: &HashMap<String, String>, pat
         if let Some(values) = parameter.values {
             if !values.contains(&value.as_str()) {
                 return Err(DataError::new(format!("{} must be one of: {}", parameter.name, values.join(", ")), 400, "INVALID_QUERY"));
+            }
+        }
+        if let Some(max_length) = parameter.max_length {
+            if value.encode_utf16().count() > max_length {
+                return Err(DataError::new(format!("{} must be a non-empty string of at most {} characters", parameter.name, max_length), 400, "INVALID_QUERY"));
             }
         }
         if parameter.schema_type == Some("integer") && !value.bytes().all(|b| b.is_ascii_digit()) {
@@ -272,6 +280,7 @@ pub fn coverage_document() -> Value {
 fn parameter_note(name: &str) -> &'static str {
     match name {
         "symbol" => "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
+        "query" => "Screening expression using exact measure labels. Supports >, <, >=, <=, =, arithmetic (+ - * /), parentheses, AND and OR. Maximum 4,000 characters; send exactly one query parameter. Example: Market Capitalization > 500 AND Price to Earning < 15. Full ratio catalog and MCP/CLI instructions: https://stock-market.auenkr.com/documentation#screening.",
         "period" => "Reporting frequency: annual or quarterly.",
         "action" => "Optional corporate-action filter: split, bonus, rights, or dividend. Omit to return all corporate actions.",
         "page" => "One-based source page. Continue with X-Next-Page until empty; filters are applied within each page.",
@@ -284,6 +293,7 @@ fn parameter_note(name: &str) -> &'static str {
 fn example_for(name: &str) -> Value {
     match name {
         "symbol" => json!("/company/RELIANCE/consolidated/"),
+        "query" => json!("Market Capitalization > 500 AND Price to Earning < 15"),
         "period" => json!("quarterly"),
         "action" => json!("bonus"),
         "page" => json!(1),
@@ -309,6 +319,9 @@ pub fn openapi_spec(origin: &str, environment: &str) -> Value {
                 schema.insert("type".to_string(), json!(p.schema_type.unwrap_or("string")));
                 if let Some(values) = p.values {
                     schema.insert("enum".to_string(), json!(values));
+                }
+                if let Some(max_length) = p.max_length {
+                    schema.insert("maxLength".to_string(), json!(max_length));
                 }
                 json!({ "name": p.name, "in": p.location, "required": p.required, "description": parameter_note(p.name), "schema": schema, "example": example_for(p.name) })
             })
@@ -380,7 +393,15 @@ pub fn openapi_spec(origin: &str, environment: &str) -> Value {
         "tags": journey().iter().map(|(_, title, description, _)| json!({ "name": title, "description": description })).collect::<Vec<_>>(),
         "x-user-journey": journey().iter().enumerate().map(|(i, (id, title, description, _))| json!({ "id": id, "title": title, "description": description, "order": i + 1 })).collect::<Vec<_>>(),
         "components": { "securitySchemes": { "apiKey": { "type": "apiKey", "in": "header", "name": "X-API-Key" } },
-            "schemas": { "Error": { "type": "object", "required": ["error", "code"], "properties": { "error": { "type": "string" }, "code": { "type": "string" } } } } },
+            "schemas": {
+                "Error": { "type": "object", "required": ["error", "code"], "properties": { "error": { "type": "string" }, "code": { "type": "string" } } },
+                "screen": { "type": "object", "required": ["query", "count", "columns", "data"], "properties": {
+                    "query": { "type": "string" },
+                    "count": { "type": "integer" },
+                    "columns": { "type": "array", "items": { "type": "string" } },
+                    "data": { "type": "array", "items": { "type": "object", "required": ["Symbol"], "properties": { "Symbol": { "type": "string", "nullable": true, "description": "Company URL path extracted from its result link; null when no company link is present." } }, "additionalProperties": { "oneOf": [{ "type": "string" }, { "type": "number" }, { "type": "string", "nullable": true }] } } }
+                } }
+            } },
         "paths": paths,
     });
     if environment != "dev" {
@@ -404,4 +425,28 @@ fn journey_title(id: &str) -> &'static str {
 fn error_response(description: &str) -> Value {
     json!({ "description": description, "headers": { "X-Request-ID": { "description": "Request identifier.", "schema": { "type": "string" } } },
         "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } })
+}
+
+#[cfg(test)]
+mod screen_tests {
+    use super::{endpoint_catalog, openapi_spec};
+
+    #[test]
+    fn screen_is_a_paid_catalog_endpoint_with_both_api_aliases_documented() {
+        let contract = endpoint_catalog()
+            .into_iter()
+            .find(|contract| contract.resource == "screen")
+            .unwrap();
+        assert_eq!(contract.path, "/api/v1/screen");
+        assert_eq!(contract.tier, "paid");
+        assert_eq!(contract.parameters[0].name, "query");
+        assert!(contract.parameters[0].required);
+        assert_eq!(contract.parameters[0].max_length, Some(4000));
+
+        let spec = openapi_spec("https://api.example", "dev");
+        assert_eq!(spec["paths"]["/api/v1/screen"]["get"]["x-alias"], false);
+        assert_eq!(spec["paths"]["/v1/screen"]["get"]["x-alias"], true);
+        assert_eq!(spec["paths"]["/api/v1/screen"]["get"]["parameters"][0]["schema"]["maxLength"], 4000);
+        assert!(spec["components"]["schemas"]["screen"].is_object());
+    }
 }

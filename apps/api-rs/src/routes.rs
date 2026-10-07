@@ -347,6 +347,40 @@ async fn compat_handler(
     }
 }
 
+async fn screen_handler(
+    State(state): State<AppState>,
+    Extension(authed): Extension<Authed>,
+    Query(multi): Query<Vec<(String, String)>>,
+) -> Response {
+    const ENDPOINT: &str = "/api/v1/screen";
+    let query_count = multi.iter().filter(|(name, _)| name == "query").count();
+    if query_count != 1 || multi.iter().any(|(name, _)| name != "query") {
+        return DataError::new("Only one query parameter is accepted", 400, "INVALID_QUERY").into_compat_response(ENDPOINT);
+    }
+    let expression = multi.iter().find(|(name, _)| name == "query").map(|(_, value)| value.as_str()).unwrap_or("");
+    if expression.trim().is_empty() || expression.encode_utf16().count() > 4000 {
+        return DataError::new("query must be a non-empty string of at most 4000 characters", 400, "INVALID_QUERY").into_compat_response(ENDPOINT);
+    }
+    if !has_detailed_data(&authed.plan) {
+        return DataError::new("This endpoint requires Personal or Professional", 403, "PAID_PLAN_REQUIRED").into_compat_response(ENDPOINT);
+    }
+    let query = [("query".to_string(), expression.trim().to_string())].into_iter().collect();
+    match state.provider.execute("screen", &query).await {
+        Ok(result) => {
+            let mut builder = Response::builder().status(StatusCode::OK);
+            for (name, value) in &result.headers {
+                if name.eq_ignore_ascii_case("x-data-coverage") || name.eq_ignore_ascii_case("x-data-source") {
+                    continue;
+                }
+                builder = builder.header(name.to_lowercase(), value.as_str());
+            }
+            builder = builder.header("x-data-coverage", "partial");
+            builder.body(axum::body::Body::from(serde_json::to_string(&result.body).unwrap())).unwrap()
+        }
+        Err(error) => error.into_compat_response(ENDPOINT),
+    }
+}
+
 // --- legacy routes ----------------------------------------------------------
 
 fn raw_pairs(multi: &[(String, String)]) -> Vec<(String, String)> {
@@ -483,9 +517,14 @@ pub fn router(state: AppState) -> axum::Router {
         .route("/v1/company-data", get(legacy_company_data))
         .route("/api/company-data", get(legacy_company_data))
         .route("/v1/extract", get(legacy_extract))
-        .route("/api/extract", get(legacy_extract));
+        .route("/api/extract", get(legacy_extract))
+        .route("/api/v1/screen", get(screen_handler))
+        .route("/v1/screen", get(screen_handler));
     // Compatibility datasets + personal aliases, excluding removed resources.
     for contract in endpoint_catalog().iter().filter(|c| c.status != "excluded") {
+        if contract.resource == "screen" {
+            continue;
+        }
         app = app.route(contract.path, get(compat_handler));
         if let Some(alias) = contract.path.strip_prefix("/api") {
             app = app.route(alias, get(compat_handler));

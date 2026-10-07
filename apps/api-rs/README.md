@@ -19,6 +19,16 @@ the same file verifies the TypeScript service and this rewrite:
   database. Set `CONTRACT_DATABASE_URL` and optionally `VALKEY_URL` first; CI
   provisions both services automatically.
 
+## Company screening
+
+`GET /api/v1/screen` (also `/v1/screen`) accepts one `query` expression up to
+4,000 characters and requires Personal or Professional access. The response
+contains the expression, displayed columns, row count and parsed company rows;
+each row includes `Symbol` when Screener provides a company link. The Rust
+adapter fetches `/screen/raw/`, parses its result table, and caches the upstream
+HTML using the normal source-cache rules. See [`docs/screening.md`](../../docs/screening.md)
+for supported syntax, measure names, and MCP/CLI examples.
+
 ## Latency design
 
 - **Direct Postgres pool** (`DATABASE_URL`). Hyperdrive is a Workers-only

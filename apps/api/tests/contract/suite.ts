@@ -176,7 +176,7 @@ export async function defineContractSuite(ctx: ContractContext) {
   });
 
   await test('every catalogue route preserves status, shape, coverage headers and personal aliases', async () => {
-    const values: Record<string, string> = { symbol: 'ACME', symbols: 'ACME', statement_type: 's', statement_code: 'pl', period: 'annual', ratio_type: 'pr', group: 'sub_industry', value: 'Widgets', from_date: '2024-01-01', to_date: '2024-12-31', corp_action: 'bonus', category: 'monthly_index', code: '123', index_symbol: 'NIF50' };
+    const values: Record<string, string> = { symbol: 'ACME', symbols: 'ACME', query: 'Market Capitalization > 500 AND Price to Earning < 15', statement_type: 's', statement_code: 'pl', period: 'annual', ratio_type: 'pr', group: 'sub_industry', value: 'Widgets', from_date: '2024-01-01', to_date: '2024-12-31', corp_action: 'bonus', category: 'monthly_index', code: '123', index_symbol: 'NIF50' };
     for (const contract of endpointCatalog) {
       const query = new URLSearchParams();
       for (const parameter of contract.parameters) if (parameter.required && parameter.in === 'query') query.set(parameter.name, parameter.name === 'symbol' ? '/company/ACME/' : values[parameter.name]!);
@@ -184,6 +184,12 @@ export async function defineContractSuite(ctx: ContractContext) {
       const response = await request(path);
       assert.equal(response.status, contract.status === 'excluded' ? 404 : contract.status === 'unavailable' ? 501 : 200, path);
       const body = await response.json() as any;
+      if (contract.resource === 'screen') {
+        assert.equal(body.count, 1);
+        assert.deepEqual(body.columns, ['Company', 'Market Capitalization']);
+        assert.equal(body.data[0].Symbol, '/company/ACME/');
+        assert.equal(body.data[0]['Market Capitalization'], 1234.5);
+      }
       assert.equal(response.headers.get('cache-control'), 'no-store', path);
       assert.equal(response.headers.get('x-data-source'), null, path);
       if (contract.status === 'partial') {
@@ -208,6 +214,23 @@ export async function defineContractSuite(ctx: ContractContext) {
     const response = await request('/v1/profit-loss');
     assert.equal(response.status, 400);
     assert.deepEqual(await response.json(), { error: 'symbol parameter is required', code: 'INVALID_QUERY', endpoint: '/api/v1/profit-loss', docs: '/v1/coverage' });
+  });
+
+  await test('screen endpoint enforces one bounded expression and paid access', async () => {
+    const duplicate = await request('/api/v1/screen?query=Market%20Cap%20%3E%201&query=Price%20%3C%202', ctx.keys.secret);
+    assert.equal(duplicate.status, 400);
+    assert.equal((await duplicate.json() as any).code, 'INVALID_QUERY');
+    const extra = await request('/v1/screen?query=Market%20Cap%20%3E%201&page=1', ctx.keys.secret);
+    assert.equal(extra.status, 400);
+    assert.equal((await extra.json() as any).error, 'Only one query parameter is accepted');
+    const empty = await request('/v1/screen?query=%20%20', ctx.keys.secret);
+    assert.equal(empty.status, 400);
+    const tooLong = await request(`/v1/screen?query=${'x'.repeat(4001)}`, ctx.keys.secret);
+    assert.equal(tooLong.status, 400);
+    assert.equal((await tooLong.json() as any).code, 'INVALID_QUERY');
+    const free = await request('/v1/screen?query=Market%20Capitalization%20%3E%20500', ctx.keys.freeSecret);
+    assert.equal(free.status, 403);
+    assert.equal((await free.json() as any).code, 'PAID_PLAN_REQUIRED');
   });
 
   await test('legacy envelopes: listing, search, IPO, company data and extraction', async () => {
