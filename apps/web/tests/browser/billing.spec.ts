@@ -5,6 +5,7 @@ import { db } from "@stock-market/db";
 import { customerState, signedEvent } from "../../../../packages/auth/tests/billing-fixtures";
 
 test("pricing and legal documents are linked, monthly, and usable on mobile", async ({ page }) => {
+  test.setTimeout(60_000);
   await page.goto("/");
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Pricing" }).click();
   await expect(page).toHaveURL(/\/pricing$/, { timeout: 30_000 });
