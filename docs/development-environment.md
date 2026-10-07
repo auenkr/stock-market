@@ -5,11 +5,13 @@
 | Service | Development | Production |
 | --- | --- | --- |
 | Web / auth / billing | https://stock-market-web-dev.vercel.app | https://stock-market.auenkr.com |
-| REST API | https://stock-market-api-dev.auenkr.com | https://stock-market-api.auenkr.com |
+| REST API | https://stock-market-api-dev.auenkr.com (Rust) | https://stock-market-api.auenkr.com (Rust) |
 | MCP | https://stock-market-mcp-dev.auenkr.com/mcp | https://stock-market-mcp.auenkr.com/mcp |
 
-Wrangler's named `dev` environment deploys separate `stock-market-api-dev` and
-`stock-market-mcp-dev` Workers and provisions their Cloudflare custom domains.
+The Rust REST API runs as a container on the existing API host and is exposed
+through that machine's Cloudflare Tunnel. Wrangler must not attach the API
+hostname to a Worker. The hosted MCP remains a Cloudflare Worker
+(`stock-market-mcp-dev`).
 The web has its own Vercel project, **stock-market-web-dev**, with root directory
 `apps/web` and Node.js 24. Its stable Vercel domain is used for auth and callbacks.
 GitHub Actions deploys this project explicitly; it is not connected to automatic
@@ -31,7 +33,7 @@ these local jobs. CLI clients can target the dev API with their API URL option.
 ```text
 feature branch → pull request into dev → Tests + Build → merge
   → full CI again on the dev commit
-  → deploy dev web, API and MCP → live smoke checks
+  → deploy dev web and MCP → smoke-check the tunnel-hosted Rust API and MCP
   → successful GitHub development deployment
   → pull request dev → main → CI + Dev promotion + existing Vercel checks
   → merge → existing production deployment workflow
@@ -89,7 +91,6 @@ The web project's **Production** target contains:
 
 ```dotenv
 ENVIRONMENT=dev
-POLAR_ENVIRONMENT=sandbox
 BETTER_AUTH_URL=https://stock-market-web-dev.vercel.app
 WEB_URL=https://stock-market-web-dev.vercel.app
 NEXT_PUBLIC_API_URL=https://stock-market-api-dev.auenkr.com
@@ -110,19 +111,15 @@ used the fallback, set `API_KEY_ENCRYPTION_SECRET` to the original
 `BETTER_AUTH_SECRET` plus `:api-key-encryption-v1` before changing the auth secret.
 A new encryption key cannot decrypt existing API keys.
 
-The dev API uses the signed web account-service bridge at
-`/api/internal/account-access`, with the same `ACCOUNT_SERVICE_SECRET` as the
-dev web. The API's `COOKIE` secret comes from the supplied source credentials.
-The dev MCP uses the dev API and dev web OAuth issuer; its
+The Rust dev API connects directly to the dev database and uses the source
+cookie from the supplied Screener credentials. Its Cloudflare Tunnel hostname
+is unchanged. The dev MCP uses the dev API and dev web OAuth issuer; its
 `MCP_ACCOUNT_SERVICE_SECRET` must match the dev web.
 
-The cache prefix is `stock-market:dev`. `VALKEY_URL` is optional and was not in
-the supplied `.env`; without it, the API fetches upstream directly. To enable
-shared dev caching, add that secret to the dev API Worker:
-
-```sh
-pnpm --filter @stock-market/api exec wrangler secret put VALKEY_URL --env dev
-```
+The Rust API cache prefix is `stock-market:dev`. `VALKEY_URL` is optional; when
+it is absent, the API fetches upstream directly. The API host reads its runtime
+configuration from the existing deployment environment; Wrangler secrets do
+not configure this container.
 
 Development password login is available at `/signin`; enter username `dev`
 (the form appends `@auenkr.com`) with the existing development account password.
@@ -155,17 +152,20 @@ separate test.
 
 From the repository root, after configuring the private provider environments:
 
+The Rust API image runs on the existing Tunnel host. This GitHub workflow
+smoke-checks its public endpoint but does not redeploy that container. Update
+the API container on its host before promoting a Rust API change.
+
 ```sh
 pnpm install --frozen-lockfile
-pnpm --filter '@stock-market/api^...' build
-pnpm --filter @stock-market/api deploy:dev
 pnpm --filter @auenkr/legerline-mcp deploy:dev
 vercel link --yes --project stock-market-web-dev
 vercel deploy --prod --yes
 node scripts/smoke-dev.mjs
 ```
 
-`scripts/smoke-dev.mjs` verifies public web/auth availability, API/MCP health,
+`scripts/smoke-dev.mjs` verifies public web/auth availability, health for the
+tunnel-hosted Rust API and MCP,
 dev-only documentation, OAuth issuer/resource/documentation URLs, and signed
 API/MCP calls through the dev web account service. It uses invalid credentials
 to check rejection and wiring without creating accounts or charging quota.

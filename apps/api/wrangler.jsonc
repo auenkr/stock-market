@@ -29,12 +29,6 @@
   },
   "workers_dev": false,
   "preview_urls": false,
-  "routes": [
-    {
-      "pattern": "stock-market-api.auenkr.com",
-      "custom_domain": true
-    }
-  ],
   "env": {
     "dev": {
       "name": "stock-market-api-dev",
@@ -55,7 +49,6 @@
         "PUBLIC_URL": "https://stock-market-api-dev.auenkr.com",
         "ACCOUNT_SERVICE_URL": "https://stock-market-web-dev.vercel.app/api/internal/account-access"
       },
-      "routes": [{ "pattern": "stock-market-api-dev.auenkr.com", "custom_domain": true }]
     }
   }
 }
