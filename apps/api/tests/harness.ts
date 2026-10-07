@@ -50,6 +50,7 @@ export async function setup({ seedUsagePolicy = true }: { seedUsagePolicy?: bool
       if (url.pathname.includes('/FAIL/')) { res.writeHead(503); res.end('Unavailable'); return; }
       if (url.pathname.includes('/LOGIN/')) { res.end('<title>Login</title><form action="/login/">'); return; }
       if (url.pathname === '/api/company/search/') { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify([{ name: 'Acme Ltd', url: '/company/ACME/' }])); return; }
+      if (url.pathname.endsWith('/screen/raw/')) { res.end('<table class="data-table"><thead><tr><th>Company</th><th>Market Capitalization</th></tr></thead><tbody><tr><td><a href="/company/ACME/">Acme Ltd</a></td><td>1,234.5</td></tr></tbody></table>'); return; }
       if (url.pathname.endsWith('/peers')) { res.end(`<table class="data-table"><tbody><tr><td>1</td><td><a href="/company/DEMO/">Demo Ltd</a></td>${'<td>10</td>'.repeat(9)}</tr></tbody></table>`); return; }
       if (url.pathname.startsWith('/api/')) { res.setHeader('Content-Type', 'application/json'); res.end('{}'); return; }
       if (url.pathname.startsWith('/screens/') || url.pathname.startsWith('/market/IN')) {

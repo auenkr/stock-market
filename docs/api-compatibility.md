@@ -2,6 +2,8 @@
 
 Endpoint paths, arguments, schemas, tiers, and categories are defined by the API catalog. [Endpoint coverage](endpoint-coverage.md) and [endpoint journey](endpoint-journey.md) are generated from the same contract as Swagger.
 
+Company screening is available at `GET /api/v1/screen?query=...` and its `/v1/screen` alias. See the [screening guide](screening.md) for syntax, output fields, and supported ratio names.
+
 ## Categories and company identifiers
 
 Public documentation has **Search**, **Company overview**, and **Finance**. **Internal** is shown only when `ENVIRONMENT=dev`, in both API/web viewers and downloadable OpenAPI. Its routes keep their normal access rules. The repository's generated contract includes Internal for development; served contracts filter it out in other environments.

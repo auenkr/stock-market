@@ -14,6 +14,8 @@
     "build": "esbuild src/index.ts --bundle --format=esm --platform=node --target=es2022 --outfile=dist/index.js --external:node:* --banner:js=\"#!/usr/bin/env node\nimport { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "legerline": "tsx src/index.ts",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "test:screen": "node --import tsx --test tests/screen.e2e.test.ts",
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {},

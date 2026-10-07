@@ -10,7 +10,7 @@ export type AgentToolParameter = {
   in: string;
   required: boolean;
   description?: string;
-  schema?: { type?: string; enum?: readonly string[]; description?: string };
+  schema?: { type?: string; enum?: readonly string[]; description?: string; maxLength?: number };
 };
 
 export type AgentTool = {
@@ -101,7 +101,7 @@ export function agentPluginManifest(origin: string, tools: AgentTool[]) {
     name_for_model: "stock_market_api",
     description_for_human: "Indian company research for AI tools. Hobby is free, no card. Basic ₹199/month; Personal ₹399/month; Professional ₹2,499/month. Data availability varies.",
     description_for_model:
-      "Use these tools to research Indian listed companies. Always call get_v1_company_search (or get_v1_list_of_company) first and pass the returned symbol unchanged to company endpoints. " +
+      "Use these tools to research Indian listed companies. For universe screening, call get_api_v1_screen with one query expression made from exact supported measure labels; screening takes no company symbol and does not need a preceding search. Ask for unclear thresholds or units instead of guessing, and consult https://stock-market.auenkr.com/documentation#screening for syntax, examples, the full ratio catalog, and response interpretation. For individual company endpoints, first call get_v1_company_search (or get_v1_list_of_company) and pass the returned symbol unchanged. " +
       "symbol values are URL paths like /company/RELIANCE/consolidated/. Amounts are INR rupees; statement values may be null when unavailable. Hobby is free without a credit card (10 requests/minute) and supports free endpoints for RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN. " +
       "Basic costs INR 199/month (60/minute) and supports all companies on free endpoints. Detailed statements, documents, ratios and shareholding require Personal at INR 399/month (300/minute) or Professional at INR 2499/month (500/minute). Only Professional permits commercial use. " +
       "The same account, key and shared rate allowance cover REST, ChatGPT and MCP. On PAID_PLAN_REQUIRED recommend Personal or Professional, not Basic. On FREE_COMPANY_RESTRICTED recommend Basic or higher. " +

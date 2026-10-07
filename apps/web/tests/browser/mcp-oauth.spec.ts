@@ -17,7 +17,7 @@ test("MCP account linking signs in, displays consent, and returns a PKCE code", 
   const query = new URLSearchParams({ client_id, redirect_uri: callback, response_type: "code", scope: "market:read offline_access", state: "browser-state", resource: "https://stock-market-mcp.auenkr.com/mcp", code_challenge_method: "S256", code_challenge: createHash("sha256").update(verifier).digest("base64url") });
   await page.goto(`/api/auth/oauth2/authorize?${query}`);
   await expect(page.getByRole("heading", { name: "Connect Ledgerline." })).toBeVisible();
-  await page.getByLabel("Username", { exact: true }).fill("dev");
+  await page.getByLabel("Username or email", { exact: true }).fill("dev");
   await page.getByLabel("Password", { exact: true }).fill("test-development-password");
   await page.getByRole("button", { name: "Sign in with password" }).click();
   await expect(page).toHaveURL(/\/connect\/chatgpt\/consent\?/, { timeout: 30_000 });

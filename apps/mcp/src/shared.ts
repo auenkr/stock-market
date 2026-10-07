@@ -17,6 +17,13 @@ const symbolOnly = { symbol: z.string().min(1).describe("Company identifier from
 
 const tools: ToolDef[] = [
   {
+    name: "screen_companies",
+    description: "Find companies that match a financial screening expression. Use exact measure labels from https://stock-market.auenkr.com/docs#endpoint=%2Fapi%2Fv1%2Fscreen or the screening guide. Combine comparisons with AND/OR; arithmetic and parentheses are supported. Returns rows keyed by displayed column names plus Symbol; unavailable cells remain null.",
+    path: "/api/v1/screen",
+    schema: { query: z.string().min(1).max(4000).describe("Screening expression, max 4,000 characters. Example: Market Capitalization > 500 AND Price to Earning < 15. Use exact measure labels from the screening guide.") },
+    params: (a) => ({ query: String(a.query) }),
+  },
+  {
     name: "search_companies",
     description: "Search companies by name. Returns symbol values to pass to other tools.",
     path: "/v1/company-search",
@@ -147,7 +154,7 @@ export async function callApi(apiUrl: string, apiKey: string, path: string, para
 
 export function createMcpServer(apiUrl: string, apiKey: string, oauth = false): McpServer {
   const server = new McpServer({ name: "stock-market", version: "1.0.0" }, {
-    instructions: "Ledgerline provides Indian company fundamentals and reported financial data. Search or list companies first, then pass the returned symbol unchanged to company tools. Access depends on the connected account's plan and shared request allowance. Report unavailable data and access errors accurately; do not infer missing figures. These tools do not execute trades or payments.",
+    instructions: "Ledgerline provides Indian company fundamentals and reported financial data. Use screen_companies to find companies with compound financial criteria; it needs one query expression and does not need a symbol or prior company search. Use exact measure labels and valid query syntax from https://stock-market.auenkr.com/documentation#screening, which contains the full ratio catalog and examples. For individual company research, search or list companies first, then pass the returned symbol unchanged to company tools. Screening requires Personal or Professional access and shares the account's request allowance. Preserve nulls and describe results as the rows returned for the requested query; do not infer unavailable figures or claim comprehensive coverage. These tools do not execute trades or payments.",
   });
   for (const tool of tools) {
     server.registerTool(

@@ -23,17 +23,27 @@ async function devStackReady() {
 let mcpPort = 0;
 let mcp: Awaited<ReturnType<typeof startServer>>;
 let fixture: Awaited<ReturnType<typeof setup>> | undefined;
+let previousDevPlan: { api_plan: string; plan_expires_at: Date | null } | undefined;
 
 before(async () => {
   if (process.env.INTEGRATION_DATABASE_URL) {
     fixture = await setup({ seedUsagePolicy: false });
     apiUrl = fixture.urls[0]!;
+    // The harness only accepts a stock_test_* database; grant screening access for this fixture user.
+    [previousDevPlan] = await fixture.sql`SELECT api_plan, plan_expires_at FROM "user" WHERE email = 'dev@auenkr.com'`;
+    await fixture.sql`UPDATE "user" SET api_plan = 'professional', plan_expires_at = now() + interval '1 month' WHERE email = 'dev@auenkr.com'`;
   }
 });
 
 after(async () => {
   mcp?.close();
-  await fixture?.cleanup();
+  try {
+    if (fixture && previousDevPlan) {
+      await fixture.sql`UPDATE "user" SET api_plan = ${previousDevPlan.api_plan}, plan_expires_at = ${previousDevPlan.plan_expires_at} WHERE email = 'dev@auenkr.com'`;
+    }
+  } finally {
+    await fixture?.cleanup();
+  }
 });
 
 test("e2e: dev stack through MCP tools", { timeout: 120000, skip: process.env.TEST_MODE === "CICD" && !process.env.INTEGRATION_DATABASE_URL }, async (t) => {
@@ -60,7 +70,8 @@ test("e2e: dev stack through MCP tools", { timeout: 120000, skip: process.env.TE
     const client = new Client({ name: "e2e", version: "1.0.0" });
     await client.connect(new StreamableHTTPClientTransport(new URL(`http://127.0.0.1:${mcpPort}/mcp`), { requestInit: { headers: { Authorization: `Bearer ${key}` } } }));
     const { tools } = await client.listTools();
-    assert.equal(tools.length, 13);
+    assert.equal(tools.length, 14);
+    assert.ok(tools.some((tool) => tool.name === "screen_companies"));
     const search = await client.callTool({ name: "search_companies", arguments: { q: fixture ? "acme" : "reliance" } });
     assert.equal(search.isError, undefined);
     assert.match((search.content as { text: string }[])[0]!.text, fixture ? /ACME|Acme/ : /RELIANCE|reliance/);
@@ -69,6 +80,16 @@ test("e2e: dev stack through MCP tools", { timeout: 120000, skip: process.env.TE
     const profile = await client.callTool({ name: "company_profile", arguments: { symbol } });
     assert.equal(profile.isError, undefined);
     assert.match((profile.content as { text: string }[])[0]!.text, fixture ? /Acme/ : /Reliance/);
+    if (fixture) {
+      const query = "Market Capitalization > 500 AND Price to Earning < 15";
+      const screened = await client.callTool({ name: "screen_companies", arguments: { query } });
+      assert.equal(screened.isError, undefined, (screened.content as { text: string }[])[0]?.text);
+      const result = JSON.parse((screened.content as { text: string }[])[0]!.text);
+      assert.equal(result.query, query);
+      assert.equal(result.count, 1);
+      assert.equal(result.data[0].Company, "Acme Ltd");
+      assert.equal(result.data[0].Symbol, "/company/ACME/");
+    }
     const denied = await client.callTool({ name: "profit_loss", arguments: { symbol } });
     if (denied.isError) assert.match((denied.content as { text: string }[])[0]!.text, /403|required|plan/i);
     await client.close();

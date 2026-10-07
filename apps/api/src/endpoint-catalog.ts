@@ -1,6 +1,6 @@
 import { coverageDetails } from "./coverage-details.js";
 import { endpointOrder } from "./endpoint-journey.js";
-export type Schema = { $ref?: string; type?: string; nullable?: boolean; properties?: Record<string, Schema>; required?: string[]; items?: Schema; additionalProperties?: Schema | boolean; enum?: readonly string[]; format?: string; minItems?: number; maxItems?: number; description?: string; example?: unknown; minimum?: number; oneOf?: Schema[]; anyOf?: Schema[] };
+export type Schema = { $ref?: string; type?: string; nullable?: boolean; properties?: Record<string, Schema>; required?: string[]; items?: Schema; additionalProperties?: Schema | boolean; enum?: readonly string[]; format?: string; minItems?: number; maxItems?: number; maxLength?: number; description?: string; example?: unknown; minimum?: number; oneOf?: Schema[]; anyOf?: Schema[] };
 type Parameter = { name: string; in: string; required: boolean; schema: Schema; style?: string; explode?: boolean };
 export type EndpointContract = { path: string; title: string; tier: "free" | "paid"; apiStyle: "personal"; resource: string; status: "partial" | "unavailable" | "excluded"; limitation: string; parameters: Parameter[]; response: Schema };
 const parameter = (name: string, location = "query", values?: string[], required = true): Parameter => ({ name, in: location, required, schema: { type: "string", ...(values ? { enum: values } : {}) } });
@@ -21,6 +21,7 @@ export const endpointCatalog: EndpointContract[] = [
   company("ratios", "Ratios"),
   company("shareholding-pattern", "Shareholding pattern"),
   company("shareholdings/distribution", "Shareholding distribution"),
+  endpoint("screen", "Run a company screen", [{ ...parameter("query"), schema: { type: "string", maxLength: 4000 } }], "partial", "/api/v1/screen"),
   endpoint("daily-price-ratios", "Price ratios daily", [parameter("symbol")], "excluded"),
   endpoint("annual-price-ratios", "Price ratios annual", [parameter("symbol")], "excluded"),
   ...["summary", "ownership-current", "ownership-history"].map((kind) => endpoint(`shareholdings/${kind}`, ({ summary: "Ownership structure", "ownership-current": "Current owners", "ownership-history": "Owner history" })[kind]!, [parameter("symbol"), ...(kind === "ownership-current" ? [] : [period()])])),
