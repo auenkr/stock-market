@@ -1,7 +1,7 @@
 # Multi-platform production image (linux/amd64 + linux/arm64).
 # Build a static musl executable for the same architecture as the target image.
 ARG TARGETARCH
-FROM messense/rust-musl-cross:${TARGETARCH}-musl AS builder
+FROM --platform=$BUILDPLATFORM messense/rust-musl-cross:${TARGETARCH}-musl AS builder
 WORKDIR /build
 ARG TARGETARCH
 
