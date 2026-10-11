@@ -99,7 +99,7 @@ jobs:
         if: needs.changed-packages.outputs.cli == 'true'
         env:
           PACKAGE_DIRECTORY: apps/legerline-cli
-          PACKAGE_NAME: '@auenkr/legerline-cli-dev'
+          PACKAGE_NAME: '@auenkr/legerline-cli'
           SOURCE_PACKAGE: '@auenkr/legerline-cli'
         run: |
           pnpm --filter "$SOURCE_PACKAGE"... build
@@ -116,7 +116,7 @@ jobs:
         if: needs.changed-packages.outputs.mcp == 'true'
         env:
           PACKAGE_DIRECTORY: apps/mcp
-          PACKAGE_NAME: '@auenkr/legerline-mcp-dev'
+          PACKAGE_NAME: '@auenkr/legerline-mcp'
           SOURCE_PACKAGE: '@auenkr/legerline-mcp'
         run: |
           pnpm --filter "$SOURCE_PACKAGE"... build
