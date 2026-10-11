@@ -31,3 +31,6 @@ playwright-report/
 
 # Rust build artifacts
 **/target/
+
+# Local scraping data
+data-scrapping/
