@@ -7,6 +7,19 @@
 :root[data-theme="light"] { color-scheme: light; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; } }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+/* Shared code token palette. The dark landing hero overrides these on .product-code
+   so its fixed dark frame keeps contrast in both themes. */
+:root { --code-fg: var(--ink); --code-comment: light-dark(#6f8290, #8fa39a); --code-keyword: light-dark(#8250c8, #d8b0ea); --code-string: light-dark(#0f7a52, #9fdcb4); --code-number: light-dark(#a2561b, #f0b17a); --code-key: light-dark(#1c5fd0, #86b6f0); --code-flag: light-dark(#8250c8, #d8b0ea); --code-punct: light-dark(#7d8f98, #93a69d); }
+.syntax-plain { color: inherit; }
+.syntax-comment { color: var(--code-comment); font-style: italic; }
+.syntax-keyword { color: var(--code-keyword); }
+.syntax-string { color: var(--code-string); }
+.syntax-number { color: var(--code-number); }
+.syntax-key { color: var(--code-key); }
+.syntax-flag { color: var(--code-flag); }
+.syntax-punct { color: var(--code-punct); }
+.code-frame, .product-code { --code-fg: #e2eee5; --code-comment: #9aafa1; --code-keyword: #d8b0ea; --code-string: #c9ed98; --code-number: #f5c99a; --code-key: #83e5dc; --code-flag: #d8b0ea; --code-punct: #8ea79a; }
 .theme-picker { display: inline-flex; align-items: center; gap: 3px; padding: 3px; border: 1px solid var(--line); background: var(--paper); border-radius: 10px; flex-shrink: 0; }
 .theme-picker button { display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; font-size: 20px; transition: background .15s, color .15s; }
 .theme-picker button:hover { color: var(--ink); background: var(--card); }

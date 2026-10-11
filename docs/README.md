@@ -13,7 +13,7 @@ This directory records endpoint coverage, source limitations, implementation pro
 - [Polar setup](polar-setup.md): monthly subscriptions, legal consent, deployment migration, and Polar account configuration.
 - [Production billing configuration](production-billing.md): created production product IDs, webhook endpoint, completed Aiven migration, and exact web/API environment changes.
 - [Production deployment](deployment.md): GitHub Actions deployments from `main`, provider configuration, and required secrets.
-- [ChatGPT plugin](plugin.md): agent manifest/OpenAPI, shared tool contract, competitor research, and the pricing decision.
+- [Agent plugins](plugin.md): Claude Code plugin repository and marketplace, directory submission, ChatGPT plugin manifest/OpenAPI, shared tool contract, competitor research, and the pricing decision.
 - [Go-to-market and pricing proposal](go-to-market.md): sourced ChatGPT/MCP competitor comparison, proposed launch plans, outreach scripts, and first-customer sales targets.
 
 Update these records when a route, source, response mapping, or deployment capability changes. A route returning `501 DATASET_UNAVAILABLE` is a documented gap, not a completed data integration.

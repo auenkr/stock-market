@@ -10,6 +10,17 @@ The API provides structured Indian equity and IPO data for applications. The ver
 
 The API validates dashboard-issued keys against PostgreSQL, including expiration and revocation. **Hobby is free without a credit card (10 requests/minute); Basic is ₹199/month (60/minute); Personal is ₹399/month (300/minute); Professional is ₹2,499/month (500/minute)**. Allowances are shared across all account keys, API instances, and REST/ChatGPT/MCP integrations using atomic database counters. Basic unlocks all supported companies on free endpoints; Personal and Professional unlock detailed endpoints. Only Professional permits commercial use. Better Auth + Polar handle monthly checkout, billing portal, and verified subscription synchronization. See [Polar account setup](docs/polar-setup.md).
 
+### Claude Code plugin
+
+Ledgerline ships an official Claude Code plugin from the public `AuenKr/ledgerline-claude-plugins` marketplace:
+
+```shell
+claude plugin marketplace add AuenKr/ledgerline-claude-plugins
+claude plugin install ledgerline@ledgerline-claude
+```
+
+Then run `/mcp` in Claude Code and choose **Authenticate** for `plugin:ledgerline:ledgerline` to link your account over OAuth. The plugin adds the hosted MCP server plus a `ledgerline-research` skill covering tool order, the company `symbol` format, screening queries, and honest reporting of missing data. Without the plugin, `claude mcp add --transport http ledgerline https://stock-market-mcp.auenkr.com/mcp` connects the same server. ChatGPT connects the same endpoint from Apps & connectors; its app listing is still in OpenAI review. This repository vendors the plugin as a submodule at `vendor/ledgerline-claude-plugins` for validation only. See [agent plugins](docs/plugin.md).
+
 ### Endpoint tiers
 
 The endpoint catalog and docs explorer divide operations into **Free** and **Paid** dataset tiers. Free covers search, profiles, basic finance, peer comparison, and selected Internal discovery/calendar/service endpoints. Paid covers documents, detailed financials, ratios, shareholding, and other paid Internal datasets, and requires Personal or Professional (not Basic). Aliases inherit their canonical tier. See [the tier matrix](docs/api-compatibility.md#endpoint-tiers). Hobby company access is limited to RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN (top five by market capitalization at 2026-10-01 close). Basic removes that company restriction on free endpoints.
