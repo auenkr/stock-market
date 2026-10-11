@@ -1,50 +1,31 @@
-//! HTTP layer: middleware (request ID, CORS, auth gate) and route handlers.
+//! HTTP layer: middleware (request ID and CORS) and route handlers.
 //! Response envelopes, status codes and headers match the TypeScript adapter.
 
 use crate::{
-    auth::{extract_key, has_detailed_data, authorize, AccessDecision},
     catalog::*,
     config::Config,
-    error::{legacy_code, legacy_error, DataError},
+    error::{legacy_error, DataError},
     legacy::*,
     provider::Provider,
 };
 use axum::{
-    extract::{Query, State, Extension},
+    extract::{Query, State},
     http::{HeaderMap, HeaderValue, Method, StatusCode, Uri},
     response::{Html, IntoResponse, Response},
     routing::get,
     Json,
 };
-use deadpool_postgres::Pool;
 use serde_json::{json, Value};
 use std::collections::HashMap;
 
 #[derive(Clone)]
 pub struct AppState {
     pub config: Config,
-    pub db: Option<Pool>,
     pub provider: Provider,
 }
 
 fn request_id() -> String {
     uuid::Uuid::new_v4().to_string()
-}
-
-fn no_store(mut response: Response, id: &str) -> Response {
-    response.headers_mut().insert("x-request-id", HeaderValue::from_str(id).unwrap());
-    response.headers_mut().insert("cache-control", HeaderValue::from_static("no-store"));
-    response
-}
-
-fn auth_envelope(message: &str, status: u16, retry_after: Option<i64>) -> Response {
-    let code = legacy_code(message);
-    let status_code = StatusCode::from_u16(status).unwrap();
-    let mut builder = Response::builder().status(status_code).header("cache-control", "no-store");
-    if let Some(retry) = retry_after {
-        builder = builder.header("retry-after", retry.to_string());
-    }
-    builder.body(axum::body::Body::from(serde_json::to_string(&json!({ "error": message, "code": code })).unwrap())).unwrap()
 }
 
 // ---------------------------------------------------------------------------
@@ -125,13 +106,8 @@ fetch('/swagger.json').then(r=>{if(!r.ok)throw Error('Swagger HTTP '+r.status);r
 </script></body></html>"#;
 
 // ---------------------------------------------------------------------------
-// Middleware: request ID + CORS + auth gate
+// Middleware: request ID + CORS
 // ---------------------------------------------------------------------------
-
-#[derive(Clone)]
-struct Authed {
-    plan: String,
-}
 
 async fn gate(
     State(state): State<AppState>,
@@ -161,7 +137,7 @@ async fn gate(
 }
 
 async fn gate_request(
-    State(state): State<AppState>,
+    State(_state): State<AppState>,
     req: axum::extract::Request,
     next: axum::middleware::Next,
     id: String,
@@ -178,43 +154,14 @@ async fn gate_request(
             .unwrap();
     }
     let guarded = ["/v1/", "/v2/", "/api/"].iter().any(|p| path.starts_with(p));
-    let mut req = req;
-    if guarded {
-        let decision = authorize(extract_key(req.headers()), state.db.as_ref()).await;
-        match decision {
-            AccessDecision::Unauthorized => return with_id(auth_envelope("Invalid or expired API key", 401, None), &id),
-            AccessDecision::Unavailable => return with_id(auth_envelope("Account usage service unavailable", 503, None), &id),
-            AccessDecision::Limited { retry_after } => return with_id(auth_envelope("Rate limit exceeded", 429, Some(retry_after)), &id),
-            AccessDecision::Allowed { plan } => {
-                // Legacy paid gate mirrors the TypeScript middleware exactly.
-                if !has_detailed_data(&plan) {
-                    if let Some(resource) = path.strip_prefix("/v1/").or_else(|| path.strip_prefix("/api/")).map(|p| p.split('/').next().unwrap_or("")) {
-                        if matches!(resource, "company-data" | "extract") {
-                            let body = json!({ "error": "This endpoint requires Personal or Professional", "code": "PAID_PLAN_REQUIRED", "docs": "/v1/coverage" });
-                            let response = (StatusCode::FORBIDDEN, Json(body)).into_response();
-                            return no_store(response, &id);
-                        }
-                    }
-                }
-                req.extensions_mut().insert(Authed { plan });
-            }
-        }
-    }
     let mut response = next.run(req).await;
-    // CORS + request ID on every response; authorized routes are no-store.
+    // CORS + request ID on every response; data routes are no-store.
     response.headers_mut().insert("x-request-id", HeaderValue::from_str(&id).unwrap());
     response.headers_mut().insert("access-control-allow-origin", HeaderValue::from_static("*"));
     response.headers_mut().insert("access-control-expose-headers", HeaderValue::from_static("X-Request-ID, X-Page, X-Next-Page, X-Data-Coverage, Retry-After"));
     if guarded {
         response.headers_mut().insert("cache-control", HeaderValue::from_static("no-store"));
     }
-    response
-}
-
-fn with_id(response: Response, id: &str) -> Response {
-    let mut response = response;
-    response.headers_mut().insert("x-request-id", HeaderValue::from_str(id).unwrap());
-    response.headers_mut().insert("access-control-allow-origin", HeaderValue::from_static("*"));
     response
 }
 
@@ -267,7 +214,7 @@ async fn plugin_manifest(State(state): State<AppState>, uri: Uri, headers: Heade
         "name_for_model": "ledgerline_stock_market",
         "description_for_human": "Indian company financials.",
         "description_for_model": "Indian company financials for AI agents. Discovery-first: search or list companies, then pass the returned symbol to company endpoints.",
-        "auth": { "type": "service_http", "authorization_type": "bearer" },
+        "auth": { "type": "none" },
         "api": { "type": "openapi", "url": format!("{origin}/plugin/openapi.json") },
         "logo_url": format!("{origin}/logo.png"),
         "contact_email": "support@example.org",
@@ -287,7 +234,6 @@ async fn not_found() -> Response {
 
 async fn compat_handler(
     State(state): State<AppState>,
-    Extension(authed): Extension<Authed>,
     uri: Uri,
     Query(multi): Query<Vec<(String, String)>>,
 ) -> Response {
@@ -306,16 +252,9 @@ async fn compat_handler(
         Ok(q) => q,
         Err(e) => return e.into_compat_response(contract.path),
     };
-    let plan = authed.plan;
-    if !has_detailed_data(&plan) && contract.tier == "paid" {
-        return DataError::new("This endpoint requires Personal or Professional", 403, "PAID_PLAN_REQUIRED").into_compat_response(contract.path);
-    }
     if let Some(symbol) = query.get("symbol") {
         if !crate::parse::valid_company_path(symbol) || symbol_count != 1 {
             return DataError::new("symbol must be a single company URL path", 400, "INVALID_QUERY").into_compat_response(contract.path);
-        }
-        if let Err(e) = require_company_access(&plan, &[symbol.clone()]) {
-            return e.into_compat_response(contract.path);
         }
     }
     match state.provider.execute(contract.resource, &query).await {
@@ -349,7 +288,6 @@ async fn compat_handler(
 
 async fn screen_handler(
     State(state): State<AppState>,
-    Extension(authed): Extension<Authed>,
     Query(multi): Query<Vec<(String, String)>>,
 ) -> Response {
     const ENDPOINT: &str = "/api/v1/screen";
@@ -360,9 +298,6 @@ async fn screen_handler(
     let expression = multi.iter().find(|(name, _)| name == "query").map(|(_, value)| value.as_str()).unwrap_or("");
     if expression.trim().is_empty() || expression.encode_utf16().count() > 4000 {
         return DataError::new("query must be a non-empty string of at most 4000 characters", 400, "INVALID_QUERY").into_compat_response(ENDPOINT);
-    }
-    if !has_detailed_data(&authed.plan) {
-        return DataError::new("This endpoint requires Personal or Professional", 403, "PAID_PLAN_REQUIRED").into_compat_response(ENDPOINT);
     }
     let query = [("query".to_string(), expression.trim().to_string())].into_iter().collect();
     match state.provider.execute("screen", &query).await {
@@ -534,4 +469,42 @@ pub fn router(state: AppState) -> axum::Router {
         .method_not_allowed_fallback(not_found)
         .with_state(state.clone())
         .layer(axum::middleware::from_fn_with_state(state, gate))
+}
+
+#[cfg(test)]
+mod public_tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn anonymous_routes_validate_input_without_account_database() {
+        let config = Config::from_env();
+        let fixture_listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let fixture_address = fixture_listener.local_addr().unwrap();
+        let fixture = axum::Router::new().route("/api/company/search/", get(|| async {
+            Json(json!([{ "name": "Reliance", "url": "/company/RELIANCE/consolidated/" }]))
+        }));
+        let fixture_server = tokio::spawn(async move { axum::serve(fixture_listener, fixture).await.unwrap() });
+        let source = crate::source::Source::new(format!("http://{fixture_address}"), String::new(), None, 0);
+        let state = AppState { config, provider: Provider::new(source) };
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = tokio::spawn(async move { axum::serve(listener, router(state)).await.unwrap() });
+        let client = reqwest::Client::new();
+        for path in ["/api/v1/screen", "/api/v1/profit-loss", "/api/v1/company-profile?symbol=invalid"] {
+            let response = client.get(format!("http://{address}{path}")).send().await.unwrap();
+            assert_eq!(response.status().as_u16(), 400, "{path} should reach validation without auth");
+            assert!(response.headers().contains_key("x-request-id"));
+            assert_eq!(response.headers()["access-control-allow-origin"], "*");
+        }
+        let spec: Value = client.get(format!("http://{address}/openapi.json")).send().await.unwrap().json().await.unwrap();
+        assert_eq!(spec["security"], json!([]));
+        assert_eq!(spec["components"]["securitySchemes"], json!({}));
+        let coverage: Value = client.get(format!("http://{address}/v1/coverage")).send().await.unwrap().json().await.unwrap();
+        assert_eq!(coverage["accessPolicy"]["authenticationRequired"], false);
+        assert!(coverage["endpoints"].as_array().unwrap().iter().all(|e| e["tier"] == "free"));
+        let search: Value = client.get(format!("http://{address}/v1/company-search?q=reliance")).send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
+        assert_eq!(search["data"][0]["symbol"], "/company/RELIANCE/consolidated/");
+        server.abort();
+        fixture_server.abort();
+    }
 }

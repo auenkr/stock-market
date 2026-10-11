@@ -1,6 +1,6 @@
 # Company screening
 
-`GET /api/v1/screen?query=...` runs a financial screening expression. The `/v1/screen` alias is also available. Send the API key in `X-API-Key`. This endpoint requires Personal or Professional access.
+`GET /api/v1/screen?query=...` runs a financial screening expression. The `/v1/screen` alias is also available. This endpoint is free and requires no login or API key.
 
 ## Write a query
 
@@ -15,9 +15,8 @@ This keeps companies with a market capitalization above 500 and a price-to-earni
 Send the expression with an HTTP client that URL-encodes query parameters:
 
 ```bash
-curl --get 'https://api.example.com/api/v1/screen' \
-  --data-urlencode 'query=Market Capitalization > 500 AND Price to Earning < 15' \
-  --header 'X-API-Key: YOUR_API_KEY'
+curl --get 'https://stock-market-api.auenkr.com/api/v1/screen' \
+  --data-urlencode 'query=Market Capitalization > 500 AND Price to Earning < 15'
 ```
 
 The `query` value is limited to 4,000 characters. Only one `query` parameter is accepted; other query parameters are rejected.
@@ -66,7 +65,7 @@ The CLI command generated from the API operation is `get_api_v1_screen`. Quote t
 legerline get_api_v1_screen --query 'Market Capitalization > 500 AND Price to Earning < 15'
 ```
 
-The CLI handles URL encoding and writes the structured JSON response to stdout. See the [public MCP/CLI quickstart](https://stock-market.auenkr.com/documentation#screening) for setup and access requirements.
+The CLI handles URL encoding and writes the structured JSON response to stdout. See the [public MCP/CLI quickstart](https://github.com/auenkr/stock-market/blob/dev/docs/screening.md) for setup and access requirements.
 
 ### Interpret results
 
@@ -74,9 +73,9 @@ The CLI handles URL encoding and writes the structured JSON response to stdout. 
 - `columns` lists the source's displayed columns. Each row in `data` uses those visible column labels as keys and also includes `Symbol`, the company URL path for follow-up company tools.
 - Blank or unavailable values are `null`; preserve them as unknown rather than treating them as zero.
 - The measure's displayed unit controls the threshold. Market capitalization is displayed in INR crores; percentage measures use the displayed percent convention. Don't convert a threshold unless the user specifies a different unit.
-- This endpoint requires Personal or Professional access. MCP, CLI, and REST share the same account access and request allowance.
+- MCP and CLI call the deployed Rust API without credentials.
 
-The [interactive API reference](https://stock-market.auenkr.com/docs#endpoint=%2Fapi%2Fv1%2Fscreen) exposes the query field and measure gallery.
+The [interactive API reference](https://stock-market-api.auenkr.com/docs) exposes the query field and measure gallery.
 
 ## Response format
 

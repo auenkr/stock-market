@@ -20,7 +20,7 @@ export type AgentTool = {
   description: string;
   method: "GET";
   path: string;
-  tier: "free" | "paid";
+  tier: "free";
   category: string;
   parameters: AgentToolParameter[];
 };
@@ -30,7 +30,7 @@ type Operation = {
   summary?: string;
   description?: string;
   parameters?: AgentToolParameter[];
-  "x-tier"?: "free" | "paid";
+  "x-tier"?: "free";
   "x-api-style"?: string;
   "x-use-case"?: string;
   "x-alias"?: boolean;
@@ -67,48 +67,8 @@ export function agentTools(spec: Spec): AgentTool[] {
     description: operation.description ?? operation.summary ?? "",
     method: "GET",
     path,
-    tier: operation["x-tier"] ?? "paid",
+    tier: operation["x-tier"] ?? "free",
     category: operation.tags?.[0] ?? "General",
     parameters: operation.parameters ?? [],
   }));
-}
-
-/** OpenAPI document restricted to the agent tool surface, ready for ChatGPT Actions. */
-export function agentOpenApi(spec: Spec, info: { title: string; version: string; description: string }) {
-  const paths: Record<string, unknown> = {};
-  const categories = new Set<string>();
-  for (const { path, operation } of keptOperations(spec)) {
-    paths[path] = { get: operation };
-    for (const tag of operation.tags ?? []) categories.add(tag);
-  }
-  return {
-    openapi: "3.0.3",
-    info: { ...info, contact: { name: "Stock Market API", url: "https://stock-market-api.auenkr.com" } },
-    servers: spec.servers,
-    "x-access-policy": spec["x-access-policy"],
-    security: [{ apiKey: [] }],
-    tags: (spec.tags ?? []).filter((tag) => categories.has(tag.name)),
-    paths,
-    components: spec.components,
-  };
-}
-
-/** ChatGPT plugin manifest (/.well-known/ai-plugin.json). Mirrors agentOpenApi. */
-export function agentPluginManifest(origin: string, tools: AgentTool[]) {
-  return {
-    schema_version: "v1",
-    name_for_human: "Ledgerline Stock Market API",
-    name_for_model: "stock_market_api",
-    description_for_human: "Indian company research for AI tools. Hobby is free, no card. Basic ₹199/month; Personal ₹399/month; Professional ₹2,499/month. Data availability varies.",
-    description_for_model:
-      "Use these tools to research Indian listed companies. For universe screening, call get_api_v1_screen with one query expression made from exact supported measure labels; screening takes no company symbol and does not need a preceding search. Ask for unclear thresholds or units instead of guessing, and consult https://stock-market.auenkr.com/documentation#screening for syntax, examples, the full ratio catalog, and response interpretation. For individual company endpoints, first call get_v1_company_search (or get_v1_list_of_company) and pass the returned symbol unchanged. " +
-      "symbol values are URL paths like /company/RELIANCE/consolidated/. Amounts are INR rupees; statement values may be null when unavailable. Hobby is free without a credit card (10 requests/minute) and supports free endpoints for RELIANCE, HDFCBANK, BHARTIARTL, ICICIBANK, and SBIN. " +
-      "Basic costs INR 199/month (60/minute) and supports all companies on free endpoints. Detailed statements, documents, ratios and shareholding require Personal at INR 399/month (300/minute) or Professional at INR 2499/month (500/minute). Only Professional permits commercial use. " +
-      "The same account, key and shared rate allowance cover REST, ChatGPT and MCP. On PAID_PLAN_REQUIRED recommend Personal or Professional, not Basic. On FREE_COMPANY_RESTRICTED recommend Basic or higher. " +
-      "Never invent symbols; report null fields as unavailable rather than guessing.",
-    auth: { type: "api_key", in: "header", name: "X-API-Key" },
-    api: { type: "openapi", url: `${origin}/plugin/openapi.json` },
-    contact_email: "support@auenkr.com",
-    tools: tools.map((tool) => ({ name: tool.name, description: tool.description })),
-  };
 }

@@ -2,7 +2,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { realpathSync } from "node:fs";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { pathToFileURL } from "node:url";
-import { createMcpServer, DEFAULT_API_URL, extractApiKey, type AuthShape } from "./shared.js";
+import { createMcpServer, DEFAULT_API_URL } from "./shared.js";
 
 export function parseArgs(argv: string[]): { port: number; host: string; apiUrl: string; help: boolean } {
   const options = {
@@ -47,9 +47,8 @@ Options:
   --api-url <url> Stock Market API base URL (default: ${DEFAULT_API_URL}, env: STOCK_MARKET_API_URL)
   -h, --help      Show this help
 
-Auth:
-  Send the same dashboard API key as the REST API via
-  'Authorization: Bearer <key>' or 'X-API-Key: <key>'.
+Access:
+  Free public data. No login or API key required.
 
 Endpoints:
   POST /mcp       MCP streamable HTTP endpoint (stateless)
@@ -70,19 +69,8 @@ export function startServer(port: number, host: string, apiUrl: string) {
       res.end(JSON.stringify({ error: "Not found" }));
       return;
     }
-    const headers = new Headers();
-    for (const [key, value] of Object.entries(req.headers)) {
-      if (typeof value === "string") headers.set(key, value);
-    }
-    const apiKey = extractApiKey(headers);
-    if (!apiKey) {
-      res.writeHead(401, { "content-type": "application/json" });
-      res.end(JSON.stringify({ error: "API key required" }));
-      return;
-    }
-    const mcp = createMcpServer(apiUrl, apiKey);
+    const mcp = createMcpServer(apiUrl);
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
-    (req as IncomingMessage & { auth?: AuthShape }).auth = { token: apiKey, clientId: "api-key", scopes: [] };
     try {
       await mcp.connect(transport);
       await transport.handleRequest(req, res);

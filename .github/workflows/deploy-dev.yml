@@ -49,21 +49,18 @@ jobs:
     uses: ./.github/workflows/ci.yml
 
   deploy:
-    name: Deploy web and MCP; verify development services
+    name: Deploy MCP; verify development services
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     environment:
       name: development
-      url: https://stock-market-web-dev.vercel.app
+      url: https://stock-market-mcp-dev.auenkr.com
     env:
       CI: 'true'
       NX_DAEMON: 'false'
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -74,12 +71,10 @@ jobs:
           node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Deploy dev web project
-        run: pnpm dlx vercel@50.18.0 deploy --prod --yes --token "$VERCEL_TOKEN"
       - name: Deploy dev MCP and custom domain
         run: pnpm --filter @auenkr/legerline-mcp deploy:dev
       - name: Verify deployed service wiring
-        run: node scripts/smoke-dev.mjs
+        run: node scripts/smoke.mjs https://stock-market-api-dev.auenkr.com https://stock-market-mcp-dev.auenkr.com/mcp
 
   npm-dev:
     name: Publish changed development packages
