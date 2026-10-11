@@ -2,12 +2,12 @@ name: Build and publish Rust API image
 
 on:
   push:
-    branches: [dev, main]
+    branches: [main]
     paths:
       - apps/api-rs/**
       - .github/workflows/build-api-image.yml
   pull_request:
-    branches: [dev, main]
+    branches: [main]
     paths:
       - apps/api-rs/**
       - .github/workflows/build-api-image.yml
@@ -24,7 +24,6 @@ jobs:
   build-and-push:
     if: >-
       github.event_name == 'pull_request' ||
-      github.ref == 'refs/heads/dev' ||
       github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 40
@@ -51,8 +50,6 @@ jobs:
         with:
           images: auenkr/stock-market-api-rs
           tags: |
-            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
-            type=raw,value=dev-latest,enable=${{ github.ref == 'refs/heads/dev' }}
             type=raw,value=main-latest,enable=${{ github.ref == 'refs/heads/main' }}
             type=sha,prefix=sha-
 

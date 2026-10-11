@@ -33,6 +33,4 @@ Run `pnpm test:ci` for Rust tests, MCP and CLI regressions, type checks, and bui
 
 ## Release
 
-Changes go through a PR to `dev`. CI publishes prerelease npm versions under the `dev` tag on the existing CLI and MCP packages and the Rust Docker image and deploys the development MCP Worker. The container host is updated manually: pull the new Rust image and restart it. CI only builds and pushes that image to Docker Hub, and checks hosted MCP health and anonymous tool discovery independently of the API container. After updating the container, run `node scripts/smoke.mjs https://stock-market-mcp.auenkr.com/mcp https://stock-market-api.auenkr.com` to check anonymous API access. Local `data-scrapping/` data is ignored and must be preserved. Promote only `dev` to `main` for production. No frontend deployment is needed.
-
-Data coverage is partial. Preserve missing values and review returned units. This project does not execute trades.
+Changes go through a PR directly to `main`. CI publishes the CLI and MCP packages to npm, deploys the production MCP Worker, and pushes the Rust Docker image to Docker Hub. The container host is updated manually: pull the new Rust image and restart it. After updating the container, run `node scripts/smoke.mjs https://stock-market-mcp.auenkr.com/mcp https://stock-market-api.auenkr.com` to check anonymous API access. Local `data-scrapping/` data is ignored and must be preserved. No frontend deployment is needed.
