@@ -24,7 +24,6 @@ COPY --from=builder /out/api-rs /api-rs
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 ENV PORT=3000 \
     ENVIRONMENT=production \
-    DB_POOL_MAX=5 \
     RUST_LOG=info
 EXPOSE 3000
 USER 65532:65532

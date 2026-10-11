@@ -1,0 +1,10 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+const { PACKAGE_DIRECTORY, PACKAGE_NAME, PACKAGE_VERSION_SUFFIX } = process.env;
+if (!PACKAGE_DIRECTORY || !PACKAGE_NAME || !PACKAGE_VERSION_SUFFIX) throw new Error('Missing development package identity');
+const path = join(PACKAGE_DIRECTORY, 'package.json');
+const pkg = JSON.parse(readFileSync(path, 'utf8'));
+pkg.name = PACKAGE_NAME;
+pkg.version = `${pkg.version}-${PACKAGE_VERSION_SUFFIX}`;
+writeFileSync(path, JSON.stringify(pkg, null, 2) + '\n');
+console.log(`Prepared ${pkg.name}@${pkg.version}`);

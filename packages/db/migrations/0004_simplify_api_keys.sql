@@ -1,7 +1,0 @@
-BEGIN;
-ALTER TABLE api_key
-  DROP COLUMN IF EXISTS prefix,
-  DROP COLUMN IF EXISTS last_used_at,
-  DROP COLUMN IF EXISTS expires_at,
-  DROP COLUMN IF EXISTS request_limit;
-COMMIT;

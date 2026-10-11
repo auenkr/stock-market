@@ -33,12 +33,12 @@ jobs:
           AFTER: ${{ github.sha }}
         run: |
           files=$(git diff --name-only "$BEFORE" "$AFTER")
-          if grep -q '^apps/legerline-cli/' <<< "$files"; then
+          if grep -Eq '^(apps/legerline-cli/|packages/agent-tools/|scripts/prepare-(dev|publish)-package.mjs$|.github/workflows/deploy-dev.yml$)' <<< "$files"; then
             echo 'cli=true' >> "$GITHUB_OUTPUT"
           else
             echo 'cli=false' >> "$GITHUB_OUTPUT"
           fi
-          if grep -q '^apps/mcp/' <<< "$files"; then
+          if grep -Eq '^(apps/mcp/|scripts/prepare-(dev|publish)-package.mjs$|.github/workflows/deploy-dev.yml$)' <<< "$files"; then
             echo 'mcp=true' >> "$GITHUB_OUTPUT"
           else
             echo 'mcp=false' >> "$GITHUB_OUTPUT"
@@ -49,21 +49,18 @@ jobs:
     uses: ./.github/workflows/ci.yml
 
   deploy:
-    name: Deploy web and MCP; verify development services
+    name: Deploy MCP; verify development services
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     environment:
       name: development
-      url: https://stock-market-web-dev.vercel.app
+      url: https://stock-market-mcp-dev.auenkr.com
     env:
       CI: 'true'
       NX_DAEMON: 'false'
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -74,12 +71,10 @@ jobs:
           node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Deploy dev web project
-        run: pnpm dlx vercel@50.18.0 deploy --prod --yes --token "$VERCEL_TOKEN"
       - name: Deploy dev MCP and custom domain
         run: pnpm --filter @auenkr/legerline-mcp deploy:dev
       - name: Verify deployed service wiring
-        run: node scripts/smoke-dev.mjs
+        run: node scripts/smoke.mjs https://stock-market-mcp-dev.auenkr.com/mcp
 
   npm-dev:
     name: Publish changed development packages
@@ -104,12 +99,12 @@ jobs:
         if: needs.changed-packages.outputs.cli == 'true'
         env:
           PACKAGE_DIRECTORY: apps/legerline-cli
-          PACKAGE_NAME: '@auenkr/legerline-cli-dev'
+          PACKAGE_NAME: '@auenkr/legerline-cli'
           SOURCE_PACKAGE: '@auenkr/legerline-cli'
         run: |
           pnpm --filter "$SOURCE_PACKAGE"... build
-          version=$(node -p "require('./' + process.env.PACKAGE_DIRECTORY + '/package.json').version")
-          pnpm --dir "$PACKAGE_DIRECTORY" pkg set "name=$PACKAGE_NAME" "version=$version-$PACKAGE_VERSION_SUFFIX"
+          node scripts/prepare-dev-package.mjs
+          node scripts/prepare-publish-package.mjs
       - name: Publish CLI development package
         if: needs.changed-packages.outputs.cli == 'true'
         working-directory: apps/legerline-cli
@@ -121,12 +116,12 @@ jobs:
         if: needs.changed-packages.outputs.mcp == 'true'
         env:
           PACKAGE_DIRECTORY: apps/mcp
-          PACKAGE_NAME: '@auenkr/legerline-mcp-dev'
+          PACKAGE_NAME: '@auenkr/legerline-mcp'
           SOURCE_PACKAGE: '@auenkr/legerline-mcp'
         run: |
           pnpm --filter "$SOURCE_PACKAGE"... build
-          version=$(node -p "require('./' + process.env.PACKAGE_DIRECTORY + '/package.json').version")
-          pnpm --dir "$PACKAGE_DIRECTORY" pkg set "name=$PACKAGE_NAME" "version=$version-$PACKAGE_VERSION_SUFFIX"
+          node scripts/prepare-dev-package.mjs
+          node scripts/prepare-publish-package.mjs
       - name: Publish MCP development package
         if: needs.changed-packages.outputs.mcp == 'true'
         working-directory: apps/mcp

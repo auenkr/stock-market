@@ -1,9 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
-export const DEFAULT_API_URL = "http://localhost:8787";
+export const DEFAULT_API_URL = "https://stock-market-api.auenkr.com";
 
-export type AuthShape = { token: string; clientId: string; scopes: string[] };
 
 type ToolDef = {
   name: string;
@@ -18,7 +17,7 @@ const symbolOnly = { symbol: z.string().min(1).describe("Company identifier from
 const tools: ToolDef[] = [
   {
     name: "screen_companies",
-    description: "Find companies that match a financial screening expression. Use exact measure labels from https://stock-market.auenkr.com/docs#endpoint=%2Fapi%2Fv1%2Fscreen or the screening guide. Combine comparisons with AND/OR; arithmetic and parentheses are supported. Returns rows keyed by displayed column names plus Symbol; unavailable cells remain null.",
+    description: "Find companies that match a financial screening expression. Use exact measure labels from https://github.com/auenkr/stock-market/blob/dev/docs/screening.md or the screening guide. Combine comparisons with AND/OR; arithmetic and parentheses are supported. Returns rows keyed by displayed column names plus Symbol; unavailable cells remain null.",
     path: "/api/v1/screen",
     schema: { query: z.string().min(1).max(4000).describe("Screening expression, max 4,000 characters. Example: Market Capitalization > 500 AND Price to Earning < 15. Use exact measure labels from the screening guide.") },
     params: (a) => ({ query: String(a.query) }),
@@ -116,25 +115,14 @@ const tools: ToolDef[] = [
   },
 ];
 
-export function extractApiKey(headers: Headers): string | undefined {
-  const header = headers.get("x-api-key");
-  if (header?.trim()) return header.trim();
-  const auth = headers.get("authorization");
-  if (auth) {
-    const match = /^Bearer\s+(.+)$/i.exec(auth.trim());
-    if (match?.[1]) return match[1].trim();
-  }
-  return undefined;
-}
-
-export async function callApi(apiUrl: string, apiKey: string, path: string, params: Record<string, string | number | undefined>) {
+export async function callApi(apiUrl: string, path: string, params: Record<string, string | number | undefined>) {
   const url = new URL(path, apiUrl);
   for (const [key, value] of Object.entries(params)) {
     if (value !== undefined) url.searchParams.set(key, String(value));
   }
   let response: Response;
   try {
-    response = await fetch(url, { headers: { "X-API-Key": apiKey, accept: "application/json" } });
+    response = await fetch(url, { headers: { accept: "application/json" } });
   } catch {
     throw new Error("API unreachable");
   }
@@ -152,9 +140,9 @@ export async function callApi(apiUrl: string, apiKey: string, path: string, para
   return body;
 }
 
-export function createMcpServer(apiUrl: string, apiKey: string, oauth = false): McpServer {
+export function createMcpServer(apiUrl: string): McpServer {
   const server = new McpServer({ name: "stock-market", version: "1.0.0" }, {
-    instructions: "Ledgerline provides Indian company fundamentals and reported financial data. Use screen_companies to find companies with compound financial criteria; it needs one query expression and does not need a symbol or prior company search. Use exact measure labels and valid query syntax from https://stock-market.auenkr.com/documentation#screening, which contains the full ratio catalog and examples. For individual company research, search or list companies first, then pass the returned symbol unchanged to company tools. Screening requires Personal or Professional access and shares the account's request allowance. Preserve nulls and describe results as the rows returned for the requested query; do not infer unavailable figures or claim comprehensive coverage. These tools do not execute trades or payments.",
+    instructions: "Ledgerline provides Indian company fundamentals and reported financial data. Use screen_companies to find companies with compound financial criteria; it needs one query expression and does not need a symbol or prior company search. Use exact measure labels and valid query syntax from https://github.com/auenkr/stock-market/blob/dev/docs/screening.md, which contains the full ratio catalog and examples. For individual company research, search or list companies first, then pass the returned symbol unchanged to company tools. Preserve nulls and describe results as the rows returned for the requested query; do not infer unavailable figures or claim comprehensive coverage. These tools do not execute trades or payments.",
   });
   for (const tool of tools) {
     server.registerTool(
@@ -162,7 +150,6 @@ export function createMcpServer(apiUrl: string, apiKey: string, oauth = false): 
       {
         description: tool.description,
         inputSchema: tool.schema,
-        ...(oauth ? { securitySchemes: [{ type: "oauth2", scopes: ["market:read"] }], _meta: { securitySchemes: [{ type: "oauth2", scopes: ["market:read"] }] } } : {}),
         annotations: {
           readOnlyHint: true,
           destructiveHint: false,
@@ -172,7 +159,7 @@ export function createMcpServer(apiUrl: string, apiKey: string, oauth = false): 
       },
       async (args) => {
         try {
-          const data = await callApi(apiUrl, apiKey, tool.path, tool.params(args as Record<string, unknown>));
+          const data = await callApi(apiUrl, tool.path, tool.params(args as Record<string, unknown>));
           return { content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }] };
         } catch (error) {
           const message = error instanceof Error ? error.message : "Unknown error";

@@ -2,19 +2,21 @@
   "name": "stock-market-mcp",
   "main": "dist/worker.js",
   "compatibility_date": "2026-09-26",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "build": {
     "command": "pnpm build:worker",
-    "watch_dir": ["src"]
+    "watch_dir": [
+      "src"
+    ]
   },
   "keep_vars": true,
   "observability": {
     "enabled": false
   },
   "vars": {
-    "STOCK_MARKET_API_URL": "https://stock-market-api.auenkr.com",
-    "MCP_RESOURCE_URL": "https://stock-market-mcp.auenkr.com/mcp",
-    "MCP_AUTHORIZATION_SERVER": "https://stock-market.auenkr.com/api/auth"
+    "STOCK_MARKET_API_URL": "https://stock-market-api.auenkr.com"
   },
   "workers_dev": false,
   "preview_urls": false,
@@ -29,14 +31,19 @@
       "name": "stock-market-mcp-dev",
       "workers_dev": false,
       "preview_urls": false,
-      "observability": { "enabled": true },
+      "observability": {
+        "enabled": true
+      },
       "vars": {
         "ENVIRONMENT": "dev",
-        "STOCK_MARKET_API_URL": "https://stock-market-api-dev.auenkr.com",
-        "MCP_RESOURCE_URL": "https://stock-market-mcp-dev.auenkr.com/mcp",
-        "MCP_AUTHORIZATION_SERVER": "https://stock-market-web-dev.vercel.app/api/auth"
+        "STOCK_MARKET_API_URL": "https://stock-market-api-dev.auenkr.com"
       },
-      "routes": [{ "pattern": "stock-market-mcp-dev.auenkr.com", "custom_domain": true }]
+      "routes": [
+        {
+          "pattern": "stock-market-mcp-dev.auenkr.com",
+          "custom_domain": true
+        }
+      ]
     }
   }
 }
