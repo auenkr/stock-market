@@ -35,6 +35,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Deploy MCP
         run: pnpm --filter @auenkr/legerline-mcp run deploy
+      - name: Verify anonymous hosted MCP
+        run: node scripts/smoke.mjs https://stock-market-mcp.auenkr.com/mcp
 
   npm:
     name: Publish ${{ matrix.label }} to npm
