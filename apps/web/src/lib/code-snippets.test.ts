@@ -1,13 +1,20 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  AUTH_HEADER,
   CLAUDE_MCP_ADD,
   CLAUDE_PLUGIN_INSTALL,
+  CLI_CONFIG,
+  CLI_ENV,
   CLI_EXAMPLE,
+  CLI_FIRST_REQUEST,
+  CLI_INSTALL,
   MCP_API_KEY_CONFIG,
   MCP_CHATGPT_CONFIG,
   MCP_OAUTH_CONFIG,
   REST_EXAMPLE,
+  SCREEN_CALL,
+  SCREEN_RESULT,
   jsonSnippet,
   shellSnippet,
   snippetText,
@@ -21,6 +28,13 @@ const everySnippet: [string, readonly CodeToken[]][] = [
   ["CLAUDE_MCP_ADD", CLAUDE_MCP_ADD],
   ["CLAUDE_PLUGIN_INSTALL", CLAUDE_PLUGIN_INSTALL],
   ["CLI_EXAMPLE", CLI_EXAMPLE],
+  ["CLI_INSTALL", CLI_INSTALL],
+  ["CLI_CONFIG", CLI_CONFIG],
+  ["CLI_FIRST_REQUEST", CLI_FIRST_REQUEST],
+  ["CLI_ENV", CLI_ENV],
+  ["AUTH_HEADER", AUTH_HEADER],
+  ["SCREEN_CALL", SCREEN_CALL],
+  ["SCREEN_RESULT", SCREEN_RESULT],
   ["REST_EXAMPLE", REST_EXAMPLE],
 ];
 
@@ -91,4 +105,10 @@ test("no snippet text is empty and no token is empty", () => {
       assert.ok(text.length > 0, `${name} has an empty ${tokenClass} token`);
     }
   }
+});
+
+test("the screening response example is still valid JSON", () => {
+  const parsed = JSON.parse(snippetText(SCREEN_RESULT)) as { count: number; data: { CMP: number }[] };
+  assert.equal(parsed.count, 1);
+  assert.equal(parsed.data[0]?.CMP, 196.75);
 });

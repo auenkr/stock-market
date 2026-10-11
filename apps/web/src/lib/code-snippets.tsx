@@ -232,3 +232,49 @@ legerline get_v1_company_search --q reliance
 legerline get_api_v1_company_profile \\
   --symbol "/company/RELIANCE/consolidated/"`,
 );
+
+export const CLI_INSTALL = shellSnippet("pnpm add -g @auenkr/legerline-cli\nlegerline --help");
+
+export const CLI_CONFIG = shellSnippet(
+  `legerline set-api-key "<your-api-key>"
+legerline config
+legerline tools`,
+);
+
+export const CLI_FIRST_REQUEST = shellSnippet(
+  `legerline get_v1_company_search --q reliance
+
+# Use the symbol returned by search unchanged.
+legerline get_api_v1_company_profile --symbol "/company/RELIANCE/consolidated/"`,
+);
+
+export const CLI_ENV = shellSnippet(
+  `export LEGERLINE_API_KEY="<your-api-key>"
+export LEGERLINE_API_URL="${API_BASE_URL}"
+legerline get_v1_company_search --q reliance`,
+);
+
+export const AUTH_HEADER = shellSnippet("X-API-Key: <your-api-key>");
+
+export const SCREEN_CALL = shellSnippet(
+  `MCP tool: screen_companies
+Arguments: { "query": "Market Capitalization > 500 AND Price to Earning < 15" }
+
+CLI:
+legerline get_api_v1_screen --query 'Market Capitalization > 500 AND Price to Earning < 15'`,
+);
+
+export const SCREEN_RESULT = jsonSnippet(
+  `{
+  "query": "Market Capitalization > 500 AND Price to Earning < 15",
+  "count": 1,
+  "columns": ["Order", "Company", "CMP", "P/E"],
+  "data": [{
+    "Order": 1,
+    "Company": "Example Industries",
+    "Symbol": "/company/EXAMPLE/",
+    "CMP": 196.75,
+    "P/E": 12.4
+  }]
+}`,
+);
