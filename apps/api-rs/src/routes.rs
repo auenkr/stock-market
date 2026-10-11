@@ -11,7 +11,7 @@ use crate::{
 use axum::{
     extract::{Query, State},
     http::{HeaderMap, HeaderValue, Method, StatusCode, Uri},
-    response::{Html, IntoResponse, Response},
+    response::{Html, IntoResponse, Redirect, Response},
     routing::get,
     Json,
 };
@@ -32,6 +32,27 @@ fn request_id() -> String {
 // Public pages
 // ---------------------------------------------------------------------------
 
+const CLIENT_QUICKSTART: &str = r##"
+<section id="mcp">
+  <h2>Connect with MCP</h2>
+  <p>Add this URL to your MCP client's remote server settings. Use Streamable HTTP with no authentication.</p>
+  <pre><code>https://stock-market-mcp.auenkr.com/mcp</code></pre>
+  <p>All 14 tools are read-only. Search for a company, then use its returned symbol to request financial data. Use <code>screen_companies</code> to find companies by financial criteria.</p>
+  <p>To run the HTTP adapter on your own computer:</p>
+  <pre><code>npx @auenkr/legerline-mcp --port 8788</code></pre>
+  <p>Connect your client to <code>http://127.0.0.1:8788/mcp</code>. The adapter calls the deployed Rust API.</p>
+</section>
+<section id="cli">
+  <h2>Use the CLI</h2>
+  <pre><code>npx @auenkr/legerline-cli get_v1_company_search --q reliance
+npx @auenkr/legerline-cli get_api_v1_profit_loss --symbol /company/RELIANCE/consolidated/
+npx @auenkr/legerline-cli get_api_v1_screen --query "Market Capitalization &gt; 500 AND Price to Earning &lt; 15"</code></pre>
+  <p>Run <code>npx @auenkr/legerline-cli tools</code> to list commands. Add <code>--help</code> to any command for its parameters.</p>
+  <p>Both clients use <a href="https://stock-market-api.auenkr.com">https://stock-market-api.auenkr.com</a> by default. Override it with <code>--api-url</code> when using another server.</p>
+  <p><a href="https://www.npmjs.com/package/@auenkr/legerline-cli">CLI on npm</a> · <a href="https://www.npmjs.com/package/@auenkr/legerline-mcp">MCP on npm</a> · <a href="#screening">Screening guide</a></p>
+</section>
+"##;
+
 fn homepage(origin: &str, environment: &str) -> String {
     let internal = if environment == "dev" {
         r#"<h2>Internal: dividends and ownership</h2>
@@ -40,22 +61,22 @@ fn homepage(origin: &str, environment: &str) -> String {
         <p><code>GET /api/list-of-ipo</code></p>
         <pre><code>curl ""#.to_string()
             + origin
-            + r#""/v1/list-of-ipo"</code></pre>
+            + r#"/v1/list-of-ipo"</code></pre>
         <h2>Get company data</h2>
         <p><code>GET /api/company-data?symbol=&lt;company-path&gt;</code></p>
         <pre><code>curl ""#
             + origin
-            + r#""/v1/company-data?symbol=%2Fcompany%2Fid%2F1286218%2F"</code></pre>"#
+            + r#"/v1/company-data?symbol=%2Fcompany%2Fid%2F1286218%2F"</code></pre>"#
     } else {
         String::new()
     };
     format!(
-        r#"<!doctype html>
+        r##"<!doctype html>
     <html lang="en">
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Stock Market API</title>
+        <title>Ledgerline — free stock market data</title>
         <style>
           :root {{ color-scheme: dark; --bg: #0b1020; --panel: #121a2e; --text: #e8eefc; --muted: #9aa8c7; --accent: #72e0b8; }}
           body {{ background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; line-height: 1.5; margin: 0; }}
@@ -65,14 +86,26 @@ fn homepage(origin: &str, environment: &str) -> String {
           p {{ color: var(--muted); max-width: 46rem; }}
           code, pre {{ background: var(--panel); border: 1px solid #253152; border-radius: .5rem; }}
           code {{ padding: .15rem .35rem; color: var(--accent); }}
-          pre {{ overflow-x: auto; padding: 1rem; color: var(--accent); }}
-          a {{ color: var(--accent); }}
+          pre {{ max-width: 100%; overflow-x: auto; padding: 1rem; color: var(--accent); }}
+          a {{ color: var(--accent); overflow-wrap: anywhere; }}
+          section {{ scroll-margin-top: 1.5rem; }}
+          pre code {{ border: 0; padding: 0; }}
+          input {{ width: 100%; box-sizing: border-box; padding: 1rem; background: var(--panel); color: var(--text); border: 1px solid #253152; border-radius: .5rem; }}
+          details {{ background: var(--panel); border: 1px solid #253152; border-radius: .5rem; margin: 1rem 0; padding: 1rem; }}
+          summary {{ cursor: pointer; font-weight: 600; overflow-wrap: anywhere; }}
+          .badge {{ color: var(--accent); font-size: .75rem; margin-right: .75rem; }}
+          .parameter {{ border-bottom: 1px solid #253152; padding: .5rem 0; overflow-wrap: anywhere; }}
+          li {{ color: var(--muted); margin: .5rem 0; }}
+          #screening code {{ overflow-wrap: anywhere; }}
         </style>
       </head>
       <body><main>
-        <p>MARKET DATA / API v1</p><h1>Build on better market data.</h1>
-        <p>Independent Indian company fundamentals and ownership data. Explore <a href="/docs">the API reference</a> or download <a href="/swagger.json">swagger.json</a>. Source-backed adapters have partial coverage; market history is excluded.</p>
-        <h2>Company fundamentals</h2>
+        <p>LEDGERLINE / INDIAN COMPANY FINANCIALS</p><h1>Free market data for your next idea.</h1>
+        <p>No login, API key, subscription, or payment required.</p>
+        <nav aria-label="Get started"><a href="#mcp">Connect with MCP</a> · <a href="#cli">Use the CLI</a> · <a href="#screening">Screening guide</a> · <a href="#api-reference">API reference</a> · <a href="#limitations">Data limitations</a></nav>
+        <p>Independent Indian company fundamentals and ownership data. Explore <a href="#api-reference">the API reference</a> or download <a href="/swagger.json">swagger.json</a>. Source-backed adapters have partial coverage; market history is excluded.</p>
+        {CLIENT_QUICKSTART}
+        <h2>Call the API</h2>
         <pre><code>curl --get "{origin}/v1/profit-loss" --data-urlencode "symbol=/company/RELIANCE/consolidated/"</code></pre>
         {internal}
         <h2>Search companies</h2>
@@ -81,14 +114,15 @@ fn homepage(origin: &str, environment: &str) -> String {
         <h2>List companies</h2>
         <p><code>GET /api/list-of-company?page=1</code></p>
         <pre><code>curl "{origin}/v1/list-of-company?page=1"</code></pre>
+        <section id="screening">{SCREENING_GUIDE}</section>
+        {API_REFERENCE}
+        <section id="limitations">{DATA_LIMITATIONS}</section>
       </main></body>
-    </html>"#
+    </html>"##
     )
 }
 
-const DOCS_HTML: &str = r#"<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ledgerline API reference</title><style>
-body{margin:0;background:#f5f8f7;color:#0d1b2a;font:14px/1.7 system-ui,sans-serif}main{max-width:1000px;margin:auto;padding:40px 24px}h1{font-size:40px;letter-spacing:-2px;line-height:1.1}a{color:#376747}input{width:100%;padding:13px;box-sizing:border-box;border:1px solid #dce5e8;border-radius:8px;margin:18px 0}details{background:white;border:1px solid #dce5e8;border-radius:10px;margin:12px 0;padding:18px}summary{cursor:pointer;font-weight:600;overflow-wrap:anywhere}pre{background:#0d1b2a;color:#c9f36b;padding:16px;border-radius:8px;overflow:auto;font-size:12px}code{font-size:12px}p{color:#6f7f8c}.badge{font-size:11px;color:#4e7852;margin-right:12px}.parameter{border-bottom:1px solid #edf0ed;padding:8px 0}h2{font-size:18px;margin-top:24px}
-</style></head><body><main><small>LEDGERLINE / API REFERENCE</small><h1>Explore the financial data contract.</h1><p id="intro">Loading Swagger…</p><a href="/swagger.json" download>Download swagger.json</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/v1/coverage">Coverage</a><input type="search" id="search" aria-label="Search endpoints" placeholder="Search endpoints, parameters or coverage…"><div id="operations"></div></main><script>
+const API_REFERENCE: &str = r##"<section id="api-reference"><h2>API reference</h2><p id="intro">Loading API reference…</p><p><a href="/swagger.json" download>Download swagger.json</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/v1/coverage">Coverage data</a></p><input type="search" id="search" aria-label="Search endpoints" placeholder="Search endpoints, parameters or coverage…"><div id="operations"></div></section><script>
 const container=document.querySelector('#operations');const search=document.querySelector('#search');
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 fetch('/swagger.json').then(r=>{if(!r.ok)throw Error('Swagger HTTP '+r.status);return r.json();}).then(spec=>{
@@ -103,7 +137,10 @@ fetch('/swagger.json').then(r=>{if(!r.ok)throw Error('Swagger HTTP '+r.status);r
   section.append(card);count++;
   }if(count){section.prepend(el('h2',group.order+'. '+group.title),el('p',group.description));container.append(section);}}if(!container.children.length)container.append(el('p','No matching endpoints.'));}render();search.addEventListener('input',render);const schemas=el('details');schemas.append(el('summary','All response models'),el('pre',JSON.stringify(spec.components.schemas,null,2)));container.after(schemas);
 }).catch(error=>{document.querySelector('#intro').textContent='Could not load Swagger: '+error.message;});
-</script></body></html>"#;
+</script>"##;
+
+const SCREENING_GUIDE: &str = include_str!("pages/screening.html");
+const DATA_LIMITATIONS: &str = include_str!("pages/limitations.html");
 
 // ---------------------------------------------------------------------------
 // Middleware: request ID + CORS
@@ -187,7 +224,7 @@ async fn health() -> Response {
 }
 
 async fn docs() -> Response {
-    (StatusCode::OK, Html(DOCS_HTML)).into_response()
+    Redirect::permanent("/#api-reference").into_response()
 }
 
 async fn spec(State(state): State<AppState>, uri: Uri, headers: HeaderMap) -> Response {
@@ -218,7 +255,7 @@ async fn plugin_manifest(State(state): State<AppState>, uri: Uri, headers: Heade
         "api": { "type": "openapi", "url": format!("{origin}/plugin/openapi.json") },
         "logo_url": format!("{origin}/logo.png"),
         "contact_email": "support@example.org",
-        "legal_info_url": format!("{origin}/docs"),
+        "legal_info_url": format!("{origin}/#limitations"),
     }))).into_response()
 }
 

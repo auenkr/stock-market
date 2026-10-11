@@ -65,7 +65,7 @@ The CLI command generated from the API operation is `get_api_v1_screen`. Quote t
 legerline get_api_v1_screen --query 'Market Capitalization > 500 AND Price to Earning < 15'
 ```
 
-The CLI handles URL encoding and writes the structured JSON response to stdout. See the [public MCP/CLI quickstart](https://github.com/auenkr/stock-market/blob/dev/docs/screening.md) for setup and access requirements.
+The CLI handles URL encoding and writes the structured JSON response to stdout. See the [public MCP/CLI quickstart](https://stock-market-api.auenkr.com/#mcp) for setup and access requirements.
 
 ### Interpret results
 
@@ -75,7 +75,7 @@ The CLI handles URL encoding and writes the structured JSON response to stdout. 
 - The measure's displayed unit controls the threshold. Market capitalization is displayed in INR crores; percentage measures use the displayed percent convention. Don't convert a threshold unless the user specifies a different unit.
 - MCP and CLI call the deployed Rust API without credentials.
 
-The [interactive API reference](https://stock-market-api.auenkr.com/docs) exposes the query field and measure gallery.
+The [interactive API reference](https://stock-market-api.auenkr.com/#api-reference) documents the query field. The supported measures are listed below.
 
 ## Response format
 
