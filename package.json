@@ -21,7 +21,7 @@
     "metrics": "nx metrics @stock-market/cli",
     "deploy:api": "nx deploy:api @stock-market/api",
     "db:push": "pnpm --filter @stock-market/web db:push",
-    "test:keys": "tsx --test apps/web/src/lib/key-expiration.test.ts",
+    "test:keys": "tsx --test apps/web/src/lib/key-expiration.test.ts apps/web/src/lib/code-snippets.test.ts",
     "db:seed:dev": "pnpm --filter @stock-market/db build && pnpm --filter @stock-market/auth seed:dev",
     "test:integration": "pnpm --filter @stock-market/api test:integration",
     "test:contract:rust": "node apps/api-rs/tests/contract.mjs",

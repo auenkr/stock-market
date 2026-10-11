@@ -33,7 +33,21 @@
 .documentation-code pre { padding-top: 46px; }
 .documentation-code > .copy-button { position: absolute; top: 8px; right: 8px; z-index: 1; padding: 6px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); font-size: 11px; cursor: pointer; }
 .documentation-code > .copy-button:hover { border-color: var(--accent); }
+.documentation-code > .documentation-code-file { position: absolute; top: 10px; left: 14px; z-index: 1; font: 11px "DM Mono", monospace; color: var(--muted); }
+.documentation-code pre code { font: 12px/1.8 "DM Mono", monospace; }
+.documentation-code pre .syntax-plain { color: var(--code-fg); }
+.mcp-config-tabs { margin-top: 4px; }
+.mcp-config-tabs-bar { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+.mcp-config-tabs-bar button { border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--muted); font-size: 12px; font-weight: 600; padding: 7px 15px; cursor: pointer; transition: border-color .18s ease, color .18s ease; }
+.mcp-config-tabs-bar button:hover { color: var(--ink); border-color: var(--muted); }
+.mcp-config-tabs-bar button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.mcp-config-note { font-size: 13px !important; margin: 12px 0 0 !important; }
+.mcp-config-note strong { color: var(--ink); }
+.mcp-config-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .documentation-content h3 { font-size: 17px; margin: 28px 0 12px; }
+.documentation-prompts { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.documentation-prompts li { padding: 13px 16px; background: var(--card); border: 1px solid var(--line); border-left: 2px solid var(--accent); border-radius: 8px; font-size: 13px; line-height: 1.7; }
+.documentation-note { margin-top: 18px !important; padding: 14px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; font-size: 13px !important; }
 .documentation-content .documentation-reference { border-top: 1px solid var(--line); padding-top: 28px; }
 .documentation-reference-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
 .documentation-footer { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid var(--line); padding: 24px 0; font-size: 12px; color: var(--muted); }

@@ -99,7 +99,7 @@ jobs:
       - name: Production documentation and theme browser tests
         env:
           ENVIRONMENT: production
-        run: pnpm --filter @stock-market/web exec playwright test tests/browser/theme.spec.ts tests/browser/api-explorer.spec.ts --output=test-results/production
+        run: pnpm --filter @stock-market/web exec playwright test tests/browser/theme.spec.ts tests/browser/api-explorer.spec.ts tests/browser/agent-plugins.spec.ts --output=test-results/production
       - uses: grafana/setup-k6-action@v1
         with:
           k6-version: "2.0.0"
