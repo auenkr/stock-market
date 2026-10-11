@@ -33,12 +33,12 @@ jobs:
           AFTER: ${{ github.sha }}
         run: |
           files=$(git diff --name-only "$BEFORE" "$AFTER")
-          if grep -q '^apps/legerline-cli/' <<< "$files"; then
+          if grep -Eq '^(apps/legerline-cli/|packages/agent-tools/|scripts/prepare-dev-package.mjs$|.github/workflows/deploy-dev.yml$)' <<< "$files"; then
             echo 'cli=true' >> "$GITHUB_OUTPUT"
           else
             echo 'cli=false' >> "$GITHUB_OUTPUT"
           fi
-          if grep -q '^apps/mcp/' <<< "$files"; then
+          if grep -Eq '^(apps/mcp/|scripts/prepare-dev-package.mjs$|.github/workflows/deploy-dev.yml$)' <<< "$files"; then
             echo 'mcp=true' >> "$GITHUB_OUTPUT"
           else
             echo 'mcp=false' >> "$GITHUB_OUTPUT"
