@@ -10,14 +10,14 @@ Every automated test in the repo, classified by what it exercises and whether it
 | Typechecks | `pnpm typecheck`, `tsc -p apps/api/tests/tsconfig.json --noEmit` | Static |
 | API unit tests | `apps/api/src/*.test.ts` via `pnpm test:api` | Unit: compatibility API, endpoint journeys/tiers, documentation visibility, cache logic, runtime regressions, source expansion, plan access, account access (local fixture) |
 | Auth/db unit tests | `pnpm test:auth` (`packages/db/src/id.test.ts`, `packages/auth/src/*.test.ts`, `apps/web/src/lib/profile.test.ts`) | Unit |
-| Key expiration | `pnpm test:keys` | Unit |
+| Key expiration, code snippets | `pnpm test:keys` (`apps/web/src/lib/key-expiration.test.ts`, `apps/web/src/lib/code-snippets.test.ts`) | Unit |
 | API integration | `apps/api/tests/integration/{api,plugin}.test.ts`, `apps/api/src/account-access.test.ts` via `pnpm test:integration` | Disposable PostgreSQL, deterministic HTML/JSON fixtures |
 | CLI integration | `apps/legerline-cli/tests/e2e.test.ts` via `pnpm test:integration` | Loopback fixture API |
 | Billing authorization/webhooks | `packages/auth/tests/billing.integration.test.ts` (non-webhook-lifecycle tests) | Local Polar boundary fixtures |
 | MCP OAuth integration | `packages/auth/tests/mcp-oauth.integration.test.ts` | Loopback |
 | MCP protocol | `apps/mcp/tests/mcp.test.ts` | Loopback mock API |
-| Browser E2E (dev) | `pnpm test:e2e` — `apps/web/tests/browser/{theme,api-explorer,mcp,mcp-oauth,billing}.spec.ts` | Disposable DB + dev server in tmux; billing uses fake Polar sandbox IDs, never real charges |
-| Production browser checks | `apps/web/tests/browser/{theme,api-explorer}.spec.ts` with `ENVIRONMENT=production` | Local production build |
+| Browser E2E (dev) | `pnpm test:e2e` — `apps/web/tests/browser/{theme,api-explorer,mcp,mcp-oauth,billing,agent-plugins}.spec.ts` | Disposable DB + dev server in tmux; billing uses fake Polar sandbox IDs, never real charges |
+| Production browser checks | `apps/web/tests/browser/{theme,api-explorer,agent-plugins}.spec.ts` with `ENVIRONMENT=production` | Local production build |
 | Performance smoke/quota | `pnpm test:performance`, `SCENARIO=quota` | k6 against disposable local app |
 
 ## Excluded from CI (opt-in / manual only)

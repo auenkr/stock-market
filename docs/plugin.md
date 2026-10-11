@@ -1,4 +1,70 @@
-# ChatGPT plugin (AI agent API surface)
+# Agent plugins (ChatGPT and Claude Code)
+
+## Claude Code plugin
+
+### Layout and ownership
+
+The Claude Code plugin ships from its own **public** repository, `AuenKr/ledgerline-claude-plugins`, because Anthropic's plugin directory requires a public GitHub repository and the main `stock-market` repository is private.
+
+```
+ledgerline-claude-plugins/            # marketplace root
+├── .claude-plugin/marketplace.json   # marketplace "ledgerline-claude"
+└── plugins/ledgerline/               # the plugin itself
+    ├── .claude-plugin/plugin.json    # manifest, including directory listing fields
+    ├── .mcp.json                     # one remote HTTP server, no credentials
+    ├── skills/ledgerline-research/SKILL.md
+    ├── README.md                     # >= 40 words, discloses endpoint and behaviour
+    ├── LICENSE                       # MIT
+    └── assets/icon.svg
+```
+
+The marketplace entry `name` is `ledgerline` and its `source` is `./plugins/ledgerline`; entry name and manifest name must stay identical. The marketplace `name` is `ledgerline-claude`, and it is not one of the reserved Anthropic names.
+
+This repository tracks the plugin as a git submodule at `vendor/ledgerline-claude-plugins` for local review and validation only. Nothing in the build, the test suites, or the CI workflows reads submodule contents, and CI checks out without `submodules: true`. Edit and publish the plugin in the plugin repository, then update the submodule pointer here. Never make the monorepo the source of truth for the published plugin.
+
+### Install and update
+
+```shell
+claude plugin marketplace add AuenKr/ledgerline-claude-plugins
+claude plugin install ledgerline@ledgerline-claude
+```
+
+In a session the same commands are `/plugin marketplace add` and `/plugin install`, followed by `/reload-plugins`. Authentication happens in `/mcp` by choosing **Authenticate** for `plugin:ledgerline:ledgerline`; the plugin declares no headers and stores no credential, so there is nothing to configure and nothing to leak.
+
+Releases: bump `version` in the marketplace entry and the manifest together, then tag from the plugin directory with `claude plugin tag --push`, which creates `ledgerline--v<version>`. `claude plugin update ledgerline@ledgerline-claude` then reaches users. Auto-update is off by default for a first-party marketplace.
+
+### Validation
+
+```shell
+claude plugin validate plugins/ledgerline --strict   # plugin manifest and .mcp.json
+claude plugin validate . --strict                    # marketplace manifest
+```
+
+The local CLI only checks that files are well formed. Anthropic's portal additionally requires a README of at least 40 words, a license, a settled name, and a passing security scan, so a clean local run does not imply an accepted submission. The current release passes both `--strict` runs on Claude Code 2.1.285, and `claude plugin install` from a local clone of the marketplace resolves the server, skill, README, license and icon.
+
+The remote endpoint advertises RFC 9728 protected-resource metadata and challenges unauthenticated requests, which is what lets `/mcp` drive the OAuth flow:
+
+```shell
+curl -s https://stock-market-mcp.auenkr.com/.well-known/oauth-protected-resource
+curl -si -X POST https://stock-market-mcp.auenkr.com/mcp \
+  -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"probe","version":"1"}}}'
+```
+
+The second call must answer `401` with a `WWW-Authenticate` challenge pointing at that metadata URL. A `200` without authorization would mean the server is not enforcing auth.
+
+### Directory submission status (2026-10-11)
+
+Not yet submitted. Two routes are prepared and both need an action only the owner can take.
+
+1. **Anthropic's directory** at `claude.ai/directory/manage`. Submit as a **Plugin bundle**. Requires a paid claude.ai plan (Pro or Max submits from the owner account; Team and Enterprise need an Owner). Enter the public repository and the plugin path `plugins/ledgerline`, run **Validate** in the portal, fix every **Blocking** finding, then submit for review. Anthropic reviews each version and only then serves it to users. The directory is separate from the official `claude-plugins-official` marketplace, which does not accept submissions through the portal.
+2. **Community marketplace** at `anthropics/claude-plugins-community`. Open a pull request against that repository following its contribution guide; entries there are pinned to a commit SHA, so the README in the plugin repository must be current first.
+
+Prerequisites already satisfied: the repository is public, the plugin name and display name are distinctive and not reserved, both `--strict` validations pass, the README documents every host the plugin talks to, and there are no scripts, hooks, executables, or credentials.
+
+### Public documentation
+
+`/documentation` carries `#chatgpt`, `#claude-code` and `#plugins` sections; the landing page has a matching `#assistants` section and a code demo with Claude Code and ChatGPT tabs. MCP configuration examples shown on the site always include an explicit `"type"`, because a `url` with no `type` is rejected by Claude Code and several other MCP clients. Those snippets are generated in `apps/web/src/lib/code-snippets.tsx` and covered by `code-snippets.test.ts`, which guards against a tokenizer that rewrites the text it is meant to highlight.
 
 ## Public ChatGPT plugin submission
 
