@@ -103,8 +103,7 @@ jobs:
           SOURCE_PACKAGE: '@auenkr/legerline-cli'
         run: |
           pnpm --filter "$SOURCE_PACKAGE"... build
-          version=$(node -p "require('./' + process.env.PACKAGE_DIRECTORY + '/package.json').version")
-          pnpm --dir "$PACKAGE_DIRECTORY" pkg set "name=$PACKAGE_NAME" "version=$version-$PACKAGE_VERSION_SUFFIX"
+          node scripts/prepare-dev-package.mjs
       - name: Publish CLI development package
         if: needs.changed-packages.outputs.cli == 'true'
         working-directory: apps/legerline-cli
@@ -120,8 +119,7 @@ jobs:
           SOURCE_PACKAGE: '@auenkr/legerline-mcp'
         run: |
           pnpm --filter "$SOURCE_PACKAGE"... build
-          version=$(node -p "require('./' + process.env.PACKAGE_DIRECTORY + '/package.json').version")
-          pnpm --dir "$PACKAGE_DIRECTORY" pkg set "name=$PACKAGE_NAME" "version=$version-$PACKAGE_VERSION_SUFFIX"
+          node scripts/prepare-dev-package.mjs
       - name: Publish MCP development package
         if: needs.changed-packages.outputs.mcp == 'true'
         working-directory: apps/mcp
