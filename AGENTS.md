@@ -24,6 +24,7 @@ expire: any future date
 
 # NOTE
 
-1. All feature, bugs, everything goes through dev branch
-2. Only Sync from dev to main push everything in prod.
-3. After commit, push create a PR to dev branch, babysit the PR till all checks CICD pass.
+1. All features and fixes go directly through pull requests to main. Do not maintain a dev branch.
+2. After commit, push and create a PR to main; monitor it until all CI/CD checks pass.
+3. CI publishes the Rust API image to Docker Hub only. The server container is updated manually by the owner. CI deploys MCP to Cloudflare and publishes MCP and CLI to npm.
+4. Keep data-scrapping ignored by Git. Never delete its local directory or data.

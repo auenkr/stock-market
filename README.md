@@ -4,6 +4,8 @@ Free Indian company fundamentals for people and AI agents. No login, API keys, s
 
 This repository contains the Rust data server, a stateless MCP adapter, and the `legerline` CLI. Both clients call the deployed Rust API at `https://stock-market-api.auenkr.com` by default.
 
+The Rust server hosts the [homepage](https://stock-market-api.auenkr.com) and [MCP, CLI, and API documentation](https://stock-market-api.auenkr.com/#api-reference).
+
 ## CLI
 
 ```sh
