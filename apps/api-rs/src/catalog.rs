@@ -1,13 +1,10 @@
 //! Endpoint catalogue, query validation, coverage document and OpenAPI spec.
-//! Values (tiers, parameters, limitations, journey order) mirror the TypeScript
-//! adapters so the contract suite passes unchanged.
+//! All supported endpoints are free.
 
 use crate::error::DataError;
 use serde_json::{json, Value};
 use std::collections::HashMap;
 
-pub const FREE_COMPANIES: &[&str] = &["RELIANCE", "HDFCBANK", "BHARTIARTL", "ICICIBANK", "SBIN"];
-pub const FREE_COMPANIES_AS_OF: &str = "2026-10-01";
 pub const INSPECTED_AT: &str = "2026-10-03";
 
 #[derive(Debug, Clone)]
@@ -97,35 +94,35 @@ pub fn endpoint_catalog() -> Vec<Contract> {
     let mut catalog = vec![
         company("company-profile", "Company profile", "free"),
         company("basic-financials", "Basic finance", "free"),
-        company("company-documents", "Company documents", "paid"),
+        company("company-documents", "Company documents", "free"),
         company("peer-comparison", "Peer comparison", "free"),
-        company("quarterly-profit-loss", "Quarterly profit and loss", "paid"),
-        company("profit-loss", "Profit and loss", "paid"),
-        company("balance-sheet", "Balance sheet", "paid"),
-        company("cash-flow", "Cash flow", "paid"),
-        company("ratios", "Ratios", "paid"),
-        company("shareholding-pattern", "Shareholding pattern", "paid"),
-        company("shareholdings/distribution", "Shareholding distribution", "paid"),
-        endpoint("screen", "Run a company screen", vec![Parameter { name: "query", location: "query", required: true, schema_type: Some("string"), max_length: Some(4000), values: None, format_date: false }], "partial", Some("/api/v1/screen"), "paid"),
-        endpoint("daily-price-ratios", "Price ratios daily", vec![symbol_param()], "excluded", None, "paid"),
-        endpoint("annual-price-ratios", "Price ratios annual", vec![symbol_param()], "excluded", None, "paid"),
-        endpoint("shareholdings/summary", "Ownership structure", vec![symbol_param(), period_param()], "partial", None, "paid"),
-        endpoint("shareholdings/ownership-current", "Current owners", vec![symbol_param()], "partial", None, "paid"),
-        endpoint("shareholdings/ownership-history", "Owner history", vec![symbol_param(), period_param()], "partial", None, "paid"),
+        company("quarterly-profit-loss", "Quarterly profit and loss", "free"),
+        company("profit-loss", "Profit and loss", "free"),
+        company("balance-sheet", "Balance sheet", "free"),
+        company("cash-flow", "Cash flow", "free"),
+        company("ratios", "Ratios", "free"),
+        company("shareholding-pattern", "Shareholding pattern", "free"),
+        company("shareholdings/distribution", "Shareholding distribution", "free"),
+        endpoint("screen", "Run a company screen", vec![Parameter { name: "query", location: "query", required: true, schema_type: Some("string"), max_length: Some(4000), values: None, format_date: false }], "partial", Some("/api/v1/screen"), "free"),
+        endpoint("daily-price-ratios", "Price ratios daily", vec![symbol_param()], "excluded", None, "free"),
+        endpoint("annual-price-ratios", "Price ratios annual", vec![symbol_param()], "excluded", None, "free"),
+        endpoint("shareholdings/summary", "Ownership structure", vec![symbol_param(), period_param()], "partial", None, "free"),
+        endpoint("shareholdings/ownership-current", "Current owners", vec![symbol_param()], "partial", None, "free"),
+        endpoint("shareholdings/ownership-history", "Owner history", vec![symbol_param(), period_param()], "partial", None, "free"),
         endpoint("corporate-actions/all", "Market corporate actions",
             vec![Parameter { name: "symbol", location: "query", required: false, schema_type: Some("string"), max_length: None, values: None, format_date: false },
                  Parameter { name: "action", location: "query", required: false, schema_type: Some("string"), max_length: None, values: Some(&["split", "bonus", "rights", "dividend"]), format_date: false },
-                 date_param("from_date", false), date_param("to_date", false)], "partial", None, "paid"),
+                 date_param("from_date", false), date_param("to_date", false)], "partial", None, "free"),
         endpoint("corporate-actions", "Company corporate actions",
-            vec![symbol_param(), Parameter { name: "action", location: "query", required: false, schema_type: Some("string"), max_length: None, values: Some(&["split", "bonus", "rights", "dividend"]), format_date: false }], "partial", None, "paid"),
-        company("dividend", "Dividends", "paid"),
+            vec![symbol_param(), Parameter { name: "action", location: "query", required: false, schema_type: Some("string"), max_length: None, values: Some(&["split", "bonus", "rights", "dividend"]), format_date: false }], "partial", None, "free"),
+        company("dividend", "Dividends", "free"),
         endpoint("results-calendar", "Results calendar", vec![date_param("from_date", true), date_param("to_date", true)], "partial", None, "free"),
         endpoint("index/market-price/historical", "Index historical market price",
-            vec![param("index_symbol", None, true), date_param("from_date", true), date_param("to_date", true)], "excluded", None, "paid"),
+            vec![param("index_symbol", None, true), date_param("from_date", true), date_param("to_date", true)], "excluded", None, "free"),
         endpoint("index/valuation/historical", "Index valuation",
-            vec![param("index_symbol", None, true), date_param("from_date", true), date_param("to_date", true)], "excluded", None, "paid"),
+            vec![param("index_symbol", None, true), date_param("from_date", true), date_param("to_date", true)], "excluded", None, "free"),
         endpoint("commodity-price", "Commodity price trend",
-            vec![Parameter { name: "code", location: "path", required: true, schema_type: Some("integer"), max_length: None, values: None, format_date: false }], "excluded", Some("/api/v1/commodity-price/{code}"), "paid"),
+            vec![Parameter { name: "code", location: "path", required: true, schema_type: Some("integer"), max_length: None, values: None, format_date: false }], "excluded", Some("/api/v1/commodity-price/{code}"), "free"),
     ];
     catalog.sort_by_key(|c| endpoint_order(c.path));
     catalog
@@ -221,25 +218,6 @@ pub fn validate_query(contract: &Contract, params: &HashMap<String, String>, pat
     Ok(query)
 }
 
-pub fn require_company_access(plan: &str, symbols: &[String]) -> Result<(), DataError> {
-    if plan == "free"
-        && symbols.iter().any(|symbol| {
-            !FREE_COMPANIES.iter().any(|allowed| {
-                symbol == *allowed
-                    || symbol.trim_end_matches('/').to_uppercase() == format!("/COMPANY/{allowed}")
-                    || symbol.trim_end_matches('/').to_uppercase() == format!("/COMPANY/{allowed}/CONSOLIDATED")
-            })
-        })
-    {
-        return Err(DataError::new(
-            format!("Free company endpoints are limited to {}. Upgrade to access other companies.", FREE_COMPANIES.join(", ")),
-            403,
-            "FREE_COMPANY_RESTRICTED",
-        ));
-    }
-    Ok(())
-}
-
 // ---------------------------------------------------------------------------
 // Coverage document
 // ---------------------------------------------------------------------------
@@ -248,18 +226,7 @@ pub fn coverage_document() -> Value {
     let catalog = endpoint_catalog();
     json!({
         "inspectedAt": INSPECTED_AT,
-        "accessPolicy": {
-            "freeCompanies": FREE_COMPANIES,
-            "rankedBy": "market-capitalization",
-            "asOf": FREE_COMPANIES_AS_OF,
-            "requestsPerMinute": { "free": 10, "basic": 60, "personal": 300, "professional": 500 },
-            "plans": {
-                "free": { "name": "Hobby", "monthlyPrice": 0, "requestsPerMinute": 10, "commercial": false },
-                "basic": { "name": "Basic", "monthlyPrice": 199, "requestsPerMinute": 60, "commercial": false },
-                "personal": { "name": "Personal", "monthlyPrice": 399, "requestsPerMinute": 300, "commercial": false },
-                "professional": { "name": "Professional", "monthlyPrice": 2499, "requestsPerMinute": 500, "commercial": true },
-            },
-        },
+        "accessPolicy": { "free": true, "authenticationRequired": false },
         "userJourney": journey().iter().enumerate().map(|(i, (id, title, description, _))| {
             json!({ "id": id, "title": title, "description": description, "order": i + 1 })
         }).collect::<Vec<_>>(),
@@ -274,13 +241,13 @@ pub fn coverage_document() -> Value {
 }
 
 // ---------------------------------------------------------------------------
-// OpenAPI spec (openapi 3.0.3, apiKey security; internal group hidden outside dev)
+// OpenAPI spec (openapi 3.0.3, no authentication; internal group hidden outside dev)
 // ---------------------------------------------------------------------------
 
 fn parameter_note(name: &str) -> &'static str {
     match name {
         "symbol" => "Company URL path returned as symbol by search, company listing, or IPO listing. Pass unchanged. The URL selects standalone or consolidated data. Exchange tickers, absolute URLs, arrays and repeated symbols are not accepted.",
-        "query" => "Screening expression using exact measure labels. Supports >, <, >=, <=, =, arithmetic (+ - * /), parentheses, AND and OR. Maximum 4,000 characters; send exactly one query parameter. Example: Market Capitalization > 500 AND Price to Earning < 15. Full ratio catalog and MCP/CLI instructions: https://stock-market.auenkr.com/documentation#screening.",
+        "query" => "Screening expression using exact measure labels. Supports >, <, >=, <=, =, arithmetic (+ - * /), parentheses, AND and OR. Maximum 4,000 characters; send exactly one query parameter. Example: Market Capitalization > 500 AND Price to Earning < 15. Full ratio catalog and MCP/CLI instructions: https://github.com/auenkr/stock-market/blob/dev/docs/screening.md.",
         "period" => "Reporting frequency: annual or quarterly.",
         "action" => "Optional corporate-action filter: split, bonus, rights, or dividend. Omit to return all corporate actions.",
         "page" => "One-based source page. Continue with X-Next-Page until empty; filters are applied within each page.",
@@ -350,10 +317,7 @@ pub fn openapi_spec(origin: &str, environment: &str) -> Value {
                         "X-Next-Page": { "description": "Next source page.", "schema": { "type": "string" } } },
                         "content": { "application/json": { "schema": { "$ref": schema_ref } } } },
                     "400": error_response("Invalid, missing or unknown parameter"),
-                    "401": error_response("Missing, invalid, expired or revoked API key"),
-                    "403": error_response("Personal or Professional required for detailed data, or company outside the Hobby top-five allowlist"),
                     "404": error_response("Source resource not found"),
-                    "429": { "description": "Request allowance exceeded.", "headers": { "Retry-After": { "schema": { "type": "integer" } } }, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
                     "501": error_response("Dataset or requested variation is unavailable"),
                     "502": error_response("Data could not be retrieved"),
                     "503": error_response("Service temporarily unavailable; retry later"),
@@ -388,11 +352,11 @@ pub fn openapi_spec(origin: &str, environment: &str) -> Value {
     let mut spec = json!({
         "openapi": "3.0.3",
         "info": { "title": "Ledgerline Stock Market API", "version": "1.2.0", "description": "Indian company financials, ownership, corporate actions, and market information." },
-        "security": [{ "apiKey": [] }],
+        "security": [],
         "servers": [{ "url": origin }],
         "tags": journey().iter().map(|(_, title, description, _)| json!({ "name": title, "description": description })).collect::<Vec<_>>(),
         "x-user-journey": journey().iter().enumerate().map(|(i, (id, title, description, _))| json!({ "id": id, "title": title, "description": description, "order": i + 1 })).collect::<Vec<_>>(),
-        "components": { "securitySchemes": { "apiKey": { "type": "apiKey", "in": "header", "name": "X-API-Key" } },
+        "components": { "securitySchemes": {},
             "schemas": {
                 "Error": { "type": "object", "required": ["error", "code"], "properties": { "error": { "type": "string" }, "code": { "type": "string" } } },
                 "screen": { "type": "object", "required": ["query", "count", "columns", "data"], "properties": {
@@ -432,13 +396,13 @@ mod screen_tests {
     use super::{endpoint_catalog, openapi_spec};
 
     #[test]
-    fn screen_is_a_paid_catalog_endpoint_with_both_api_aliases_documented() {
+    fn screen_is_a_free_catalog_endpoint_with_both_api_aliases_documented() {
         let contract = endpoint_catalog()
             .into_iter()
             .find(|contract| contract.resource == "screen")
             .unwrap();
         assert_eq!(contract.path, "/api/v1/screen");
-        assert_eq!(contract.tier, "paid");
+        assert_eq!(contract.tier, "free");
         assert_eq!(contract.parameters[0].name, "query");
         assert!(contract.parameters[0].required);
         assert_eq!(contract.parameters[0].max_length, Some(4000));
