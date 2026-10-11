@@ -33,12 +33,12 @@ jobs:
           AFTER: ${{ github.sha }}
         run: |
           files=$(git diff --name-only "$BEFORE" "$AFTER")
-          if grep -Eq '^(apps/legerline-cli/|packages/agent-tools/|scripts/prepare-dev-package.mjs$|.github/workflows/deploy-dev.yml$)' <<< "$files"; then
+          if grep -Eq '^(apps/legerline-cli/|packages/agent-tools/|scripts/prepare-(dev|publish)-package.mjs$|.github/workflows/deploy-dev.yml$)' <<< "$files"; then
             echo 'cli=true' >> "$GITHUB_OUTPUT"
           else
             echo 'cli=false' >> "$GITHUB_OUTPUT"
           fi
-          if grep -Eq '^(apps/mcp/|scripts/prepare-dev-package.mjs$|.github/workflows/deploy-dev.yml$)' <<< "$files"; then
+          if grep -Eq '^(apps/mcp/|scripts/prepare-(dev|publish)-package.mjs$|.github/workflows/deploy-dev.yml$)' <<< "$files"; then
             echo 'mcp=true' >> "$GITHUB_OUTPUT"
           else
             echo 'mcp=false' >> "$GITHUB_OUTPUT"
@@ -104,6 +104,7 @@ jobs:
         run: |
           pnpm --filter "$SOURCE_PACKAGE"... build
           node scripts/prepare-dev-package.mjs
+          node scripts/prepare-publish-package.mjs
       - name: Publish CLI development package
         if: needs.changed-packages.outputs.cli == 'true'
         working-directory: apps/legerline-cli
@@ -120,6 +121,7 @@ jobs:
         run: |
           pnpm --filter "$SOURCE_PACKAGE"... build
           node scripts/prepare-dev-package.mjs
+          node scripts/prepare-publish-package.mjs
       - name: Publish MCP development package
         if: needs.changed-packages.outputs.mcp == 'true'
         working-directory: apps/mcp
