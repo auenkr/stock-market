@@ -102,7 +102,7 @@ fn homepage(origin: &str, environment: &str) -> String {
       <body><main>
         <p>LEDGERLINE / INDIAN COMPANY FINANCIALS</p><h1>Free market data for your next idea.</h1>
         <p>No login, API key, subscription, or payment required.</p>
-        <nav aria-label="Get started"><a href="#mcp">Connect with MCP</a> · <a href="#cli">Use the CLI</a> · <a href="#screening">Screening guide</a> · <a href="#api-reference">API reference</a> · <a href="#limitations">Data limitations</a></nav>
+        <nav aria-label="Get started"><a href="#mcp">Connect with MCP</a> · <a href="#cli">Use the CLI</a> · <a href="#screening">Screening guide</a> · <a href="#api-reference">API reference</a></nav>
         <p>Independent Indian company fundamentals and ownership data. Explore <a href="#api-reference">the API reference</a> or download <a href="/swagger.json">swagger.json</a>. Source-backed adapters have partial coverage; market history is excluded.</p>
         {CLIENT_QUICKSTART}
         <h2>Call the API</h2>
@@ -116,7 +116,6 @@ fn homepage(origin: &str, environment: &str) -> String {
         <pre><code>curl "{origin}/v1/list-of-company?page=1"</code></pre>
         <section id="screening">{SCREENING_GUIDE}</section>
         {API_REFERENCE}
-        <section id="limitations">{DATA_LIMITATIONS}</section>
       </main></body>
     </html>"##
     )
@@ -140,7 +139,6 @@ fetch('/swagger.json').then(r=>{if(!r.ok)throw Error('Swagger HTTP '+r.status);r
 </script>"##;
 
 const SCREENING_GUIDE: &str = include_str!("pages/screening.html");
-const DATA_LIMITATIONS: &str = include_str!("pages/limitations.html");
 
 // ---------------------------------------------------------------------------
 // Middleware: request ID + CORS
@@ -255,7 +253,7 @@ async fn plugin_manifest(State(state): State<AppState>, uri: Uri, headers: Heade
         "api": { "type": "openapi", "url": format!("{origin}/plugin/openapi.json") },
         "logo_url": format!("{origin}/logo.png"),
         "contact_email": "support@example.org",
-        "legal_info_url": format!("{origin}/#limitations"),
+        "legal_info_url": format!("{origin}/"),
     }))).into_response()
 }
 
