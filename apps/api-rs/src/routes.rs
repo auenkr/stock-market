@@ -116,6 +116,7 @@ fn homepage(origin: &str, environment: &str) -> String {
         <pre><code>curl "{origin}/v1/list-of-company?page=1"</code></pre>
         <section id="screening">{SCREENING_GUIDE}</section>
         {API_REFERENCE}
+        <footer><p><a href="/privacy-policy">Privacy Policy</a> · <a href="/terms-of-service">Terms of Service</a> · <a href="/support">Support</a></p></footer>
       </main></body>
     </html>"##
     )
@@ -221,6 +222,27 @@ async fn health() -> Response {
     (StatusCode::OK, Json(json!({ "status": "ok", "service": "stock-market-api", "version": "1.2.0" }))).into_response()
 }
 
+fn information_page(title: &str, content: &str) -> Html<String> {
+    Html(format!(r#"<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{title} | Ledgerline</title><style>
+body {{ margin:0; background:#0b1020; color:#e8eefc; font:16px/1.7 system-ui,sans-serif; }}
+main {{ max-width:58rem; margin:auto; padding:3rem 1.5rem; }}
+a {{ color:#72e0b8; overflow-wrap:anywhere; }} p {{ color:#9aa8c7; }} h2 {{ margin-top:2rem; }}
+nav {{ display:flex; flex-wrap:wrap; gap:1rem; }} h1 {{ line-height:1.15; }}
+</style></head><body><main><nav aria-label="Site navigation"><a href="/">Home and docs</a><a href="/privacy-policy">Privacy Policy</a><a href="/terms-of-service">Terms of Service</a><a href="/support">Support</a></nav><h1>{title}</h1>{content}</main></body></html>"#))
+}
+
+async fn privacy_policy() -> Html<String> {
+    information_page("Privacy Policy", include_str!("pages/privacy-policy.html"))
+}
+
+async fn terms_of_service() -> Html<String> {
+    information_page("Terms of Service", include_str!("pages/terms-of-service.html"))
+}
+
+async fn support() -> Html<String> {
+    information_page("Support", include_str!("pages/support.html"))
+}
+
 async fn docs() -> Response {
     Redirect::permanent("/#api-reference").into_response()
 }
@@ -253,7 +275,7 @@ async fn plugin_manifest(State(state): State<AppState>, uri: Uri, headers: Heade
         "api": { "type": "openapi", "url": format!("{origin}/plugin/openapi.json") },
         "logo_url": format!("{origin}/logo.png"),
         "contact_email": "support@example.org",
-        "legal_info_url": format!("{origin}/"),
+        "legal_info_url": format!("{origin}/terms-of-service"),
     }))).into_response()
 }
 
@@ -473,6 +495,9 @@ pub fn router(state: AppState) -> axum::Router {
         .route("/", get(root))
         .route("/health", get(health))
         .route("/docs", get(docs))
+        .route("/privacy-policy", get(privacy_policy))
+        .route("/terms-of-service", get(terms_of_service))
+        .route("/support", get(support))
         .route("/openapi.json", get(spec))
         .route("/swagger.json", get(spec))
         .route("/plugin/openapi.json", get(plugin_spec))
