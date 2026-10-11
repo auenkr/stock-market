@@ -1,0 +1,83 @@
+<!-- Rendered from docs/screening.md; keep content in sync. -->
+<h2>Company screening</h2>
+<p><code>GET /api/v1/screen?query=...</code> runs a financial screening expression. The <code>/v1/screen</code> alias is also available. This endpoint is free and requires no login or API key.</p>
+<h3>Write a query</h3>
+<p>Use the exact measure names from the supported-measures list below. For example:</p>
+<pre><code class="language-text">Market Capitalization &gt; 500 AND Price to Earning &lt; 15
+</code></pre>
+<p>This keeps companies with a market capitalization above 500 and a price-to-earning value below 15. <code>AND</code> requires both conditions; use <code>OR</code> when either condition can match. Numeric values use the measure's displayed units.</p>
+<p>Send the expression with an HTTP client that URL-encodes query parameters:</p>
+<pre><code class="language-bash">curl --get 'https://stock-market-api.auenkr.com/api/v1/screen' \
+  --data-urlencode 'query=Market Capitalization &gt; 500 AND Price to Earning &lt; 15'
+</code></pre>
+<p>The <code>query</code> value is limited to 4,000 characters. Only one <code>query</code> parameter is accepted; other query parameters are rejected.</p>
+<p>Supported syntax:</p>
+<ul>
+<li>Comparisons: <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, <code>=</code></li>
+<li>Arithmetic: <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code></li>
+<li>Grouping: parentheses, such as <code>(Price to Earning &lt; 15 OR Price to book value &lt; 2) AND Debt to equity &lt; 1</code></li>
+<li>Logic: <code>AND</code>, <code>OR</code></li>
+</ul>
+<h3>Use screening from an agent</h3>
+<p>Screening evaluates the company universe; it does not take <code>symbol</code> and does not need a preceding company-search call. Choose this operation when a user asks to find companies that satisfy financial criteria. If a requested threshold, time period, or unit is unclear, ask for it instead of assuming. Translate each criterion into an expression using exact labels from the supported-measures catalog below. Combine conditions with <code>AND</code> when all must match. Use parentheses to make mixed <code>AND</code>/<code>OR</code> logic explicit. Do not silently replace an unavailable measure with a similar one.</p>
+<p>Examples:</p>
+<pre><code class="language-text"># All conditions must match
+Market Capitalization &gt; 500 AND Price to Earning &lt; 15 AND Return on capital employed &gt; 22%
+
+# Either valuation criterion may match, and debt must remain below the limit
+(Price to Earning &lt; 15 OR Price to book value &lt; 2) AND Debt to equity &lt; 1
+
+# Arithmetic can combine supported measures
+(Sales growth 3Years + Profit growth 3Years) / 2 &gt; 15
+</code></pre>
+<h4>MCP</h4>
+<p>Call <code>screen_companies</code> with the complete expression as <code>query</code>:</p>
+<pre><code class="language-json">{
+  &quot;query&quot;: &quot;Market Capitalization &gt; 500 AND Price to Earning &lt; 15&quot;
+}
+</code></pre>
+<p>The MCP tool automatically URL-encodes the value and returns the API response as JSON text. Do not pass a company symbol or split the expression across multiple tool arguments.</p>
+<h4>CLI</h4>
+<p>The CLI command generated from the API operation is <code>get_api_v1_screen</code>. Quote the complete expression so the shell passes it as one <code>--query</code> value:</p>
+<pre><code class="language-bash">legerline get_api_v1_screen --query 'Market Capitalization &gt; 500 AND Price to Earning &lt; 15'
+</code></pre>
+<p>The CLI handles URL encoding and writes the structured JSON response to stdout. See the <a href="https://stock-market-api.auenkr.com/#mcp">public MCP/CLI quickstart</a> for setup and access requirements.</p>
+<h4>Interpret results</h4>
+<ul>
+<li><code>count</code> is the number of returned rows. Treat it as the size of this response, not proof that the data source has complete coverage of every listed company.</li>
+<li><code>columns</code> lists the source's displayed columns. Each row in <code>data</code> uses those visible column labels as keys and also includes <code>Symbol</code>, the company URL path for follow-up company tools.</li>
+<li>Blank or unavailable values are <code>null</code>; preserve them as unknown rather than treating them as zero.</li>
+<li>The measure's displayed unit controls the threshold. Market capitalization is displayed in INR crores; percentage measures use the displayed percent convention. Don't convert a threshold unless the user specifies a different unit.</li>
+<li>MCP and CLI call the deployed Rust API without credentials.</li>
+</ul>
+<p>The <a href="https://stock-market-api.auenkr.com/#api-reference">interactive API reference</a> documents the query field. The supported measures are listed below.</p>
+<h3>Response format</h3>
+<p>The response includes the original <code>query</code>, the number of returned rows in <code>count</code>, source column names in <code>columns</code>, and matching company rows in <code>data</code>. Each row uses the displayed column names as keys. The serial-number column is named <code>Order</code>; the visible column label is used without a separate unit suffix (for example, <code>CMP</code> from <code>CMP Rs.</code>). <code>Symbol</code> is added from the company link in the HTML. Numeric cells are JSON numbers, blank cells are <code>null</code>, and missing cells are included as <code>null</code>. This illustrative response shows the shape; values and selected columns depend on the query:</p>
+<pre><code class="language-json">{
+  &quot;query&quot;: &quot;Market Capitalization &gt; 500 AND Price to Earning &lt; 15&quot;,
+  &quot;count&quot;: 1,
+  &quot;columns&quot;: [&quot;Order&quot;, &quot;Company&quot;, &quot;CMP&quot;, &quot;P/E&quot;],
+  &quot;data&quot;: [
+    {
+      &quot;Order&quot;: 1,
+      &quot;Company&quot;: &quot;Example Industries&quot;,
+      &quot;Symbol&quot;: &quot;/company/EXAMPLE/&quot;,
+      &quot;CMP&quot;: 196.75,
+      &quot;P/E&quot;: 12.4
+    }
+  ]
+}
+</code></pre>
+<p>The results contain the rows returned for that query; they are not a promise of a complete universe or exhaustive data coverage.</p>
+<h3>Supported ratio measures</h3>
+<p>Use these labels exactly as written. The ratio gallery also contains statement and price fields described in the next section. Historical, average, and preceding-period measures are available when present in the gallery.</p>
+<h4>Ratios</h4>
+<p><strong>Valuation and company size:</strong> <code>Market Capitalization</code>; <code>Price to Earning</code>; <code>Dividend yield</code>; <code>Price to book value</code>; <code>Industry PE</code>; <code>Industry PBV</code>; <code>Enterprise Value</code>; <code>Price to Quarterly Earning</code>; <code>Book value</code>; <code>Earnings yield</code>; <code>Historical PE 3Years</code>; <code>Historical PE 5Years</code>; <code>Historical PE 7Years</code>; <code>Historical PE 10Years</code>; <code>Historical PBV 3Years</code>; <code>Historical PBV 5Years</code>; <code>Historical PBV 7Years</code>; <code>Historical PBV 10Years</code>.</p>
+<p><strong>Returns, profitability, and growth:</strong> <code>Return on assets</code>; <code>Return on equity</code>; <code>Return on invested capital</code>; <code>Return on capital employed preceding year</code>; <code>Return on assets preceding year</code>; <code>Return on equity preceding year</code>; <code>Average return on equity 3Years</code>; <code>Average return on equity 5Years</code>; <code>Average return on equity 7Years</code>; <code>Average return on equity 10Years</code>; <code>Return on equity 5years growth</code>; <code>Return on assets 3years</code>; <code>Return on assets 5years</code>; <code>Average return on capital employed 3Years</code>; <code>Average return on capital employed 5Years</code>; <code>Average return on capital employed 7Years</code>; <code>Average return on capital employed 10Years</code>; <code>Median return on capital employed 5Years</code>; <code>Median return on capital employed 10Years</code>; <code>Average return on invested capital 3Years</code>; <code>Average return on invested capital 5Years</code>; <code>OPM 5Year</code>; <code>OPM 10Year</code>; <code>Average 5years dividend</code>; <code>Average dividend payout 3years</code>.</p>
+<p><strong>Debt, liquidity, and operating efficiency:</strong> <code>Debt to equity</code>; <code>Inventory turnover ratio</code>; <code>Quick ratio</code>; <code>Asset Turnover Ratio</code>; <code>Financial leverage</code>; <code>Debtor days</code>; <code>Working Capital Days</code>; <code>Earning Power</code>; <code>Graham Number</code>; <code>Cash Conversion Cycle</code>; <code>Days Payable Outstanding</code>; <code>Days Receivable Outstanding</code>; <code>Days Inventory Outstanding</code>; <code>Inventory turnover ratio 3Years back</code>; <code>Inventory turnover ratio 5Years back</code>; <code>Inventory turnover ratio 7Years back</code>; <code>Inventory turnover ratio 10Years back</code>; <code>Average debtor days 3years</code>; <code>Debtor days 3years back</code>; <code>Debtor days 5years back</code>; <code>Average Working Capital Days 3years</code>.</p>
+<p><strong>Ownership and other reported measures:</strong> <code>Promoter holding</code>; <code>Pledged percentage</code>; <code>Number of equity shares</code>; <code>Number of Shareholders</code>; <code>Unpledged promoter holding</code>; <code>Public holding</code>; <code>FII holding</code>; <code>Change in FII holding</code>; <code>DII holding</code>; <code>Change in DII holding</code>; <code>Number of Shareholders preceding quarter</code>; <code>Number of Shareholders 1year back</code>; <code>Number of equity shares 10years back</code>; <code>Book value preceding year</code>; <code>Book value 3years back</code>; <code>Book value 5years back</code>; <code>Book value 10years back</code>; <code>Exports percentage</code>; <code>Exports percentage 3Years back</code>; <code>Exports percentage 5Years back</code>; <code>Change in FII holding 3Years</code>; <code>Change in DII holding 3Years</code>; <code>Credit rating</code>; <code>Piotroski score</code>; <code>G Factor</code>.</p>
+<p><strong>Market capitalization history:</strong> <code>Market Capitalization 3years back</code>; <code>Market Capitalization 5years back</code>; <code>Market Capitalization 7years back</code>; <code>Market Capitalization 10years back</code>.</p>
+<h4>User-created ratios</h4>
+<p><code>Price to Sales</code>; <code>Price to Free Cash Flow</code>; <code>EVEBITDA</code>; <code>Current ratio</code>; <code>Interest Coverage Ratio</code>; <code>PEG Ratio</code>; <code>Working Capital to Sales ratio</code>; <code>QoQ Profits</code>; <code>QoQ Sales</code>; <code>Net worth</code>; <code>Market Cap to Sales</code>; <code>Interest Coverage</code>; <code>Enterprise Value to EBIT</code>; <code>Debt Capacity</code>; <code>Debt To Profit</code>; <code>Total Capital Employed</code>; <code>CROIC</code>; <code>debtplus</code>; <code>Leverage</code>; <code>Dividend Payout</code>; <code>Intrinsic Value</code>; <code>cash debt contingent liabilities by mcap</code>; <code>Cash by market cap</code>; <code>52w Index</code>; <code>Down from 52w high</code>; <code>Up from 52w low</code>; <code>From 52w high</code>; <code>Mkt Cap To Debt Cap</code>; <code>Dividend Payout Ratio</code>; <code>Graham</code>; <code>Price to Cash Flow</code>; <code>ROCE3yr avg</code>; <code>PB X PE</code>; <code>NCAVPS</code>; <code>Market Capt to Cash Flow</code>; <code>Altman Z Score</code>; <code>Market cap to quarterly profit</code>.</p>
+<h4>Other gallery fields</h4>
+<p>The gallery also provides measures from annual and quarterly profit and loss, balance sheet, cash flow, and price sections. It includes preceding-period and historical variants. These labels can be used in expressions when they appear in the gallery. The catalog above records the full Ratios and User-created ratios groups observed during review; gallery labels may change as new fields are added or removed.</p>
