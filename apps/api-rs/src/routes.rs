@@ -54,22 +54,7 @@ npx @auenkr/legerline-cli get_api_v1_screen --query "Market Capitalization &gt; 
 "##;
 
 fn homepage(origin: &str, environment: &str) -> String {
-    let internal = if environment == "dev" {
-        r#"<h2>Internal: dividends and ownership</h2>
-        <p><code>GET /v1/dividend?symbol=/company/RELIANCE/</code> · <code>GET /v1/shareholdings/ownership-current?symbol=/company/RELIANCE/</code></p>
-        <h2>List upcoming IPOs</h2>
-        <p><code>GET /api/list-of-ipo</code></p>
-        <pre><code>curl ""#.to_string()
-            + origin
-            + r#"/v1/list-of-ipo"</code></pre>
-        <h2>Get company data</h2>
-        <p><code>GET /api/company-data?symbol=&lt;company-path&gt;</code></p>
-        <pre><code>curl ""#
-            + origin
-            + r#"/v1/company-data?symbol=%2Fcompany%2Fid%2F1286218%2F"</code></pre>"#
-    } else {
-        String::new()
-    };
+    let internal_note = if environment == "dev" { "Dev mode: internal endpoints are listed below." } else { "" };
     format!(
         r##"<!doctype html>
     <html lang="en">
@@ -97,23 +82,23 @@ fn homepage(origin: &str, environment: &str) -> String {
           .parameter {{ border-bottom: 1px solid #253152; padding: .5rem 0; overflow-wrap: anywhere; }}
           li {{ color: var(--muted); margin: .5rem 0; }}
           #screening code {{ overflow-wrap: anywhere; }}
+          nav ol li {{ color: var(--text); }}
+          .op {{ display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }}
+          @media (max-width: 52rem) {{ .op {{ grid-template-columns: 1fr; }} }}
+          .live {{ border-left: 1px solid #253152; padding-left: 1rem; min-width: 0; }}
+          .live pre {{ max-height: 24rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }}
+          .companies button {{ background: var(--panel); color: var(--accent); border: 1px solid #253152; border-radius: .5rem; padding: .4rem .8rem; cursor: pointer; }}
         </style>
       </head>
       <body><main>
         <p>LEDGERLINE / INDIAN COMPANY FINANCIALS</p><h1>Free market data for your next idea.</h1>
         <p>No login, API key, subscription, or payment required.</p>
-        <nav aria-label="Get started"><a href="#mcp">Connect with MCP</a> · <a href="#cli">Use the CLI</a> · <a href="#screening">Screening guide</a> · <a href="#api-reference">API reference</a></nav>
+        <nav aria-label="Contents"><ol><li><a href="#mcp">Connect with MCP</a></li><li><a href="#cli">Use the CLI</a></li><li><a href="#call-the-api">Call the API</a></li><li><a href="#screening">Screening guide</a></li><li><a href="#api-reference">API reference</a> — company search, endpoint list and live examples</li></ol></nav>
         <p>Independent Indian company fundamentals and ownership data. Explore <a href="#api-reference">the API reference</a> or download <a href="/swagger.json">swagger.json</a>. Source-backed adapters have partial coverage; market history is excluded.</p>
         {CLIENT_QUICKSTART}
-        <h2>Call the API</h2>
-        <pre><code>curl --get "{origin}/v1/profit-loss" --data-urlencode "symbol=/company/RELIANCE/consolidated/"</code></pre>
-        {internal}
-        <h2>Search companies</h2>
-        <p><code>GET /api/company-search?q=&lt;company-name&gt;</code></p>
-        <pre><code>curl "{origin}/v1/company-search?q=reli"</code></pre>
-        <h2>List companies</h2>
-        <p><code>GET /api/list-of-company?page=1</code></p>
-        <pre><code>curl "{origin}/v1/list-of-company?page=1"</code></pre>
+        <section id="call-the-api"><h2>Call the API</h2>
+        <pre><code>curl --get "{origin}/v1/profit-loss" --data-urlencode "symbol=/company/RELIANCE/consolidated/"</code></pre></section>
+        <p>{internal_note}</p>
         <section id="screening">{SCREENING_GUIDE}</section>
         {API_REFERENCE}
         <footer><p><a href="/privacy-policy">Privacy Policy</a> · <a href="/terms-of-service">Terms of Service</a> · <a href="/support">Support</a></p></footer>
@@ -122,18 +107,48 @@ fn homepage(origin: &str, environment: &str) -> String {
     )
 }
 
-const API_REFERENCE: &str = r##"<section id="api-reference"><h2>API reference</h2><p id="intro">Loading API reference…</p><p><a href="/swagger.json" download>Download swagger.json</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/v1/coverage">Coverage data</a></p><input type="search" id="search" aria-label="Search endpoints" placeholder="Search endpoints, parameters or coverage…"><div id="operations"></div></section><script>
+const API_REFERENCE: &str = r##"<section id="api-reference"><h2>API reference</h2><p id="intro">Loading API reference…</p><p><a href="/swagger.json" download>Download swagger.json</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/v1/coverage">Coverage data</a></p>
+<details><summary>What does “partial” mean?</summary><p><strong>partial</strong> means the endpoint is backed by a public source adapter that returns a subset of the fields a full market-data vendor would. Returned values are real, but some fields (for example share counts, voting rights or pledges) can be <code>null</code> or missing, and some pages or companies may be unavailable. Every such response carries the header <code>X-Data-Coverage: partial</code>. Endpoints marked <em>service</em> or <em>legacy</em> are not coverage-limited.</p></details>
+<div class="companies"><h3>Companies</h3><input type="search" id="company-search" aria-label="Search companies" placeholder="Search companies by name, e.g. reliance — leave empty to browse the list"><p id="company-status"></p><ul id="company-list"></ul><p><button id="company-prev" type="button">Previous</button> <button id="company-next" type="button">Next</button></p></div>
+<input type="search" id="search" aria-label="Search endpoints" placeholder="Search endpoints, parameters or coverage…"><div id="operations"></div></section><script>
 const container=document.querySelector('#operations');const search=document.querySelector('#search');
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
+// Company explorer: search by name, or browse the paginated list when the box is empty.
+const cInput=document.querySelector('#company-search'),cList=document.querySelector('#company-list'),cStatus=document.querySelector('#company-status'),cPrev=document.querySelector('#company-prev'),cNext=document.querySelector('#company-next');
+let cPage=1,cTimer,cSeq=0,cHasNext=false;
+async function loadCompanies(){const seq=++cSeq,q=cInput.value.trim();cStatus.textContent='Loading…';
+ try{const res=await fetch(q?'/v1/company-search?q='+encodeURIComponent(q):'/v1/list-of-company?page='+cPage);const body=await res.json();if(seq!==cSeq)return;
+  if(!res.ok)throw Error(body.error||'HTTP '+res.status);
+  const rows=body.data||[];cHasNext=!q&&!!body.meta?.isNextPageAvailable;cList.replaceChildren();
+  for(const c of rows){const li=el('li');const code=el('code',c.symbol);li.append(document.createTextNode((c.name||'')+' — '),code);cList.append(li);}
+  cStatus.textContent=q?rows.length+' match(es) for “'+q+'”':'Page '+cPage+' · '+rows.length+' companies. Use a symbol with the company endpoints below.';
+ }catch(error){if(seq!==cSeq)return;cList.replaceChildren();cHasNext=false;cStatus.textContent='Could not load companies: '+error.message;}
+ cPrev.disabled=!!q||cPage<=1;cNext.disabled=!!q||!cHasNext;}
+cInput.addEventListener('input',()=>{cPage=1;clearTimeout(cTimer);cTimer=setTimeout(loadCompanies,300);});
+cPrev.addEventListener('click',()=>{cPage--;loadCompanies();});cNext.addEventListener('click',()=>{cPage++;loadCompanies();});
+loadCompanies();
+// Live example: called once, the first time an endpoint is opened.
+async function runLive(path,op,pane){
+ const query=new URLSearchParams();let url=path;
+ for(const p of op.parameters||[]){const v=p.example??p.schema?.example;if(v===undefined)continue;if(p.in==='path')url=url.replace('{'+p.name+'}',encodeURIComponent(v));else if(p.required||p.name==='symbol'||p.name==='page')query.set(p.name,v);}
+ const full=url+(query.toString()?'?'+query:'');
+ pane.replaceChildren(el('h3','Request'),el('pre','GET '+full+'\n\ncurl "'+location.origin+full+'"'),el('h3','Response'),el('p','Calling…'));
+ try{const started=performance.now();const res=await fetch(full);const text=await res.text();let shown=text;try{shown=JSON.stringify(JSON.parse(text),null,2);}catch{}
+  const headers=['x-request-id','x-data-coverage','x-page','x-next-page'].filter(h=>res.headers.get(h)).map(h=>h+': '+res.headers.get(h)).join('\n');
+  pane.lastChild.replaceWith(el('p','HTTP '+res.status+' · '+Math.round(performance.now()-started)+' ms'),el('pre',(headers?headers+'\n\n':'')+(shown.length>6000?shown.slice(0,6000)+'\n… truncated':shown)));
+ }catch(error){pane.lastChild.replaceWith(el('p','Request failed: '+error.message));}}
 fetch('/swagger.json').then(r=>{if(!r.ok)throw Error('Swagger HTTP '+r.status);return r.json();}).then(spec=>{
  document.querySelector('#intro').textContent=spec.info.description;
  const entries=Object.entries(spec.paths).filter(([,p])=>p.get&&!p.get['x-alias']).map(([path,item])=>[path,item,Object.entries(spec.paths).filter(([,alias])=>alias.get?.['x-alias']&&alias.get['x-canonical-path']===path).map(([alias])=>alias)]);
  entries.sort((a,b)=>a[1].get['x-order']-b[1].get['x-order']);
  function render(){container.replaceChildren();for(const group of spec['x-user-journey']){const section=el('section');let count=0;for(const[path,item,aliases]of entries){const op=item.get;if(op['x-use-case']!==group.id||!(path+' '+aliases.join(' ')+' '+JSON.stringify(op)).toLowerCase().includes(search.value.toLowerCase()))continue;
-  const card=el('details');const summary=el('summary');const badge=el('span','GET · '+op['x-tier']+' · '+(op['x-coverage']||'service'));badge.className='badge';summary.append(badge,document.createTextNode(path+' — '+op.summary));card.append(summary,el('p',op.description||''));
- if(aliases.length)card.append(el('p','Also available at '+aliases.join(', ')));
- if(op.parameters?.length){card.append(el('h2','Parameters'));for(const p of op.parameters){const row=el('div',p.name+' · '+p.in+' · '+(p.required?'required':'optional')+' — '+(p.description||''));row.className='parameter';card.append(row);}}
- for(const[status,response]of Object.entries(op.responses)){card.append(el('h2',status+' — '+response.description));const schema=response.content?.['application/json']?.schema;if(schema)card.append(el('pre',JSON.stringify(schema,null,2)));if(response.headers)for(const[name,header]of Object.entries(response.headers))card.append(el('p',name+' — '+(header.description||'')));}
+  const card=el('details');const summary=el('summary');const badge=el('span','GET · '+op['x-tier']+' · '+(op['x-coverage']||'service'));badge.className='badge';summary.append(badge,document.createTextNode(path+' — '+op.summary));
+  const body=el('div');body.className='op';const doc=el('div');const live=el('div');live.className='live';body.append(doc,live);card.append(summary,body);
+  doc.append(el('p',op.description||''));
+  if(aliases.length)doc.append(el('p','Also available at '+aliases.join(', ')));
+  if(op.parameters?.length){doc.append(el('h3','Parameters'));for(const p of op.parameters){const row=el('div',p.name+' · '+p.in+' · '+(p.required?'required':'optional')+' — '+(p.description||''));row.className='parameter';doc.append(row);}}
+  for(const[status,response]of Object.entries(op.responses)){doc.append(el('h3',status+' — '+response.description));const schema=response.content?.['application/json']?.schema;if(schema)doc.append(el('pre',JSON.stringify(schema,null,2)));if(response.headers)for(const[name,header]of Object.entries(response.headers))doc.append(el('p',name+' — '+(header.description||'')));}
+  let called=false;card.addEventListener('toggle',()=>{if(card.open&&!called){called=true;runLive(path,op,live);}});
   section.append(card);count++;
   }if(count){section.prepend(el('h2',group.order+'. '+group.title),el('p',group.description));container.append(section);}}if(!container.children.length)container.append(el('p','No matching endpoints.'));}render();search.addEventListener('input',render);const schemas=el('details');schemas.append(el('summary','All response models'),el('pre',JSON.stringify(spec.components.schemas,null,2)));container.after(schemas);
 }).catch(error=>{document.querySelector('#intro').textContent='Could not load Swagger: '+error.message;});

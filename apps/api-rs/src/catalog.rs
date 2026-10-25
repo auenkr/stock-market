@@ -328,13 +328,20 @@ pub fn openapi_spec(origin: &str, environment: &str) -> Value {
     for path in ["/v1/list-of-company", "/v1/list-of-ipo", "/v1/company-search", "/v1/company-data", "/v1/extract"] {
         for route in [path.to_string(), path.replace("/v1", "/api")] {
             let operation = route.replace(|c: char| !c.is_alphanumeric(), "_").trim_matches('_').to_string();
+            let legacy_parameters = match path {
+                "/v1/company-search" => json!([{ "name": "q", "in": "query", "required": true, "description": "Company name or ticker fragment.", "schema": { "type": "string" }, "example": "reliance" }]),
+                "/v1/list-of-company" => json!([{ "name": "page", "in": "query", "required": false, "description": parameter_note("page"), "schema": { "type": "integer", "minimum": 1 }, "example": 1 }]),
+                "/v1/company-data" => json!([{ "name": "symbol", "in": "query", "required": true, "description": parameter_note("symbol"), "schema": { "type": "string" }, "example": "/company/RELIANCE/consolidated/" }]),
+                _ => json!([]),
+            };
             paths.insert(route.clone(), json!({ "get": {
                 "operationId": format!("get_{operation}"),
                 "summary": route,
+                "parameters": legacy_parameters,
                 "tags": ["Internal"],
                 "x-tier": "legacy", "x-api-style": "legacy", "x-coverage": "legacy",
                 "x-canonical-path": path, "x-alias": route != path,
-                "x-use-case": "internal", "x-order": endpoint_order(path),
+                "x-use-case": endpoint_use_case(path), "x-order": endpoint_order(path),
                 "responses": { "200": { "description": "Legacy envelope." } },
             }}));
         }
