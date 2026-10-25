@@ -29,7 +29,7 @@ Use `STOCK_MARKET_API_URL` or `--api-url` to choose another deployed server. The
 
 Install with `pnpm install`. Run `pnpm dev` inside the `stock-market` tmux session. It starts Rust on port 8787 and MCP on 8788. Set `STOCK_MARKET_API_URL=http://127.0.0.1:8787` when testing MCP against local Rust. See [environment variables](sample.env), [screening](docs/screening.md), and [source limitations](docs/limitations.md).
 
-Run `pnpm test:ci` for Rust tests, MCP and CLI regressions, type checks, and builds. Rust needs no account database; Valkey caching is optional. Source sessions, when required by the upstream provider, stay on the server through `SOURCE_COOKIE`.
+Run `pnpm test:ci` for Rust tests, MCP and CLI regressions, type checks, and builds. Rust needs no account database; Valkey caching is optional. Source sessions, when required by the upstream provider, are created by logging in with `SOURCE_USERNAME` and `SOURCE_PASSWORD`; the cookie is cached in memory and a temp file and refreshed automatically on expiry.
 
 ## Release
 

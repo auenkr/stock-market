@@ -4,6 +4,7 @@
 //! connections warm across requests.
 
 use crate::{
+    session::Session,
     cache::{source_cache_key, source_cache_ttl, CacheHit, SourceCache},
     error::{upstream_error, DataError},
 };
@@ -13,20 +14,21 @@ use std::time::Duration;
 pub struct Source {
     pub client: reqwest::Client,
     pub base_url: String,
-    pub cookie: String,
+    pub session: Session,
     pub cache: Option<SourceCache>,
     pub pacing_ms: u64,
 }
 
 impl Source {
-    pub fn new(base_url: String, cookie: String, cache: Option<SourceCache>, pacing_ms: u64) -> Self {
+    pub fn new(base_url: String, credentials: Option<(String, String)>, cache: Option<SourceCache>, pacing_ms: u64) -> Self {
         let client = reqwest::Client::builder()
             .timeout(Duration::from_secs(15))
             .pool_max_idle_per_host(16)
             .user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/131 Safari/537.36")
             .build()
             .expect("reqwest client");
-        Self { client, base_url, cookie, cache, pacing_ms }
+        let session = Session::new(&base_url, credentials);
+        Self { client, base_url, session, cache, pacing_ms }
     }
 
     pub(crate) fn url(&self, path: &str) -> Result<url::Url, DataError> {
@@ -35,18 +37,30 @@ impl Source {
     }
 
     pub fn cache_key(&self, kind: &str, url: &url::Url) -> String {
-        source_cache_key(kind, url, &self.cookie)
+        source_cache_key(kind, url, "")
+    }
+
+    /// Fetch with the session cookie; on an expired session, log in again once and retry.
+    pub async fn fetch_raw(&self, path: &str, ajax: bool) -> Result<(String, String, u16), DataError> {
+        let cookie = self.session.cookie().await;
+        match self.fetch_with(path, ajax, &cookie).await {
+            Err(error) if error.code == "SOURCE_AUTH_REQUIRED" && self.session.can_login() => {
+                let fresh = self.session.refresh(&cookie).await?;
+                self.fetch_with(path, ajax, &fresh).await
+            }
+            result => result,
+        }
     }
 
     /// Fetch a URL with retries. Returns (body text, final URL, http status).
-    pub async fn fetch_raw(&self, path: &str, ajax: bool) -> Result<(String, String, u16), DataError> {
+    async fn fetch_with(&self, path: &str, ajax: bool, cookie: &str) -> Result<(String, String, u16), DataError> {
         let url = self.url(path)?;
         let source_path = url.path().to_string();
         let mut last_error: Option<DataError> = None;
         for attempt in 0..=3 {
             let request = self.client.get(url.clone()).header("Accept", "text/html, application/json");
             let request = if ajax { request.header("X-Requested-With", "XMLHttpRequest") } else { request };
-            let request = if self.cookie.is_empty() { request } else { request.header("Cookie", &self.cookie) };
+            let request = if cookie.is_empty() { request } else { request.header("Cookie", cookie) };
             match request.send().await {
                 Ok(response) => {
                     let status = response.status().as_u16();
@@ -90,7 +104,7 @@ impl Source {
                             path = %source_path,
                             response_path = %response_path,
                             status,
-                            cookie_present = !self.cookie.is_empty(),
+                            cookie_present = !cookie.is_empty(),
                             attempt = attempt + 1
                         );
                         return Err(DataError::new("The data source requires authentication", 502, "SOURCE_AUTH_REQUIRED"));

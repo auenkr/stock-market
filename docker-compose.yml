@@ -6,7 +6,8 @@ services:
     environment:
       ENVIRONMENT: dev
       VALKEY_URL: redis://valkey:6379
-      SOURCE_COOKIE: ${SOURCE_COOKIE:-}
+      SOURCE_USERNAME: ${SOURCE_USERNAME:-}
+      SOURCE_PASSWORD: ${SOURCE_PASSWORD:-}
   valkey:
     image: valkey/valkey:8-alpine
     restart: unless-stopped

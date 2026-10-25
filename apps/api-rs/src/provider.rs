@@ -790,7 +790,7 @@ mod screen_tests {
             stream.write_all(response.as_bytes()).await.unwrap();
         });
 
-        let source = Source::new(format!("http://{address}"), String::new(), None, 0);
+        let source = Source::new(format!("http://{address}"), None, None, 0);
         let provider = Provider::new(source);
         let query = HashMap::from([("query".to_string(), "Market Capitalization > 500".to_string())]);
         let result = provider.execute("screen", &query).await.unwrap();
