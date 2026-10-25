@@ -79,7 +79,7 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
       - name: Build bundled package
-        run: pnpm --filter "./$PACKAGE_DIRECTORY..." build
+        run: pnpm --recursive --filter "{./$PACKAGE_DIRECTORY}..." run build
       - run: node scripts/prepare-publish-package.mjs
       - name: Assign unique main release version
         working-directory: ${{ matrix.directory }}
