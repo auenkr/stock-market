@@ -87,13 +87,12 @@ fn homepage(origin: &str, environment: &str) -> String {
           @media (max-width: 52rem) {{ .op {{ grid-template-columns: 1fr; }} }}
           .live {{ border-left: 1px solid #253152; padding-left: 1rem; min-width: 0; }}
           .live pre {{ max-height: 24rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }}
-          .companies button {{ background: var(--panel); color: var(--accent); border: 1px solid #253152; border-radius: .5rem; padding: .4rem .8rem; cursor: pointer; }}
         </style>
       </head>
       <body><main>
         <p>LEDGERLINE / INDIAN COMPANY FINANCIALS</p><h1>Free market data for your next idea.</h1>
         <p>No login, API key, subscription, or payment required.</p>
-        <nav aria-label="Contents"><ol><li><a href="#mcp">Connect with MCP</a></li><li><a href="#cli">Use the CLI</a></li><li><a href="#call-the-api">Call the API</a></li><li><a href="#screening">Screening guide</a></li><li><a href="#api-reference">API reference</a> — company search, endpoint list and live examples</li></ol></nav>
+        <nav aria-label="Contents"><ol><li><a href="#mcp">Connect with MCP</a></li><li><a href="#cli">Use the CLI</a></li><li><a href="#call-the-api">Call the API</a></li><li><a href="#screening">Screening guide</a></li><li><a href="#api-reference">API reference</a></li></ol></nav>
         <p>Independent Indian company fundamentals and ownership data. Explore <a href="#api-reference">the API reference</a> or download <a href="/swagger.json">swagger.json</a>. Source-backed adapters have partial coverage; market history is excluded.</p>
         {CLIENT_QUICKSTART}
         <section id="call-the-api"><h2>Call the API</h2>
@@ -109,24 +108,9 @@ fn homepage(origin: &str, environment: &str) -> String {
 
 const API_REFERENCE: &str = r##"<section id="api-reference"><h2>API reference</h2><p id="intro">Loading API reference…</p><p><a href="/swagger.json" download>Download swagger.json</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/v1/coverage">Coverage data</a></p>
 <details><summary>What does “partial” mean?</summary><p><strong>partial</strong> means the endpoint is backed by a public source adapter that returns a subset of the fields a full market-data vendor would. Returned values are real, but some fields (for example share counts, voting rights or pledges) can be <code>null</code> or missing, and some pages or companies may be unavailable. Every such response carries the header <code>X-Data-Coverage: partial</code>. Endpoints marked <em>service</em> or <em>legacy</em> are not coverage-limited.</p></details>
-<div class="companies"><h3>Companies</h3><input type="search" id="company-search" aria-label="Search companies" placeholder="Search companies by name, e.g. reliance — leave empty to browse the list"><p id="company-status"></p><ul id="company-list"></ul><p><button id="company-prev" type="button">Previous</button> <button id="company-next" type="button">Next</button></p></div>
 <input type="search" id="search" aria-label="Search endpoints" placeholder="Search endpoints, parameters or coverage…"><div id="operations"></div></section><script>
 const container=document.querySelector('#operations');const search=document.querySelector('#search');
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
-// Company explorer: search by name, or browse the paginated list when the box is empty.
-const cInput=document.querySelector('#company-search'),cList=document.querySelector('#company-list'),cStatus=document.querySelector('#company-status'),cPrev=document.querySelector('#company-prev'),cNext=document.querySelector('#company-next');
-let cPage=1,cTimer,cSeq=0,cHasNext=false;
-async function loadCompanies(){const seq=++cSeq,q=cInput.value.trim();cStatus.textContent='Loading…';
- try{const res=await fetch(q?'/v1/company-search?q='+encodeURIComponent(q):'/v1/list-of-company?page='+cPage);const body=await res.json();if(seq!==cSeq)return;
-  if(!res.ok)throw Error(body.error||'HTTP '+res.status);
-  const rows=body.data||[];cHasNext=!q&&!!body.meta?.isNextPageAvailable;cList.replaceChildren();
-  for(const c of rows){const li=el('li');const code=el('code',c.symbol);li.append(document.createTextNode((c.name||'')+' — '),code);cList.append(li);}
-  cStatus.textContent=q?rows.length+' match(es) for “'+q+'”':'Page '+cPage+' · '+rows.length+' companies. Use a symbol with the company endpoints below.';
- }catch(error){if(seq!==cSeq)return;cList.replaceChildren();cHasNext=false;cStatus.textContent='Could not load companies: '+error.message;}
- cPrev.disabled=!!q||cPage<=1;cNext.disabled=!!q||!cHasNext;}
-cInput.addEventListener('input',()=>{cPage=1;clearTimeout(cTimer);cTimer=setTimeout(loadCompanies,300);});
-cPrev.addEventListener('click',()=>{cPage--;loadCompanies();});cNext.addEventListener('click',()=>{cPage++;loadCompanies();});
-loadCompanies();
 // Live example: called once, the first time an endpoint is opened.
 async function runLive(path,op,pane){
  const query=new URLSearchParams();let url=path;
@@ -559,7 +543,7 @@ mod public_tests {
             Json(json!([{ "name": "Reliance", "url": "/company/RELIANCE/consolidated/" }]))
         }));
         let fixture_server = tokio::spawn(async move { axum::serve(fixture_listener, fixture).await.unwrap() });
-        let source = crate::source::Source::new(format!("http://{fixture_address}"), String::new(), None, 0);
+        let source = crate::source::Source::new(format!("http://{fixture_address}"), None, None, 0);
         let state = AppState { config, provider: Provider::new(source) };
         let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
         let address = listener.local_addr().unwrap();

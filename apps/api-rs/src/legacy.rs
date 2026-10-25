@@ -57,7 +57,7 @@ pub async fn get_company_list_page(limit: i64, page: i64, source: &Source) -> Re
         let title = doc.select(&Selector::parse("title").unwrap()).next().map(|t| t.text().collect::<Vec<_>>().join(" ").to_lowercase()).unwrap_or_default();
         let login_form = doc.select(&Selector::parse("form[action*='login']").unwrap()).next().is_some();
         if title.contains("login") || title.contains("register") || login_form {
-            return Err(DataError::new("Screener returned a login page. Configure a valid Screener COOKIE.", 502, "UPSTREAM_UNAVAILABLE"));
+            return Err(DataError::new("Screener returned a login page. Configure valid SOURCE_USERNAME and SOURCE_PASSWORD.", 502, "UPSTREAM_UNAVAILABLE"));
         }
         return Err(DataError::new("Screener returned no company rows.", 502, "UPSTREAM_UNAVAILABLE"));
     }

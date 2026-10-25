@@ -23,3 +23,4 @@ indexmap = { version = "2", features = ["serde"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["json"] }
 url = "2"
+dotenvy = "0.15.7"

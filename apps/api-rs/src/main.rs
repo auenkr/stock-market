@@ -9,6 +9,7 @@ mod legacy;
 mod parse;
 mod provider;
 mod routes;
+mod session;
 mod source;
 
 use std::time::Duration;
@@ -39,7 +40,7 @@ async fn main() {
     };
     let source = source::Source::new(
         config.source_base_url.clone(),
-        config.source_cookie.clone(),
+        config.source_credentials(),
         cache,
         config.source_pacing_ms,
     );
