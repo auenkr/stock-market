@@ -16,6 +16,11 @@ use std::time::Duration;
 
 #[tokio::main]
 async fn main() {
+    // Offline contract export: no .env, credentials, cache, or listener needed.
+    if std::env::args().any(|arg| arg == "--export-openapi") {
+        println!("{}", catalog::openapi_spec("https://stock-market-api.auenkr.com", "production"));
+        return;
+    }
     tracing_subscriber::fmt().json().init();
     let config = config::Config::from_env();
 

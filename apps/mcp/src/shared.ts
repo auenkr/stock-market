@@ -14,7 +14,7 @@ type ToolDef = {
 
 const symbolOnly = { symbol: z.string().min(1).describe("Company identifier from search, e.g. /company/RELIANCE/consolidated/") };
 
-const tools: ToolDef[] = [
+export const tools: ToolDef[] = [
   {
     name: "screen_companies",
     description: "Find companies that match a financial screening expression. Use exact measure labels from https://github.com/auenkr/stock-market/blob/dev/docs/screening.md or the screening guide. Combine comparisons with AND/OR; arithmetic and parentheses are supported. Returns rows keyed by displayed column names plus Symbol; unavailable cells remain null.",
