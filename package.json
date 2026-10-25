@@ -3,6 +3,8 @@
   "private": true,
   "packageManager": "pnpm@10.15.0",
   "scripts": {
+    "sync:clients": "tsx scripts/sync-clients.ts",
+    "sync:clients:check": "tsx scripts/sync-clients.ts --check",
     "build": "nx run-many -t build",
     "typecheck": "nx run-many -t typecheck",
     "dev": "node scripts/dev.mjs",
