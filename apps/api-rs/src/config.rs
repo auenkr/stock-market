@@ -12,6 +12,8 @@ pub struct Config {
     /// Politeness delay after uncached upstream detail fetches (ms). Matches
     /// the TypeScript adapter default; tests set it to 0.
     pub source_pacing_ms: u64,
+    /// IPO data source (scraped, cached).
+    pub ipo_base_url: String,
 }
 
 fn env(key: &str, default: &str) -> String {
@@ -35,6 +37,7 @@ impl Config {
             source_username: env("SOURCE_USERNAME", ""),
             source_password: env("SOURCE_PASSWORD", ""),
             source_pacing_ms: env("SOURCE_PACING_MS", "1200").parse().unwrap_or(1200),
+            ipo_base_url: env("IPO_SOURCE_BASE_URL", "https://www.ipoguru.in"),
         }
     }
 

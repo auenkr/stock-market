@@ -5,6 +5,7 @@ mod catalog;
 mod company;
 mod config;
 mod error;
+mod ipo;
 mod legacy;
 mod parse;
 mod provider;
@@ -43,6 +44,7 @@ async fn main() {
     } else {
         None
     };
+    let ipo = ipo::Ipo::new(config.ipo_base_url.clone(), cache.clone());
     let source = source::Source::new(
         config.source_base_url.clone(),
         config.source_credentials(),
@@ -52,6 +54,7 @@ async fn main() {
     let state = routes::AppState {
         config: config.clone(),
         provider: provider::Provider::new(source),
+        ipo,
     };
 
     let addr = std::net::SocketAddr::from(([0, 0, 0, 0], config.port));

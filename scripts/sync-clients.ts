@@ -8,7 +8,8 @@ import { tools as mcpTools } from '../apps/mcp/src/shared.js';
 const spec = JSON.parse(execFileSync('cargo', [
   'run', '--quiet', '--manifest-path', 'apps/api-rs/Cargo.toml', '--', '--export-openapi',
 ], { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 }));
-const publicTools = agentTools(spec);
+// IPO is currently API-only; keep the existing MCP/CLI contract unchanged.
+const publicTools = agentTools(spec).filter(tool => spec.paths[tool.path].get['x-resource'] !== 'ipo');
 assert.ok(publicTools.length > 0, 'API export must contain public tools');
 const paths = publicTools.map(tool => tool.path).sort();
 assert.deepEqual(mcpTools.map(tool => tool.path).sort(), paths, 'MCP routes have drifted from the public API');
