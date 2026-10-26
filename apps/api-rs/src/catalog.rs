@@ -135,11 +135,12 @@ pub fn journey() -> Vec<(&'static str, &'static str, &'static str, Vec<&'static 
         ("company-search", "Search", "Search by company name, browse the paginated company list, or screen companies with a financial expression. Search and listing return the original company URL path as symbol.", vec!["/v1/company-search", "/v1/list-of-company", "/api/v1/screen"]),
         ("company-overview", "Company overview", "Company profile, basic finance, business description, analysis, and documents.", vec!["/api/v1/company-profile", "/api/v1/basic-financials", "/api/v1/company-documents"]),
         ("finance", "Finance", "Peer comparison, quarterly and annual profit and loss, balance sheet, cash flow, ratios, shareholding pattern and distribution. Only symbol is required; its URL selects standalone or consolidated data.", vec!["/api/v1/peer-comparison", "/api/v1/quarterly-profit-loss", "/api/v1/profit-loss", "/api/v1/balance-sheet", "/api/v1/cash-flow", "/api/v1/ratios", "/api/v1/shareholding-pattern", "/api/v1/shareholdings/distribution"]),
-        ("internal", "Internal", "Supplementary ownership, corporate actions, results calendar, upcoming IPOs, full-company extraction, and service endpoints. Documented only in dev mode.", vec![
+        ("ipo", "IPO", "Mainboard and SME IPO listings, company details, GMP history, subscription data and analyst reviews.", IPO_ROUTES.iter().map(|(path, _)| *path).collect()),
+        ("internal", "Internal", "Supplementary ownership, corporate actions, results calendar, IPO listings and details, full-company extraction, and service endpoints. Documented only in dev mode.", vec![
             "/api/v1/daily-price-ratios", "/api/v1/annual-price-ratios",
             "/api/v1/shareholdings/summary", "/api/v1/shareholdings/ownership-current", "/api/v1/shareholdings/ownership-history",
             "/api/v1/corporate-actions", "/api/v1/dividend", "/api/v1/corporate-actions/all",
-            "/api/v1/results-calendar", "/v1/list-of-ipo",
+            "/api/v1/results-calendar",
             "/api/v1/index/market-price/historical", "/api/v1/index/valuation/historical", "/api/v1/commodity-price/{code}",
             "/v1/company-data", "/v1/extract", "/health", "/v1/coverage",
         ]),
@@ -325,7 +326,10 @@ pub fn openapi_spec(origin: &str, environment: &str) -> Value {
             }}));
         }
     }
-    for path in ["/v1/list-of-company", "/v1/list-of-ipo", "/v1/company-search", "/v1/company-data", "/v1/extract"] {
+    for (path, operation) in ipo_operations() {
+        paths.insert(path, operation);
+    }
+    for path in ["/v1/list-of-company", "/v1/company-search", "/v1/company-data", "/v1/extract"] {
         for route in [path.to_string(), path.replace("/v1", "/api")] {
             let operation = route.replace(|c: char| !c.is_alphanumeric(), "_").trim_matches('_').to_string();
             let legacy_parameters = match path {
@@ -420,4 +424,57 @@ mod screen_tests {
         assert_eq!(spec["paths"]["/api/v1/screen"]["get"]["parameters"][0]["schema"]["maxLength"], 4000);
         assert!(spec["components"]["schemas"]["screen"].is_object());
     }
+}
+
+pub const IPO_ROUTES: &[(&str, &str)] = &[
+    ("/api/v1/ipos", "List IPOs"),
+    ("/api/v1/ipo", "IPO detail"),
+    ("/api/v1/ipo-gmp", "IPO grey market premium"),
+    ("/api/v1/ipo-subscription", "IPO subscription"),
+    ("/api/v1/ipo-review", "IPO review"),
+];
+
+fn ipo_description(path: &str) -> &'static str {
+    match path {
+        "/api/v1/ipos" => "Mainboard or SME IPOs: id, name, open and close dates, price band (low, high), lot size (shares, value), issue size in INR crores, GMP and subscription multiple. Items are grouped by section (current, recent, past); use page for older IPOs. Scraped from ipoguru.in and cached.",
+        "/api/v1/ipo" => "IPO detail by id: timetable, news articles, issue summary, lot size, strengths and risks, financials, valuation, objects of issue, anchors, about, documents, bankers and FAQ. Sections are named top-level objects. Metric comparisons are keyed by metric (for example eps.preIssue and eps.postIssue). Numbers are JSON numbers; dates are ISO 8601 timestamps with an explicit timezone. Date-only source values use midnight India time (+05:30), not a known event time. Unavailable sections are null. Source metadata, URLs and fetchedAt are omitted.",
+        "/api/v1/ipo-gmp" => "GMP chart as date/value points (ISO 8601 timestamp with India offset and numeric INR value), day-wise GMP, timetable, expected listing, GMP reliability, Kostak and Subject-to-Sauda rates, company and FAQ. Sections are named top-level objects; unavailable sections are null.",
+        "/api/v1/ipo-subscription" => "Live bidding, allotment odds, insights, day-wise subscription history, timetable, anchor investors, how to read the data, and FAQ.",
+        _ => "Verdict and score, detailed review, analyst reviews, latest IPO reviews and FAQ.",
+    }
+}
+
+/// OpenAPI operations for the IPO endpoints (canonical `/api/v1/...` plus `/v1/...` alias).
+fn ipo_operations() -> Vec<(String, Value)> {
+    let mut out = Vec::new();
+    for (canonical, title) in IPO_ROUTES {
+        let parameters = if *canonical == "/api/v1/ipos" {
+            json!([
+                { "name": "type", "in": "query", "required": true, "description": "IPO board: mainboard or sme.", "schema": { "type": "string", "enum": ["mainboard", "sme"] }, "example": "mainboard" },
+                { "name": "page", "in": "query", "required": false, "description": "One-based page of older IPOs; the response nextPage is null on the last page.", "schema": { "type": "integer", "minimum": 1 }, "example": 1 },
+            ])
+        } else {
+            json!([{ "name": "id", "in": "query", "required": true, "description": "IPO id returned by the IPO list (the slug of its ipoguru URL).", "schema": { "type": "string", "maxLength": 120 }, "example": "eaaa-india-alternatives-ipo" }])
+        };
+        for path in [canonical.to_string(), canonical.replace("/api/v1", "/v1")] {
+            let operation = path.replace(|c: char| !c.is_alphanumeric(), "_").trim_matches('_').to_string();
+            out.push((path.clone(), json!({ "get": {
+                "operationId": format!("get_{operation}"),
+                "summary": title,
+                "tags": ["IPO"],
+                "description": ipo_description(canonical),
+                "parameters": parameters,
+                "x-tier": "free", "x-api-style": "personal", "x-coverage": "partial",
+                "x-resource": "ipo", "x-canonical-path": canonical, "x-alias": path != *canonical,
+                "x-use-case": "ipo", "x-order": endpoint_order(canonical),
+                "responses": {
+                    "200": { "description": "Parsed IPO data, cached.", "content": { "application/json": { "schema": { "type": "object" } } } },
+                    "400": error_response("Invalid or missing parameter"),
+                    "404": error_response("IPO not found"),
+                    "502": error_response("Data could not be retrieved"),
+                },
+            }})));
+        }
+    }
+    out
 }

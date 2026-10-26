@@ -22,6 +22,7 @@ use std::collections::HashMap;
 pub struct AppState {
     pub config: Config,
     pub provider: Provider,
+    pub ipo: crate::ipo::Ipo,
 }
 
 fn request_id() -> String {
@@ -97,6 +98,18 @@ fn homepage(origin: &str, environment: &str) -> String {
         {CLIENT_QUICKSTART}
         <section id="call-the-api"><h2>Call the API</h2>
         <pre><code>curl --get "{origin}/v1/profit-loss" --data-urlencode "symbol=/company/RELIANCE/consolidated/"</code></pre></section>
+        <section id="ipo-api"><h2>IPO data</h2>
+        <p>Browse Mainboard and SME IPOs and retrieve company details, grey market premium (GMP), subscription history, and reviews. IPO data is scraped from IPO Guru, cached, and reused on subsequent requests.</p>
+        <h3>List IPOs</h3><p><code>type</code> is required; use <code>mainboard</code> or <code>sme</code>. The optional one-based <code>page</code> selects older listings.</p>
+        <pre><code>curl "{origin}/v1/ipos?type=mainboard"
+curl "{origin}/v1/ipos?type=sme&amp;page=2"</code></pre>
+        <p>Each listing includes an <code>id</code> used to fetch its detail pages, along with the name, status, open and close dates, price band, lot size, issue size, GMP, and subscription multiple.</p>
+        <h3>IPO detail endpoints</h3><ul>
+          <li><code>GET /v1/ipo?id=&lt;id&gt;</code> — issue summary, timetable, news, financials, valuation, strengths and risks, objects, anchors, documents, and FAQ.</li>
+          <li><code>GET /v1/ipo-gmp?id=&lt;id&gt;</code> — GMP chart and history, expected listing, timetable, Kostak and Sauda, and FAQ.</li>
+          <li><code>GET /v1/ipo-subscription?id=&lt;id&gt;</code> — live bidding, allotment odds, day-wise history, anchors, insights, and FAQ.</li>
+          <li><code>GET /v1/ipo-review?id=&lt;id&gt;</code> — verdict and score, detailed and analyst reviews, and FAQ.</li>
+        </ul><p>For example, append <code>?id=eaaa-india-alternatives-ipo</code> to any detail endpoint. The same endpoints are available under <code>/api/v1/</code>. Responses are cached for reuse; listings for 10 minutes, GMP and subscription for 5 minutes, and detail and review for 30 minutes.</p></section>
         <p>{internal_note}</p>
         <section id="screening">{SCREENING_GUIDE}</section>
         {API_REFERENCE}
@@ -119,20 +132,20 @@ async function runLive(path,op,pane){
  pane.replaceChildren(el('h3','Request'),el('pre','GET '+full+'\n\ncurl "'+location.origin+full+'"'),el('h3','Response'),el('p','Calling…'));
  try{const started=performance.now();const res=await fetch(full);const text=await res.text();let shown=text;try{shown=JSON.stringify(JSON.parse(text),null,2);}catch{}
   const headers=['x-request-id','x-data-coverage','x-page','x-next-page'].filter(h=>res.headers.get(h)).map(h=>h+': '+res.headers.get(h)).join('\n');
-  pane.lastChild.replaceWith(el('p','HTTP '+res.status+' · '+Math.round(performance.now()-started)+' ms'),el('pre',(headers?headers+'\n\n':'')+(shown.length>6000?shown.slice(0,6000)+'\n… truncated':shown)));
+   pane.lastChild.replaceWith(el('p','HTTP '+res.status+' · '+Math.round(performance.now()-started)+' ms'),el('pre',(headers?headers+'\n\n':'')+shown));
  }catch(error){pane.lastChild.replaceWith(el('p','Request failed: '+error.message));}}
 fetch('/swagger.json').then(r=>{if(!r.ok)throw Error('Swagger HTTP '+r.status);return r.json();}).then(spec=>{
  document.querySelector('#intro').textContent=spec.info.description;
  const entries=Object.entries(spec.paths).filter(([,p])=>p.get&&!p.get['x-alias']).map(([path,item])=>[path,item,Object.entries(spec.paths).filter(([,alias])=>alias.get?.['x-alias']&&alias.get['x-canonical-path']===path).map(([alias])=>alias)]);
  entries.sort((a,b)=>a[1].get['x-order']-b[1].get['x-order']);
  function render(){container.replaceChildren();for(const group of spec['x-user-journey']){const section=el('section');let count=0;for(const[path,item,aliases]of entries){const op=item.get;if(op['x-use-case']!==group.id||!(path+' '+aliases.join(' ')+' '+JSON.stringify(op)).toLowerCase().includes(search.value.toLowerCase()))continue;
-  const card=el('details');const summary=el('summary');const badge=el('span','GET · '+op['x-tier']+' · '+(op['x-coverage']||'service'));badge.className='badge';summary.append(badge,document.createTextNode(path+' — '+op.summary));
+  const card=el('details');card.name='api-endpoint';const summary=el('summary');const badge=el('span','GET · '+op['x-tier']+' · '+(op['x-coverage']||'service'));badge.className='badge';summary.append(badge,document.createTextNode(path+' — '+op.summary));
   const body=el('div');body.className='op';const doc=el('div');const live=el('div');live.className='live';body.append(doc,live);card.append(summary,body);
   doc.append(el('p',op.description||''));
   if(aliases.length)doc.append(el('p','Also available at '+aliases.join(', ')));
   if(op.parameters?.length){doc.append(el('h3','Parameters'));for(const p of op.parameters){const row=el('div',p.name+' · '+p.in+' · '+(p.required?'required':'optional')+' — '+(p.description||''));row.className='parameter';doc.append(row);}}
   for(const[status,response]of Object.entries(op.responses)){doc.append(el('h3',status+' — '+response.description));const schema=response.content?.['application/json']?.schema;if(schema)doc.append(el('pre',JSON.stringify(schema,null,2)));if(response.headers)for(const[name,header]of Object.entries(response.headers))doc.append(el('p',name+' — '+(header.description||'')));}
-  let called=false;card.addEventListener('toggle',()=>{if(card.open&&!called){called=true;runLive(path,op,live);}});
+   let called=false;card.addEventListener('toggle',()=>{if(!card.open)return;for(const other of container.querySelectorAll('details[open]'))if(other!==card)other.open=false;if(!called){called=true;runLive(path,op,live);}});
   section.append(card);count++;
   }if(count){section.prepend(el('h2',group.order+'. '+group.title),el('p',group.description));container.append(section);}}if(!container.children.length)container.append(el('p','No matching endpoints.'));}render();search.addEventListener('input',render);const schemas=el('details');schemas.append(el('summary','All response models'),el('pre',JSON.stringify(spec.components.schemas,null,2)));container.after(schemas);
 }).catch(error=>{document.querySelector('#intro').textContent='Could not load Swagger: '+error.message;});
@@ -288,6 +301,37 @@ async fn not_found() -> Response {
 
 // --- compatibility dataset route ------------------------------------------
 
+async fn ipo_handler(State(state): State<AppState>, uri: Uri, Query(params): Query<HashMap<String, String>>) -> Response {
+    use crate::ipo::Page;
+    let endpoint = uri.path().replacen("/api", "", 1);
+    let result = match endpoint.as_str() {
+        "/v1/ipos" => {
+            let page = params.get("page").map(|p| p.parse::<u32>()).transpose();
+            match (params.get("type"), page) {
+                (Some(kind), Ok(page)) => state.ipo.list(kind, page.unwrap_or(1).max(1)).await,
+                (None, _) => Err(DataError::new("type is required: mainboard or sme", 400, "INVALID_QUERY")),
+                (_, Err(_)) => Err(DataError::new("page must be a positive integer", 400, "INVALID_QUERY")),
+            }
+        }
+        other => {
+            let page = match other {
+                "/v1/ipo" => Page::Detail,
+                "/v1/ipo-gmp" => Page::Gmp,
+                "/v1/ipo-subscription" => Page::Subscription,
+                _ => Page::Review,
+            };
+            match params.get("id") {
+                Some(id) => state.ipo.page(page, id).await,
+                None => Err(DataError::new("id is required", 400, "INVALID_QUERY")),
+            }
+        }
+    };
+    match result {
+        Ok(body) => (StatusCode::OK, Json(body)).into_response(),
+        Err(e) => e.into_compat_response(&uri.path().to_string()),
+    }
+}
+
 async fn compat_handler(
     State(state): State<AppState>,
     uri: Uri,
@@ -425,13 +469,6 @@ async fn legacy_search(State(state): State<AppState>, Query(multi): Query<Vec<(S
     }
 }
 
-async fn legacy_ipos(State(state): State<AppState>) -> Response {
-    match list_upcoming_ipos(&state.provider.source).await {
-        Ok(rows) => (StatusCode::OK, Json(json!({ "data": rows, "ipos": rows }))).into_response(),
-        Err(e) => e.into_legacy_response(),
-    }
-}
-
 async fn legacy_company_data(State(state): State<AppState>, Query(multi): Query<Vec<(String, String)>>) -> Response {
     let pairs = raw_pairs(&multi);
     if !pairs.iter().any(|(k, v)| k == "symbol" && !v.trim().is_empty()) {
@@ -504,8 +541,6 @@ pub fn router(state: AppState) -> axum::Router {
         .route("/v1/coverage", get(coverage))
         .route("/v1/list-of-company", get(legacy_list))
         .route("/api/list-of-company", get(legacy_list))
-        .route("/v1/list-of-ipo", get(legacy_ipos))
-        .route("/api/list-of-ipo", get(legacy_ipos))
         .route("/v1/company-search", get(legacy_search))
         .route("/api/company-search", get(legacy_search))
         .route("/v1/company-data", get(legacy_company_data))
@@ -514,6 +549,9 @@ pub fn router(state: AppState) -> axum::Router {
         .route("/api/extract", get(legacy_extract))
         .route("/api/v1/screen", get(screen_handler))
         .route("/v1/screen", get(screen_handler));
+    for (path, _) in crate::catalog::IPO_ROUTES {
+        app = app.route(path, get(ipo_handler)).route(&path.replace("/api/v1", "/v1"), get(ipo_handler));
+    }
     // Compatibility datasets + personal aliases, excluding removed resources.
     for contract in endpoint_catalog().iter().filter(|c| c.status != "excluded") {
         if contract.resource == "screen" {
@@ -531,6 +569,9 @@ pub fn router(state: AppState) -> axum::Router {
 }
 
 #[cfg(test)]
+mod public_endpoint_tests;
+
+#[cfg(test)]
 mod public_tests {
     use super::*;
 
@@ -539,12 +580,14 @@ mod public_tests {
         let config = Config::from_env();
         let fixture_listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
         let fixture_address = fixture_listener.local_addr().unwrap();
-        let fixture = axum::Router::new().route("/api/company/search/", get(|| async {
+        let fixture = axum::Router::new().route("/mainboard-ipos", get(|| async { Html(r#"<h2 id="current-h">x</h2><table class="lt"><tbody><tr><td class="lt-ipo"><a href="https://x/ipo/acme-ipo" class="lt-name">Acme IPO</a></td></tr></tbody></table>"#) }))
+            .route("/api/company/search/", get(|| async {
             Json(json!([{ "name": "Reliance", "url": "/company/RELIANCE/consolidated/" }]))
         }));
         let fixture_server = tokio::spawn(async move { axum::serve(fixture_listener, fixture).await.unwrap() });
         let source = crate::source::Source::new(format!("http://{fixture_address}"), None, None, 0);
-        let state = AppState { config, provider: Provider::new(source) };
+        let ipo = crate::ipo::Ipo::new(format!("http://{fixture_address}"), None);
+        let state = AppState { config, provider: Provider::new(source), ipo };
         let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
         let address = listener.local_addr().unwrap();
         let server = tokio::spawn(async move { axum::serve(listener, router(state)).await.unwrap() });
@@ -563,6 +606,19 @@ mod public_tests {
         assert!(coverage["endpoints"].as_array().unwrap().iter().all(|e| e["tier"] == "free"));
         let search: Value = client.get(format!("http://{address}/v1/company-search?q=reliance")).send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
         assert_eq!(search["data"][0]["symbol"], "/company/RELIANCE/consolidated/");
+        // IPO endpoints: validated, scraped from the fixture, documented in the spec.
+        for path in ["/v1/ipos", "/v1/ipos?type=bonds", "/api/v1/ipo", "/v1/ipo-gmp?id=../x", "/v1/ipo-review?id=BAD", "/v1/ipos?type=sme&page=x"] {
+            let response = client.get(format!("http://{address}{path}")).send().await.unwrap();
+            assert_eq!(response.status().as_u16(), 400, "{path}");
+            assert_eq!(response.json::<Value>().await.unwrap()["code"], "INVALID_QUERY");
+        }
+        let ipo_list: Value = client.get(format!("http://{address}/api/v1/ipos?type=mainboard")).send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
+        assert_eq!(ipo_list["items"][0]["id"], "acme-ipo");
+        let spec_paths = spec["paths"].as_object().unwrap();
+        for path in ["/api/v1/ipos", "/v1/ipos", "/api/v1/ipo", "/v1/ipo-gmp", "/v1/ipo-subscription", "/v1/ipo-review"] {
+            assert_eq!(spec_paths[path]["get"]["x-use-case"], "ipo", "{path}");
+        }
+        assert!(spec["x-user-journey"].as_array().unwrap().iter().any(|g| g["id"] == "internal"));
         server.abort();
         fixture_server.abort();
     }
